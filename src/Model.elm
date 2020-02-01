@@ -1,4 +1,4 @@
-module Model exposing (Hover(..), Model, Position, Selection(..), initModel)
+module Model exposing (Config, Hover(..), Model, Position, Selection(..), init)
 
 import Array exposing (Array)
 
@@ -8,6 +8,14 @@ type alias Model =
     , cursor : Position
     , hover : Hover
     , selection : Selection
+    , width : Float
+    , height : Float
+    }
+
+
+type alias Config =
+    { width : Float
+    , height : Float
     }
 
 
@@ -30,10 +38,12 @@ type alias Position =
     }
 
 
-initModel : Model
-initModel =
+init : Config -> Model
+init config =
     { lines = Array.fromList [ "" ]
     , cursor = Position 0 0
     , hover = NoHover
     , selection = NoSelection
+    , width = config.width
+    , height = config.height
     }

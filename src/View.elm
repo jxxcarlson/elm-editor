@@ -1,4 +1,4 @@
-module View exposing (alwaysMsg, displayStyle, handleKey, isSelected, lineNumbersDisplay, nbsp, onHover2, selectedText, transformMsg, viewChar, viewChars, viewContent, viewDebug, viewEditor, viewLine, viewLineNumber, viewLineNumbers, viewLine_, viewLines, wordCountDisplay, yada)
+module View exposing (viewDebug, viewEditor, viewHeader)
 
 import Array exposing (Array)
 import Common exposing (..)
@@ -150,7 +150,7 @@ viewEditor model =
         , HA.style "font-size" (px fontSize)
         , HA.style "line-height" (px lineHeight)
         , HA.style "white-space" "pre"
-        , HA.style "height" "200px"
+        , HA.style "height" (px model.height)
         , HA.style "overflow-y" "scroll"
         , handleKey
         , HA.tabindex 0
@@ -438,3 +438,43 @@ rowButtonLabelStyle width =
 nbsp : String
 nbsp =
     "\u{00A0}"
+
+
+
+-- HEADER AND FOOTER
+
+
+viewFooter : Model -> Html Msg
+viewFooter model =
+    H.div
+        [ HA.style "display" "flex"
+        , HA.style "flex-direction" "column"
+        , HA.style "margin-top" "20px"
+        ]
+        [ H.p [ HA.style "margin-top" "0px" ]
+            [ H.text "This demo is an Elm 0.19 version of"
+            , H.a [ HA.href "https://janiczek.github.io/elm-editor/" ] [ H.text " Martin Janiczek's elm-editor" ]
+            , H.span [] [ H.text ". See also his " ]
+            , H.a [ HA.href "https://discourse.elm-lang.org/t/text-editor-done-in-pure-elm/1365/" ] [ H.text " Discourse article" ]
+            , H.span [] [ H.text ". " ]
+            ]
+        , H.p [ HA.style "margin-top" "0px" ]
+            [ H.a [ HA.href "https://github.com/jxxcarlson/elm-editor" ] [ H.text "Github repo" ]
+            , H.span [] [ H.text " forked from " ]
+            , H.a [ HA.href "https://janiczek.github.io/elm-editor/" ] [ H.text " Martin Janiczek. " ]
+            ]
+        ]
+
+
+viewHeader : Model -> Html Msg
+viewHeader model =
+    H.div
+        [ HA.style "display" "flex"
+        , HA.style "font-family" "monospace"
+        , HA.style "margin-bottom" "20px"
+        ]
+        [ H.span [ HA.style "font-size" "24px" ] [ H.text "Text editor" ]
+        , lineNumbersDisplay model
+        , wordCountDisplay model
+        , rowButton 40 "Clear" Clear [ HA.style "margin-left" "24px", HA.style "margin-top" "4px" ]
+        ]
