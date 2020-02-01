@@ -1,0 +1,4 @@
+.idea/
+**/elm-stuff
+**/Main.js
+**/*.min.js
