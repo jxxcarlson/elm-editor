@@ -3,10 +3,12 @@ module Main exposing (main)
 import Array exposing (Array)
 import Browser
 import Browser.Dom as Dom
+import Diff exposing (Change)
 import Editor exposing (Editor)
 import Html as H exposing (Attribute, Html)
 import Html.Attributes as HA
 import Html.Events as HE
+import Model exposing (Msg(..))
 import Task
 
 
@@ -26,6 +28,8 @@ main =
 
 type alias Model =
     { editor : Editor
+    , lines : List String
+    , diffedLines : List (Change String)
     , numberOfTestLines : Maybe Int
     }
 
@@ -40,7 +44,11 @@ type Msg
 init : Flags -> ( Model, Cmd Msg )
 init =
     \() ->
-        ( { editor = Editor.init config, numberOfTestLines = Nothing }
+        ( { editor = Editor.init config
+          , numberOfTestLines = Nothing
+          , lines = []
+          , diffedLines = []
+          }
         , Dom.focus "editor"
             |> Task.attempt (always NoOp)
         )
@@ -70,7 +78,20 @@ update msg model =
                 ( newEditor, cmd ) =
                     Editor.update editorMsg model.editor
             in
-            ( { model | editor = newEditor }, Cmd.map EditorMsg cmd )
+            case editorMsg of
+                Unload _ ->
+                    let
+                        newLines =
+                            Editor.getLines newEditor |> Array.toList
+
+                        diffedLines =
+                            Debug.log "DIFF" <|
+                                Diff.diff model.lines newLines
+                    in
+                    ( { model | editor = newEditor, lines = newLines, diffedLines = diffedLines }, Cmd.map EditorMsg cmd )
+
+                _ ->
+                    ( { model | editor = newEditor }, Cmd.map EditorMsg cmd )
 
         TestLines ->
             case model.numberOfTestLines of

@@ -1,6 +1,7 @@
 module Editor exposing
     ( Editor(..)
     , EditorMsg
+    , getLines
     , init
     , loadArray
     , update
@@ -49,3 +50,8 @@ type alias EditorMsg =
 loadArray : Array String -> Editor -> Editor
 loadArray array (Editor model) =
     Editor { model | lines = array }
+
+
+getLines : Editor -> Array String
+getLines (Editor model) =
+    model.lines

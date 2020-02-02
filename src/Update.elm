@@ -71,9 +71,13 @@ update msg model =
             )
 
         RemoveCharBefore ->
-            ( removeCharBefore model
+            let
+                ( debounce, debounceCmd ) =
+                    Debounce.push Model.debounceConfig "RCB" model.debounce
+            in
+            ( removeCharBefore { model | debounce = debounce }
                 |> sanitizeHover
-            , Cmd.none
+            , debounceCmd
             )
 
         FirstLine ->
