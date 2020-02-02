@@ -1,27 +1,9 @@
-module Update exposing (Msg(..), update)
+module Update exposing (update)
 
+import Action
 import Array exposing (Array)
 import Common exposing (..)
-import Json.Decode as JD
-import Model exposing (Hover(..), Model, Position, Selection(..))
-
-
-type Msg
-    = NoOp
-    | MoveUp
-    | MoveDown
-    | MoveLeft
-    | MoveRight
-    | NewLine
-    | InsertChar Char
-    | RemoveCharBefore
-    | RemoveCharAfter
-    | Hover Hover
-    | GoToHoveredPosition
-    | StartSelecting
-    | StopSelecting
-      --
-    | Clear
+import Model exposing (Hover(..), Model, Msg(..), Position, Selection(..))
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -29,6 +11,9 @@ update msg model =
     case msg of
         NoOp ->
             ( model, Cmd.none )
+
+        Test ->
+            Action.firstLine model
 
         MoveUp ->
             ( { model | cursor = moveUp model.cursor model.lines }

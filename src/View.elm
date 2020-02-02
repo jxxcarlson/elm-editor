@@ -7,8 +7,7 @@ import Html.Attributes as HA
 import Html.Events as HE
 import Html.Lazy
 import Json.Decode as JD exposing (Decoder)
-import Model exposing (Hover(..), Model, Position, Selection(..))
-import Update exposing (Msg(..))
+import Model exposing (Hover(..), Model, Msg(..), Position, Selection(..))
 
 
 keyDecoder : Decoder Msg
@@ -155,7 +154,7 @@ viewEditor model =
         , HA.style "width" (px model.width)
         , handleKey
         , HA.tabindex 0
-        , HA.id "editor"
+        , HA.id "__editor__"
         ]
         [ viewLineNumbers model
         , viewContent model
@@ -473,10 +472,14 @@ viewHeader model =
     H.div
         [ HA.style "display" "flex"
         , HA.style "font-family" "monospace"
-        , HA.style "margin-bottom" "20px"
+        , HA.style "background-color" "#c0c0c9"
+        , HA.style "padding-top" "2px"
+        , HA.style "padding-bottom" "6px"
+        , HA.style "width" (px model.width)
         ]
-        [ H.span [ HA.style "font-size" "24px" ] [ H.text "Text editor" ]
+        [ rowButton 40 "Help" NoOp [ HA.style "margin-left" "8px", HA.style "margin-top" "4px" ]
         , lineNumbersDisplay model
         , wordCountDisplay model
         , rowButton 40 "Clear" Clear [ HA.style "margin-left" "24px", HA.style "margin-top" "4px" ]
+        , rowButton 40 "Test" Test [ HA.style "margin-left" "24px", HA.style "margin-top" "4px" ]
         ]

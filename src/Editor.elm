@@ -10,8 +10,8 @@ module Editor exposing
 import Array exposing (Array)
 import Html as H exposing (Html)
 import Html.Attributes as HA
-import Model exposing (Config, Model)
-import Update as U exposing (Msg(..))
+import Model exposing (Config, Model, Msg(..))
+import Update as U
 import View exposing (viewDebug, viewEditor, viewHeader)
 
 

@@ -1,4 +1,4 @@
-module Model exposing (Config, Hover(..), Model, Position, Selection(..), init)
+module Model exposing (Config, Hover(..), Model, Msg(..), Position, Selection(..), init)
 
 import Array exposing (Array)
 
@@ -47,3 +47,22 @@ init config =
     , width = config.width
     , height = config.height
     }
+
+
+type Msg
+    = NoOp
+    | MoveUp
+    | MoveDown
+    | MoveLeft
+    | MoveRight
+    | NewLine
+    | InsertChar Char
+    | RemoveCharBefore
+    | RemoveCharAfter
+    | Hover Hover
+    | GoToHoveredPosition
+    | StartSelecting
+    | StopSelecting
+      --
+    | Clear
+    | Test

@@ -1,0 +1,27 @@
+{
+  "name": "janiczek-editor",
+  "version": "1.0.0",
+  "description": "![Travis CI build status](https://travis-ci.org/Janiczek/elm-editor.svg?branch=master)",
+  "main": "Main.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "elm-live -p 8001 -d public/ src/Main.elm -- --output public/Main.js",
+    "publish": "sh script/publish.sh",
+    "go": "open -a /Applications/Firefox.app/ https://jxxcarlson.github.io/app/janiczek-editor/index.html",
+    "cloc": "cloc --by-file src"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Janiczek/elm-editor.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Janiczek/elm-editor/issues"
+  },
+  "homepage": "https://github.com/Janiczek/elm-editor#readme"
+}
