@@ -3,7 +3,9 @@ module Update exposing (update)
 import Action
 import Array exposing (Array)
 import Common exposing (..)
+import Debounce exposing (Debounce)
 import Model exposing (Hover(..), Model, Msg(..), Position, Selection(..))
+import Task
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -14,6 +16,24 @@ update msg model =
 
         Test ->
             Action.goToLine 30 model
+
+        DebounceMsg msg_ ->
+            let
+                ( debounce, cmd ) =
+                    Debounce.update
+                        Model.debounceConfig
+                        (Debounce.takeLast unload)
+                        msg_
+                        model.debounce
+            in
+            ( { model | debounce = debounce }, cmd )
+
+        Unload _ ->
+            let
+                _ =
+                    Debug.log "ARRAY" model.lines
+            in
+            ( { model | debounce = model.debounce }, Cmd.none )
 
         MoveUp ->
             ( { model | cursor = moveUp model.cursor model.lines }
@@ -42,8 +62,12 @@ update msg model =
             )
 
         InsertChar char ->
-            ( insertChar char model
-            , Cmd.none
+            let
+                ( debounce, debounceCmd ) =
+                    Debounce.push Model.debounceConfig char model.debounce
+            in
+            ( insertChar char { model | debounce = debounce }
+            , debounceCmd
             )
 
         RemoveCharBefore ->
@@ -276,3 +300,12 @@ insertChar char ({ cursor, lines } as model) =
         | lines = newLines
         , cursor = newCursor
     }
+
+
+
+-- DEBOUNCE
+
+
+unload : String -> Cmd Msg
+unload s =
+    Task.perform Unload (Task.succeed s)

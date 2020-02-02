@@ -1,6 +1,7 @@
-module Model exposing (Config, Hover(..), Model, Msg(..), Position, Selection(..), init)
+module Model exposing (Config, Hover(..), Model, Msg(..), Position, Selection(..), debounceConfig, init)
 
 import Array exposing (Array)
+import Debounce exposing (Debounce)
 
 
 type alias Model =
@@ -14,6 +15,7 @@ type alias Model =
     , lineHeight : Float
     , verticalScrollOffset : Int
     , lineNumberToGoTo : String
+    , debounce : Debounce String
     }
 
 
@@ -56,6 +58,14 @@ init config =
     , lineHeight = 1.2 * config.fontSize
     , verticalScrollOffset = config.verticalScrollOffset
     , lineNumberToGoTo = ""
+    , debounce = Debounce.init
+    }
+
+
+debounceConfig : Debounce.Config Msg
+debounceConfig =
+    { strategy = Debounce.later 2000
+    , transform = DebounceMsg
     }
 
 
@@ -87,6 +97,9 @@ type Msg
     | LastLine
     | GoToLine
     | AcceptLineToGoTo String
+      --
+    | DebounceMsg Debounce.Msg
+    | Unload String
       --
     | Clear
     | Test

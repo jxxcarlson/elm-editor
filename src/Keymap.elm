@@ -208,7 +208,6 @@ keymaps =
             [-- ( "ArrowRight", SelectToGroupEnd )
              --, ( "ArrowLeft", SelectToGroupStart )
              --, ( "C", WriteToSystemClipBoard )
-             --, ( "I", ToggleInfoPanel )
              --, ( "V", CopyPasteClipboard )
              --, ( "W", WrapAll )
              --, ( "S", SendLine )
