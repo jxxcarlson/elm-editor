@@ -26,20 +26,71 @@ type Modifier
     | ControlAndOption
 
 
-keyDecoder : Decoder Msg
-keyDecoder =
-    JD.field "key" JD.string
+keydownDecoder : Decoder Msg
+keydownDecoder =
+    JD.map3 Keydown
+        characterDecoder
+        (JD.field "key" JD.string)
+        modifierDecoder
         |> JD.andThen keyToMsg
 
 
-keyToMsg : String -> Decoder Msg
-keyToMsg string =
-    case String.uncons string of
-        Just ( char, "" ) ->
-            JD.succeed (InsertChar char)
+characterDecoder : Decoder (Maybe String)
+characterDecoder =
+    JD.field "key" JD.string
+        |> JD.map
+            (\key ->
+                case String.uncons key of
+                    Just ( char, "" ) ->
+                        Just (String.fromChar char)
 
-        _ ->
-            case string of
+                    _ ->
+                        Nothing
+            )
+
+
+modifierDecoder : Decoder Modifier
+modifierDecoder =
+    JD.map3 modifierFromFlags
+        (JD.field "ctrlKey" JD.bool)
+        (JD.field "shiftKey" JD.bool)
+        (JD.field "altKey" JD.bool)
+
+
+modifierFromFlags : Bool -> Bool -> Bool -> Modifier
+modifierFromFlags ctrl shift option =
+    case ( ctrl, shift, option ) of
+        ( True, True, False ) ->
+            ControlAndShift
+
+        ( False, True, False ) ->
+            Shift
+
+        ( True, False, False ) ->
+            Control
+
+        ( False, False, True ) ->
+            Option
+
+        ( True, False, True ) ->
+            ControlAndOption
+
+        ( _, _, _ ) ->
+            None
+
+
+keyToMsg : Keydown -> Decoder Msg
+keyToMsg { char, key, modifier } =
+    let
+        _ =
+            Debug.log "(c, k, m)" ( char, key, modifier )
+    in
+    case ( char, key, modifier ) of
+        ( Just char_, _, None ) ->
+            JD.succeed (InsertChar char_)
+
+        ( Nothing, key_, None ) ->
+            case key_ of
                 "ArrowUp" ->
                     JD.succeed MoveUp
 
@@ -63,6 +114,9 @@ keyToMsg string =
 
                 _ ->
                     JD.fail "This key does nothing"
+
+        ( _, _, _ ) ->
+            JD.fail "This key does nothing"
 
 
 lineNumbersDisplay : Model -> Html Msg
@@ -180,7 +234,7 @@ viewEditor model =
 
 handleKey : Attribute Msg
 handleKey =
-    HE.custom "keydown" (JD.map transformMsg keyDecoder)
+    HE.custom "keydown" (JD.map transformMsg keydownDecoder)
 
 
 transformMsg : a -> { message : a, stopPropagation : Bool, preventDefault : Bool }

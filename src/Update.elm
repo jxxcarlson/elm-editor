@@ -213,7 +213,7 @@ newLine ({ cursor, lines } as model) =
     }
 
 
-insertChar : Char -> Model -> Model
+insertChar : String -> Model -> Model
 insertChar char ({ cursor, lines } as model) =
     let
         { line, column } =
@@ -222,7 +222,7 @@ insertChar char ({ cursor, lines } as model) =
         lineWithCharAdded : String -> String
         lineWithCharAdded content =
             String.left column content
-                ++ String.fromChar char
+                ++ char
                 ++ String.dropLeft column content
 
         newLines : Array String

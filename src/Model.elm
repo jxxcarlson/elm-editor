@@ -68,7 +68,7 @@ type Msg
     | MoveLeft
     | MoveRight
     | NewLine
-    | InsertChar Char
+    | InsertChar String
     | RemoveCharBefore
     | RemoveCharAfter
     | Hover Hover
