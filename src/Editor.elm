@@ -1,5 +1,13 @@
-module Editor exposing (Editor(..), EditorMsg, init, update, view)
+module Editor exposing
+    ( Editor(..)
+    , EditorMsg
+    , init
+    , loadArray
+    , update
+    , view
+    )
 
+import Array exposing (Array)
 import Html as H exposing (Html)
 import Html.Attributes as HA
 import Model exposing (Config, Model)
@@ -36,3 +44,8 @@ update msg (Editor model) =
 
 type alias EditorMsg =
     Msg
+
+
+loadArray : Array String -> Editor -> Editor
+loadArray array (Editor model) =
+    Editor { model | lines = array }

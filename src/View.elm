@@ -79,9 +79,9 @@ displayStyle =
 
 
 viewDebug : Model -> Html Msg
-viewDebug { lines, cursor, hover, selection } =
+viewDebug { lines, cursor, hover, selection, width } =
     H.div
-        [ HA.style "max-width" "100%" ]
+        [ HA.style "max-width" (px width) ]
         [ --H.pre
           --   [ HA.style  "white-space"  "pre-wrap"  ]
           --   [ H.text <| "Lines: \n" ++ (lines |> Array.toList |> String.join "\n") ]
@@ -152,6 +152,7 @@ viewEditor model =
         , HA.style "white-space" "pre"
         , HA.style "height" (px model.height)
         , HA.style "overflow-y" "scroll"
+        , HA.style "width" (px model.width)
         , handleKey
         , HA.tabindex 0
         , HA.id "editor"
@@ -245,6 +246,7 @@ viewLine_ position hover selection lines line content =
         [ HA.style "position" "absolute"
         , HA.style "position" "absolute"
         , HA.style "position" "absolute"
+        , HA.style "background-color" "#f0f0f0"
         , HA.style "left" "0"
         , HA.style "right" "0"
         , HA.style "padding-left" "4px"
