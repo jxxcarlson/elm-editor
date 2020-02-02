@@ -152,7 +152,7 @@ keymaps =
             , ( "ArrowRight", MoveRight )
             , ( "Backspace", RemoveCharBefore )
             , ( "Delete", RemoveCharAfter )
-            , ( "Enter", InsertChar "\n" )
+            , ( "Enter", NewLine )
             , ( "Home", MoveToLineStart )
             , ( "End", MoveToLineEnd )
 
