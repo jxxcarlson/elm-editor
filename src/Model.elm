@@ -10,12 +10,15 @@ type alias Model =
     , selection : Selection
     , width : Float
     , height : Float
+    , fontSize : Float
+    , lineHeight : Float
     }
 
 
 type alias Config =
     { width : Float
     , height : Float
+    , fontSize : Float
     }
 
 
@@ -46,6 +49,8 @@ init config =
     , selection = NoSelection
     , width = config.width
     , height = config.height
+    , fontSize = config.fontSize
+    , lineHeight = 1.2 * config.fontSize
     }
 
 

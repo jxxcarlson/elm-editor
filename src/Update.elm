@@ -13,7 +13,7 @@ update msg model =
             ( model, Cmd.none )
 
         Test ->
-            Action.firstLine model
+            Action.lastLine model
 
         MoveUp ->
             ( { model | cursor = moveUp model.cursor model.lines }

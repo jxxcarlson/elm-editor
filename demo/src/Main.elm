@@ -40,10 +40,17 @@ type Msg
 init : Flags -> ( Model, Cmd Msg )
 init =
     \() ->
-        ( { editor = Editor.init { width = 800, height = 200 }, numberOfTestLines = Nothing }
+        ( { editor = Editor.init config, numberOfTestLines = Nothing }
         , Dom.focus "editor"
             |> Task.attempt (always NoOp)
         )
+
+
+config =
+    { width = 800
+    , height = 200
+    , fontSize = 20
+    }
 
 
 subscriptions : Model -> Sub Msg

@@ -1,6 +1,6 @@
 module Action exposing
     ( firstLine
-    , scrollToTopForElement
+    , lastLine
     , selectLine
     )
 
@@ -13,6 +13,15 @@ import Task exposing (Task)
 firstLine : Model -> ( Model, Cmd Msg )
 firstLine model =
     ( { model | cursor = { line = 0, column = 0 } }, scrollToTopForElement "__editor__" )
+
+
+lastLine : Model -> ( Model, Cmd Msg )
+lastLine model =
+    let
+        lastLineIndex =
+            Array.length model.lines - 1
+    in
+    ( { model | cursor = { line = lastLineIndex, column = 0 } }, scrollToLine model.lineHeight lastLineIndex )
 
 
 selectLine : Model -> ( Model, Cmd Msg )
@@ -43,3 +52,12 @@ selectLine model =
 scrollToTopForElement : String -> Cmd Msg
 scrollToTopForElement id =
     Task.attempt (\_ -> NoOp) (Dom.setViewportOf id 0 0)
+
+
+scrollToLine : Float -> Int -> Cmd Msg
+scrollToLine lineHeight n =
+    let
+        y =
+            toFloat n * lineHeight
+    in
+    Task.attempt (\_ -> NoOp) (Dom.setViewportOf "__editor__" 0 y)

@@ -146,8 +146,8 @@ viewEditor model =
         [ HA.style "display" "flex"
         , HA.style "flex-direction" "row"
         , HA.style "font-family" "monospace"
-        , HA.style "font-size" (px fontSize)
-        , HA.style "line-height" (px lineHeight)
+        , HA.style "font-size" (px model.fontSize)
+        , HA.style "line-height" (px model.lineHeight)
         , HA.style "white-space" "pre"
         , HA.style "height" (px model.height)
         , HA.style "overflow-y" "scroll"
@@ -225,25 +225,25 @@ viewContent model =
         , HE.onClick GoToHoveredPosition
         , HE.onMouseOut (Hover NoHover)
         ]
-        [ viewLines model.cursor model.hover model.selection model.lines ]
+        [ viewLines model.lineHeight model.cursor model.hover model.selection model.lines ]
 
 
-viewLines : Position -> Hover -> Selection -> Array String -> Html Msg
-viewLines position hover selection lines =
+viewLines : Float -> Position -> Hover -> Selection -> Array String -> Html Msg
+viewLines lineHeight position hover selection lines =
     H.div []
         (lines
-            |> Array.indexedMap (viewLine position hover selection lines)
+            |> Array.indexedMap (viewLine lineHeight position hover selection lines)
             |> Array.toList
         )
 
 
-viewLine : Position -> Hover -> Selection -> Array String -> Int -> String -> Html Msg
-viewLine position hover selection lines line content =
-    Html.Lazy.lazy6 viewLine_ position hover selection lines line content
+viewLine : Float -> Position -> Hover -> Selection -> Array String -> Int -> String -> Html Msg
+viewLine lineHeight position hover selection lines line content =
+    Html.Lazy.lazy7 viewLine_ lineHeight position hover selection lines line content
 
 
-viewLine_ : Position -> Hover -> Selection -> Array String -> Int -> String -> Html Msg
-viewLine_ position hover selection lines line content =
+viewLine_ : Float -> Position -> Hover -> Selection -> Array String -> Int -> String -> Html Msg
+viewLine_ lineHeight position hover selection lines line content =
     H.div
         [ HA.style "position" "absolute"
         , HA.style "position" "absolute"
@@ -387,19 +387,9 @@ onHover position =
             }
 
 
-fontSize : Float
-fontSize =
-    20
-
-
 px : Float -> String
 px f =
     String.fromFloat f ++ "px"
-
-
-lineHeight : Float
-lineHeight =
-    fontSize * 1.2
 
 
 rowButton width str msg attr =
