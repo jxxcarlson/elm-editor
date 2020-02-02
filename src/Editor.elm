@@ -1,9 +1,9 @@
-module Editor exposing (Editor(..), EditorMsg, init, view)
+module Editor exposing (Editor(..), EditorMsg, init, update, view)
 
 import Html as H exposing (Html)
 import Html.Attributes as HA
 import Model exposing (Config, Model)
-import Update exposing (Msg(..))
+import Update as U exposing (Msg(..))
 import View exposing (viewDebug, viewEditor, viewHeader)
 
 
@@ -23,6 +23,15 @@ view (Editor model) =
 init : Config -> Editor
 init config =
     config |> Model.init |> Editor
+
+
+update : Msg -> Editor -> ( Editor, Cmd Msg )
+update msg (Editor model) =
+    let
+        ( newModel, cmd ) =
+            U.update msg model
+    in
+    ( Editor newModel, cmd )
 
 
 type alias EditorMsg =

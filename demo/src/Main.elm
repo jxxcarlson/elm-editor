@@ -53,8 +53,12 @@ update msg model =
         NoOp ->
             ( model, Cmd.none )
 
-        EditorMsg _ ->
-            ( model, Cmd.none )
+        EditorMsg editorMsg ->
+            let
+                ( newEditor, cmd ) =
+                    Editor.update editorMsg model.editor
+            in
+            ( { model | editor = newEditor }, Cmd.map EditorMsg cmd )
 
 
 view : Model -> Html Msg

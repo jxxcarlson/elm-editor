@@ -1,4 +1,4 @@
-module Update exposing (Msg(..))
+module Update exposing (Msg(..), update)
 
 import Array exposing (Array)
 import Common exposing (..)
