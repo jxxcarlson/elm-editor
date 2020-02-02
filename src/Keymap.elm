@@ -96,39 +96,39 @@ keyToMsg { char, key, modifier } =
     let
         _ =
             Debug.log "(c, k, m)" ( char, key, modifier )
+
+        keyFrom keymap =
+            Dict.get key keymap
+                |> Maybe.map JD.succeed
+                |> Maybe.withDefault (JD.fail "This key does nothing")
+
+        keyOrCharFrom keymap =
+            JD.oneOf
+                [ keyFrom keymap
+                , char
+                    |> Maybe.map (InsertChar >> JD.succeed)
+                    |> Maybe.withDefault
+                        (JD.fail "This key does nothing")
+                ]
     in
-    case ( char, key, modifier ) of
-        ( Just char_, _, None ) ->
-            JD.succeed (InsertChar char_)
+    case modifier of
+        None ->
+            keyOrCharFrom keymaps.noModifier
 
-        ( Nothing, key_, None ) ->
-            case key_ of
-                "ArrowUp" ->
-                    JD.succeed MoveUp
+        Control ->
+            keyFrom keymaps.control
 
-                "ArrowDown" ->
-                    JD.succeed MoveDown
+        Shift ->
+            keyOrCharFrom keymaps.shift
 
-                "ArrowLeft" ->
-                    JD.succeed MoveLeft
+        ControlAndShift ->
+            keyFrom keymaps.controlAndShift
 
-                "ArrowRight" ->
-                    JD.succeed MoveRight
+        ControlAndOption ->
+            keyFrom keymaps.controlAndOption
 
-                "Backspace" ->
-                    JD.succeed RemoveCharBefore
-
-                "Delete" ->
-                    JD.succeed RemoveCharAfter
-
-                "Enter" ->
-                    JD.succeed NewLine
-
-                _ ->
-                    JD.fail "This key does nothing"
-
-        ( _, _, _ ) ->
-            JD.fail "This key does nothing"
+        Option ->
+            keyFrom keymaps.option
 
 
 type alias Keymap =
@@ -152,8 +152,8 @@ keymaps =
             , ( "ArrowRight", MoveRight )
             , ( "Backspace", RemoveCharBefore )
             , ( "Delete", RemoveCharAfter )
+            , ( "Enter", InsertChar "\n" )
 
-            --, ( "Enter", Insert "\n" )
             --, ( "Home", CursorToLineStart )
             --, ( "End", CursorToLineEnd )
             --, ( "Tab", Indent )
