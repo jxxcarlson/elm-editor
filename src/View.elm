@@ -10,6 +10,22 @@ import Json.Decode as JD exposing (Decoder)
 import Model exposing (Hover(..), Model, Msg(..), Position, Selection(..))
 
 
+type alias Keydown =
+    { char : Maybe String
+    , key : String
+    , modifier : Modifier
+    }
+
+
+type Modifier
+    = None
+    | Control
+    | Option
+    | Shift
+    | ControlAndShift
+    | ControlAndOption
+
+
 keyDecoder : Decoder Msg
 keyDecoder =
     JD.field "key" JD.string
