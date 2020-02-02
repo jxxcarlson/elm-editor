@@ -77,6 +77,10 @@ type Msg
     | StopSelecting
       --
     | SelectLine
+    | MoveToLineStart
+    | MoveToLineEnd
+    | PageUp
+    | PageDown
       --
     | Clear
     | Test

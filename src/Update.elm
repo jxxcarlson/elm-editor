@@ -128,6 +128,18 @@ update msg model =
         SelectLine ->
             Action.selectLine model
 
+        MoveToLineStart ->
+            Action.moveToLineStart model
+
+        MoveToLineEnd ->
+            Action.moveToLineEnd model
+
+        PageDown ->
+            Action.pageDown model
+
+        PageUp ->
+            Action.pageUp model
+
         Clear ->
             ( { model | lines = Array.fromList [ "" ] }, Cmd.none )
 

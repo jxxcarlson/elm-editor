@@ -153,14 +153,14 @@ keymaps =
             , ( "Backspace", RemoveCharBefore )
             , ( "Delete", RemoveCharAfter )
             , ( "Enter", InsertChar "\n" )
+            , ( "Home", MoveToLineStart )
+            , ( "End", MoveToLineEnd )
 
-            --, ( "Home", CursorToLineStart )
-            --, ( "End", CursorToLineEnd )
             --, ( "Tab", Indent )
             ]
     , shift =
         Dict.fromList
-            [--( "ArrowUp", SelectUp )
+            [-- ( "ArrowUp", SelectUp )
              --, ( "ArrowDown", SelectDown )
              --, ( "ArrowLeft", SelectLeft )
              --, ( "ArrowRight", SelectRight )
@@ -170,14 +170,14 @@ keymaps =
             ]
     , option =
         Dict.fromList
-            [--( "ArrowUp", ScrollUp 20 )
-             --, ( "ArrowDown", ScrollDown 20 )
-             --, ( "ArrowLeft", CursorToLineStart )
-             --, ( "ArrowRight", CursorToLineEnd )
+            [ ( "ArrowUp", PageUp )
+            , ( "ArrowDown", PageDown )
+            , ( "ArrowLeft", MoveToLineStart )
+            , ( "ArrowRight", MoveToLineEnd )
             ]
     , controlAndOption =
         Dict.fromList
-            [--( "ArrowUp", FirstLine )
+            [-- ( "ArrowUp", FirstLine )
              --, ( "ArrowDown", LastLine )
              --, ( "ArrowRight", CursorToGroupEnd )
              --, ( "ArrowLeft", CursorToGroupStart )
@@ -186,7 +186,7 @@ keymaps =
             ]
     , control =
         Dict.fromList
-            [--( "Backspace", RemoveGroupBefore )
+            [-- ( "Backspace", RemoveGroupBefore )
              --, ( "Delete", RemoveGroupAfter )
              --, ( "d", SelectGroup )
              --, ( "c", Copy )
@@ -204,7 +204,7 @@ keymaps =
             ]
     , controlAndShift =
         Dict.fromList
-            [--( "ArrowRight", SelectToGroupEnd )
+            [-- ( "ArrowRight", SelectToGroupEnd )
              --, ( "ArrowLeft", SelectToGroupStart )
              --, ( "C", WriteToSystemClipBoard )
              --, ( "I", ToggleInfoPanel )

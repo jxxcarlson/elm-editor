@@ -2,6 +2,10 @@ module Action exposing
     ( firstLine
     , goToLine
     , lastLine
+    , moveToLineEnd
+    , moveToLineStart
+    , pageDown
+    , pageUp
     , selectLine
     )
 
@@ -42,13 +46,72 @@ lastLine model =
     ( { model | cursor = { line = lastLineIndex, column = 0 } }, scrollToLine model.lineHeight lastLineIndex )
 
 
+moveToLineEnd : Model -> ( Model, Cmd Msg )
+moveToLineEnd model =
+    ( { model | cursor = { line = model.cursor.line, column = lineEnd model.cursor.line model } }, Cmd.none )
+
+
+moveToLineStart : Model -> ( Model, Cmd Msg )
+moveToLineStart model =
+    ( { model | cursor = { line = model.cursor.line, column = 0 } }, Cmd.none )
+
+
+pageDown : Model -> ( Model, Cmd Msg )
+pageDown model =
+    let
+        lpp =
+            linesPerPage model
+
+        lastIndex =
+            Array.length model.lines - 1
+
+        newLine =
+            min lastIndex (model.cursor.line + lpp)
+
+        newCursor =
+            { line = newLine, column = 0 }
+
+        newY =
+            yValueOfLine model.lineHeight model.cursor.line + model.height - 3 * model.lineHeight
+    in
+    ( { model | cursor = newCursor }, scrollToYCoordinate newY )
+
+
+pageUp : Model -> ( Model, Cmd Msg )
+pageUp model =
+    let
+        lpp =
+            linesPerPage model
+
+        newLine =
+            max 0 (model.cursor.line - lpp)
+
+        newCursor =
+            { line = newLine, column = 0 }
+
+        newY =
+            yValueOfLine model.lineHeight model.cursor.line - model.height - 1 * model.lineHeight
+    in
+    ( { model | cursor = newCursor }, scrollToYCoordinate newY )
+
+
+yValueOfLine : Float -> Int -> Float
+yValueOfLine lineHeight n =
+    toFloat n * lineHeight
+
+
+linesPerPage : Model -> Int
+linesPerPage model =
+    floor (model.height / model.lineHeight)
+
+
 selectLine : Model -> ( Model, Cmd Msg )
 selectLine model =
     let
         line =
             model.cursor.line
 
-        lineEnd =
+        lineEnd_ =
             Array.get line model.lines
                 |> Maybe.map String.length
                 |> Maybe.withDefault 0
@@ -56,10 +119,18 @@ selectLine model =
     in
     ( { model
         | cursor = { line = line, column = 0 }
-        , selection = Selection { line = line, column = 0 } { line = line, column = lineEnd }
+        , selection = Selection { line = line, column = 0 } { line = line, column = lineEnd_ }
       }
     , Cmd.none
     )
+
+
+lineEnd : Int -> Model -> Int
+lineEnd line model =
+    Array.get line model.lines
+        |> Maybe.map String.length
+        |> Maybe.withDefault 0
+        |> (\x -> x - 1)
 
 
 
@@ -78,4 +149,9 @@ scrollToLine lineHeight n =
         y =
             toFloat n * lineHeight
     in
+    Task.attempt (\_ -> NoOp) (Dom.setViewportOf "__editor__" 0 y)
+
+
+scrollToYCoordinate : Float -> Cmd Msg
+scrollToYCoordinate y =
     Task.attempt (\_ -> NoOp) (Dom.setViewportOf "__editor__" 0 y)
