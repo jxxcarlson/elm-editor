@@ -52,11 +52,8 @@ update msg model =
             , Cmd.none
             )
 
-        RemoveCharAfter ->
-            ( removeCharAfter model
-                |> sanitizeHover
-            , Cmd.none
-            )
+        FirstLine ->
+            Action.firstLine model
 
         Hover hover ->
             ( { model | hover = hover }
@@ -79,6 +76,26 @@ update msg model =
                         HoverChar position ->
                             position
               }
+            , Cmd.none
+            )
+
+        LastLine ->
+            Action.lastLine model
+
+        AcceptLineToGoTo str ->
+            ( { model | lineNumberToGoTo = str }, Cmd.none )
+
+        GoToLine ->
+            case String.toInt model.lineNumberToGoTo of
+                Nothing ->
+                    ( model, Cmd.none )
+
+                Just n ->
+                    Action.goToLine n model
+
+        RemoveCharAfter ->
+            ( removeCharAfter model
+                |> sanitizeHover
             , Cmd.none
             )
 

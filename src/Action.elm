@@ -6,6 +6,7 @@ module Action exposing
     , moveToLineStart
     , pageDown
     , pageUp
+    , scrollToLine
     , selectLine
     )
 
@@ -27,14 +28,10 @@ goToLine line model =
             Array.length model.lines
 
         index =
-            line - 1
+            min (length - 1) (line - 1)
+                |> max 0
     in
-    case index >= 0 && index < length of
-        False ->
-            ( model, Cmd.none )
-
-        True ->
-            ( { model | cursor = { line = index, column = 0 } }, scrollToLine model.lineHeight (index - model.verticalScrollOffset) )
+    ( { model | cursor = { line = index, column = 0 } }, scrollToLine model.lineHeight (index - model.verticalScrollOffset) )
 
 
 lastLine : Model -> ( Model, Cmd Msg )

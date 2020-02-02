@@ -13,6 +13,7 @@ type alias Model =
     , fontSize : Float
     , lineHeight : Float
     , verticalScrollOffset : Int
+    , lineNumberToGoTo : String
     }
 
 
@@ -54,6 +55,7 @@ init config =
     , fontSize = config.fontSize
     , lineHeight = 1.2 * config.fontSize
     , verticalScrollOffset = config.verticalScrollOffset
+    , lineNumberToGoTo = ""
     }
 
 
@@ -81,6 +83,10 @@ type Msg
     | MoveToLineEnd
     | PageUp
     | PageDown
+    | FirstLine
+    | LastLine
+    | GoToLine
+    | AcceptLineToGoTo String
       --
     | Clear
     | Test

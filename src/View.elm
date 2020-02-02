@@ -345,7 +345,7 @@ rowButton width str msg attr =
 
 
 textField width str msg attr innerAttr =
-    H.div ([ HA.style "margin-bottom" "10px" ] ++ attr)
+    H.div attr
         [ H.input
             ([ HA.style "height" "18px"
              , HA.style "width" (String.fromInt width ++ "px")
@@ -420,6 +420,7 @@ viewHeader model =
         [ rowButton 40 "Help" NoOp [ HA.style "margin-left" "8px", HA.style "margin-top" "4px" ]
         , lineNumbersDisplay model
         , wordCountDisplay model
-        , rowButton 40 "Clear" Clear [ HA.style "margin-left" "24px", HA.style "margin-top" "4px" ]
+        , rowButton 70 "Go to line" GoToLine [ HA.style "margin-left" "24px", HA.style "margin-top" "4px" ]
+        , textField 40 "n" AcceptLineToGoTo [ HA.style "margin-left" "4px", HA.style "margin-top" "4px" ] [ HA.style "font-size" "14px" ]
         , rowButton 40 "Test" Test [ HA.style "margin-left" "24px", HA.style "margin-top" "4px" ]
         ]

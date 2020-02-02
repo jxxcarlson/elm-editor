@@ -177,12 +177,13 @@ keymaps =
             ]
     , controlAndOption =
         Dict.fromList
-            [-- ( "ArrowUp", FirstLine )
-             --, ( "ArrowDown", LastLine )
-             --, ( "ArrowRight", CursorToGroupEnd )
-             --, ( "ArrowLeft", CursorToGroupStart )
-             --, ( "∑", ToggleWrapping )
-             --, ( "ç", Clear )
+            [ ( "ArrowUp", FirstLine )
+            , ( "ArrowDown", LastLine )
+
+            --, ( "ArrowRight", CursorToGroupEnd )
+            --, ( "ArrowLeft", CursorToGroupStart )
+            --, ( "∑", ToggleWrapping )
+            , ( "ç", Clear )
             ]
     , control =
         Dict.fromList

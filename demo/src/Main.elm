@@ -50,7 +50,7 @@ config =
     { width = 800
     , height = 400
     , fontSize = 20
-    , verticalScrollOffset = 5
+    , verticalScrollOffset = 3
     }
 
 
