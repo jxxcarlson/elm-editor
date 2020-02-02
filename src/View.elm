@@ -154,6 +154,7 @@ viewEditor model =
         , HA.style "width" (px model.width)
         , handleKey
         , HA.tabindex 0
+        , onTripleClick SelectLine
         , HA.id "__editor__"
         ]
         [ viewLineNumbers model
@@ -176,18 +177,20 @@ alwaysMsg msg =
     ( msg, True )
 
 
-yada =
-    HE.custom "keydown"
+onTripleClick : msg -> Attribute msg
+onTripleClick msg =
+    HE.on
+        "click"
+        (JD.field "detail" JD.int
+            |> JD.andThen
+                (\detail ->
+                    if detail >= 3 then
+                        JD.succeed msg
 
-
-onHover2 : Position -> Attribute Msg
-onHover2 position =
-    HE.custom "mouseover" <|
-        JD.succeed
-            { message = Hover (HoverChar position)
-            , stopPropagation = True
-            , preventDefault = True
-            }
+                    else
+                        JD.fail ""
+                )
+        )
 
 
 viewLineNumbers : Model -> Html Msg

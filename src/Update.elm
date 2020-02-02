@@ -125,6 +125,9 @@ update msg model =
             , Cmd.none
             )
 
+        SelectLine ->
+            Action.selectLine model
+
         Clear ->
             ( { model | lines = Array.fromList [ "" ] }, Cmd.none )
 

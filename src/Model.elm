@@ -49,6 +49,10 @@ init config =
     }
 
 
+
+-- MSG
+
+
 type Msg
     = NoOp
     | MoveUp
@@ -63,6 +67,8 @@ type Msg
     | GoToHoveredPosition
     | StartSelecting
     | StopSelecting
+      --
+    | SelectLine
       --
     | Clear
     | Test
