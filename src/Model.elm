@@ -12,6 +12,7 @@ type alias Model =
     , height : Float
     , fontSize : Float
     , lineHeight : Float
+    , verticalScrollOffset : Int
     }
 
 
@@ -19,6 +20,7 @@ type alias Config =
     { width : Float
     , height : Float
     , fontSize : Float
+    , verticalScrollOffset : Int
     }
 
 
@@ -51,6 +53,7 @@ init config =
     , height = config.height
     , fontSize = config.fontSize
     , lineHeight = 1.2 * config.fontSize
+    , verticalScrollOffset = config.verticalScrollOffset
     }
 
 

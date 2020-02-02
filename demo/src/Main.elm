@@ -48,8 +48,9 @@ init =
 
 config =
     { width = 800
-    , height = 200
+    , height = 400
     , fontSize = 20
+    , verticalScrollOffset = 5
     }
 
 

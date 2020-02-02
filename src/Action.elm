@@ -30,7 +30,7 @@ goToLine line model =
             ( model, Cmd.none )
 
         True ->
-            ( { model | cursor = { line = index, column = 0 } }, scrollToLine model.lineHeight index )
+            ( { model | cursor = { line = index, column = 0 } }, scrollToLine model.lineHeight (index - model.verticalScrollOffset) )
 
 
 lastLine : Model -> ( Model, Cmd Msg )
