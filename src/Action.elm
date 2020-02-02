@@ -1,5 +1,6 @@
 module Action exposing
     ( firstLine
+    , goToLine
     , lastLine
     , selectLine
     )
@@ -13,6 +14,23 @@ import Task exposing (Task)
 firstLine : Model -> ( Model, Cmd Msg )
 firstLine model =
     ( { model | cursor = { line = 0, column = 0 } }, scrollToTopForElement "__editor__" )
+
+
+goToLine : Int -> Model -> ( Model, Cmd Msg )
+goToLine line model =
+    let
+        length =
+            Array.length model.lines
+
+        index =
+            line - 1
+    in
+    case index >= 0 && index < length of
+        False ->
+            ( model, Cmd.none )
+
+        True ->
+            ( { model | cursor = { line = index, column = 0 } }, scrollToLine model.lineHeight index )
 
 
 lastLine : Model -> ( Model, Cmd Msg )
