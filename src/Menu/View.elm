@@ -34,23 +34,23 @@ toItemGroups : Context -> List (List ( ContextMenu.Item, Msg ))
 toItemGroups context =
     case context of
         Object ->
-            [ [ ( ContextMenu.item "Undo" |> ContextMenu.shortcut "Ctrl-Z", Item 1 )
-              , ( ContextMenu.item "Redo" |> ContextMenu.shortcut "Ctrl-Y", Item 2 )
+            [ [ ( ContextMenu.item "Undo" |> ContextMenu.shortcut "Ctrl-Z", Undo )
+              , ( ContextMenu.item "Redo" |> ContextMenu.shortcut "Ctrl-Y", Redo )
               ]
-            , [ ( ContextMenu.item "Clear" |> ContextMenu.shortcut "Ctrl-Opt-C", Item 9 )
+            , [ ( ContextMenu.item "Clear" |> ContextMenu.shortcut "Ctrl-Opt-C", Clear )
               ]
-            , [ ( ContextMenu.item "Move up" |> ContextMenu.shortcut "ArrowUp", Item 3 )
-              , ( ContextMenu.item "Move down" |> ContextMenu.shortcut "ArrowDown", Item 4 )
-              , ( ContextMenu.item "Move left" |> ContextMenu.shortcut "ArrowLeft", Item 5 )
-              , ( ContextMenu.item "Move Right" |> ContextMenu.shortcut "ArrowRight", Item 6 )
+            , [ ( ContextMenu.item "Move up" |> ContextMenu.shortcut "ArrowUp", MoveUp )
+              , ( ContextMenu.item "Move down" |> ContextMenu.shortcut "ArrowDown", MoveDown )
+              , ( ContextMenu.item "Move left" |> ContextMenu.shortcut "ArrowLeft", MoveLeft )
+              , ( ContextMenu.item "Move Right" |> ContextMenu.shortcut "ArrowRight", MoveRight )
               ]
-            , [ ( ContextMenu.item "Page up" |> ContextMenu.shortcut "Opt-ArrowUp", Item 7 )
-              , ( ContextMenu.item "Page down" |> ContextMenu.shortcut "Opt-ArrowDown", Item 8 )
-              , ( ContextMenu.item "Line start" |> ContextMenu.shortcut "Opt-ArrowLeft", Item 9 )
-              , ( ContextMenu.item "Line endt" |> ContextMenu.shortcut "Opt-ArrowRight", Item 10 )
+            , [ ( ContextMenu.item "Page up" |> ContextMenu.shortcut "Opt-ArrowUp", PageUp )
+              , ( ContextMenu.item "Page down" |> ContextMenu.shortcut "Opt-ArrowDown", PageDown )
+              , ( ContextMenu.item "Line start" |> ContextMenu.shortcut "Opt-ArrowLeft", MoveToLineStart )
+              , ( ContextMenu.item "Line end" |> ContextMenu.shortcut "Opt-ArrowRight", MoveToLineEnd )
               ]
-            , [ ( ContextMenu.item "Firt line" |> ContextMenu.shortcut "Ctrl-Opt-ArrowUp", Item 7 )
-              , ( ContextMenu.item "Last line" |> ContextMenu.shortcut "Ctrl-Opt-ArrowDown", Item 8 )
+            , [ ( ContextMenu.item "First line" |> ContextMenu.shortcut "Ctrl-Opt-ArrowUp", FirstLine )
+              , ( ContextMenu.item "Last line" |> ContextMenu.shortcut "Ctrl-Opt-ArrowDown", LastLine )
               ]
             ]
 
