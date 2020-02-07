@@ -1,16 +1,13 @@
-module View exposing (viewContextMenu, viewDebug, viewEditor, viewHeader)
+module View exposing (viewDebug, viewEditor, viewHeader)
 
 import Array exposing (Array)
 import Common exposing (..)
-import ContextMenu exposing (ContextMenu)
 import Html as H exposing (Attribute, Html)
 import Html.Attributes as HA
 import Html.Events as HE
 import Html.Lazy
 import Json.Decode as JD exposing (Decoder)
 import Keymap
-import Menu.Config
-import Menu.Style
 import Model exposing (Config, Context(..), Hover(..), Model, Msg(..), Position, Selection(..))
 
 
@@ -427,68 +424,3 @@ viewHeader model =
         , textField 40 "n" AcceptLineToGoTo [ HA.style "margin-left" "4px", HA.style "margin-top" "4px" ] [ HA.style "font-size" "14px" ]
         , rowButton 40 "Test" Test [ HA.style "margin-left" "24px", HA.style "margin-top" "4px" ]
         ]
-
-
-
--- CONTEXT MENU --
-
-
-viewContextMenu : Model -> Html Msg
-viewContextMenu model =
-    H.div
-        []
-        [ H.div
-            (ContextMenu.open ContextMenuMsg Background :: Menu.Style.backgroundStyles)
-            [ H.div
-                (ContextMenu.open ContextMenuMsg Object :: Menu.Style.objectStyles)
-                []
-            ]
-        , H.div [] []
-        , ContextMenu.view
-            Menu.Config.mac
-            ContextMenuMsg
-            toItemGroups
-            model.contextMenu
-        ]
-
-
-
--- MENU --
-
-
-toItemGroups : Context -> List (List ( ContextMenu.Item, Msg ))
-toItemGroups context =
-    case context of
-        Background ->
-            [ [ ( ContextMenu.item "Undo" |> ContextMenu.shortcut "Ctrl-Z", Item 1 )
-              , ( ContextMenu.item "Redo" |> ContextMenu.shortcut "Ctrl-Y", Item 2 )
-              ]
-            , [ ( ContextMenu.item "Take photos"
-                    -- |> ContextMenu.icon FontAwesome.camera Color.green
-                    |> ContextMenu.disabled True
-                , Item 3
-                )
-              , ( ContextMenu.item "Have a break"
-                    -- |> ContextMenu.icon FontAwesome.coffee Color.brown
-                    |> ContextMenu.disabled False
-                , Item 4
-                )
-              , ( ContextMenu.item "Pneumonoultramicroscopicsilicovolcanoconiosis", Item 5 )
-              , ( ContextMenu.item "Save"
-                    |> ContextMenu.shortcut "Ctrl+S"
-                , Item 6
-                )
-              , ( ContextMenu.itemWithAnnotation "Item with annotation" "Some annotation here"
-                    -- |> ContextMenu.icon Material.tag_faces Color.red
-                    |> ContextMenu.disabled False
-                , Item 7
-                )
-              ]
-            ]
-
-        Object ->
-            [ [ ( ContextMenu.item "Pen", Item 8 )
-              , ( ContextMenu.item "Pineapple", Item 9 )
-              , ( ContextMenu.item "Apple", Item 10 )
-              ]
-            ]

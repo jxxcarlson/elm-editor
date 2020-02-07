@@ -23,10 +23,10 @@ import Array exposing (Array)
 import Cmd.Extra
 import ContextMenu exposing (ContextMenu)
 import Html as H exposing (Html)
-import Html.Attributes as HA
+import Menu.View exposing (viewContextMenu)
 import Model exposing (Config, Context(..), Model, Msg(..))
 import Update as U
-import View exposing (viewContextMenu, viewDebug, viewEditor, viewHeader)
+import View exposing (viewDebug, viewEditor, viewHeader)
 
 
 {-| Opaque type for the editor

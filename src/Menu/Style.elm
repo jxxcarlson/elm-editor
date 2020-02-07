@@ -160,10 +160,10 @@ px n =
 
 backgroundStyles : List (Attribute msg)
 backgroundStyles =
-    [ style "left" "0"
-    , style "top" "0"
-    , style "width" "30px"
-    , style "height" "30px"
+    [ style "top" "0"
+    , style "left" "60px"
+    , style "width" "60px"
+    , style "height" "15px"
     , style "position" "absolute"
     , style "background-color" "#77b"
     ]
@@ -172,9 +172,9 @@ backgroundStyles =
 objectStyles : List (Attribute msg)
 objectStyles =
     [ style "position" "absolute"
-    , style "top" "0px"
-    , style "left" "30px"
-    , style "width" "30px"
-    , style "height" "30px"
+    , style "top" "0"
+    , style "left" "60px"
+    , style "width" "60px"
+    , style "height" "15px"
     , style "background-color" "#8aa"
     ]
