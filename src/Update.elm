@@ -75,10 +75,31 @@ update msg model =
                 ( debounce, debounceCmd ) =
                     Debounce.push Model.debounceConfig "RCB" model.debounce
             in
-            ( removeCharBefore { model | debounce = debounce }
-                |> sanitizeHover
-            , debounceCmd
-            )
+            case model.selection of
+                NoSelection ->
+                    ( removeCharBefore { model | debounce = debounce }
+                        |> sanitizeHover
+                    , debounceCmd
+                    )
+
+                (Selection beginSel endSel) as sel ->
+                    let
+                        newLines =
+                            Action.deleteSelection sel model.lines
+                    in
+                    ( { model | lines = newLines, cursor = beginSel, selection = NoSelection } |> sanitizeHover, debounceCmd )
+
+                SelectedChar _ ->
+                    ( removeCharBefore { model | debounce = debounce }
+                        |> sanitizeHover
+                    , debounceCmd
+                    )
+
+                _ ->
+                    ( removeCharBefore { model | debounce = debounce }
+                        |> sanitizeHover
+                    , debounceCmd
+                    )
 
         FirstLine ->
             Action.firstLine model

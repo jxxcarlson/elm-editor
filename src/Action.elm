@@ -1,5 +1,6 @@
 module Action exposing
-    ( firstLine
+    ( deleteSelection
+    , firstLine
     , goToLine
     , lastLine
     , moveToLineEnd
@@ -10,10 +11,15 @@ module Action exposing
     , selectLine
     )
 
-import Array
+import Array exposing (Array)
+import ArrayUtil
 import Browser.Dom as Dom
 import Model exposing (Model, Msg(..), Selection(..))
 import Task exposing (Task)
+
+
+
+-- CURSOR MOVES --
 
 
 firstLine : Model -> ( Model, Cmd Msg )
@@ -92,14 +98,8 @@ pageUp model =
     ( { model | cursor = newCursor }, scrollToYCoordinate newY )
 
 
-yValueOfLine : Float -> Int -> Float
-yValueOfLine lineHeight n =
-    toFloat n * lineHeight
 
-
-linesPerPage : Model -> Int
-linesPerPage model =
-    floor (model.height / model.lineHeight)
+-- SELECTION --
 
 
 selectLine : Model -> ( Model, Cmd Msg )
@@ -122,6 +122,18 @@ selectLine model =
     )
 
 
+deleteSelection : Selection -> Array String -> Array String
+deleteSelection selection array =
+    case selection of
+        Selection beginSel endSel ->
+            ArrayUtil.cut beginSel endSel array
+                |> Debug.log "CUT"
+                |> ArrayUtil.join
+
+        _ ->
+            array
+
+
 lineEnd : Int -> Model -> Int
 lineEnd line model =
     Array.get line model.lines
@@ -131,8 +143,7 @@ lineEnd line model =
 
 
 
--- CURSOR
--- SCROLLING
+-- SCROLLING --
 
 
 scrollToTopForElement : String -> Cmd Msg
@@ -152,3 +163,13 @@ scrollToLine lineHeight n =
 scrollToYCoordinate : Float -> Cmd Msg
 scrollToYCoordinate y =
     Task.attempt (\_ -> NoOp) (Dom.setViewportOf "__editor__" 0 y)
+
+
+yValueOfLine : Float -> Int -> Float
+yValueOfLine lineHeight n =
+    toFloat n * lineHeight
+
+
+linesPerPage : Model -> Int
+linesPerPage model =
+    floor (model.height / model.lineHeight)
