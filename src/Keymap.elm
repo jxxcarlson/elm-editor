@@ -187,21 +187,22 @@ keymaps =
             ]
     , control =
         Dict.fromList
-            [-- ( "Backspace", RemoveGroupBefore )
-             --, ( "Delete", RemoveGroupAfter )
-             --, ( "d", SelectGroup )
-             --, ( "c", Copy )
-             --, ( "g", ToggleGoToLinePanel )
-             --, ( ".", RollSearchSelectionForward )
-             --, ( ",", RollSearchSelectionBackward )
-             --, ( "h", ToggleHelp )
-             --, ( "x", Cut )
-             --, ( "s", ToggleSearchPanel )
-             --, ( "r", ToggleReplacePanel )
-             --, ( "v", Paste )
-             --, ( "z", Undo )
-             --, ( "w", WrapSelection )
-             --, ( "y", Redo )
+            [ -- ( "Backspace", RemoveGroupBefore )
+              --, ( "Delete", RemoveGroupAfter )
+              --, ( "d", SelectGroup )
+              --, ( "c", Copy )
+              --, ( "g", ToggleGoToLinePanel )
+              --, ( ".", RollSearchSelectionForward )
+              --, ( ",", RollSearchSelectionBackward )
+              --, ( "h", ToggleHelp )
+              --, ( "x", Cut )
+              --, ( "s", ToggleSearchPanel )
+              --, ( "r", ToggleReplacePanel )
+              --, ( "v", Paste )
+              ( "z", Undo )
+
+            --, ( "w", WrapSelection )
+            , ( "y", Redo )
             ]
     , controlAndShift =
         Dict.fromList

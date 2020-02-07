@@ -4,7 +4,8 @@ import Action
 import Array exposing (Array)
 import Common exposing (..)
 import Debounce exposing (Debounce)
-import Model exposing (Hover(..), Model, Msg(..), Position, Selection(..))
+import History
+import Model exposing (Hover(..), Model, Msg(..), Position, Selection(..), Snapshot)
 import Task
 
 
@@ -29,31 +30,31 @@ update msg model =
             ( { model | debounce = debounce }, cmd )
 
         Unload _ ->
-            let
-                _ =
-                    Debug.log "ARRAY" model.lines
-            in
             ( { model | debounce = model.debounce }, Cmd.none )
 
         MoveUp ->
             ( { model | cursor = moveUp model.cursor model.lines }
             , Cmd.none
             )
+                |> recordHistory model
 
         MoveDown ->
             ( { model | cursor = moveDown model.cursor model.lines }
             , Cmd.none
             )
+                |> recordHistory model
 
         MoveLeft ->
             ( { model | cursor = moveLeft model.cursor model.lines }
             , Cmd.none
             )
+                |> recordHistory model
 
         MoveRight ->
             ( { model | cursor = moveRight model.cursor model.lines }
             , Cmd.none
             )
+                |> recordHistory model
 
         NewLine ->
             ( newLine model
@@ -69,6 +70,7 @@ update msg model =
             ( insertChar char { model | debounce = debounce }
             , debounceCmd
             )
+                |> recordHistory model
 
         RemoveCharBefore ->
             let
@@ -81,6 +83,7 @@ update msg model =
                         |> sanitizeHover
                     , debounceCmd
                     )
+                        |> recordHistory model
 
                 (Selection beginSel endSel) as sel ->
                     let
@@ -88,18 +91,21 @@ update msg model =
                             Action.deleteSelection sel model.lines
                     in
                     ( { model | lines = newLines, cursor = beginSel, selection = NoSelection } |> sanitizeHover, debounceCmd )
+                        |> recordHistory model
 
                 SelectedChar _ ->
                     ( removeCharBefore { model | debounce = debounce }
                         |> sanitizeHover
                     , debounceCmd
                     )
+                        |> recordHistory model
 
                 _ ->
                     ( removeCharBefore { model | debounce = debounce }
                         |> sanitizeHover
                     , debounceCmd
                     )
+                        |> recordHistory model
 
         FirstLine ->
             Action.firstLine model
@@ -147,6 +153,7 @@ update msg model =
                 |> sanitizeHover
             , Cmd.none
             )
+                |> recordHistory model
 
         StartSelecting ->
             ( { model | selection = SelectingFrom model.hover }
@@ -208,6 +215,36 @@ update msg model =
 
         Clear ->
             ( { model | lines = Array.fromList [ "" ] }, Cmd.none )
+
+        Undo ->
+            case History.undo (stateToSnapshot model) model.history of
+                Just ( history, snapshot ) ->
+                    ( { model
+                        | cursor = snapshot.cursor
+                        , selection = snapshot.selection
+                        , lines = snapshot.lines
+                        , history = history
+                      }
+                    , Cmd.none
+                    )
+
+                Nothing ->
+                    ( model, Cmd.none )
+
+        Redo ->
+            case History.redo (stateToSnapshot model) model.history of
+                Just ( history, snapshot ) ->
+                    ( { model
+                        | cursor = snapshot.cursor
+                        , selection = snapshot.selection
+                        , lines = snapshot.lines
+                        , history = history
+                      }
+                    , Cmd.none
+                    )
+
+                Nothing ->
+                    ( model, Cmd.none )
 
 
 sanitizeHover : Model -> Model
@@ -325,6 +362,34 @@ insertChar char ({ cursor, lines } as model) =
         | lines = newLines
         , cursor = newCursor
     }
+
+
+
+-- HISTORY
+
+
+stateToSnapshot : Model -> Snapshot
+stateToSnapshot model =
+    { cursor = model.cursor, selection = model.selection, lines = model.lines }
+
+
+recordHistory :
+    Model
+    -> ( Model, Cmd Msg )
+    -> ( Model, Cmd Msg )
+recordHistory oldModel ( newModel, cmd ) =
+    ( { newModel
+        | history =
+            if oldModel.lines /= newModel.lines then
+                History.push
+                    (stateToSnapshot oldModel)
+                    newModel.history
+
+            else
+                newModel.history
+      }
+    , cmd
+    )
 
 
 

@@ -1,7 +1,18 @@
-module Model exposing (Config, Hover(..), Model, Msg(..), Position, Selection(..), debounceConfig, init)
+module Model exposing
+    ( Config
+    , Hover(..)
+    , Model
+    , Msg(..)
+    , Position
+    , Selection(..)
+    , Snapshot
+    , debounceConfig
+    , init
+    )
 
 import Array exposing (Array)
 import Debounce exposing (Debounce)
+import History exposing (History)
 
 
 type alias Model =
@@ -16,6 +27,22 @@ type alias Model =
     , verticalScrollOffset : Int
     , lineNumberToGoTo : String
     , debounce : Debounce String
+    , history : History Snapshot
+    }
+
+
+type alias Snapshot =
+    { lines : Array String
+    , cursor : Position
+    , selection : Selection
+    }
+
+
+emptySnapshot : Snapshot
+emptySnapshot =
+    { lines = Array.fromList [ "" ]
+    , cursor = { line = 0, column = 0 }
+    , selection = NoSelection
     }
 
 
@@ -59,6 +86,7 @@ init config =
     , verticalScrollOffset = config.verticalScrollOffset
     , lineNumberToGoTo = ""
     , debounce = Debounce.init
+    , history = History.empty
     }
 
 
@@ -87,6 +115,8 @@ type Msg
     | GoToHoveredPosition
     | StartSelecting
     | StopSelecting
+    | Undo
+    | Redo
       --
     | SelectLine
     | MoveToLineStart

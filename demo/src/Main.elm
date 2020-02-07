@@ -85,8 +85,8 @@ update msg model =
                             Editor.getLines newEditor |> Array.toList
 
                         diffedLines =
-                            Debug.log "DIFF" <|
-                                Diff.diff model.lines newLines
+                            --Debug.log "DIFF" <|
+                            Diff.diff model.lines newLines
                     in
                     ( { model | editor = newEditor, lines = newLines, diffedLines = diffedLines }, Cmd.map EditorMsg cmd )
 
