@@ -4,7 +4,7 @@
     "summary": "A pure Elm text editor",
     "license": "MIT",
     "version": "1.0.0",
-    "exposed-modules": [],
+    "exposed-modules": ["Editor"],
     "elm-version": "0.19.0 <= v < 0.20.0",
     "dependencies": {
         "elm/browser": "1.0.2 <= v < 2.0.0",
