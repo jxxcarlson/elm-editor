@@ -1,5 +1,6 @@
 module Model exposing
     ( Config
+    , Context(..)
     , Hover(..)
     , Model
     , Msg(..)
@@ -11,6 +12,7 @@ module Model exposing
     )
 
 import Array exposing (Array)
+import ContextMenu exposing (ContextMenu)
 import Debounce exposing (Debounce)
 import History exposing (History)
 
@@ -28,7 +30,13 @@ type alias Model =
     , lineNumberToGoTo : String
     , debounce : Debounce String
     , history : History Snapshot
+    , contextMenu : ContextMenu Context
     }
+
+
+type Context
+    = Object
+    | Background
 
 
 type alias Snapshot =
@@ -73,8 +81,8 @@ type alias Position =
     }
 
 
-init : Config -> Model
-init config =
+init : ( Config, ContextMenu Context ) -> Model
+init ( config, contextMenu ) =
     { lines = Array.fromList [ "" ]
     , cursor = Position 0 0
     , hover = NoHover
@@ -87,6 +95,7 @@ init config =
     , lineNumberToGoTo = ""
     , debounce = Debounce.init
     , history = History.empty
+    , contextMenu = contextMenu
     }
 
 
@@ -133,3 +142,6 @@ type Msg
       --
     | Clear
     | Test
+      --
+    | ContextMenuMsg (ContextMenu.Msg Context)
+    | Item Int

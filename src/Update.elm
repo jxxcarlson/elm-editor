@@ -3,6 +3,7 @@ module Update exposing (update)
 import Action
 import Array exposing (Array)
 import Common exposing (..)
+import ContextMenu exposing (ContextMenu)
 import Debounce exposing (Debounce)
 import History
 import Model exposing (Hover(..), Model, Msg(..), Position, Selection(..), Snapshot)
@@ -11,6 +12,10 @@ import Task
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
+    let
+        _ =
+            Debug.log "ED.update" msg
+    in
     case msg of
         NoOp ->
             ( model, Cmd.none )
@@ -245,6 +250,25 @@ update msg model =
 
                 Nothing ->
                     ( model, Cmd.none )
+
+        ContextMenuMsg msg_ ->
+            let
+                _ =
+                    Debug.log "CTMM" msg_
+
+                ( contextMenu, cmd ) =
+                    ContextMenu.update msg_ model.contextMenu
+            in
+            ( { model | contextMenu = contextMenu }
+            , Cmd.map ContextMenuMsg cmd
+            )
+
+        Item k ->
+            let
+                _ =
+                    Debug.log "ITEM" k
+            in
+            ( model, Cmd.none )
 
 
 sanitizeHover : Model -> Model

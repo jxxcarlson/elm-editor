@@ -3,6 +3,8 @@ module Main exposing (main)
 import Array exposing (Array)
 import Browser
 import Browser.Dom as Dom
+import Cmd.Extra
+import ContextMenu exposing (Item(..))
 import Diff exposing (Change)
 import Editor exposing (Editor)
 import Html as H exposing (Attribute, Html)
@@ -44,14 +46,14 @@ type Msg
 init : Flags -> ( Model, Cmd Msg )
 init =
     \() ->
-        ( { editor = Editor.init config
-          , numberOfTestLines = Nothing
-          , lines = []
-          , diffedLines = []
-          }
-        , Dom.focus "editor"
-            |> Task.attempt (always NoOp)
-        )
+        { editor = Editor.init config |> Tuple.first
+        , numberOfTestLines = Nothing
+        , lines = []
+        , diffedLines = []
+        }
+            |> Cmd.Extra.withCmds
+                [ Dom.focus "editor" |> Task.attempt (always NoOp)
+                ]
 
 
 config =
@@ -64,7 +66,9 @@ config =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    Sub.none
+    ContextMenu.subscriptions (Editor.getContextMenu model.editor)
+        |> Sub.map ContextMenuMsg
+        |> Sub.map EditorMsg
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )

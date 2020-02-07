@@ -1,6 +1,6 @@
 module Editor exposing
     ( Editor(..), init, loadArray
-    , EditorMsg, getLines, update, view
+    , EditorMsg, getLines, getContextMenu, update, view
     )
 
 {-| Use the Editor module to embed a pure Elm text editor
@@ -15,16 +15,18 @@ code for an example.
 
 ## Using the editor
 
-@docs EditorMsg, getLines, update, view
+@docs EditorMsg, getLines, getContextMenu, update, view
 
 -}
 
 import Array exposing (Array)
+import Cmd.Extra
+import ContextMenu exposing (ContextMenu)
 import Html as H exposing (Html)
 import Html.Attributes as HA
-import Model exposing (Config, Model, Msg(..))
+import Model exposing (Config, Context(..), Model, Msg(..))
 import Update as U
-import View exposing (viewDebug, viewEditor, viewHeader)
+import View exposing (viewContextMenu, viewDebug, viewEditor, viewHeader)
 
 
 {-| Opaque type for the editor
@@ -40,15 +42,27 @@ view (Editor model) =
     H.div []
         [ viewHeader model
         , viewEditor model
+        , viewContextMenu model
         , viewDebug model
         ]
 
 
 {-| Initialize the editor with a configuration
 -}
-init : Config -> Editor
+init : Config -> ( Editor, Cmd Msg )
 init config =
-    config |> Model.init |> Editor
+    let
+        ( contextMenu, msg ) =
+            ContextMenu.init
+
+        cmd : Cmd Msg
+        cmd =
+            Cmd.map ContextMenuMsg msg
+    in
+    ( config, contextMenu )
+        |> Model.init
+        |> Editor
+        |> Cmd.Extra.withCmd cmd
 
 
 {-| Update the editor with a message
@@ -80,3 +94,10 @@ loadArray array (Editor model) =
 getLines : Editor -> Array String
 getLines (Editor model) =
     model.lines
+
+
+{-| Get the context menu
+-}
+getContextMenu : Editor -> ContextMenu Context
+getContextMenu (Editor model) =
+    model.contextMenu
