@@ -201,6 +201,8 @@ keymaps =
 
             --, ( "s", ToggleSearchPanel )
             --, ( "r", ToggleReplacePanel )
+            , ( "d", RemoveCharAfter )
+            , ( "k", KillLine )
             , ( "v", Paste )
             , ( "a", MoveToLineStart )
             , ( "e", MoveToLineEnd )

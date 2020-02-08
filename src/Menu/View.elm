@@ -36,11 +36,14 @@ toItemGroups context =
         Object ->
             [ [ ( ContextMenu.item "Line Start" |> ContextMenu.shortcut "Ctrl-A", MoveToLineStart )
               , ( ContextMenu.item "Copy" |> ContextMenu.shortcut "Ctrl-C", Copy )
+              , ( ContextMenu.item "Delete Forward" |> ContextMenu.shortcut "Ctrl-D", RemoveCharAfter )
               , ( ContextMenu.item "Line End" |> ContextMenu.shortcut "Ctrl-E", MoveToLineEnd )
               , ( ContextMenu.item "Line End" |> ContextMenu.shortcut "Ctrl-E", MoveToLineEnd )
+              , ( ContextMenu.item "Kill Line" |> ContextMenu.shortcut "Ctrl-K", KillLine )
               , ( ContextMenu.item "Paste" |> ContextMenu.shortcut "Ctrl-V", Paste )
               , ( ContextMenu.item "Cut" |> ContextMenu.shortcut "Ctrl-X", Cut )
               , ( ContextMenu.item "Redo" |> ContextMenu.shortcut "Ctrl-Y", Redo )
+              , ( ContextMenu.item "Undo" |> ContextMenu.shortcut "Ctrl-Z", Undo )
               ]
             , [ ( ContextMenu.item "Clear" |> ContextMenu.shortcut "Ctrl-Opt-C", Clear )
               ]

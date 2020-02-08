@@ -72,20 +72,19 @@ suite =
                     Array.fromList [ "abcde", "01234", "56789", "aeiou", "pqrst" ]
                         |> ArrayUtil.cut (Position 1 2) (Position 3 3)
                         |> Expect.equal result
-            , only <|
-                test "Cut, trouble" <|
-                    \_ ->
-                        let
-                            result =
-                                { before = Array.fromList [ "abcde", "034" ]
-                                , middle = Array.fromList [ "12" ]
-                                , after = Array.fromList [ "pqrst" ]
-                                }
-                        in
-                        Array.fromList [ "abcde", "01234", "pqrst" ]
-                            |> ArrayUtil.cut (Position 1 1) (Position 1 2)
-                            |> Expect.equal
-                                result
+            , test "Cut, trouble" <|
+                \_ ->
+                    let
+                        result =
+                            { before = Array.fromList [ "abcde", "034" ]
+                            , middle = Array.fromList [ "12" ]
+                            , after = Array.fromList [ "pqrst" ]
+                            }
+                    in
+                    Array.fromList [ "abcde", "01234", "pqrst" ]
+                        |> ArrayUtil.cut (Position 1 1) (Position 1 2)
+                        |> Expect.equal
+                            result
             , test "Cut lines (Action), simple (1)" <|
                 \_ ->
                     let

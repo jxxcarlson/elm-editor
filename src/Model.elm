@@ -132,6 +132,7 @@ type Msg
       --
     | RemoveCharBefore
     | RemoveCharAfter
+    | KillLine
     | Cut
     | Copy
     | Paste
