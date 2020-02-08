@@ -22,6 +22,7 @@ type alias Model =
     , cursor : Position
     , hover : Hover
     , selection : Selection
+    , selectedText : Array String
     , width : Float
     , height : Float
     , fontSize : Float
@@ -87,6 +88,7 @@ init ( config, contextMenu ) =
     , cursor = Position 0 0
     , hover = NoHover
     , selection = NoSelection
+    , selectedText = Array.fromList [ "" ]
     , width = config.width
     , height = config.height
     , fontSize = config.fontSize
@@ -112,22 +114,11 @@ debounceConfig =
 
 type Msg
     = NoOp
+      --
     | MoveUp
     | MoveDown
     | MoveLeft
     | MoveRight
-    | NewLine
-    | InsertChar String
-    | RemoveCharBefore
-    | RemoveCharAfter
-    | Hover Hover
-    | GoToHoveredPosition
-    | StartSelecting
-    | StopSelecting
-    | Undo
-    | Redo
-      --
-    | SelectLine
     | MoveToLineStart
     | MoveToLineEnd
     | PageUp
@@ -135,6 +126,26 @@ type Msg
     | FirstLine
     | LastLine
     | GoToLine
+      --
+    | NewLine
+    | InsertChar String
+      --
+    | RemoveCharBefore
+    | RemoveCharAfter
+    | Cut
+    | Copy
+    | Paste
+      --
+    | Hover Hover
+    | GoToHoveredPosition
+      --
+    | StartSelecting
+    | StopSelecting
+    | SelectLine
+      --
+    | Undo
+    | Redo
+      --
     | AcceptLineToGoTo String
       --
     | DebounceMsg Debounce.Msg

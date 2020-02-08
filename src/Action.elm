@@ -122,16 +122,15 @@ selectLine model =
     )
 
 
-deleteSelection : Selection -> Array String -> Array String
+deleteSelection : Selection -> Array String -> ( Array String, Array String )
 deleteSelection selection array =
     case selection of
         Selection beginSel endSel ->
             ArrayUtil.cut beginSel endSel array
-                |> Debug.log "CUT"
                 |> ArrayUtil.join
 
         _ ->
-            array
+            ( array, Array.fromList [ "" ] )
 
 
 lineEnd : Int -> Model -> Int

@@ -4,6 +4,7 @@ module ArrayUtil exposing
     , cutOut
     , insert
     , join
+    , joinThree
     , put
     , replace
     , split
@@ -60,11 +61,11 @@ insert position str array =
     Array.fromList ["aaa","x","yz","xyz"]
 
 -}
-split : Position -> Array String -> Array String
+split : Position -> Array String -> ( Array String, Array String )
 split position array =
     case Array.get position.line array of
         Nothing ->
-            array
+            ( array, Array.fromList [ "" ] )
 
         Just focus ->
             let
@@ -72,24 +73,31 @@ split position array =
                     String.length focus
 
                 before =
-                    Array.slice 0 position.line array
+                    Debug.log "DB, split, before" <|
+                        Array.slice 0 position.line array
 
                 after =
-                    Array.slice position.line (focusLength - 1) array
+                    Array.slice (position.line + 1) (focusLength - 1) array
 
                 beforeSuffix =
-                    String.slice 0 position.column focus
+                    Debug.log "DB, split, beforeSuffix" <|
+                        String.slice 0 position.column focus
 
                 afterPrefix =
                     String.slice position.column focusLength focus
 
                 firstPart =
-                    Array.push beforeSuffix before
+                    case beforeSuffix == "" of
+                        True ->
+                            before
+
+                        False ->
+                            Array.push beforeSuffix before
 
                 secondPart =
                     put afterPrefix after
             in
-            Array.append firstPart secondPart
+            ( firstPart, secondPart )
 
 
 splitStringAt : Int -> String -> ( String, String )
@@ -120,26 +128,37 @@ cut pos1 pos2 array =
             Array.length array
 
         before_ =
-            Array.slice 0 pos1.line array
+            Debug.log "DB, cut before_" <|
+                Array.slice 0 pos1.line array
 
         ( a, b ) =
-            Array.get pos1.line array |> Maybe.withDefault "" |> splitStringAt pos1.column
+            Debug.log "DB, cut (a, b)" <|
+                (Array.get pos1.line array
+                    |> Maybe.withDefault ""
+                    |> splitStringAt pos1.column
+                )
 
         middle_ =
-            Array.slice (pos1.line + 1) pos2.line array
+            Debug.log "DB, cut middle_" <|
+                Array.slice pos1.line (pos2.line + 1) array
 
         m =
             Array.length middle_
 
         ( c, d ) =
-            Array.get pos2.line array |> Maybe.withDefault "" |> splitStringAt (pos2.column + 1)
+            Debug.log "DB, cut (c, d)" <|
+                (Array.get pos2.line array
+                    |> Maybe.withDefault ""
+                    |> splitStringAt (pos2.column + 1)
+                )
 
         after_ =
-            Array.slice (pos2.line + 1) n array
+            Debug.log "DB, cut after_" <|
+                Array.slice (pos2.line + 1) n array
     in
-    { before = Array.push a before_
-    , middle = Array.push c (put b middle_)
-    , after = put d after_
+    { before = before_
+    , middle = middle_
+    , after = after_
     }
 
 
@@ -192,25 +211,40 @@ put str array =
     Array.append (Array.fromList [ str ]) array
 
 
-join : StringZipper -> Array String
+join : StringZipper -> ( Array String, Array String )
 join { before, middle, after } =
     let
         lastIndexOfBefore =
             Array.length before - 1
 
         before_ =
-            Array.slice 0 lastIndexOfBefore before
+            Debug.log "DB join, before_" <|
+                Array.slice 0 lastIndexOfBefore before
 
         lastLineOfBefore =
             Array.get lastIndexOfBefore before |> Maybe.withDefault ""
 
         after_ =
-            Array.slice 1 (Array.length after) after
+            Debug.log "DB join, after_" <|
+                Array.slice 1 (Array.length after) after
 
         firstLineOfAfter =
             Array.get 0 after |> Maybe.withDefault ""
 
         newMiddleLine =
-            lastLineOfBefore ++ firstLineOfAfter
+            lastLineOfBefore
+                ++ firstLineOfAfter
+
+        joinEnds =
+            Debug.log "DB: joinEnds" <|
+                Array.append before after
+
+        _ =
+            Debug.log "DB: middle" <| middle
     in
-    Array.append before_ (put newMiddleLine after_)
+    ( joinEnds, middle )
+
+
+joinThree : Array a -> Array a -> Array a -> Array a
+joinThree before middle after =
+    Array.append (Array.append before middle) after

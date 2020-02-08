@@ -184,22 +184,27 @@ keymaps =
             --, ( "ArrowLeft", CursorToGroupStart )
             --, ( "∑", ToggleWrapping )
             , ( "ç", Clear )
+            , ( "t", Test )
             ]
     , control =
         Dict.fromList
             [ -- ( "Backspace", RemoveGroupBefore )
               --, ( "Delete", RemoveGroupAfter )
               --, ( "d", SelectGroup )
-              --, ( "c", Copy )
-              --, ( "g", ToggleGoToLinePanel )
-              --, ( ".", RollSearchSelectionForward )
-              --, ( ",", RollSearchSelectionBackward )
-              --, ( "h", ToggleHelp )
-              --, ( "x", Cut )
-              --, ( "s", ToggleSearchPanel )
-              --, ( "r", ToggleReplacePanel )
-              --, ( "v", Paste )
-              ( "z", Undo )
+              ( "c", Copy )
+
+            --, ( "g", ToggleGoToLinePanel )
+            --, ( ".", RollSearchSelectionForward )
+            --, ( ",", RollSearchSelectionBackward )
+            --, ( "h", ToggleHelp )
+            , ( "x", Cut )
+
+            --, ( "s", ToggleSearchPanel )
+            --, ( "r", ToggleReplacePanel )
+            , ( "v", Paste )
+            , ( "a", MoveToLineStart )
+            , ( "e", MoveToLineEnd )
+            , ( "z", Undo )
 
             --, ( "w", WrapSelection )
             , ( "y", Redo )

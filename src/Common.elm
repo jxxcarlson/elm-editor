@@ -1,7 +1,36 @@
-module Common exposing (clampColumn, comparePositions, endOfDocument, hoversToPositions, isEndOfDocument, isFirstColumn, isFirstLine, isLastColumn, isLastLine, isStartOfDocument, lastColumn, lastLine, lineContent, lineLength, maxLine, moveDown, moveLeft, moveRight, moveUp, nextLine, previousLine, removeCharAfter, removeCharBefore, startOfDocument)
+module Common exposing
+    ( clampColumn
+    , comparePositions
+    , endOfDocument
+    , hoversToPositions
+    , isEndOfDocument
+    , isFirstColumn
+    , isFirstLine
+    , isLastColumn
+    , isLastLine
+    , isStartOfDocument
+    , lastColumn
+    , lastLine
+    , lineContent
+    , lineLength
+    , maxLine
+    , moveDown
+    , moveLeft
+    , moveRight
+    , moveUp
+    , nextLine
+    , previousLine
+    , recordHistory
+    , removeCharAfter
+    , removeCharBefore
+    , sanitizeHover
+    , startOfDocument
+    , stateToSnapshot
+    )
 
 import Array exposing (Array)
-import Model exposing (Hover(..), Model, Position)
+import History
+import Model exposing (Hover(..), Model, Msg(..), Position, Snapshot)
 
 
 hoversToPositions : Array String -> Hover -> Hover -> Maybe ( Position, Position )
@@ -325,3 +354,57 @@ lineContent lines lineNum =
     lines
         |> Array.get lineNum
         |> Maybe.withDefault ""
+
+
+sanitizeHover : Model -> Model
+sanitizeHover model =
+    { model
+        | hover =
+            case model.hover of
+                NoHover ->
+                    model.hover
+
+                HoverLine line ->
+                    HoverLine (clamp 0 (lastLine model.lines) line)
+
+                HoverChar { line, column } ->
+                    let
+                        sanitizedLine =
+                            clamp 0 (lastLine model.lines) line
+
+                        sanitizedColumn =
+                            clamp 0 (lastColumn model.lines sanitizedLine) column
+                    in
+                    HoverChar
+                        { line = sanitizedLine
+                        , column = sanitizedColumn
+                        }
+    }
+
+
+
+-- HISTORY
+
+
+stateToSnapshot : Model -> Snapshot
+stateToSnapshot model =
+    { cursor = model.cursor, selection = model.selection, lines = model.lines }
+
+
+recordHistory :
+    Model
+    -> ( Model, Cmd Msg )
+    -> ( Model, Cmd Msg )
+recordHistory oldModel ( newModel, cmd ) =
+    ( { newModel
+        | history =
+            if oldModel.lines /= newModel.lines then
+                History.push
+                    (stateToSnapshot oldModel)
+                    newModel.history
+
+            else
+                newModel.history
+      }
+    , cmd
+    )

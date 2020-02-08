@@ -34,7 +34,12 @@ toItemGroups : Context -> List (List ( ContextMenu.Item, Msg ))
 toItemGroups context =
     case context of
         Object ->
-            [ [ ( ContextMenu.item "Undo" |> ContextMenu.shortcut "Ctrl-Z", Undo )
+            [ [ ( ContextMenu.item "Line Start" |> ContextMenu.shortcut "Ctrl-A", MoveToLineStart )
+              , ( ContextMenu.item "Copy" |> ContextMenu.shortcut "Ctrl-C", Copy )
+              , ( ContextMenu.item "Line End" |> ContextMenu.shortcut "Ctrl-E", MoveToLineEnd )
+              , ( ContextMenu.item "Line End" |> ContextMenu.shortcut "Ctrl-E", MoveToLineEnd )
+              , ( ContextMenu.item "Paste" |> ContextMenu.shortcut "Ctrl-V", Paste )
+              , ( ContextMenu.item "Cut" |> ContextMenu.shortcut "Ctrl-X", Cut )
               , ( ContextMenu.item "Redo" |> ContextMenu.shortcut "Ctrl-Y", Redo )
               ]
             , [ ( ContextMenu.item "Clear" |> ContextMenu.shortcut "Ctrl-Opt-C", Clear )
@@ -51,6 +56,8 @@ toItemGroups context =
               ]
             , [ ( ContextMenu.item "First line" |> ContextMenu.shortcut "Ctrl-Opt-ArrowUp", FirstLine )
               , ( ContextMenu.item "Last line" |> ContextMenu.shortcut "Ctrl-Opt-ArrowDown", LastLine )
+              ]
+            , [ ( ContextMenu.item "Test (go to line 30)" |> ContextMenu.shortcut "Ctrl-Opt-T", Test )
               ]
             ]
 
