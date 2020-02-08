@@ -138,6 +138,14 @@ cut pos1 pos2 array =
                     |> splitStringAt pos1.column
                 )
 
+        before =
+            case a of
+                "" ->
+                    before_
+
+                _ ->
+                    Array.push a before_
+
         middle_ =
             Debug.log "DB, cut middle_" <|
                 Array.slice pos1.line (pos2.line + 1) array
@@ -155,10 +163,18 @@ cut pos1 pos2 array =
         after_ =
             Debug.log "DB, cut after_" <|
                 Array.slice (pos2.line + 1) n array
+
+        after =
+            case d of
+                "" ->
+                    after_
+
+                _ ->
+                    put d after_
     in
-    { before = before_
+    { before = before
     , middle = middle_
-    , after = after_
+    , after = after
     }
 
 
