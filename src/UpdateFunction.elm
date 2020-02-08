@@ -48,7 +48,7 @@ pasteSelection model =
             Debug.log "DB, paste selectedText" model.selectedText
 
         newLines =
-            ArrayUtil.joinThree before model.selectedText after
+            ArrayUtil.paste model.cursor model.selectedText model.lines
     in
     ( { model | lines = newLines }, Cmd.none )
 
@@ -70,7 +70,8 @@ deleteSelection model =
         (Selection beginSel endSel) as sel ->
             let
                 ( newLines, selectedText ) =
-                    Action.deleteSelection sel model.lines
+                    Debug.log "XXX" <|
+                        Action.deleteSelection sel model.lines
             in
             ( { model
                 | lines = newLines

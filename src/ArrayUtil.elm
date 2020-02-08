@@ -5,10 +5,12 @@ module ArrayUtil exposing
     , insert
     , join
     , joinThree
+    , paste
     , put
     , replace
     , split
     , splitStringAt
+    , stringFromZipper
     )
 
 import Array exposing (Array)
@@ -25,6 +27,18 @@ type alias StringZipper =
     , middle : Array String
     , after : Array String
     }
+
+
+stringFromZipper : StringZipper -> String
+stringFromZipper sz =
+    stringFromArray sz.before ++ stringFromArray sz.middle ++ stringFromArray sz.after
+
+
+stringFromArray : Array String -> String
+stringFromArray array =
+    array
+        |> Array.toList
+        |> String.join ""
 
 
 {-|
@@ -73,15 +87,13 @@ split position array =
                     String.length focus
 
                 before =
-                    Debug.log "DB, split, before" <|
-                        Array.slice 0 position.line array
+                    Array.slice 0 position.line array
 
                 after =
                     Array.slice (position.line + 1) (focusLength - 1) array
 
                 beforeSuffix =
-                    Debug.log "DB, split, beforeSuffix" <|
-                        String.slice 0 position.column focus
+                    String.slice 0 position.column focus
 
                 afterPrefix =
                     String.slice position.column focusLength focus
@@ -127,55 +139,105 @@ cut pos1 pos2 array =
         n =
             Array.length array
 
+        before_ : Array String
         before_ =
-            Debug.log "DB, cut before_" <|
-                Array.slice 0 pos1.line array
+            Array.slice 0 pos1.line array
 
-        ( a, b ) =
-            Debug.log "DB, cut (a, b)" <|
-                (Array.get pos1.line array
-                    |> Maybe.withDefault ""
-                    |> splitStringAt pos1.column
-                )
-
-        before =
-            case a of
-                "" ->
-                    before_
-
-                _ ->
-                    Array.push a before_
-
+        middle_ : Array String
         middle_ =
-            Debug.log "DB, cut middle_" <|
-                Array.slice pos1.line (pos2.line + 1) array
+            Array.slice pos1.line (pos2.line + 1) array
 
-        m =
-            Array.length middle_
-
-        ( c, d ) =
-            Debug.log "DB, cut (c, d)" <|
-                (Array.get pos2.line array
-                    |> Maybe.withDefault ""
-                    |> splitStringAt (pos2.column + 1)
-                )
-
+        after_ : Array String
         after_ =
-            Debug.log "DB, cut after_" <|
-                Array.slice (pos2.line + 1) n array
+            Array.slice (pos2.line + 1) n array
 
-        after =
-            case d of
-                "" ->
-                    after_
+        ( before, middle, after ) =
+            case pos1.line == pos2.line of
+                True ->
+                    let
+                        middleLine =
+                            Debug.log "MIDDLE"
+                                (Array.get pos1.line array |> Maybe.withDefault "")
 
-                _ ->
-                    put d after_
+                        ( a_, part ) =
+                            Debug.log "( a_, part )" <|
+                                splitStringAt pos1.column middleLine
+
+                        ( b_, c_ ) =
+                            Debug.log "( b_, c_ )" <|
+                                splitStringAt (pos2.column - String.length a_ + 1) part
+
+                        before__ =
+                            case a_ of
+                                "" ->
+                                    before_
+
+                                _ ->
+                                    Array.push a_ before_
+
+                        after__ =
+                            case a_ of
+                                "" ->
+                                    after_
+
+                                _ ->
+                                    put c_ after_
+                    in
+                    ( before__, Array.fromList [ b_ ], after__ )
+
+                False ->
+                    let
+                        _ =
+                            Debug.log "(P1 P2)" ( pos1, pos2 )
+
+                        firstLine =
+                            Array.get pos1.line array |> Maybe.withDefault ""
+
+                        lastLine =
+                            Array.get pos2.line array
+                                |> Maybe.withDefault ""
+                                |> Debug.log "LAST LINE"
+
+                        middle__ =
+                            Array.slice (pos1.line + 1) pos2.line array
+
+                        ( a_, part_1 ) =
+                            splitStringAt pos1.column firstLine
+
+                        before__ =
+                            case a_ of
+                                "" ->
+                                    before_
+
+                                _ ->
+                                    Array.push a_ before_
+
+                        ( part_2, c_ ) =
+                            Debug.log "( part_2, c_ )"
+                                (splitStringAt (pos2.column + 0) lastLine)
+
+                        after__ =
+                            case c_ of
+                                "" ->
+                                    after_
+
+                                _ ->
+                                    put c_ after_
+
+                        b__ =
+                            joinThree (Array.fromList [ part_1 ]) middle__ (Array.fromList [ part_2 ])
+                    in
+                    ( before__, b__, after__ )
     in
     { before = before
-    , middle = middle_
+    , middle = middle
     , after = after
     }
+
+
+mapTriple : (a -> b) -> ( a, a, a ) -> ( b, b, b )
+mapTriple f ( x, y, z ) =
+    ( f x, f y, f z )
 
 
 {-|
@@ -228,39 +290,30 @@ put str array =
 
 
 join : StringZipper -> ( Array String, Array String )
-join { before, middle, after } =
+join z =
     let
-        lastIndexOfBefore =
-            Array.length before - 1
+        _ =
+            Debug.log "JOIN" ( z.before, z.middle, z.after )
 
-        before_ =
-            Debug.log "DB join, before_" <|
-                Array.slice 0 lastIndexOfBefore before
-
-        lastLineOfBefore =
-            Array.get lastIndexOfBefore before |> Maybe.withDefault ""
-
-        after_ =
-            Debug.log "DB join, after_" <|
-                Array.slice 1 (Array.length after) after
-
-        firstLineOfAfter =
-            Array.get 0 after |> Maybe.withDefault ""
-
-        newMiddleLine =
-            lastLineOfBefore
-                ++ firstLineOfAfter
-
-        joinEnds =
-            Debug.log "DB: joinEnds" <|
-                Array.append before after
+        joineEnds =
+            Debug.log "DB: joinedEnds" <|
+                Array.append z.before z.after
 
         _ =
-            Debug.log "DB: middle" <| middle
+            Debug.log "DB: middle" <| z.middle
     in
-    ( joinEnds, middle )
+    ( joineEnds, z.middle )
 
 
 joinThree : Array a -> Array a -> Array a -> Array a
 joinThree before middle after =
     Array.append (Array.append before middle) after
+
+
+paste : Position -> Array String -> Array String -> Array String
+paste position newContent lines =
+    let
+        ( before, after ) =
+            split position lines
+    in
+    joinThree before newContent after

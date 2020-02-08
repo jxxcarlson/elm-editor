@@ -19,5 +19,7 @@
         "jinjor/elm-contextmenu": "2.0.0 <= v < 3.0.0",
         "jinjor/elm-debounce": "3.0.0 <= v < 4.0.0"
     },
-    "test-dependencies": {}
+    "test-dependencies": {
+        "elm-explorations/test": "1.2.2 <= v < 2.0.0"
+    }
 }
