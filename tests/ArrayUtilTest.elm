@@ -24,19 +24,18 @@ suite : Test
 suite =
     describe "The ArrayUtil module"
         [ describe "String.reverse"
-            [ only <|
-                test "Cut a single line" <|
-                    \_ ->
-                        let
-                            result =
-                                { before = Array.fromList [ "abcde", "01" ]
-                                , middle = Array.fromList [ "23" ]
-                                , after = Array.fromList [ "4", "pqrst" ]
-                                }
-                        in
-                        Array.fromList [ "abcde", "01234", "pqrst" ]
-                            |> ArrayUtil.cut (Position 1 2) (Position 1 3)
-                            |> Expect.equal result
+            [ test "Cut a single line" <|
+                \_ ->
+                    let
+                        result =
+                            { before = Array.fromList [ "abcde", "0145" ]
+                            , middle = Array.fromList [ "23" ]
+                            , after = Array.fromList [ "pqrst" ]
+                            }
+                    in
+                    Array.fromList [ "abcde", "012345", "pqrst" ]
+                        |> ArrayUtil.cut (Position 1 2) (Position 1 3)
+                        |> Expect.equal result
             , test "Cut several lines" <|
                 \_ ->
                     let
@@ -73,21 +72,20 @@ suite =
                     Array.fromList [ "abcde", "01234", "56789", "aeiou", "pqrst" ]
                         |> ArrayUtil.cut (Position 1 2) (Position 3 3)
                         |> Expect.equal result
-            , test "Cut, trouble" <|
-                \_ ->
-                    let
-                        result =
-                            { before = Array.fromList [ "abcde", "01" ]
-                            , middle = Array.fromList [ "23" ]
-                            , after = Array.fromList [ "4", "pqrst" ]
-                            }
-                                |> ArrayUtil.stringFromZipper
-                    in
-                    Array.fromList [ "abcde", "01234", "pqrst" ]
-                        |> ArrayUtil.cut (Position 1 1) (Position 1 2)
-                        |> ArrayUtil.stringFromZipper
-                        |> Expect.equal
-                            result
+            , only <|
+                test "Cut, trouble" <|
+                    \_ ->
+                        let
+                            result =
+                                { before = Array.fromList [ "abcde", "034" ]
+                                , middle = Array.fromList [ "12" ]
+                                , after = Array.fromList [ "pqrst" ]
+                                }
+                        in
+                        Array.fromList [ "abcde", "01234", "pqrst" ]
+                            |> ArrayUtil.cut (Position 1 1) (Position 1 2)
+                            |> Expect.equal
+                                result
             , test "Cut lines (Action), simple (1)" <|
                 \_ ->
                     let

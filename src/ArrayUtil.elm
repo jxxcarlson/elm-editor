@@ -163,17 +163,20 @@ cut pos1 pos2 array =
                             Debug.log "( a_, part )" <|
                                 splitStringAt pos1.column middleLine
 
-                        ( b_, c_ ) =
+                        ( _, c_ ) =
                             Debug.log "( b_, c_ )" <|
                                 splitStringAt (pos2.column - String.length a_ + 1) part
 
+                        middle__ =
+                            String.slice pos1.column (pos2.column + 1) middleLine
+
                         before__ =
-                            case a_ of
+                            case a_ ++ c_ of
                                 "" ->
                                     before_
 
                                 _ ->
-                                    Array.push a_ before_
+                                    Array.push (a_ ++ c_) before_
 
                         after__ =
                             case a_ of
@@ -181,9 +184,9 @@ cut pos1 pos2 array =
                                     after_
 
                                 _ ->
-                                    put c_ after_
+                                    after_
                     in
-                    ( before__, Array.fromList [ b_ ], after__ )
+                    ( before__, Array.fromList [ middle__ ], after__ )
 
                 False ->
                     let
