@@ -136,6 +136,8 @@ type Msg
     | Cut
     | Copy
     | Paste
+    | WrapAll
+    | WrapSelection
       --
     | Hover Hover
     | GoToHoveredPosition

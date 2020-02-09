@@ -44,6 +44,8 @@ toItemGroups context =
               , ( ContextMenu.item "Cut" |> ContextMenu.shortcut "Ctrl-X", Cut )
               , ( ContextMenu.item "Redo" |> ContextMenu.shortcut "Ctrl-Y", Redo )
               , ( ContextMenu.item "Undo" |> ContextMenu.shortcut "Ctrl-Z", Undo )
+              , ( ContextMenu.item "Wrap" |> ContextMenu.shortcut "Ctrl-W", WrapSelection )
+              , ( ContextMenu.item "Wrap all" |> ContextMenu.shortcut "Ctrl-shift-W", WrapAll )
               ]
             , [ ( ContextMenu.item "Clear" |> ContextMenu.shortcut "Ctrl-Opt-C", Clear )
               ]
@@ -65,11 +67,8 @@ toItemGroups context =
             ]
 
         Background ->
-            [ [ ( ContextMenu.item "Pen", Item 8 )
-              , ( ContextMenu.item "Pineapple", Item 9 )
-              , ( ContextMenu.item "Apple", Item 10 )
-              , ( ContextMenu.itemWithAnnotation "Item with annotation" "Some annotation here"
-                    -- |> ContextMenu.icon Material.tag_faces Color.red
+            [ [ ( ContextMenu.item "Nothing here yet", Item 8 )
+              , ( ContextMenu.itemWithAnnotation "This editor is a work in progress" "Watch this space for more info:-)"
                     |> ContextMenu.disabled False
                 , Item 7
                 )

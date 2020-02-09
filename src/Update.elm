@@ -9,14 +9,11 @@ import History
 import Model exposing (Hover(..), Model, Msg(..), Position, Selection(..), Snapshot)
 import Task
 import UpdateFunction
+import Wrap exposing (WrapParams)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
-    let
-        _ =
-            Debug.log "ED.update" msg
-    in
     case msg of
         NoOp ->
             ( model, Cmd.none )
@@ -98,23 +95,26 @@ update msg model =
                 newSelection =
                     Selection newCursor lineEnd
 
-                ( newLines, _ ) =
+                ( newLines, selectedText ) =
                     Action.deleteSelection newSelection model.lines
             in
-            ( { model | lines = newLines }, Cmd.none )
+            ( { model | lines = newLines, selectedText = selectedText }, Cmd.none )
                 |> recordHistory model
 
         Cut ->
             UpdateFunction.deleteSelection model
+                |> recordHistory model
 
         Copy ->
             UpdateFunction.copySelection model
 
         Paste ->
             UpdateFunction.pasteSelection model
+                |> recordHistory model
 
         RemoveCharBefore ->
             UpdateFunction.deleteSelection model
+                |> recordHistory model
 
         FirstLine ->
             Action.firstLine model
@@ -257,9 +257,6 @@ update msg model =
 
         ContextMenuMsg msg_ ->
             let
-                _ =
-                    Debug.log "CTMM" msg_
-
                 ( contextMenu, cmd ) =
                     ContextMenu.update msg_ model.contextMenu
             in
@@ -268,11 +265,56 @@ update msg model =
             )
 
         Item k ->
-            let
-                _ =
-                    Debug.log "ITEM" k
-            in
             ( model, Cmd.none )
+
+        WrapSelection ->
+            case model.selection of
+                Selection p1 p2 ->
+                    let
+                        params =
+                            { maximumWidth = maxWrapWidth model
+                            , optimalWidth = optimumWrapWidth model
+                            , stringWidth = String.length
+                            }
+
+                        newLines =
+                            Wrap.stringArray params model.selectedText
+                    in
+                    UpdateFunction.replaceLines model newLines
+                        |> recordHistory model
+
+                _ ->
+                    ( model, Cmd.none )
+
+        WrapAll ->
+            let
+                params =
+                    { maximumWidth = maxWrapWidth model, optimalWidth = optimumWrapWidth model, stringWidth = String.length }
+
+                lines =
+                    Wrap.stringArray params model.lines
+            in
+            ( { model | lines = lines }, Cmd.none )
+                |> recordHistory model
+
+
+maxWrapWidth : Model -> Int
+maxWrapWidth model =
+    charactersPerLine model.width model.fontSize
+        - 3
+        |> truncate
+
+
+optimumWrapWidth : Model -> Int
+optimumWrapWidth model =
+    charactersPerLine model.width model.fontSize
+        - 6
+        |> truncate
+
+
+charactersPerLine : Float -> Float -> Float
+charactersPerLine screenWidth fontSize =
+    (1.55 * screenWidth) / fontSize
 
 
 newLine : Model -> Model

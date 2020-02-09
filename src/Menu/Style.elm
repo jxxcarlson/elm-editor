@@ -174,7 +174,7 @@ objectStyles =
     [ style "position" "relative"
     , style "top" "0"
     , style "left" "50px"
-    , style "width" "50px"
+    , style "width" "750px"
     , style "height" "15px"
     , style "background-color" "#8aa"
     ]

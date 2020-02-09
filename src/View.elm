@@ -42,7 +42,7 @@ displayStyle =
 viewDebug : Model -> Html Msg
 viewDebug { lines, cursor, hover, selection, width } =
     H.div
-        [ HA.style "max-width" (px width) ]
+        [ HA.style "max-width" (px width), HA.style "padding" "8px" ]
         [ --H.pre
           --   [ HA.style  "white-space"  "pre-wrap"  ]
           --   [ H.text <| "Lines: \n" ++ (lines |> Array.toList |> String.join "\n") ]

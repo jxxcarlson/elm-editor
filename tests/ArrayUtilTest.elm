@@ -177,20 +177,37 @@ suite =
                         |> Tuple.first
                         |> stringFromArray
                         |> Expect.equal output
-            , test "paste" <|
-                \_ ->
-                    let
-                        lines =
-                            Array.fromList [ "abcdef", "01234", "pqrst" ]
+            , only <|
+                test "paste one line" <|
+                    \_ ->
+                        let
+                            lines =
+                                Array.fromList [ "abcdef", "01234", "pqrst" ]
 
-                        newContent =
-                            Array.fromList [ "XYZ" ]
+                            newContent =
+                                Array.fromList [ "XYZ" ]
 
-                        output =
-                            Array.fromList [ "abcdef", "01", "XYZ", "234", "pqrst" ]
-                    in
-                    lines
-                        |> ArrayUtil.paste (Position 1 2) newContent
-                        |> Expect.equal output
+                            output =
+                                Array.fromList [ "abcdef", "01", "XYZ", "234", "pqrst" ]
+                        in
+                        lines
+                            |> ArrayUtil.paste (Position 1 2) newContent
+                            |> Expect.equal output
+            , only <|
+                test "paste several lines" <|
+                    \_ ->
+                        let
+                            lines =
+                                Array.fromList [ "abcdef", "01234", "pqrst" ]
+
+                            newContent =
+                                Array.fromList [ "XYZ", "U1234U" ]
+
+                            output =
+                                Array.fromList [ "abcdef", "01", "XYZ", "U1234U", "234", "pqrst" ]
+                        in
+                        lines
+                            |> ArrayUtil.paste (Position 1 2) newContent
+                            |> Expect.equal output
             ]
         ]

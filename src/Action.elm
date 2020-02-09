@@ -127,7 +127,7 @@ deleteSelection selection array =
     case selection of
         Selection beginSel endSel ->
             ArrayUtil.cut beginSel endSel array
-                |> ArrayUtil.join
+                |> ArrayUtil.joinEnds
 
         _ ->
             ( array, Array.fromList [ "" ] )

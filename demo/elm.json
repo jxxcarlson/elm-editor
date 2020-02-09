@@ -14,6 +14,7 @@
             "elm/json": "1.1.3",
             "elm-community/list-extra": "8.2.3",
             "elm-community/string-extra": "4.0.1",
+            "folkertdev/elm-paragraph": "1.0.0",
             "jinjor/elm-contextmenu": "2.0.0",
             "jinjor/elm-debounce": "3.0.0",
             "jinjor/elm-diff": "1.0.6"

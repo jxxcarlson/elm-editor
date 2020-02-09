@@ -116,7 +116,17 @@ view model =
         , HA.style "display" "flex"
         , HA.style "flex-direction" "column"
         ]
-        [ Editor.view model.editor |> H.map EditorMsg
+        [ H.span [ HA.style "margin-bottom" "10px" ]
+            [ H.text "A pure Elm text editor based on prior work of Martin Janiczek and Sidney Nemzer."
+            , H.a [ HA.style "margin-left" "18px", HA.href "https://github.com/jxxcarlson/elm-editor2" ] [ H.text "Github.com/jxxcarlson/elm-editor2" ]
+            ]
+        , H.div
+            [ HA.style "border" "solid"
+            , HA.style "border-width" "0.5px"
+            , HA.style "border-color" "#444"
+            , HA.style "width" "800px"
+            ]
+            [ Editor.view model.editor |> H.map EditorMsg ]
         , viewFooter model
         ]
 
@@ -128,8 +138,9 @@ viewFooter model =
         , HA.style "font-family" "monospace"
         , HA.style "margin-bottom" "20px"
         ]
-        [ rowButton 100 "Add test lines: " TestLines [ HA.style "margin-left" "24px", HA.style "margin-top" "4px" ]
+        [ rowButton 100 "Add test lines: " TestLines [ HA.style "margin-left" "0px", HA.style "margin-top" "4px" ]
         , textField 40 "n" InputNumberOfLines [ HA.style "margin-left" "4px", HA.style "margin-top" "4px" ] [ HA.style "font-size" "14px" ]
+        , H.span [ HA.style "padding-top" "10px" ] [ H.text "This is a work-in-progress. Control-click on the green bar for more info" ]
         ]
 
 

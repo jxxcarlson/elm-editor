@@ -2,9 +2,11 @@ module UpdateFunction exposing
     ( copySelection
     , deleteSelection
     , pasteSelection
+    , replaceLines
     )
 
 import Action
+import Array exposing (Array)
 import ArrayUtil
 import Common
 import Debounce exposing (Debounce)
@@ -40,17 +42,40 @@ copySelection model =
 pasteSelection : Model -> ( Model, Cmd Msg )
 pasteSelection model =
     let
-        ( before, after ) =
-            Debug.log "DB, paste split: (before, after)" <|
-                ArrayUtil.split model.cursor model.lines
+        n =
+            Array.length model.selectedText
 
-        _ =
-            Debug.log "DB, paste selectedText" model.selectedText
-
-        newLines =
-            ArrayUtil.paste model.cursor model.selectedText model.lines
+        newCursor =
+            { line = model.cursor.line + n, column = model.cursor.column }
     in
-    ( { model | lines = newLines }, Cmd.none )
+    ( { model
+        | lines = ArrayUtil.paste model.cursor model.selectedText model.lines
+        , cursor = newCursor
+      }
+    , Cmd.none
+    )
+
+
+replaceLines : Model -> Array String -> ( Model, Cmd Msg )
+replaceLines model strings =
+    let
+        n =
+            Array.length strings
+
+        newCursor =
+            { line = model.cursor.line + n, column = model.cursor.column }
+    in
+    case model.selection of
+        Selection p1 p2 ->
+            ( { model
+                | lines = ArrayUtil.replaceLines p1 p2 strings model.lines
+                , cursor = newCursor
+              }
+            , Cmd.none
+            )
+
+        _ ->
+            ( model, Cmd.none )
 
 
 deleteSelection : Model -> ( Model, Cmd Msg )
@@ -70,8 +95,7 @@ deleteSelection model =
         (Selection beginSel endSel) as sel ->
             let
                 ( newLines, selectedText ) =
-                    Debug.log "XXX" <|
-                        Action.deleteSelection sel model.lines
+                    Action.deleteSelection sel model.lines
             in
             ( { model
                 | lines = newLines

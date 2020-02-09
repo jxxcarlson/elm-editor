@@ -4,10 +4,12 @@ module ArrayUtil exposing
     , cutOut
     , insert
     , join
+    , joinEnds
     , joinThree
     , paste
     , put
     , replace
+    , replaceLines
     , split
     , splitStringAt
     , stringFromZipper
@@ -156,16 +158,13 @@ cut pos1 pos2 array =
                 True ->
                     let
                         middleLine =
-                            Debug.log "MIDDLE"
-                                (Array.get pos1.line array |> Maybe.withDefault "")
+                            Array.get pos1.line array |> Maybe.withDefault ""
 
                         ( a_, part ) =
-                            Debug.log "( a_, part )" <|
-                                splitStringAt pos1.column middleLine
+                            splitStringAt pos1.column middleLine
 
                         ( _, c_ ) =
-                            Debug.log "( b_, c_ )" <|
-                                splitStringAt (pos2.column - String.length a_ + 1) part
+                            splitStringAt (pos2.column - String.length a_ + 1) part
 
                         middle__ =
                             String.slice pos1.column (pos2.column + 1) middleLine
@@ -190,16 +189,12 @@ cut pos1 pos2 array =
 
                 False ->
                     let
-                        _ =
-                            Debug.log "(P1 P2)" ( pos1, pos2 )
-
                         firstLine =
                             Array.get pos1.line array |> Maybe.withDefault ""
 
                         lastLine =
                             Array.get pos2.line array
                                 |> Maybe.withDefault ""
-                                |> Debug.log "LAST LINE"
 
                         middle__ =
                             Array.slice (pos1.line + 1) pos2.line array
@@ -216,8 +211,7 @@ cut pos1 pos2 array =
                                     Array.push a_ before_
 
                         ( part_2, c_ ) =
-                            Debug.log "( part_2, c_ )"
-                                (splitStringAt (pos2.column + 0) lastLine)
+                            splitStringAt (pos2.column + 0) lastLine
 
                         after__ =
                             case c_ of
@@ -287,25 +281,32 @@ replace pos1 pos2 str array =
             Array.append (Array.push str sz.before) sz.after
 
 
+replaceLines : Position -> Position -> Array String -> Array String -> Array String
+replaceLines pos1 pos2 newLines targetLines =
+    let
+        sz =
+            cut pos1 pos2 targetLines
+    in
+    join { sz | middle = newLines }
+
+
 put : String -> Array String -> Array String
 put str array =
     Array.append (Array.fromList [ str ]) array
 
 
-join : StringZipper -> ( Array String, Array String )
-join z =
+joinEnds : StringZipper -> ( Array String, Array String )
+joinEnds z =
     let
-        _ =
-            Debug.log "JOIN" ( z.before, z.middle, z.after )
-
-        joineEnds =
-            Debug.log "DB: joinedEnds" <|
-                Array.append z.before z.after
-
-        _ =
-            Debug.log "DB: middle" <| z.middle
+        joinedEnds =
+            Array.append z.before z.after
     in
-    ( joineEnds, z.middle )
+    ( joinedEnds, z.middle )
+
+
+join : StringZipper -> Array String
+join z =
+    joinThree z.before z.middle z.after
 
 
 joinThree : Array a -> Array a -> Array a -> Array a
