@@ -244,7 +244,7 @@ suite =
                     lines
                         |> ArrayUtil.cutString 1 1 2
                         |> Expect.equal output
-            , test "replace lines, not aligned with a line" <|
+            , test "replace lines, section within a line" <|
                 \_ ->
                     let
                         lines =
@@ -258,6 +258,21 @@ suite =
                     in
                     lines
                         |> ArrayUtil.replaceLines (Position 1 1) (Position 1 3) newContent
+                        |> Expect.equal output
+            , test "replace lines, section is a line" <|
+                \_ ->
+                    let
+                        lines =
+                            Array.fromList [ "abcde", "01234", "pqrst" ]
+
+                        newContent =
+                            Array.fromList [ "XYZ", "UVW" ]
+
+                        output =
+                            Array.fromList [ "abcde", "XYZ", "UVW", "pqrst" ]
+                    in
+                    lines
+                        |> ArrayUtil.replaceLines (Position 1 0) (Position 1 4) newContent
                         |> Expect.equal output
             ]
         ]

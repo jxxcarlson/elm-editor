@@ -16,6 +16,7 @@ stringArray wrapParams stringArray_ =
         |> List.map (wrapParagraph wrapParams >> String.lines >> appendBlankLine)
         |> List.concat
         |> Array.fromList
+        |> (\a -> Array.slice 0 (Array.length a - 1) a)
 
 
 appendBlankLine : List String -> List String

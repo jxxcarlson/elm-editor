@@ -282,8 +282,19 @@ update msg model =
 
                         newLines =
                             Wrap.stringArray params selectedText
+
+                        n =
+                            Array.length newLines
+
+                        c =
+                            Array.get (n - 1) newLines
+                                |> Maybe.map String.length
+                                |> Maybe.withDefault 0
+
+                        newCursor =
+                            { line = p1.line + n - 1, column = c }
                     in
-                    UpdateFunction.replaceLines model newLines
+                    UpdateFunction.replaceLines { model | cursor = newCursor } newLines
                         |> recordHistory model
 
                 _ ->

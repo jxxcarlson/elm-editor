@@ -113,7 +113,7 @@ update msg model =
 view : Model -> Html Msg
 view model =
     H.div
-        Style.main
+        Style.mainColumn
         [ viewHeader model
         , viewEditor model
         , viewFooter model
@@ -126,11 +126,10 @@ view model =
 
 viewHeader : Model -> Html Msg
 viewHeader model =
-    [ H.span [ HA.style "margin-bottom" "10px" ]
+    H.span [ HA.style "margin-bottom" "10px" ]
         [ H.text "A pure Elm text editor based on prior work of Martin Janiczek and Sidney Nemzer."
         , H.a [ HA.style "margin-left" "18px", HA.href "https://github.com/jxxcarlson/elm-editor2" ] [ H.text "Github.com/jxxcarlson/elm-editor2" ]
         ]
-    ]
 
 
 viewEditor model =

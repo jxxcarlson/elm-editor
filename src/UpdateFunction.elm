@@ -69,7 +69,8 @@ replaceLines model strings =
         Selection p1 p2 ->
             ( { model
                 | lines = ArrayUtil.replaceLines p1 p2 strings model.lines
-                , cursor = newCursor
+
+                -- , cursor = newCursor
               }
             , Cmd.none
             )

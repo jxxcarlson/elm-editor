@@ -1,9 +1,9 @@
-module Style exposing (editor, main)
+module Style exposing (editor, mainColumn)
 
 import Html.Attributes as HA
 
 
-main =
+mainColumn =
     [ HA.style "margin" "50px"
     , HA.style "display" "flex"
     , HA.style "flex-direction" "column"

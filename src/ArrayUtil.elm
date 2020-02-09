@@ -257,10 +257,26 @@ cutString line col1 col2 array =
 
         after_ =
             Array.slice (line + 1) n array
+
+        before__ =
+            case a of
+                "" ->
+                    before_
+
+                _ ->
+                    Array.push a before_
+
+        after__ =
+            case c of
+                "" ->
+                    after_
+
+                _ ->
+                    put c after_
     in
-    { before = Array.push a before_
+    { before = before__
     , middle = Array.fromList [ b ]
-    , after = put c after_
+    , after = after__
     }
 
 
@@ -327,7 +343,6 @@ replaceLines pos1 pos2 newLines targetLines =
             let
                 sz =
                     cut pos1 pos2 targetLines
-                        |> Debug.log "CUT"
             in
             join { sz | middle = newLines }
 
