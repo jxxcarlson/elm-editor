@@ -8,7 +8,7 @@ import Html.Events as HE
 import Html.Lazy
 import Json.Decode as JD exposing (Decoder)
 import Keymap
-import Model exposing (Config, Context(..), Hover(..), Model, Msg(..), Position, Selection(..))
+import Model exposing (AutoLineBreak(..), Config, Context(..), Hover(..), Model, Msg(..), Position, Selection(..))
 
 
 lineNumbersDisplay : Model -> Html Msg
@@ -422,5 +422,15 @@ viewHeader model =
         , wordCountDisplay model
         , rowButton 70 "Go to line" GoToLine [ HA.style "margin-left" "24px", HA.style "margin-top" "4px" ]
         , textField 40 "n" AcceptLineToGoTo [ HA.style "margin-left" "4px", HA.style "margin-top" "4px" ] [ HA.style "font-size" "14px" ]
-        , rowButton 40 "Test" Test [ HA.style "margin-left" "24px", HA.style "margin-top" "4px" ]
+        , rowButton 150 (autoLinBreakTitle model) ToggleAutoLineBreak [ HA.style "margin-left" "24px", HA.style "margin-top" "4px" ]
         ]
+
+
+autoLinBreakTitle : Model -> String
+autoLinBreakTitle model =
+    case model.autoLineBreak of
+        AutoLineBreakON ->
+            "Auto line break: ON"
+
+        AutoLineBreakOFF ->
+            "Auto line break: OFF"

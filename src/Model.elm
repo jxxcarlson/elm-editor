@@ -1,5 +1,6 @@
 module Model exposing
-    ( Config
+    ( AutoLineBreak(..)
+    , Config
     , Context(..)
     , Hover(..)
     , Model
@@ -32,6 +33,7 @@ type alias Model =
     , debounce : Debounce String
     , history : History Snapshot
     , contextMenu : ContextMenu Context
+    , autoLineBreak : AutoLineBreak
     }
 
 
@@ -98,7 +100,13 @@ init ( config, contextMenu ) =
     , debounce = Debounce.init
     , history = History.empty
     , contextMenu = contextMenu
+    , autoLineBreak = AutoLineBreakON
     }
+
+
+type AutoLineBreak
+    = AutoLineBreakON
+    | AutoLineBreakOFF
 
 
 debounceConfig : Debounce.Config Msg
@@ -159,3 +167,4 @@ type Msg
       --
     | ContextMenuMsg (ContextMenu.Msg Context)
     | Item Int
+    | ToggleAutoLineBreak

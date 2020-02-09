@@ -6,7 +6,7 @@ import Common exposing (..)
 import ContextMenu exposing (ContextMenu)
 import Debounce exposing (Debounce)
 import History
-import Model exposing (Hover(..), Model, Msg(..), Position, Selection(..), Snapshot)
+import Model exposing (AutoLineBreak(..), Hover(..), Model, Msg(..), Position, Selection(..), Snapshot)
 import Task
 import UpdateFunction
 import Wrap exposing (WrapParams)
@@ -311,6 +311,14 @@ update msg model =
             ( { model | lines = lines }, Cmd.none )
                 |> recordHistory model
 
+        ToggleAutoLineBreak ->
+            case model.autoLineBreak of
+                AutoLineBreakOFF ->
+                    ( { model | autoLineBreak = AutoLineBreakON }, Cmd.none )
+
+                AutoLineBreakON ->
+                    ( { model | autoLineBreak = AutoLineBreakOFF }, Cmd.none )
+
 
 maxWrapWidth : Model -> Int
 maxWrapWidth model =
@@ -431,36 +439,41 @@ insertChar char ({ cursor, lines } as model) =
 
 breakLine : Model -> Model
 breakLine model =
-    let
-        k =
-            optimumWrapWidth model
-
-        line =
-            model.cursor.line
-    in
-    case Array.get line model.lines of
-        Nothing ->
+    case model.autoLineBreak of
+        AutoLineBreakOFF ->
             model
 
-        Just currentLine ->
-            case String.length currentLine <= k of
-                True ->
+        AutoLineBreakON ->
+            let
+                k =
+                    optimumWrapWidth model
+
+                line =
+                    model.cursor.line
+            in
+            case Array.get line model.lines of
+                Nothing ->
                     model
 
-                False ->
-                    case UpdateFunction.breakLineBefore k currentLine of
-                        ( _, Nothing ) ->
+                Just currentLine ->
+                    case String.length currentLine <= k of
+                        True ->
                             model
 
-                        ( adjustedLine, Just extraLine ) ->
-                            let
-                                newCursor =
-                                    { line = line + 1, column = String.length extraLine }
-                            in
-                            model
-                                |> UpdateFunction.replaceLineAt line adjustedLine
-                                |> UpdateFunction.insertLineAfter line extraLine
-                                |> putCursorAt newCursor
+                        False ->
+                            case UpdateFunction.breakLineBefore k currentLine of
+                                ( _, Nothing ) ->
+                                    model
+
+                                ( adjustedLine, Just extraLine ) ->
+                                    let
+                                        newCursor =
+                                            { line = line + 1, column = String.length extraLine }
+                                    in
+                                    model
+                                        |> UpdateFunction.replaceLineAt line adjustedLine
+                                        |> UpdateFunction.insertLineAfter line extraLine
+                                        |> putCursorAt newCursor
 
 
 putCursorAt : Position -> Model -> Model
