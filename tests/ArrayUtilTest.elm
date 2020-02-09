@@ -23,7 +23,14 @@ stringFromArray array =
 suite : Test
 suite =
     describe "The ArrayUtil module"
-        [ describe "String.reverse"
+        [ describe "String Ops"
+            [ test "Dice string" <|
+                \_ ->
+                    "ABCDEF"
+                        |> ArrayUtil.diceStringAt 1 3
+                        |> Expect.equal ( "A", "BC", "DEF" )
+            ]
+        , describe "Array ops"
             [ test "Cut a single line" <|
                 \_ ->
                     let
@@ -177,37 +184,80 @@ suite =
                         |> Tuple.first
                         |> stringFromArray
                         |> Expect.equal output
-            , only <|
-                test "paste one line" <|
-                    \_ ->
-                        let
-                            lines =
-                                Array.fromList [ "abcdef", "01234", "pqrst" ]
+            , test "paste one line" <|
+                \_ ->
+                    let
+                        lines =
+                            Array.fromList [ "abcdef", "01234", "pqrst" ]
 
-                            newContent =
-                                Array.fromList [ "XYZ" ]
+                        newContent =
+                            Array.fromList [ "XYZ" ]
 
-                            output =
-                                Array.fromList [ "abcdef", "01", "XYZ", "234", "pqrst" ]
-                        in
-                        lines
-                            |> ArrayUtil.paste (Position 1 2) newContent
-                            |> Expect.equal output
-            , only <|
-                test "paste several lines" <|
-                    \_ ->
-                        let
-                            lines =
-                                Array.fromList [ "abcdef", "01234", "pqrst" ]
+                        output =
+                            Array.fromList [ "abcdef", "01", "XYZ", "234", "pqrst" ]
+                    in
+                    lines
+                        |> ArrayUtil.paste (Position 1 2) newContent
+                        |> Expect.equal output
+            , test "paste several lines" <|
+                \_ ->
+                    let
+                        lines =
+                            Array.fromList [ "abcdef", "01234", "pqrst" ]
 
-                            newContent =
-                                Array.fromList [ "XYZ", "U1234U" ]
+                        newContent =
+                            Array.fromList [ "XYZ", "U1234U" ]
 
-                            output =
-                                Array.fromList [ "abcdef", "01", "XYZ", "U1234U", "234", "pqrst" ]
-                        in
-                        lines
-                            |> ArrayUtil.paste (Position 1 2) newContent
-                            |> Expect.equal output
+                        output =
+                            Array.fromList [ "abcdef", "01", "XYZ", "U1234U", "234", "pqrst" ]
+                    in
+                    lines
+                        |> ArrayUtil.paste (Position 1 2) newContent
+                        |> Expect.equal output
+            , test "replace lines, aligned with a line" <|
+                \_ ->
+                    let
+                        lines =
+                            Array.fromList [ "abcdef", "01234", "pqrst" ]
+
+                        newContent =
+                            Array.fromList [ "XYZ", "U1234U" ]
+
+                        output =
+                            Array.fromList [ "abcdef", "XYZ", "U1234U", "pqrst" ]
+                    in
+                    lines
+                        |> ArrayUtil.replaceLines (Position 1 0) (Position 1 4) newContent
+                        |> Expect.equal output
+            , test "cutString line col1 col2 array" <|
+                \_ ->
+                    let
+                        lines =
+                            Array.fromList [ "abcde", "01234", "pqrst" ]
+
+                        output =
+                            { before = Array.fromList [ "abcde", "0" ]
+                            , middle = Array.fromList [ "12" ]
+                            , after = Array.fromList [ "34", "pqrst" ]
+                            }
+                    in
+                    lines
+                        |> ArrayUtil.cutString 1 1 2
+                        |> Expect.equal output
+            , test "replace lines, not aligned with a line" <|
+                \_ ->
+                    let
+                        lines =
+                            Array.fromList [ "abcde", "01234", "pqrst" ]
+
+                        newContent =
+                            Array.fromList [ "XYZ", "UVW" ]
+
+                        output =
+                            Array.fromList [ "abcde", "0", "XYZ", "UVW", "4", "pqrst" ]
+                    in
+                    lines
+                        |> ArrayUtil.replaceLines (Position 1 1) (Position 1 3) newContent
+                        |> Expect.equal output
             ]
         ]

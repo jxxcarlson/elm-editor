@@ -26,7 +26,7 @@ copySelection model =
                     Action.deleteSelection sel model.lines
             in
             ( { model
-                | cursor = beginSel
+                | cursor = { endSel | column = endSel.column + 1 }
                 , selection = NoSelection
                 , selectedText = selectedText
               }

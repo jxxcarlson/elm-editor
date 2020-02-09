@@ -2,6 +2,8 @@ module ArrayUtil exposing
     ( Position
     , cut
     , cutOut
+    , cutString
+    , diceStringAt
     , insert
     , join
     , joinEnds
@@ -123,6 +125,15 @@ splitStringAt k str =
     ( String.slice 0 k str, String.slice k n str )
 
 
+diceStringAt : Int -> Int -> String -> ( String, String, String )
+diceStringAt j k str =
+    let
+        n =
+            String.length str
+    in
+    ( String.slice 0 j str, String.slice j k str, String.slice k n str )
+
+
 {-|
 
     arr =
@@ -232,6 +243,27 @@ cut pos1 pos2 array =
     }
 
 
+cutString : Int -> Int -> Int -> Array String -> StringZipper
+cutString line col1 col2 array =
+    let
+        n =
+            Array.length array
+
+        before_ =
+            Array.slice 0 line array
+
+        ( a, b, c ) =
+            Array.get line array |> Maybe.withDefault "" |> diceStringAt col1 (col2 + 1)
+
+        after_ =
+            Array.slice (line + 1) n array
+    in
+    { before = Array.push a before_
+    , middle = Array.fromList [ b ]
+    , after = put c after_
+    }
+
+
 mapTriple : (a -> b) -> ( a, a, a ) -> ( b, b, b )
 mapTriple f ( x, y, z ) =
     ( f x, f y, f z )
@@ -283,11 +315,21 @@ replace pos1 pos2 str array =
 
 replaceLines : Position -> Position -> Array String -> Array String -> Array String
 replaceLines pos1 pos2 newLines targetLines =
-    let
-        sz =
-            cut pos1 pos2 targetLines
-    in
-    join { sz | middle = newLines }
+    case pos1.line == pos2.line of
+        True ->
+            let
+                sz =
+                    cutString pos1.line pos1.column pos2.column targetLines
+            in
+            join { sz | middle = newLines }
+
+        False ->
+            let
+                sz =
+                    cut pos1 pos2 targetLines
+                        |> Debug.log "CUT"
+            in
+            join { sz | middle = newLines }
 
 
 put : String -> Array String -> Array String

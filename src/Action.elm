@@ -51,7 +51,7 @@ lastLine model =
 
 moveToLineEnd : Model -> ( Model, Cmd Msg )
 moveToLineEnd model =
-    ( { model | cursor = { line = model.cursor.line, column = lineEnd model.cursor.line model } }, Cmd.none )
+    ( { model | cursor = { line = model.cursor.line, column = lineEnd model.cursor.line model + 1 } }, Cmd.none )
 
 
 moveToLineStart : Model -> ( Model, Cmd Msg )

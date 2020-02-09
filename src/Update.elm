@@ -277,8 +277,11 @@ update msg model =
                             , stringWidth = String.length
                             }
 
+                        ( _, selectedText ) =
+                            Action.deleteSelection model.selection model.lines
+
                         newLines =
-                            Wrap.stringArray params model.selectedText
+                            Wrap.stringArray params selectedText
                     in
                     UpdateFunction.replaceLines model newLines
                         |> recordHistory model
