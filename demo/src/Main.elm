@@ -11,6 +11,7 @@ import Html as H exposing (Attribute, Html)
 import Html.Attributes as HA
 import Html.Events as HE
 import Model exposing (Msg(..))
+import Style
 import Task
 
 
@@ -112,23 +113,30 @@ update msg model =
 view : Model -> Html Msg
 view model =
     H.div
-        [ HA.style "margin" "50px"
-        , HA.style "display" "flex"
-        , HA.style "flex-direction" "column"
-        ]
-        [ H.span [ HA.style "margin-bottom" "10px" ]
-            [ H.text "A pure Elm text editor based on prior work of Martin Janiczek and Sidney Nemzer."
-            , H.a [ HA.style "margin-left" "18px", HA.href "https://github.com/jxxcarlson/elm-editor2" ] [ H.text "Github.com/jxxcarlson/elm-editor2" ]
-            ]
-        , H.div
-            [ HA.style "border" "solid"
-            , HA.style "border-width" "0.5px"
-            , HA.style "border-color" "#444"
-            , HA.style "width" "800px"
-            ]
-            [ Editor.view model.editor |> H.map EditorMsg ]
+        Style.main
+        [ viewHeader model
+        , viewEditor model
         , viewFooter model
         ]
+
+
+
+-- VIEW FUNCTIONS
+
+
+viewHeader : Model -> Html Msg
+viewHeader model =
+    [ H.span [ HA.style "margin-bottom" "10px" ]
+        [ H.text "A pure Elm text editor based on prior work of Martin Janiczek and Sidney Nemzer."
+        , H.a [ HA.style "margin-left" "18px", HA.href "https://github.com/jxxcarlson/elm-editor2" ] [ H.text "Github.com/jxxcarlson/elm-editor2" ]
+        ]
+    ]
+
+
+viewEditor model =
+    H.div
+        Style.editor
+        [ Editor.view model.editor |> H.map EditorMsg ]
 
 
 viewFooter : Model -> Html Msg
@@ -142,6 +150,10 @@ viewFooter model =
         , textField 40 "n" InputNumberOfLines [ HA.style "margin-left" "4px", HA.style "margin-top" "4px" ] [ HA.style "font-size" "14px" ]
         , H.span [ HA.style "padding-top" "10px" ] [ H.text "This is a work-in-progress. Control-click on the green bar for more info" ]
         ]
+
+
+
+-- BUTTONS
 
 
 rowButton width str msg attr =
