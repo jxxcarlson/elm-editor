@@ -1,7 +1,10 @@
 module UpdateFunction exposing
-    ( copySelection
+    ( breakLineBefore
+    , copySelection
     , deleteSelection
+    , insertLineAfter
     , pasteSelection
+    , replaceLineAt
     , replaceLines
     )
 
@@ -10,6 +13,7 @@ import Array exposing (Array)
 import ArrayUtil
 import Common
 import Debounce exposing (Debounce)
+import List.Extra
 import Model exposing (Model, Msg(..), Selection(..))
 
 
@@ -122,3 +126,30 @@ deleteSelection model =
             , debounceCmd
             )
                 |> Common.recordHistory model
+
+
+breakLineBefore : Int -> String -> ( String, Maybe String )
+breakLineBefore k str =
+    case String.length str > k of
+        False ->
+            ( str, Nothing )
+
+        True ->
+            let
+                words =
+                    String.words str
+
+                n =
+                    List.length words
+            in
+            ( String.join " " (List.take (n - 1) words), List.Extra.getAt (n - 1) words )
+
+
+replaceLineAt : Int -> String -> Model -> Model
+replaceLineAt k str model =
+    { model | lines = Array.set k str model.lines }
+
+
+insertLineAfter : Int -> String -> Model -> Model
+insertLineAfter k str model =
+    { model | lines = ArrayUtil.insertLineAfter k str model.lines }

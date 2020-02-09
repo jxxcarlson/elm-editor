@@ -70,7 +70,7 @@ update msg model =
                 ( debounce, debounceCmd ) =
                     Debounce.push Model.debounceConfig char model.debounce
             in
-            ( insertChar char { model | debounce = debounce }
+            ( insertChar char { model | debounce = debounce } |> breakLine
             , debounceCmd
             )
                 |> recordHistory model
@@ -392,6 +392,9 @@ insertChar char ({ cursor, lines } as model) =
         { line, column } =
             cursor
 
+        maxLineLength =
+            20
+
         lineWithCharAdded : String -> String
         lineWithCharAdded content =
             String.left column content
@@ -420,6 +423,49 @@ insertChar char ({ cursor, lines } as model) =
         | lines = newLines
         , cursor = newCursor
     }
+
+
+
+-- LINE BREAKING
+
+
+breakLine : Model -> Model
+breakLine model =
+    let
+        k =
+            optimumWrapWidth model
+
+        line =
+            model.cursor.line
+    in
+    case Array.get line model.lines of
+        Nothing ->
+            model
+
+        Just currentLine ->
+            case String.length currentLine <= k of
+                True ->
+                    model
+
+                False ->
+                    case UpdateFunction.breakLineBefore k currentLine of
+                        ( _, Nothing ) ->
+                            model
+
+                        ( adjustedLine, Just extraLine ) ->
+                            let
+                                newCursor =
+                                    { line = line + 1, column = String.length extraLine }
+                            in
+                            model
+                                |> UpdateFunction.replaceLineAt line adjustedLine
+                                |> UpdateFunction.insertLineAfter line extraLine
+                                |> putCursorAt newCursor
+
+
+putCursorAt : Position -> Model -> Model
+putCursorAt position model =
+    { model | cursor = position }
 
 
 

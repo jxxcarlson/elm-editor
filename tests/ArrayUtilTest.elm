@@ -274,5 +274,15 @@ suite =
                     lines
                         |> ArrayUtil.replaceLines (Position 1 0) (Position 1 4) newContent
                         |> Expect.equal output
+            , only <|
+                test "insert line after given index" <|
+                    \_ ->
+                        let
+                            lines =
+                                Array.fromList [ "AAA", "BBB", "CCC" ]
+                        in
+                        lines
+                            |> ArrayUtil.insertLineAfter 1 "XXX"
+                            |> Expect.equal (Array.fromList [ "AAA", "BBB", "XXX", "CCC" ])
             ]
         ]

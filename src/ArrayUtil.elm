@@ -5,6 +5,7 @@ module ArrayUtil exposing
     , cutString
     , diceStringAt
     , insert
+    , insertLineAfter
     , join
     , joinEnds
     , joinThree
@@ -68,6 +69,15 @@ insert position str array =
                     String.Extra.insertAt str position.column line
             in
             Array.set position.line newLine array
+
+
+insertLineAfter : Int -> String -> Array String -> Array String
+insertLineAfter line str lines =
+    let
+        ( before, after ) =
+            split { line = line + 1, column = 0 } lines
+    in
+    joinThree before (Array.fromList [ str ]) after
 
 
 {-|
