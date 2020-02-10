@@ -61,6 +61,9 @@ toItemGroups context =
             , [ ( ContextMenu.item "First line" |> ContextMenu.shortcut "Ctrl-Opt-ArrowUp", FirstLine )
               , ( ContextMenu.item "Last line" |> ContextMenu.shortcut "Ctrl-Opt-ArrowDown", LastLine )
               ]
+            , [ ( ContextMenu.item "Open file" |> ContextMenu.shortcut "Ctrl-O", RequestFile )
+              , ( ContextMenu.item "Save file" |> ContextMenu.shortcut "Ctrl-Opt-S", SaveFile )
+              ]
             , [ ( ContextMenu.item "Test (go to line 30)" |> ContextMenu.shortcut "Ctrl-Opt-T", Test )
               ]
             ]
