@@ -256,7 +256,7 @@ syncWithEditor model editor cmd =
 sync : Editor -> Cmd EditorMsg -> Model -> ( Model, Cmd Msg )
 sync newEditor cmd model =
     model
-        |> updateRenderingData (Editor.getLines newEditor)
+        |> updateRenderingData (Editor.getLines newEditor |> Debug.log "NEW")
         |> (\m -> { m | editor = newEditor })
         |> withCmd (Cmd.map EditorMsg cmd)
 
