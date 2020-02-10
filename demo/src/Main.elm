@@ -68,9 +68,9 @@ init =
 
 
 config =
-    { width = 800
+    { width = 600
     , height = 400
-    , fontSize = 20
+    , fontSize = 16
     , verticalScrollOffset = 3
     }
 
@@ -138,8 +138,14 @@ viewEditorColumn model =
 
 viewRenderedText : Model -> Html Msg
 viewRenderedText model =
+    let
+        _ =
+            Debug.log "NEW:3" (Render.getFullAst model.renderingData)
+    in
     H.div Style.renderedText
-        [ (Render.get model.renderingData).document ]
+        [ (Render.get model.renderingData).title
+        , (Render.get model.renderingData).document
+        ]
 
 
 
@@ -149,14 +155,14 @@ viewRenderedText model =
 viewHeader : Model -> Html Msg
 viewHeader model =
     H.span [ HA.style "margin-bottom" "10px" ]
-        [ H.text "A pure Elm text editor based on prior work of Martin Janiczek and Sidney Nemzer."
+        [ H.text "A pure Elm text editor."
         , H.a [ HA.style "margin-left" "18px", HA.href "https://github.com/jxxcarlson/elm-editor2" ] [ H.text "Github.com/jxxcarlson/elm-editor2" ]
         ]
 
 
 viewEditor model =
     H.div
-        Style.editor
+        (Style.editor config.width)
         [ Editor.view model.editor |> H.map EditorMsg ]
 
 
@@ -169,7 +175,7 @@ viewFooter model =
         ]
         [ rowButton 100 "Add test lines: " TestLines [ HA.style "margin-left" "0px", HA.style "margin-top" "4px" ]
         , textField 40 "n" InputNumberOfLines [ HA.style "margin-left" "4px", HA.style "margin-top" "4px" ] [ HA.style "font-size" "14px" ]
-        , H.span [ HA.style "padding-top" "10px" ] [ H.text "This is a work-in-progress. Control-click on the green bar for more info" ]
+        , H.span [ HA.style "padding-top" "10px" ] [ H.text "Control-click on the green bar for more info" ]
         ]
 
 
@@ -220,10 +226,16 @@ updateRenderingData lines model =
         source =
             lines |> Array.toList |> String.join "\n"
 
+        counter =
+            model.counter + 1
+
         newRenderingData =
-            Render.update ( 0, 0 ) model.counter source model.renderingData
+            Render.update ( 0, 0 ) counter source model.renderingData
+
+        _ =
+            Debug.log "NEW:1" (Render.getFullAst newRenderingData)
     in
-    { model | renderingData = newRenderingData }
+    { model | renderingData = newRenderingData, counter = counter }
 
 
 loadRenderingData : String -> Model -> Model
@@ -236,27 +248,29 @@ loadRenderingData source model =
     { model | renderingData = newRenderingData }
 
 
-syncWithEditor : Model -> Editor -> Cmd EditorMsg -> ( Model, Cmd Msg )
-syncWithEditor model editor cmd =
-    let
-        newSource =
-            Editor.getLines editor
-                |> Array.toList
-                |> String.join "\n"
-    in
-    ( { model
-        | editor = editor
-        , counter = model.counter + 2
-        , renderingData = Render.update ( 0, 0 ) model.counter newSource model.renderingData
-      }
-    , Cmd.map EditorMsg cmd
-    )
+
+--syncWithEditor : Model -> Editor -> Cmd EditorMsg -> ( Model, Cmd Msg )
+--syncWithEditor model editor cmd =
+--    let
+--        newSource =
+--            Editor.getLines editor
+--                |> Array.toList
+--                |> String.join "\n"
+--                |> Debug.log "NEW:S"
+--    in
+--    ( { model
+--        | editor = editor
+--        , counter = model.counter + 2
+--        , renderingData = Render.update ( 0, 0 ) (model.counter + 1) newSource model.renderingData
+--      }
+--    , Cmd.map EditorMsg cmd
+--    )
 
 
 sync : Editor -> Cmd EditorMsg -> Model -> ( Model, Cmd Msg )
 sync newEditor cmd model =
     model
-        |> updateRenderingData (Editor.getLines newEditor |> Debug.log "NEW")
+        |> updateRenderingData (Editor.getLines newEditor |> Debug.log "NEW:0")
         |> (\m -> { m | editor = newEditor })
         |> withCmd (Cmd.map EditorMsg cmd)
 

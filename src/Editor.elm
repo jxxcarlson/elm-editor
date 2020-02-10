@@ -44,7 +44,7 @@ view (Editor model) =
     H.div []
         [ viewHeader model
         , viewEditor model
-        , viewContextMenu model
+        , viewContextMenu model.width model
         , viewDebug model
         ]
 

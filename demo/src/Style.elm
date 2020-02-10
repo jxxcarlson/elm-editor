@@ -28,9 +28,14 @@ renderedText =
     ]
 
 
-editor =
+editor width =
     [ HA.style "border" "solid"
     , HA.style "border-width" "0.5px"
     , HA.style "border-color" "#444"
-    , HA.style "width" "800px"
+    , HA.style "width" (px width)
     ]
+
+
+px : Float -> String
+px p =
+    String.fromFloat p ++ "px"

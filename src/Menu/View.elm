@@ -7,14 +7,14 @@ import Menu.Style
 import Model exposing (Config, Context(..), Hover(..), Model, Msg(..), Position, Selection(..))
 
 
-viewContextMenu : Model -> Html Msg
-viewContextMenu model =
+viewContextMenu : Float -> Model -> Html Msg
+viewContextMenu width model =
     H.div
         []
         [ H.div
             (ContextMenu.open ContextMenuMsg Background :: Menu.Style.backgroundStyles)
             [ H.div
-                (ContextMenu.open ContextMenuMsg Object :: Menu.Style.objectStyles)
+                (ContextMenu.open ContextMenuMsg Object :: Menu.Style.objectStyles width)
                 []
             ]
         , H.div [] []
@@ -73,14 +73,3 @@ toItemGroups context =
                 )
               ]
             ]
-
-
-
---[ ( "ArrowUp", FirstLine )
---           , ( "ArrowDown", LastLine )
---
---           --, ( "ArrowRight", CursorToGroupEnd )
---           --, ( "ArrowLeft", CursorToGroupStart )
---           --, ( "∑", ToggleWrapping )
---           , ( "ç", Clear )
---           ]

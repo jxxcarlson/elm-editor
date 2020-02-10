@@ -4,6 +4,7 @@ module Render exposing
     , RenderingData(..)
     , RenderingOption(..)
     , get
+    , getFullAst
     , load
     , loadFast
     , render
@@ -56,6 +57,16 @@ type alias MDData msg =
 type RenderingOption
     = OMarkdown MDOption.Option
     | OMiniLatex
+
+
+getFullAst : RenderingData msg -> Maybe (Tree Parse.MDBlockWithId)
+getFullAst rd =
+    case rd of
+        ML _ ->
+            Nothing
+
+        MD data ->
+            Just data.fullAst
 
 
 load : ( Int, Int ) -> Int -> RenderingOption -> String -> RenderingData msg
