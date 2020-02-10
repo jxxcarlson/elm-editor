@@ -15,6 +15,7 @@ module Model exposing
 import Array exposing (Array)
 import ContextMenu exposing (ContextMenu)
 import Debounce exposing (Debounce)
+import File exposing (File)
 import History exposing (History)
 
 
@@ -168,3 +169,6 @@ type Msg
     | ContextMenuMsg (ContextMenu.Msg Context)
     | Item Int
     | ToggleAutoLineBreak
+    | RequestFile
+    | RequestedFile File
+    | MarkdownLoaded String

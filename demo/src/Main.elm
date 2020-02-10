@@ -61,11 +61,11 @@ type Msg
 init : Flags -> ( Model, Cmd Msg )
 init =
     \() ->
-        { editor = Editor.init config |> Tuple.first |> Editor.loadString Data.mathExample
+        { editor = Editor.init config |> Tuple.first |> Editor.loadString Data.welcome
         , numberOfTestLines = Nothing
         , lines = []
         , diffedLines = []
-        , markdownData = load 0 ( 0, 0 ) Data.mathExample
+        , markdownData = load 0 ( 0, 0 ) Data.welcome
         , counter = 1
         }
             |> Cmd.Extra.withCmds

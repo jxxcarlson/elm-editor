@@ -1,4 +1,8 @@
-module Data exposing (mathExample)
+module Data exposing (mathExample, welcome)
+
+
+welcome =
+    "Welcome!"
 
 
 mathExample =

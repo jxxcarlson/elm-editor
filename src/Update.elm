@@ -5,6 +5,8 @@ import Array exposing (Array)
 import Common exposing (..)
 import ContextMenu exposing (ContextMenu)
 import Debounce exposing (Debounce)
+import File exposing (File)
+import File.Select as Select
 import History
 import Model exposing (AutoLineBreak(..), Hover(..), Model, Msg(..), Position, Selection(..), Snapshot)
 import Task
@@ -318,6 +320,25 @@ update msg model =
 
                 AutoLineBreakON ->
                     ( { model | autoLineBreak = AutoLineBreakOFF }, Cmd.none )
+
+        RequestFile ->
+            ( model, requestMarkdownFile )
+
+        RequestedFile file ->
+            ( model, read file )
+
+        MarkdownLoaded str ->
+            ( { model | lines = str |> String.lines |> Array.fromList }, Cmd.none )
+
+
+read : File -> Cmd Msg
+read file =
+    Task.perform MarkdownLoaded (File.toString file)
+
+
+requestMarkdownFile : Cmd Msg
+requestMarkdownFile =
+    Select.file [ "text/markdown" ] RequestedFile
 
 
 maxWrapWidth : Model -> Int

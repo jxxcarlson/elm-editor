@@ -23,6 +23,7 @@ code for an example.
 import Array exposing (Array)
 import Cmd.Extra
 import ContextMenu exposing (ContextMenu)
+import File.Select as Select
 import Html as H exposing (Html)
 import Menu.View exposing (viewContextMenu)
 import Model exposing (Config, Context(..), Model, Msg(..))
