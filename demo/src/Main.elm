@@ -3,7 +3,7 @@ module Main exposing (main)
 import Array exposing (Array)
 import Browser
 import Browser.Dom as Dom
-import Cmd.Extra
+import Cmd.Extra exposing (withCmd)
 import ContextMenu exposing (Item(..))
 import Data
 import Diff exposing (Change)
@@ -15,6 +15,7 @@ import Markdown.ElmWithId
 import Markdown.Option exposing (Option(..))
 import Markdown.Parse as Parse
 import Model exposing (Msg(..))
+import Render exposing (RenderingData, RenderingOption(..))
 import Style
 import Task
 import Tree exposing (Tree)
@@ -39,15 +40,8 @@ type alias Model =
     , lines : List String
     , diffedLines : List (Change String)
     , numberOfTestLines : Maybe Int
-    , markdownData : MarkdownData
+    , renderingData : RenderingData Msg
     , counter : Int
-    }
-
-
-type alias MarkdownData =
-    { source : String
-    , ast : Tree Parse.MDBlockWithId
-    , renderedText : Html Msg
     }
 
 
@@ -61,11 +55,11 @@ type Msg
 init : Flags -> ( Model, Cmd Msg )
 init =
     \() ->
-        { editor = Editor.init config |> Tuple.first |> Editor.loadString Data.welcome
+        { editor = Editor.init config |> Tuple.first
         , numberOfTestLines = Nothing
         , lines = []
         , diffedLines = []
-        , markdownData = load 0 ( 0, 0 ) Data.welcome
+        , renderingData = load 0 ( 0, 0 ) (OMarkdown ExtendedMath) Data.welcome
         , counter = 1
         }
             |> Cmd.Extra.withCmds
@@ -101,11 +95,7 @@ update msg model =
             in
             case editorMsg of
                 Unload _ ->
-                    let
-                        markdownData =
-                            updateMarkdownData model.counter ( 0, 0 ) (Editor.getLines model.editor)
-                    in
-                    ( { model | editor = newEditor, markdownData = markdownData }, Cmd.map EditorMsg cmd )
+                    sync newEditor cmd model
 
                 InsertChar _ ->
                     sync newEditor cmd model
@@ -149,7 +139,7 @@ viewEditorColumn model =
 viewRenderedText : Model -> Html Msg
 viewRenderedText model =
     H.div Style.renderedText
-        [ model.markdownData.renderedText ]
+        [ (Render.get model.renderingData).document ]
 
 
 
@@ -224,16 +214,26 @@ rowButtonLabelStyle width =
     ]
 
 
-updateMarkdownData : Int -> ( Int, Int ) -> Array String -> MarkdownData
-updateMarkdownData counter selectedId lines =
+updateRenderingData : Array String -> Model -> Model
+updateRenderingData lines model =
     let
-        str =
+        source =
             lines |> Array.toList |> String.join "\n"
+
+        newRenderingData =
+            Render.update ( 0, 0 ) model.counter source model.renderingData
     in
-    { source = str
-    , ast = Parse.toMDBlockTree counter ExtendedMath str
-    , renderedText = Markdown.ElmWithId.toHtml selectedId counter ExtendedMath str
-    }
+    { model | renderingData = newRenderingData }
+
+
+loadRenderingData : String -> Model -> Model
+loadRenderingData source model =
+    let
+        newRenderingData : RenderingData Msg
+        newRenderingData =
+            Render.update ( 0, 0 ) model.counter source model.renderingData
+    in
+    { model | renderingData = newRenderingData }
 
 
 syncWithEditor : Model -> Editor -> Cmd EditorMsg -> ( Model, Cmd Msg )
@@ -241,11 +241,13 @@ syncWithEditor model editor cmd =
     let
         newSource =
             Editor.getLines editor
+                |> Array.toList
+                |> String.join "\n"
     in
     ( { model
         | editor = editor
         , counter = model.counter + 2
-        , markdownData = updateMarkdownData model.counter ( 0, 0 ) newSource
+        , renderingData = Render.update ( 0, 0 ) model.counter newSource model.renderingData
       }
     , Cmd.map EditorMsg cmd
     )
@@ -253,19 +255,15 @@ syncWithEditor model editor cmd =
 
 sync : Editor -> Cmd EditorMsg -> Model -> ( Model, Cmd Msg )
 sync newEditor cmd model =
-    let
-        markdownData =
-            updateMarkdownData model.counter ( 0, 0 ) (Editor.getLines model.editor)
-    in
-    ( { model | editor = newEditor, markdownData = markdownData, counter = model.counter + 1 }, Cmd.map EditorMsg cmd )
+    model
+        |> updateRenderingData (Editor.getLines newEditor)
+        |> (\m -> { m | editor = newEditor })
+        |> withCmd (Cmd.map EditorMsg cmd)
 
 
-load : Int -> ( Int, Int ) -> String -> MarkdownData
-load counter selectedId str =
-    str
-        |> String.lines
-        |> Array.fromList
-        |> (\a -> updateMarkdownData counter selectedId a)
+load : Int -> ( Int, Int ) -> RenderingOption -> String -> RenderingData Msg
+load counter selectedId renderingOption str =
+    Render.load selectedId counter renderingOption str
 
 
 
