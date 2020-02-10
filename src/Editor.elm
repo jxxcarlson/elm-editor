@@ -1,6 +1,7 @@
 module Editor exposing
     ( Editor(..), init, loadArray
     , EditorMsg, getLines, getContextMenu, update, view
+    , loadString, syncMessages
     )
 
 {-| Use the Editor module to embed a pure Elm text editor
@@ -89,6 +90,11 @@ loadArray array (Editor model) =
     Editor { model | lines = array }
 
 
+loadString : String -> Editor -> Editor
+loadString str (Editor model) =
+    Editor { model | lines = str |> String.lines |> Array.fromList }
+
+
 {-| Get the current editor content
 -}
 getLines : Editor -> Array String
@@ -101,3 +107,17 @@ getLines (Editor model) =
 getContextMenu : Editor -> ContextMenu Context
 getContextMenu (Editor model) =
     model.contextMenu
+
+
+syncMessages : List Msg
+syncMessages =
+    [ RemoveCharBefore
+    , RemoveCharAfter
+    , KillLine
+    , Cut
+    , Copy
+    , NewLine
+    , Paste
+    , WrapAll
+    , WrapSelection
+    ]

@@ -26,28 +26,34 @@ suite =
     describe "Update functions"
         [ describe "String rwapping"
             [ only <|
-                test "breakStrinAt (no break)" <|
+                test "breakStringAt (no break)" <|
                     \_ ->
                         "aaa bbb"
                             |> UF.breakLineBefore 30
                             |> Expect.equal ( "aaa bbb", Nothing )
-            , only <|
+            , skip <|
                 test "breakStringAt, two words" <|
                     \_ ->
                         "aaa bbb"
                             |> UF.breakLineBefore 4
                             |> Expect.equal ( "aaa", Just "bbb" )
-            , only <|
+            , skip <|
                 test "breakStringAt, three words" <|
                     \_ ->
                         "aaa bbb ccc"
                             |> UF.breakLineBefore 7
-                            |> Expect.equal ( "aaa bbb", Just "ccc" )
+                            |> Expect.equal ( "aaa ", Just "bbb ccc" )
             , skip <|
                 test "breakStringAt, three words, extra space" <|
                     \_ ->
                         "aaa  bbb ccc"
                             |> UF.breakLineBefore 7
-                            |> Expect.equal ( "aaa  bbb", Just "ccc" )
+                            |> Expect.equal ( "aaa  ", Just "bbb ccc" )
+            , only <|
+                test "breakStringAfter (1))" <|
+                    \_ ->
+                        "aaa bbb ccc"
+                            |> UF.breakLineAfter 2
+                            |> Expect.equal ( "aaa ", Just "bbb ccc" )
             ]
         ]

@@ -456,24 +456,45 @@ breakLine model =
                     model
 
                 Just currentLine ->
-                    case String.length currentLine <= k of
+                    let
+                        currentLineLength =
+                            String.length currentLine
+                    in
+                    case currentLineLength <= k of
                         True ->
                             model
 
                         False ->
-                            case UpdateFunction.breakLineBefore k currentLine of
-                                ( _, Nothing ) ->
-                                    model
+                            case currentLineLength == model.cursor.column of
+                                True ->
+                                    case UpdateFunction.breakLineBefore k currentLine of
+                                        ( _, Nothing ) ->
+                                            model
 
-                                ( adjustedLine, Just extraLine ) ->
-                                    let
-                                        newCursor =
-                                            { line = line + 1, column = String.length extraLine }
-                                    in
-                                    model
-                                        |> UpdateFunction.replaceLineAt line adjustedLine
-                                        |> UpdateFunction.insertLineAfter line extraLine
-                                        |> putCursorAt newCursor
+                                        ( adjustedLine, Just extraLine ) ->
+                                            let
+                                                newCursor =
+                                                    { line = line + 1, column = String.length extraLine }
+                                            in
+                                            model
+                                                |> UpdateFunction.replaceLineAt line adjustedLine
+                                                |> UpdateFunction.insertLineAfter line extraLine
+                                                |> putCursorAt newCursor
+
+                                False ->
+                                    case UpdateFunction.breakLineAfter model.cursor.column currentLine of
+                                        ( _, Nothing ) ->
+                                            model
+
+                                        ( adjustedLine, Just extraLine ) ->
+                                            let
+                                                newCursor =
+                                                    model.cursor
+                                            in
+                                            model
+                                                |> UpdateFunction.replaceLineAt line adjustedLine
+                                                |> UpdateFunction.insertLineAfter line extraLine
+                                                |> putCursorAt newCursor
 
 
 putCursorAt : Position -> Model -> Model

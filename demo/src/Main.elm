@@ -5,6 +5,7 @@ import Browser
 import Browser.Dom as Dom
 import Cmd.Extra
 import ContextMenu exposing (Item(..))
+import Data
 import Diff exposing (Change)
 import Editor exposing (Editor, EditorMsg)
 import Html as H exposing (Attribute, Html)
@@ -60,11 +61,11 @@ type Msg
 init : Flags -> ( Model, Cmd Msg )
 init =
     \() ->
-        { editor = Editor.init config |> Tuple.first
+        { editor = Editor.init config |> Tuple.first |> Editor.loadString Data.mathExample
         , numberOfTestLines = Nothing
         , lines = []
         , diffedLines = []
-        , markdownData = updateMarkdownData (Array.fromList [ "**Welcome!**" ]) 0 ( 0, 0 )
+        , markdownData = load 0 ( 0, 0 ) Data.mathExample
         , counter = 1
         }
             |> Cmd.Extra.withCmds
@@ -102,12 +103,20 @@ update msg model =
                 Unload _ ->
                     let
                         markdownData =
-                            updateMarkdownData (Editor.getLines model.editor) model.counter ( 0, 0 )
+                            updateMarkdownData model.counter ( 0, 0 ) (Editor.getLines model.editor)
                     in
                     ( { model | editor = newEditor, markdownData = markdownData }, Cmd.map EditorMsg cmd )
 
+                InsertChar _ ->
+                    sync newEditor cmd model
+
                 _ ->
-                    ( { model | editor = newEditor }, Cmd.map EditorMsg cmd )
+                    case List.member msg (List.map EditorMsg Editor.syncMessages) of
+                        True ->
+                            sync newEditor cmd model
+
+                        False ->
+                            ( { model | editor = newEditor }, Cmd.map EditorMsg cmd )
 
         TestLines ->
             case model.numberOfTestLines of
@@ -215,8 +224,8 @@ rowButtonLabelStyle width =
     ]
 
 
-updateMarkdownData : Array String -> Int -> ( Int, Int ) -> MarkdownData
-updateMarkdownData lines counter selectedId =
+updateMarkdownData : Int -> ( Int, Int ) -> Array String -> MarkdownData
+updateMarkdownData counter selectedId lines =
     let
         str =
             lines |> Array.toList |> String.join "\n"
@@ -236,10 +245,27 @@ syncWithEditor model editor cmd =
     ( { model
         | editor = editor
         , counter = model.counter + 2
-        , markdownData = updateMarkdownData newSource model.counter ( 0, 0 )
+        , markdownData = updateMarkdownData model.counter ( 0, 0 ) newSource
       }
     , Cmd.map EditorMsg cmd
     )
+
+
+sync : Editor -> Cmd EditorMsg -> Model -> ( Model, Cmd Msg )
+sync newEditor cmd model =
+    let
+        markdownData =
+            updateMarkdownData model.counter ( 0, 0 ) (Editor.getLines model.editor)
+    in
+    ( { model | editor = newEditor, markdownData = markdownData, counter = model.counter + 1 }, Cmd.map EditorMsg cmd )
+
+
+load : Int -> ( Int, Int ) -> String -> MarkdownData
+load counter selectedId str =
+    str
+        |> String.lines
+        |> Array.fromList
+        |> (\a -> updateMarkdownData counter selectedId a)
 
 
 

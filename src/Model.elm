@@ -111,7 +111,7 @@ type AutoLineBreak
 
 debounceConfig : Debounce.Config Msg
 debounceConfig =
-    { strategy = Debounce.later 2000
+    { strategy = Debounce.later 300
     , transform = DebounceMsg
     }
 

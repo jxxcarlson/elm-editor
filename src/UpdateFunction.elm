@@ -1,5 +1,6 @@
 module UpdateFunction exposing
-    ( breakLineBefore
+    ( breakLineAfter
+    , breakLineBefore
     , copySelection
     , deleteSelection
     , insertLineAfter
@@ -136,13 +137,49 @@ breakLineBefore k str =
 
         True ->
             let
-                words =
-                    String.words str
-
-                n =
-                    List.length words
+                indexOfPrecedingBlank =
+                    str
+                        |> String.indexes " "
+                        |> List.filter (\i -> i < k)
+                        |> List.reverse
+                        |> List.head
+                        |> Maybe.withDefault k
             in
-            ( String.join " " (List.take (n - 1) words), List.Extra.getAt (n - 1) words )
+            case indexOfPrecedingBlank <= k of
+                False ->
+                    ( str, Nothing )
+
+                True ->
+                    splitStringAt (indexOfPrecedingBlank + 1) str
+                        |> (\( a, b ) -> ( a, Just b ))
+
+
+breakLineAfter : Int -> String -> ( String, Maybe String )
+breakLineAfter k str =
+    case String.length str > k of
+        False ->
+            ( str, Nothing )
+
+        True ->
+            let
+                indexOfSucceedingBlank =
+                    str
+                        |> String.indexes " "
+                        |> List.filter (\i -> i > k)
+                        |> List.head
+                        |> Maybe.withDefault k
+            in
+            splitStringAt (indexOfSucceedingBlank + 1) str
+                |> (\( a, b ) -> ( a, Just b ))
+
+
+splitStringAt : Int -> String -> ( String, String )
+splitStringAt k str =
+    let
+        n =
+            String.length str
+    in
+    ( String.slice 0 k str, String.slice k n str )
 
 
 replaceLineAt : Int -> String -> Model -> Model
