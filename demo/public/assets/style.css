@@ -1,0 +1,194 @@
+.flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.flex-column-space {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+
+.flex-row {
+  display: flex;
+  flex-direction: row;
+}
+
+.flex-row-text-aligned {
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+}
+
+
+
+
+.elmsh-line {
+    padding : 8px;
+    line-height: 12px !important;
+ }
+
+
+.mm-paragraph {
+	white-space: normal;
+}
+
+.toc-level-0 { margin-left: 0em; font-size : 10pt; line-height: 4pt; font-weight: normal; text-decoration: none; }
+.toc-level-1 {  margin-left: 1em; font-size : 10pt; line-height: 4pt; font-weight: normal; text-decoration: none;  }
+.toc-level-2 {  margin-left: 2em; font-size : 10pt; line-height: 4pt; font-weight: normal; text-decoration: none;  }
+.toc-level-3 {  margin-left: 3em; font-size : 10pt; line-height: 4pt; font-weight: normal; text-decoration: none;  }
+
+.mm-code {font-family: "Courier New"
+  , Courier, monospace; padding: 8px; background-color: #f5f5f5; font-size: 11pt;
+}
+.mm-inline-code {font-family: "Courier New"
+  , Courier, monospace; padding-left: 5px; padding-right: 5px;background-color: #f5f5f5; font-size: 11pt;
+}
+
+.mm-image {width : 100%; }
+.mm-image-left {float: left; width: 40%; margin-right: 12px;}
+.mm-image-right {float: right; width: 40%; margin-left: 4px;}
+.mm-image-center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 60%;
+}
+
+.mm-h1 {font-size: 24px;}
+.mm-h2 {font-size: 20px;}
+.mm-h3 {font-size: 16px}
+.mm-h4 {font-size: 12px;}
+.mm-h5 {font-size: 12px;}
+
+
+
+.highlight {
+   background-color: #8d9ffe;
+  }
+
+.mm-block-0 {
+ }
+
+.mm-block-1 {
+  margin-left: 16px;
+}
+
+.mm-block-2 {
+  margin-left: 32px;
+}
+
+
+.mm-block-3 {
+  margin-left: 48px;
+}
+
+.mm-block-4 {
+  margin-left: 64px;
+}
+
+
+.mm-olist-item {
+	list-style: none;
+  margin-bottom: 8px;
+  padding-left: 18px;
+  text-indent: -18px;
+}
+
+.mm-olist-item.mm-block-0 {
+   margin-left: 12px;
+ }
+
+.mm-olist-item.mm-block-1 {
+   margin-left: 12px;
+ }
+
+
+.mm-ulist-item {
+	list-style: none;
+  margin-bottom: 8px;
+  padding-left: 18px;
+  text-indent: -12px;
+	white-space: normal;
+}
+
+.mm-ulist-item.mm-block-0 {
+   margin-left: 8px;
+ }
+
+.mm-quotation {
+	margin-top: 18px;
+	margin-right: 36px;
+	margin-bottom: 18px;
+	white-space: normal;
+}
+.mm-poetry {
+	margin-left: 24px;
+	margin-top: 18px;
+	margin-right: 36px;
+	margin-bottom: 18px;
+	white-space: nowrap;
+}
+.mm-closed-block {
+	margin-bottom; 12px;
+	width: inherit;
+	white-space: normal;
+}
+.mm-closed-block .mm-inlinelist {
+	margin-bottom: 12px;
+	line-height: 18px;
+	width: inherit;
+}
+.mm-poetry .mm-inlinelist .mm-inlinelist {
+	margin-bottom: 4px;
+	width: inherit;
+}
+.mm-error-message {
+	color: red; margin-bottom: 12px;
+}
+.mm-code {
+	font: 16px courier; background-color: #eee; padding: 8px;
+}
+
+.mm-strike-through {
+	 text-decoration: line-through;
+}
+
+
+.mm-table-cell {
+  padding: 4px;
+  margin-right : 3px;
+  margin-bottom: 6px;
+  background-color: #eef;
+  }
+
+
+.mm-paragraph.mm-block-2 {
+  margin: 0;
+  }
+
+
+.mm-table-row {
+	 display: block;
+	 margin-left: 40px;
+	 height: 25px;
+}
+
+p.mm-table-row {
+	display: inline-block;
+}
+
+.mm-table-cell {
+    display: inline-block;
+		width: 80px;
+}
+
+p.mm-table-cell {
+	display: inline-block;
+}
+
+
+.mm-verbatim {
+	font: 16px courier; background-color: #eee; padding: 8px;
+}

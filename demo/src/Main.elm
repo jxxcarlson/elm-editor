@@ -6,13 +6,17 @@ import Browser.Dom as Dom
 import Cmd.Extra
 import ContextMenu exposing (Item(..))
 import Diff exposing (Change)
-import Editor exposing (Editor)
+import Editor exposing (Editor, EditorMsg)
 import Html as H exposing (Attribute, Html)
 import Html.Attributes as HA
 import Html.Events as HE
+import Markdown.ElmWithId
+import Markdown.Option exposing (Option(..))
+import Markdown.Parse as Parse
 import Model exposing (Msg(..))
 import Style
 import Task
+import Tree exposing (Tree)
 
 
 type alias Flags =
@@ -34,6 +38,15 @@ type alias Model =
     , lines : List String
     , diffedLines : List (Change String)
     , numberOfTestLines : Maybe Int
+    , markdownData : MarkdownData
+    , counter : Int
+    }
+
+
+type alias MarkdownData =
+    { source : String
+    , ast : Tree Parse.MDBlockWithId
+    , renderedText : Html Msg
     }
 
 
@@ -51,6 +64,8 @@ init =
         , numberOfTestLines = Nothing
         , lines = []
         , diffedLines = []
+        , markdownData = updateMarkdownData (Array.fromList [ "**Welcome!**" ]) 0 ( 0, 0 )
+        , counter = 1
         }
             |> Cmd.Extra.withCmds
                 [ Dom.focus "editor" |> Task.attempt (always NoOp)
@@ -86,14 +101,10 @@ update msg model =
             case editorMsg of
                 Unload _ ->
                     let
-                        newLines =
-                            Editor.getLines newEditor |> Array.toList
-
-                        diffedLines =
-                            --Debug.log "DIFF" <|
-                            Diff.diff model.lines newLines
+                        markdownData =
+                            updateMarkdownData (Editor.getLines model.editor) model.counter ( 0, 0 )
                     in
-                    ( { model | editor = newEditor, lines = newLines, diffedLines = diffedLines }, Cmd.map EditorMsg cmd )
+                    ( { model | editor = newEditor, markdownData = markdownData }, Cmd.map EditorMsg cmd )
 
                 _ ->
                     ( { model | editor = newEditor }, Cmd.map EditorMsg cmd )
@@ -112,12 +123,24 @@ update msg model =
 
 view : Model -> Html Msg
 view model =
+    H.div Style.mainRow
+        [ viewEditorColumn model, viewRenderedText model ]
+
+
+viewEditorColumn : Model -> Html Msg
+viewEditorColumn model =
     H.div
-        Style.mainColumn
+        Style.editorColumn
         [ viewHeader model
         , viewEditor model
         , viewFooter model
         ]
+
+
+viewRenderedText : Model -> Html Msg
+viewRenderedText model =
+    H.div Style.renderedText
+        [ model.markdownData.renderedText ]
 
 
 
@@ -190,6 +213,33 @@ rowButtonLabelStyle width =
     , HA.style "height" "24px"
     , HA.style "border" "none"
     ]
+
+
+updateMarkdownData : Array String -> Int -> ( Int, Int ) -> MarkdownData
+updateMarkdownData lines counter selectedId =
+    let
+        str =
+            lines |> Array.toList |> String.join "\n"
+    in
+    { source = str
+    , ast = Parse.toMDBlockTree counter ExtendedMath str
+    , renderedText = Markdown.ElmWithId.toHtml selectedId counter ExtendedMath str
+    }
+
+
+syncWithEditor : Model -> Editor -> Cmd EditorMsg -> ( Model, Cmd Msg )
+syncWithEditor model editor cmd =
+    let
+        newSource =
+            Editor.getLines editor
+    in
+    ( { model
+        | editor = editor
+        , counter = model.counter + 2
+        , markdownData = updateMarkdownData newSource model.counter ( 0, 0 )
+      }
+    , Cmd.map EditorMsg cmd
+    )
 
 
 

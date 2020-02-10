@@ -19,7 +19,8 @@
         "elm-community/string-extra": "4.0.1 <= v < 5.0.0",
         "folkertdev/elm-paragraph": "1.0.0 <= v < 2.0.0",
         "jinjor/elm-contextmenu": "2.0.0 <= v < 3.0.0",
-        "jinjor/elm-debounce": "3.0.0 <= v < 4.0.0"
+        "jinjor/elm-debounce": "3.0.0 <= v < 4.0.0",
+        "zwilias/elm-rosetree": "1.5.0 <= v < 2.0.0"
     },
     "test-dependencies": {
         "elm-explorations/test": "1.2.2 <= v < 2.0.0"

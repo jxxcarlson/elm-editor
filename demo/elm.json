@@ -18,7 +18,8 @@
             "jinjor/elm-contextmenu": "2.0.0",
             "jinjor/elm-debounce": "3.0.0",
             "jinjor/elm-diff": "1.0.6",
-            "jxxcarlson/elm-markdown": "6.0.1"
+            "jxxcarlson/elm-markdown": "6.0.1",
+            "zwilias/elm-rosetree": "1.5.0"
         },
         "indirect": {
             "NoRedInk/elm-string-conversions": "1.0.1",
@@ -33,8 +34,7 @@
             "elm-community/maybe-extra": "5.1.0",
             "jxxcarlson/htree": "2.0.1",
             "pablohirafuji/elm-syntax-highlight": "3.2.0",
-            "zwilias/elm-html-string": "2.0.2",
-            "zwilias/elm-rosetree": "1.5.0"
+            "zwilias/elm-html-string": "2.0.2"
         }
     },
     "test-dependencies": {
