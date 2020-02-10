@@ -100,6 +100,9 @@ update msg model =
                 InsertChar _ ->
                     sync newEditor cmd model
 
+                MarkdownLoaded _ ->
+                    sync newEditor cmd model
+
                 _ ->
                     case List.member msg (List.map EditorMsg Editor.syncMessages) of
                         True ->

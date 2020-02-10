@@ -111,6 +111,12 @@ update selectedId version source rd =
             let
                 newAst =
                     Render.Markdown.diffUpdateAst data.option version source data.fullAst
+
+                _ =
+                    Debug.log "AST1" data.fullAst
+
+                _ =
+                    Debug.log "AST2" newAst
             in
             MD
                 { data

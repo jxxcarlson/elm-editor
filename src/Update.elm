@@ -6,6 +6,7 @@ import Common exposing (..)
 import ContextMenu exposing (ContextMenu)
 import Debounce exposing (Debounce)
 import File exposing (File)
+import File.Download as Download
 import File.Select as Select
 import History
 import Model exposing (AutoLineBreak(..), Hover(..), Model, Msg(..), Position, Selection(..), Snapshot)
@@ -330,6 +331,19 @@ update msg model =
         MarkdownLoaded str ->
             ( { model | lines = str |> String.lines |> Array.fromList }, Cmd.none )
 
+        SaveFile ->
+            let
+                markdown =
+                    model.lines
+                        |> Array.toList
+                        |> String.join "\n"
+            in
+            ( model, save markdown )
+
+
+
+-- FILE I/Oi
+
 
 read : File -> Cmd Msg
 read file =
@@ -346,6 +360,15 @@ maxWrapWidth model =
     charactersPerLine model.width model.fontSize
         - 3
         |> truncate
+
+
+save : String -> Cmd msg
+save markdown =
+    Download.string "foo.md" "text/markdown" markdown
+
+
+
+-- LINE BREAKING
 
 
 optimumWrapWidth : Model -> Int

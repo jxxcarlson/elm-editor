@@ -183,6 +183,7 @@ keymaps =
             --, ( "ArrowLeft", CursorToGroupStart )
             --, ( "∑", ToggleWrapping )
             , ( "ç", Clear )
+            , ( "ß", SaveFile )
             , ( "t", Test )
             ]
     , control =
@@ -202,6 +203,7 @@ keymaps =
             --, ( "r", ToggleReplacePanel )
             , ( "d", RemoveCharAfter )
             , ( "k", KillLine )
+            , ( "o", RequestFile )
             , ( "v", Paste )
             , ( "a", MoveToLineStart )
             , ( "e", MoveToLineEnd )

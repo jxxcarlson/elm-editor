@@ -423,7 +423,8 @@ viewHeader model =
         , rowButton 70 "Go to line" GoToLine [ HA.style "margin-left" "24px", HA.style "margin-top" "4px" ]
         , textField 40 "n" AcceptLineToGoTo [ HA.style "margin-left" "4px", HA.style "margin-top" "4px" ] [ HA.style "font-size" "14px" ]
         , rowButton 60 (autoLinBreakTitle model) ToggleAutoLineBreak [ HA.style "margin-left" "24px", HA.style "margin-top" "4px" ]
-        , rowButton 60 "Open" RequestFile [ HA.style "margin-left" "24px", HA.style "margin-top" "4px" ]
+
+        -- , rowButton 60 "Open" RequestFile [ HA.style "margin-left" "24px", HA.style "margin-top" "4px" ]
         ]
 
 

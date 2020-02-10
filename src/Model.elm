@@ -172,3 +172,4 @@ type Msg
     | RequestFile
     | RequestedFile File
     | MarkdownLoaded String
+    | SaveFile
