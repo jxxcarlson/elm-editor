@@ -6,23 +6,19 @@ import Browser.Dom as Dom
 import Cmd.Extra exposing (withCmd)
 import ContextMenu exposing (Item(..))
 import Data
-import Diff exposing (Change)
 import Editor exposing (Editor, EditorMsg)
 import Html as H exposing (Attribute, Html)
 import Html.Attributes as HA
 import Html.Events as HE
-import Markdown.ElmWithId
 import Markdown.Option exposing (Option(..))
-import Markdown.Parse as Parse
 import Model exposing (Msg(..))
 import Render exposing (RenderingData, RenderingOption(..))
 import Style
 import Task
-import Tree exposing (Tree)
 
 
 type alias Flags =
-    ()
+    { width : Float, height : Float }
 
 
 main : Program Flags Model Msg
@@ -38,40 +34,43 @@ main =
 type alias Model =
     { editor : Editor
     , lines : List String
-    , diffedLines : List (Change String)
-    , numberOfTestLines : Maybe Int
     , renderingData : RenderingData Msg
     , counter : Int
+    , width : Float
+    , height : Float
     }
+
+
+proportions : { width : Float, height : Float }
+proportions =
+    { width = 0.35, height = 0.8 }
 
 
 type Msg
     = NoOp
     | EditorMsg Editor.EditorMsg
-    | TestLines
-    | InputNumberOfLines String
 
 
 init : Flags -> ( Model, Cmd Msg )
-init =
-    \() ->
-        { editor = Editor.initWithContent Data.markdownExample config
-        , numberOfTestLines = Nothing
-        , lines = Data.markdownExample |> String.lines
-        , diffedLines = []
-        , renderingData = load 0 ( 0, 0 ) (OMarkdown ExtendedMath) Data.markdownExample
-        , counter = 1
-        }
-            |> Cmd.Extra.withCmds
-                [ Dom.focus "editor" |> Task.attempt (always NoOp)
-                ]
+init flags =
+    { editor = Editor.initWithContent Data.markdownExample (config flags)
+    , lines = Data.markdownExample |> String.lines
+    , renderingData = load 0 ( 0, 0 ) (OMarkdown ExtendedMath) Data.markdownExample
+    , counter = 1
+    , width = flags.width
+    , height = flags.height
+    }
+        |> Cmd.Extra.withCmds
+            [ Dom.focus "editor" |> Task.attempt (always NoOp)
+            ]
 
 
-config =
-    { width = 600
-    , height = 400
+config flags =
+    { width = proportions.width * flags.width
+    , height = proportions.height * flags.height
     , fontSize = 16
     , verticalScrollOffset = 3
+    , debugOn = False
     }
 
 
@@ -111,70 +110,26 @@ update msg model =
                         False ->
                             ( { model | editor = newEditor }, Cmd.map EditorMsg cmd )
 
-        TestLines ->
-            case model.numberOfTestLines of
-                Nothing ->
-                    ( model, Cmd.none )
 
-                Just n ->
-                    ( { model | editor = Editor.loadArray (testLines n) model.editor }, Cmd.none )
 
-        InputNumberOfLines str ->
-            ( { model | numberOfTestLines = String.toInt str }, Cmd.none )
+-- VIEW
 
 
 view : Model -> Html Msg
 view model =
-    H.div Style.mainRow
-        [ viewEditorColumn model, viewRenderedText model ]
+    H.div (Style.outerContainer model.width model.height)
+        [ viewEditor model, viewRenderedText model ]
 
 
-viewEditorColumn : Model -> Html Msg
-viewEditorColumn model =
-    H.div
-        Style.editorColumn
-        [ viewHeader model
-        , viewEditor model
-        , viewFooter model
-        ]
+viewEditor model =
+    Editor.view model.editor |> H.map EditorMsg
 
 
 viewRenderedText : Model -> Html Msg
 viewRenderedText model =
-    H.div Style.renderedText
+    H.div (Style.renderedText (proportions.width * model.width) (proportions.height * model.height))
         [ (Render.get model.renderingData).title
         , (Render.get model.renderingData).document
-        ]
-
-
-
--- VIEW FUNCTIONS
-
-
-viewHeader : Model -> Html Msg
-viewHeader model =
-    H.span [ HA.style "margin-bottom" "10px" ]
-        [ H.text "A pure Elm text editor."
-        , H.a [ HA.style "margin-left" "18px", HA.href "https://github.com/jxxcarlson/elm-editor2" ] [ H.text "Github.com/jxxcarlson/elm-editor2" ]
-        ]
-
-
-viewEditor model =
-    H.div
-        (Style.editor config.width)
-        [ Editor.view model.editor |> H.map EditorMsg ]
-
-
-viewFooter : Model -> Html Msg
-viewFooter model =
-    H.div
-        [ HA.style "display" "flex"
-        , HA.style "font-family" "monospace"
-        , HA.style "margin-bottom" "20px"
-        ]
-        [ rowButton 100 "Add test lines: " TestLines [ HA.style "margin-left" "0px", HA.style "margin-top" "4px" ]
-        , textField 40 "n" InputNumberOfLines [ HA.style "margin-left" "4px", HA.style "margin-top" "4px" ] [ HA.style "font-size" "14px" ]
-        , H.span [ HA.style "padding-top" "10px" ] [ H.text "Control-click on the green bar for more info" ]
         ]
 
 

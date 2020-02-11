@@ -35,6 +35,7 @@ type alias Model =
     , history : History Snapshot
     , contextMenu : ContextMenu Context
     , autoLineBreak : AutoLineBreak
+    , debugOn : Bool
     }
 
 
@@ -63,6 +64,7 @@ type alias Config =
     , height : Float
     , fontSize : Float
     , verticalScrollOffset : Int
+    , debugOn : Bool
     }
 
 
@@ -102,6 +104,7 @@ init ( config, contextMenu ) =
     , history = History.empty
     , contextMenu = contextMenu
     , autoLineBreak = AutoLineBreakON
+    , debugOn = config.debugOn
     }
 
 

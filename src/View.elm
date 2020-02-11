@@ -40,17 +40,19 @@ displayStyle =
 
 
 viewDebug : Model -> Html Msg
-viewDebug { lines, cursor, hover, selection, width } =
-    H.div
-        [ HA.style "max-width" (px width), HA.style "padding" "8px" ]
-        [ --H.pre
-          --   [ HA.style  "white-space"  "pre-wrap"  ]
-          --   [ H.text <| "Lines: \n" ++ (lines |> Array.toList |> String.join "\n") ]
-          H.pre [] [ H.text <| "cursor: " ++ stringFromPosition cursor ]
-        , H.pre [] [ H.text <| "hover: " ++ stringFromHover hover ]
-        , H.pre [] [ H.text (stringFromSelection selection) ]
-        , H.pre [] [ H.text <| "selected text:\n" ++ selectedText selection hover lines ]
-        ]
+viewDebug model =
+    case model.debugOn of
+        False ->
+            H.div [] []
+
+        True ->
+            H.div
+                [ HA.style "max-width" (px model.width), HA.style "padding" "8px" ]
+                [ H.pre [] [ H.text <| "cursor: " ++ stringFromPosition model.cursor ]
+                , H.pre [] [ H.text <| "hover: " ++ stringFromHover model.hover ]
+                , H.pre [] [ H.text (stringFromSelection model.selection) ]
+                , H.pre [] [ H.text <| "selected text:\n" ++ selectedText model.selection model.hover model.lines ]
+                ]
 
 
 selectedText : Selection -> Hover -> Array String -> String
@@ -417,11 +419,10 @@ viewHeader model =
         , HA.style "padding-bottom" "6px"
         , HA.style "width" (px model.width)
         ]
-        [ rowButton 40 "Help" NoOp [ HA.style "margin-left" "8px", HA.style "margin-top" "4px" ]
-        , lineNumbersDisplay model
+        [ lineNumbersDisplay model
         , wordCountDisplay model
-        , rowButton 70 "Go to line" GoToLine [ HA.style "margin-left" "24px", HA.style "margin-top" "4px" ]
-        , textField 40 "n" AcceptLineToGoTo [ HA.style "margin-left" "4px", HA.style "margin-top" "4px" ] [ HA.style "font-size" "14px" ]
+        , rowButton 32 "Go" GoToLine [ HA.style "margin-left" "24px", HA.style "margin-top" "4px" ]
+        , textField 32 "" AcceptLineToGoTo [ HA.style "margin-left" "4px", HA.style "margin-top" "4px" ] [ HA.style "font-size" "14px" ]
         , rowButton 60 (autoLinBreakTitle model) ToggleAutoLineBreak [ HA.style "margin-left" "24px", HA.style "margin-top" "4px" ]
 
         -- , rowButton 60 "Open" RequestFile [ HA.style "margin-left" "24px", HA.style "margin-top" "4px" ]
@@ -432,7 +433,7 @@ autoLinBreakTitle : Model -> String
 autoLinBreakTitle model =
     case model.autoLineBreak of
         AutoLineBreakON ->
-            "lb: ON"
+            "brk ON"
 
         AutoLineBreakOFF ->
-            "lb: OFF"
+            "brk OFF"
