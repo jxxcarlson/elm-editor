@@ -1,7 +1,7 @@
 module Editor exposing
     ( Editor(..), init, loadArray
     , EditorMsg, getLines, getContextMenu, update, view
-    , loadString, syncMessages
+    , initWithContent, loadString, syncMessages
     )
 
 {-| Use the Editor module to embed a pure Elm text editor
@@ -65,6 +65,22 @@ init config =
         |> Model.init
         |> Editor
         |> Cmd.Extra.withCmd cmd
+
+
+initWithContent : String -> Config -> Editor
+initWithContent content config =
+    let
+        ( contextMenu, msg ) =
+            ContextMenu.init
+
+        cmd : Cmd Msg
+        cmd =
+            Cmd.map ContextMenuMsg msg
+    in
+    ( config, contextMenu )
+        |> Model.init
+        |> (\m -> { m | lines = content |> String.lines |> Array.fromList })
+        |> Editor
 
 
 {-| Update the editor with a message

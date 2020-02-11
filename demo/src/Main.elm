@@ -55,11 +55,11 @@ type Msg
 init : Flags -> ( Model, Cmd Msg )
 init =
     \() ->
-        { editor = Editor.init config |> Tuple.first
+        { editor = Editor.initWithContent Data.markdownExample config
         , numberOfTestLines = Nothing
-        , lines = []
+        , lines = Data.markdownExample |> String.lines
         , diffedLines = []
-        , renderingData = load 0 ( 0, 0 ) (OMarkdown ExtendedMath) Data.welcome
+        , renderingData = load 0 ( 0, 0 ) (OMarkdown ExtendedMath) Data.markdownExample
         , counter = 1
         }
             |> Cmd.Extra.withCmds
