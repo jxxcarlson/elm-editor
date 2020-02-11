@@ -1,7 +1,7 @@
 module Editor exposing
     ( Editor(..), init, loadArray
     , EditorMsg, getLines, getContextMenu, update, view
-    , initWithContent, loadString, syncMessages
+    , initWithContent, loadString, resize, syncMessages
     )
 
 {-| Use the Editor module to embed a pure Elm text editor
@@ -35,6 +35,11 @@ import View exposing (viewDebug, viewEditor, viewHeader)
 -}
 type Editor
     = Editor Model
+
+
+resize : Float -> Float -> Editor -> Editor
+resize width height (Editor model) =
+    Editor { model | width = width, height = height }
 
 
 {-| View function for the editor

@@ -21,6 +21,7 @@
             "jinjor/elm-diff": "1.0.6",
             "jxxcarlson/elm-markdown": "6.0.1",
             "jxxcarlson/meenylatex": "9.0.2",
+            "mdgriffith/elm-ui": "1.1.5",
             "zwilias/elm-rosetree": "1.5.0"
         },
         "indirect": {

@@ -1,16 +1,36 @@
-module Style exposing (editor, outerContainer, renderedText)
+module Style exposing (editor, footer, innerContainer, outerContainer, renderedText)
 
 import Html.Attributes as HA
 
 
 outerContainer width height =
-    [ HA.style "padding-top" "40px"
-    , HA.style "width" (px (width - 40))
-    , HA.style "height" (px (height - 40))
+    [ HA.style "padding-top" "0px"
+    , HA.style "width" (px width)
+    , HA.style "height" (px height)
+    , HA.style "display" "flex"
+    , HA.style "flex-direction" "column"
+    , HA.style "justify-content" "center"
+    , HA.style "overflow" "hidden"
+    ]
+
+
+innerContainer width height =
+    [ HA.style "width" (px width)
+    , HA.style "height" (px height)
     , HA.style "display" "flex"
     , HA.style "flex-direction" "row"
     , HA.style "justify-content" "center"
     , HA.style "overflow" "hidden"
+    ]
+
+
+footer width height =
+    [ HA.style "width" (px width)
+    , HA.style "height" (px height)
+    , HA.style "display" "flex"
+    , HA.style "flex-direction" "row"
+    , HA.style "overflow" "hidden"
+    , HA.style "background-color" "#666"
     ]
 
 

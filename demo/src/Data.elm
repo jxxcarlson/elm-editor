@@ -1,8 +1,68 @@
-module Data exposing (markdownExample, mathExample, welcome)
+module Data exposing (about, markdownExample, mathExample)
 
 
-welcome =
-    "Welcome!"
+about =
+    """
+# About this app
+
+What you see here is a demonstration of
+a pure Elm text editor. The app has two
+windows.  On the left is the editor
+itself.  On the right is the content of
+the editor suitably rendered. This
+document is written in a [flavor of
+Markdown](https://package.elm-lang.org/packages/jxxcarlson/elm-markdown/latest/)
+that can handle mathematical
+notation, like this:
+
+$$
+\\int_0^1 x^n dx = \\frac{1}{n+1}
+$$
+
+Documents can also be written in
+[MiniLaTeX](https://minilatex.io),
+a subset of LaTeX that is designed
+to be rendered on the fly to Html.
+
+## Using the editor
+
+Do ctrl-click in the green bar below to
+bring up a menu of commands, e.g.,
+ctrl-O to open a file and ctrl-option-S
+to save the current contents of the
+editor to a file.
+
+## Examples
+
+The commands ctrl-1, ctrl-2, ... load
+examples into the editor.
+
+## Roadmap
+
+This editor is a work in progress.
+Version 1.0 will be announced when it is
+ready. I appreciate feedback and bug
+reports.  The best way is to post an
+issue on the [Github
+repo](https://github.com/jxxcarlson/elm-ed
+itor2). Email to jxxcarlson@gmail.com
+also works.
+
+## Acknowledgements
+
+The starting point for this editor was
+the code of [Martin Janiczek](https://discourse.elm-lang.org/t/text-editor-done-in-pure-elm/1365). I also
+learned a great deal from the work
+ of [Sydney Nemzer](https://sidneynemzer.github.io/elm-text-editor/).
+
+## Note
+
+This editor will supersede [the previous version](https://package.elm-lang.org/packages/jxxcarlson/elm-text-editor/latest/).
+It has not yet been published on the [Elm package manager](https://package.elm-lang.org), but will be as soon as it reaches
+feature parity wth the previous version.
+
+
+"""
 
 
 markdownExample : String
