@@ -42,7 +42,7 @@ diffUpdateAst option counter text lastAst =
         newAst =
             parse option counter text
     in
-    Diff.mergeWith Parse.equalIds lastAst newAst
+    Diff.mergeWith Parse.equalContent lastAst newAst
 
 
 render : ( Int, Int ) -> Tree Parse.MDBlockWithId -> RenderedText msg

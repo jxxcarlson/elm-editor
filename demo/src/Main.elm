@@ -141,10 +141,6 @@ viewEditorColumn model =
 
 viewRenderedText : Model -> Html Msg
 viewRenderedText model =
-    let
-        _ =
-            Debug.log "NEW:3" (Render.getFullAst model.renderingData)
-    in
     H.div Style.renderedText
         [ (Render.get model.renderingData).title
         , (Render.get model.renderingData).document
@@ -234,9 +230,6 @@ updateRenderingData lines model =
 
         newRenderingData =
             Render.update ( 0, 0 ) counter source model.renderingData
-
-        _ =
-            Debug.log "NEW:1" (Render.getFullAst newRenderingData)
     in
     { model | renderingData = newRenderingData, counter = counter }
 
@@ -251,29 +244,10 @@ loadRenderingData source model =
     { model | renderingData = newRenderingData }
 
 
-
---syncWithEditor : Model -> Editor -> Cmd EditorMsg -> ( Model, Cmd Msg )
---syncWithEditor model editor cmd =
---    let
---        newSource =
---            Editor.getLines editor
---                |> Array.toList
---                |> String.join "\n"
---                |> Debug.log "NEW:S"
---    in
---    ( { model
---        | editor = editor
---        , counter = model.counter + 2
---        , renderingData = Render.update ( 0, 0 ) (model.counter + 1) newSource model.renderingData
---      }
---    , Cmd.map EditorMsg cmd
---    )
-
-
 sync : Editor -> Cmd EditorMsg -> Model -> ( Model, Cmd Msg )
 sync newEditor cmd model =
     model
-        |> updateRenderingData (Editor.getLines newEditor |> Debug.log "NEW:0")
+        |> updateRenderingData (Editor.getLines newEditor)
         |> (\m -> { m | editor = newEditor })
         |> withCmd (Cmd.map EditorMsg cmd)
 
