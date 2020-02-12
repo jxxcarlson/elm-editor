@@ -82,6 +82,8 @@ type Msg
     | EditorMsg Editor.EditorMsg
     | WindowSize Int Int
     | Load String
+    | ToggleDocType
+    | NewDocument
 
 
 init : Flags -> ( Model, Cmd Msg )
@@ -99,27 +101,33 @@ init flags =
             ]
 
 
-loadDocument : String -> Model -> ( Model, Cmd Msg )
-loadDocument docTitle model =
+loadDocumentByTitle : String -> Model -> ( Model, Cmd Msg )
+loadDocumentByTitle docTitle model =
     case docTitle of
         "about" ->
-            ( loadDocument_ docTitle MarkdownDoc Data.about model, Cmd.none )
+            ( loadDocument docTitle Data.about MarkdownDoc model, Cmd.none )
 
         "markdownExample" ->
-            ( loadDocument_ docTitle MarkdownDoc Data.markdownExample model, Cmd.none )
+            ( loadDocument docTitle Data.markdownExample MarkdownDoc model, Cmd.none )
 
         "mathExample" ->
-            ( loadDocument_ docTitle MarkdownDoc Data.mathExample model, Cmd.none )
+            ( loadDocument docTitle Data.mathExample MarkdownDoc model, Cmd.none )
 
         "astro" ->
-            ( loadDocument_ docTitle MarkdownDoc Data.astro model, Cmd.none )
+            ( loadDocument docTitle Data.astro MarkdownDoc model, Cmd.none )
+
+        "aboutMiniLaTeX" ->
+            ( loadDocument docTitle Data.aboutMiniLaTeX MiniLaTeXDoc model, Cmd.none )
+
+        "miniLaTeXExample" ->
+            ( loadDocument docTitle Data.miniLaTeXExample MiniLaTeXDoc model, Cmd.none )
 
         _ ->
             ( model, Cmd.none )
 
 
-loadDocument_ : String -> DocType -> String -> Model -> Model
-loadDocument_ title docType source model =
+loadDocument : String -> String -> DocType -> Model -> Model
+loadDocument title source docType model =
     case docType of
         MarkdownDoc ->
             let
@@ -213,7 +221,29 @@ update msg model =
             )
 
         Load title ->
-            loadDocument title model
+            loadDocumentByTitle title model
+
+        ToggleDocType ->
+            let
+                newDocType =
+                    case model.docType of
+                        MarkdownDoc ->
+                            MiniLaTeXDoc
+
+                        MiniLaTeXDoc ->
+                            MarkdownDoc
+            in
+            ( { model | docType = newDocType }, Cmd.none )
+
+        NewDocument ->
+            case model.docType of
+                MarkdownDoc ->
+                    loadDocument "newFile" "" MarkdownDoc model
+                        |> withCmd Cmd.none
+
+                MiniLaTeXDoc ->
+                    loadDocument "newFile" "" MiniLaTeXDoc model
+                        |> withCmd Cmd.none
 
 
 
@@ -222,7 +252,7 @@ update msg model =
 
 view : Model -> Html Msg
 view model =
-    Element.layout []
+    Element.layout [ Background.color <| gray 80 ]
         (mainColumn model)
 
 
@@ -254,12 +284,36 @@ viewFooter model width_ height_ =
         , Font.size 14
         , paddingXY 10 0
         , Element.moveUp 19
-        , spacing 12
+        , spacing 36
         ]
-        [ loadDocumentButton model 50 "about" "About"
-        , loadDocumentButton model 70 "markdownExample" "Markdown"
+        [ documentControls model
+        , markdownDocumentLoader model
+        , latexDocumentLoader model
+        ]
+
+
+documentControls model =
+    row [ spacing 12 ]
+        [ documentTypeButton model
+        , newDocumentButton model
+        ]
+
+
+markdownDocumentLoader model =
+    row [ spacing 12 ]
+        [ el [] (text "Markdown Docs: ")
+        , loadDocumentButton model 50 "about" "About"
+        , loadDocumentButton model 50 "markdownExample" "Sample"
         , loadDocumentButton model 50 "mathExample" "Math"
         , loadDocumentButton model 50 "astro" "Astro"
+        ]
+
+
+latexDocumentLoader model =
+    row [ spacing 12 ]
+        [ el [] (text "LaTeX Docs: ")
+        , loadDocumentButton model 50 "aboutMiniLaTeX" "About"
+        , loadDocumentButton model 50 "miniLaTeXExample" "Sample"
         ]
 
 
@@ -281,6 +335,7 @@ viewRenderedText model width_ height_ =
         , Element.htmlAttribute (HA.style "line-height" "20px")
         , paddingXY 14 0
         , Border.width 1
+        , Background.color <| gray 240
         ]
         [ (Render.get model.renderingData).title |> Element.html
         , (Render.get model.renderingData).document |> Element.html
@@ -296,15 +351,32 @@ pxFloat p =
 -- BUTTONS
 
 
+newDocumentButton model =
+    button 90 "New" NewDocument []
+
+
+documentTypeButton model =
+    let
+        title =
+            case model.docType of
+                MarkdownDoc ->
+                    "Markdown"
+
+                MiniLaTeXDoc ->
+                    "LaTeX"
+    in
+    button width title ToggleDocType [ Background.color Style.redColor ]
+
+
 loadDocumentButton model width docTitle buttonLabel =
     let
         bgColor =
             case model.docTitle == docTitle of
                 True ->
-                    Element.rgb255 150 40 40
+                    Style.redColor
 
                 False ->
-                    Element.rgb255 90 90 100
+                    Style.grayColor
     in
     button width buttonLabel (Load docTitle) [ Background.color bgColor ]
 
