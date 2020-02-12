@@ -62,6 +62,8 @@ type alias Model =
     , counter : Int
     , width : Float
     , height : Float
+    , docTitle : String
+    , docType : DocType
     }
 
 
@@ -89,22 +91,58 @@ init flags =
     , counter = 1
     , width = flags.width
     , height = flags.height
+    , docTitle = "about"
+    , docType = MarkdownDoc
     }
         |> Cmd.Extra.withCmds
             [ Dom.focus "editor" |> Task.attempt (always NoOp)
             ]
 
 
+loadDocument : String -> Model -> ( Model, Cmd Msg )
+loadDocument docTitle model =
+    case docTitle of
+        "about" ->
+            ( loadDocument_ docTitle MarkdownDoc Data.about model, Cmd.none )
 
---
---loadDocument : DocType -> String -> Model -> Model
---loadDocument docType source model =
---    let
---        lines = source |> String.l
---
---    case docType of
---        MarkdownDoc ->
---            lines =
+        "markdownExample" ->
+            ( loadDocument_ docTitle MarkdownDoc Data.markdownExample model, Cmd.none )
+
+        "mathExample" ->
+            ( loadDocument_ docTitle MarkdownDoc Data.mathExample model, Cmd.none )
+
+        _ ->
+            ( model, Cmd.none )
+
+
+loadDocument_ : String -> DocType -> String -> Model -> Model
+loadDocument_ title docType source model =
+    case docType of
+        MarkdownDoc ->
+            let
+                renderingData =
+                    Render.load ( 0, 0 ) model.counter (OMarkdown ExtendedMath) source
+            in
+            { model
+                | renderingData = renderingData
+                , counter = model.counter + 1
+                , editor = Editor.initWithContent source (config { width = model.width, height = model.height })
+                , docTitle = title
+                , docType = MarkdownDoc
+            }
+
+        MiniLaTeXDoc ->
+            let
+                renderingData =
+                    Render.load ( 0, 0 ) model.counter OMiniLatex source
+            in
+            { model
+                | renderingData = renderingData
+                , counter = model.counter + 1
+                , editor = Editor.initWithContent source (config { width = model.width, height = model.height })
+                , docTitle = title
+                , docType = MiniLaTeXDoc
+            }
 
 
 config flags =
@@ -172,7 +210,7 @@ update msg model =
             )
 
         Load title ->
-            ( model, Cmd.none )
+            loadDocument title model
 
 
 
@@ -215,9 +253,9 @@ viewFooter model width_ height_ =
         , Element.moveUp 19
         , spacing 12
         ]
-        [ button 50 "About" (Load "about") []
-        , button 70 "Markdown" (Load "markdownExample") []
-        , button 50 "Math" (Load "mmathExample") []
+        [ loadDocumentButton model 50 "about" "About"
+        , loadDocumentButton model 70 "markdownExample" "Markdown"
+        , loadDocumentButton model 50 "mathExample" "Math"
         ]
 
 
@@ -252,6 +290,19 @@ pxFloat p =
 
 
 -- BUTTONS
+
+
+loadDocumentButton model width docTitle buttonLabel =
+    let
+        bgColor =
+            case model.docTitle == docTitle of
+                True ->
+                    Element.rgb255 150 40 40
+
+                False ->
+                    Element.rgb255 90 90 100
+    in
+    button width buttonLabel (Load docTitle) [ Background.color bgColor ]
 
 
 button width str msg attr =
