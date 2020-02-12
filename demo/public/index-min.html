@@ -1,10 +1,19 @@
+
 <!DOCTYPE HTML>
 <html>
 
 <head>
     <meta charset="UTF-8">
 
-    <title>Janiczek Text Editor</title>
+    <!-- Load MathJax code -->
+    <script src="assets/custom-element-config.js"></script>
+    <script src="assets/math-text.js"></script>
+    <script src="assets/math-text-delayed.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+
+    <link rel="stylesheet" href="assets/style.css">
+
+    <title>Pure Elm Text Editor</title>
 
     <script src="Main.min.js"></script>
 
@@ -16,6 +25,10 @@
 <script>
       var app = Elm.Main.init({
         node: document.getElementById('editor'),
+        flags : {
+          width : window.innerWidth,
+          height : window.innerHeight
+         }
       });
 </script>
 
