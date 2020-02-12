@@ -116,6 +116,7 @@ update selectedId version source rd =
                 { data
                     | fullAst = newAst
                     , renderedText = Markdown.ElmWithId.renderHtmlWithExternaTOC selectedId "Topics" newAst
+                    , initialAst = newAst
                     , sourceMap = Parse.sourceMap newAst
                 }
 

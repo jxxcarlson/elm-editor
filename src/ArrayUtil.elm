@@ -100,11 +100,14 @@ split position array =
                 focusLength =
                     String.length focus
 
+                n =
+                    Array.length array
+
                 before =
                     Array.slice 0 position.line array
 
                 after =
-                    Array.slice (position.line + 1) (focusLength - 1) array
+                    Array.slice (position.line + 1) n array
 
                 beforeSuffix =
                     String.slice 0 position.column focus

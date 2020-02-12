@@ -111,6 +111,9 @@ loadDocument docTitle model =
         "mathExample" ->
             ( loadDocument_ docTitle MarkdownDoc Data.mathExample model, Cmd.none )
 
+        "astro" ->
+            ( loadDocument_ docTitle MarkdownDoc Data.astro model, Cmd.none )
+
         _ ->
             ( model, Cmd.none )
 
@@ -256,6 +259,7 @@ viewFooter model width_ height_ =
         [ loadDocumentButton model 50 "about" "About"
         , loadDocumentButton model 70 "markdownExample" "Markdown"
         , loadDocumentButton model 50 "mathExample" "Math"
+        , loadDocumentButton model 50 "astro" "Astro"
         ]
 
 
@@ -307,13 +311,15 @@ loadDocumentButton model width docTitle buttonLabel =
 
 button width str msg attr =
     Input.button
-        [ Border.width 1
-        , Border.color (gray 200)
-        , paddingXY 8 8
-        , Background.color (Element.rgb255 90 90 100)
-        ]
+        ([ Border.width 1
+         , Border.color (gray 200)
+         , paddingXY 8 8
+         , Background.color (Element.rgb255 90 90 100)
+         ]
+            ++ attr
+        )
         { onPress = Just msg
-        , label = el [] (text str)
+        , label = el attr (text str)
         }
 
 
@@ -367,11 +373,14 @@ updateRenderingData lines model =
 loadRenderingData : String -> Model -> Model
 loadRenderingData source model =
     let
+        counter =
+            model.counter + 1
+
         newRenderingData : RenderingData Msg
         newRenderingData =
-            Render.update ( 0, 0 ) model.counter source model.renderingData
+            Render.update ( 0, 0 ) counter source model.renderingData
     in
-    { model | renderingData = newRenderingData }
+    { model | renderingData = newRenderingData, counter = counter }
 
 
 sync : Editor -> Cmd EditorMsg -> Model -> ( Model, Cmd Msg )

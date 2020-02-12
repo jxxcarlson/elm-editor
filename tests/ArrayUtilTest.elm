@@ -13,6 +13,24 @@ ex1 =
     Array.fromList [ "abcde", "01234", "pqrst" ]
 
 
+ex2str =
+    """
+aaa
+
+$$
+\\omega = \\frac{360}(365/25} = 0.9856 \\text{ degrees/day }
+$$
+
+bbb
+"""
+
+
+ex2array =
+    ex2str
+        |> String.lines
+        |> Array.fromList
+
+
 stringFromArray : Array String -> String
 stringFromArray array =
     array
@@ -115,7 +133,7 @@ suite =
                     Array.fromList [ "abc", "012", "def" ]
                         |> Action.deleteSelection (Selection (Position 1 0) (Position 1 2))
                         |> Expect.equal result
-            , test "Cut two lines (Action), simple " <|
+            , test "Cut two lines (Action), simple 3 " <|
                 \_ ->
                     let
                         result =
@@ -127,7 +145,7 @@ suite =
                     Array.fromList [ "abc", "012", "345", "def" ]
                         |> ArrayUtil.cut (Position 1 0) (Position 2 3)
                         |> Expect.equal result
-            , test "Cut parts of two lines (Action), simple " <|
+            , test "Cut parts of two lines (Action), simple 4" <|
                 \_ ->
                     let
                         result =
@@ -139,7 +157,7 @@ suite =
                     Array.fromList [ "abc", "0123", "4567", "def" ]
                         |> ArrayUtil.cut (Position 1 1) (Position 2 3)
                         |> Expect.equal result
-            , test "Cut lines (Action), wider spread" <|
+            , test "Cut lines (Action), wider spread 5" <|
                 \_ ->
                     let
                         result =
@@ -171,19 +189,15 @@ suite =
                         |> Expect.equal (stringFromArray output)
             , test "split" <|
                 \_ ->
-                    let
-                        input =
-                            Array.fromList [ "abcdef" ]
-
-                        output =
-                            Array.append (Array.fromList [ "abc" ]) (Array.fromList [ "def" ])
-                                |> stringFromArray
-                    in
-                    input
-                        |> ArrayUtil.split (Position 1 2)
-                        |> Tuple.first
-                        |> stringFromArray
-                        |> Expect.equal output
+                    Array.fromList [ "abcdef" ]
+                        |> ArrayUtil.split (Position 0 2)
+                        |> Expect.equal ( Array.fromList [ "abc", "def" ], Array.fromList [ "" ] )
+            , only <|
+                test "split (2)" <|
+                    \_ ->
+                        Array.fromList [ "abc", "def", "hij" ]
+                            |> ArrayUtil.split (Position 1 0)
+                            |> Expect.equal ( Array.fromList [ "abc" ], Array.fromList [ "def", "hij" ] )
             , test "paste one line" <|
                 \_ ->
                     let
@@ -274,15 +288,23 @@ suite =
                     lines
                         |> ArrayUtil.replaceLines (Position 1 0) (Position 1 4) newContent
                         |> Expect.equal output
-            , only <|
-                test "insert line after given index" <|
-                    \_ ->
-                        let
-                            lines =
-                                Array.fromList [ "AAA", "BBB", "CCC" ]
-                        in
-                        lines
-                            |> ArrayUtil.insertLineAfter 1 "XXX"
-                            |> Expect.equal (Array.fromList [ "AAA", "BBB", "XXX", "CCC" ])
+            , test "insert line after given index" <|
+                \_ ->
+                    let
+                        lines =
+                            Array.fromList [ "AAA", "BBB", "CCC" ]
+                    in
+                    lines
+                        |> ArrayUtil.insertLineAfter 1 "XXX"
+                        |> Expect.equal (Array.fromList [ "AAA", "BBB", "XXX", "CCC" ])
+            , test "insert line after given index 2" <|
+                \_ ->
+                    let
+                        lines =
+                            Array.fromList [ "AAA", "BBB", "CCC" ]
+                    in
+                    lines
+                        |> ArrayUtil.insertLineAfter 1 "XXX"
+                        |> Expect.equal (Array.fromList [ "AAA", "BBB", "XXX", "CCC" ])
             ]
         ]

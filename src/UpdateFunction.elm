@@ -129,6 +129,10 @@ deleteSelection model =
                 |> Common.recordHistory model
 
 
+
+-- BREAK LINES
+
+
 breakLineBefore : Int -> String -> ( String, Maybe String )
 breakLineBefore k str =
     case String.length str > k of

@@ -142,4 +142,6 @@ syncMessages =
     , Paste
     , WrapAll
     , WrapSelection
+    , Undo
+    , Redo
     ]

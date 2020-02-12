@@ -1,4 +1,4 @@
-module Data exposing (about, markdownExample, mathExample)
+module Data exposing (about, astro, markdownExample, mathExample)
 
 
 about =
@@ -376,4 +376,466 @@ plt.plot(x, np.cos(x**2/t)/np.sqrt(t))
 plt.title('Free particle propagator, t=4');
 ```
 
+"""
+
+
+astro =
+    """
+# Greek Period ___
+
+[Main](#id/0089c6c9-aa54-4c42-8844-c821d2684c9c)
+
+___
+
+## Motion of the Sun (DRAFT)
+
+
+
+FIGURE. Greek astronomy was fundamentally different from that of the
+Babylonian scribes, having as its basis geometric models rather than
+abstract predictive functions. Notable was the 
+work of [Hipparchus](https://en.wikipedia.org/wiki/Hipparchus)(c.
+190 – c. 120 BCE), who based his astronomy on
+the circle. Let us consider just one case, that of the
+sun. To understand the problem, let's think about what we can observe.
+The first and most obvious fact is that each
+day the sun rises let us see what happens. this
+is a little slow.
+
+Now for the second fact. If we observe
+the sun just before it rises, we can
+make out the outline of one of the
+twelve constellations of the zodiac:
+
+````
+  Constellation  Month    Longitude
+  ---------------------------------
+    Aries        March        0
+    Taurus       April       30  
+    Gemini       May         60
+    Cancer       June        90
+    Leo          July       120
+    Virgo        August     150
+    Libra        September  180
+    Scorpio      October    210
+    Sagittarius  November   240
+    Capricornus  December   270
+    Aquarius     January    300
+    Pisces       February   330
+````
+
+
+These constellations form a kind of
+belt in the sky, the center of which is
+a great circle called the *ecliptic*.
+If we observe the sun in March we find
+it in the constellation of Aries. The
+next month we find it in Taurus, the
+month after that in Gemini, etc. Thus,
+in addition to its daily motion from
+sunrise to sunset, the sun also appears
+to move much more slowly through the
+constellations of the zodiac. Since
+there are 360 degrees in a circle, each
+of the constellations occupies an arc
+of about 30 degrees along the ecliptic.
+Thus we can think of the signs of the
+zodiac as marking off 30 degree arcs
+along the ecliptic, with the precise
+position given in degrees from "the
+first point of Aries." This quantity
+is the *ecliptic longitude*. As an
+example, on March 21 of 2019, at 4:00
+GMT, almost exactly at the moment of
+the Spring Equinox, the sun was at
+longitude 359.991 degrees, or what
+is te same thing, -0.009 degrees. One
+day later at the same time it was at
+longitude 0.984 degrees, and a day
+after that at 1.976 degrees.
+
+In ancient times, when there were no
+precision optical instruments, the
+zodiac gave a crude way of measuring
+angular position and had the added
+benefit of providing a calendar, in
+which the twelve signs are correlated
+with the twelve months. In any case, in
+Hipparcus time, the notion of ecliptic
+longitude was well known. Thus we can
+make statements such as "today, the
+sun is in Scorpio; its longitude is
+231 degrees."
+
+## Uniform Motion
+
+Thi 
+
+Hipparchus' goal was to be able to
+compute the eclipitic longitude of the
+sun as a function of time. The simplest
+model is the one you see in the figure
+below. It consists of a circle of some
+radius R with the Earth G as center.
+The sun moves uniformly around the
+circle making one complete turn of 360
+degree in 365.25 days. Thereore its
+angular velocity is
+
+$$
+\\omega = \\frac{360}{365.25} = 0.9856 \\text{ degrees/day}
+$$
+
+Note the reasonably close agreement
+with the positions of the sun mentioned
+above: starting from March 21, 2019
+at 4:00 and advancing in 24 hour
+increments, we have the following table
+for one week of the Sun's position.
+An entry in the last column is the
+current longitude minus the previous
+day's longitude.
+
+````
+Date               Long.   Diff
+-------------------------------
+March 21, 2019    -0.009
+March 22, 2019     0.984  0.993
+March 23, 2019     1.977  0.992
+March 24, 2019     2.968  0.991  
+March 25, 2019     3.959  0.991  
+March 26, 2019     4.950  0.991 
+March 27, 2019     5.940  0.990
+-------------------------------
+````
+
+Given this model, we can make various predictions.
+'For example, using the [Ecliptic Longitude Tables](https://www.imo.net/resources/solar-longitude-tables/), we
+find that $\\theta = 280.001$ on January 1,
+2018, that $\\theta = 311.561$ on Febraury 1.
+
+$$
+\\theta = 280.001 + \\omega T = 310.55 \\text{ degrees}
+$$
+
+The actual longitude is 1.006 degrees
+greater. What is wrong?
+
+FIGURE
+
+## Non-uniform Motion
+
+The discrepancy we have just seen was
+well known to Hipparchus, who realized
+that the apparent motion of the sun
+as seen from the Earth, while it may
+be along a circle, is not uniform. The
+observational data of the time, even
+though much less accurate than what
+we have today, was good enough to show
+that the simple model is too simple.
+Hipparchus' solution is shown in the
+next figure. The sun moves uniformly
+around a circle of radius $R$ centered
+at $O$, but the Earth is located
+off-center at $G$, some $d$ units away.
+The point $\\Pi$ is the *perigree*, the
+point at which the sun is closest to
+Earth. The point $A$ is the *apogee*,
+the point at which the sun is farthest
+from Earth.
+
+Let us now compare the motion of the
+Sun as seen from Earth as it moves
+from $Pi$ to $L$ with its motion from
+$M$ to $A$. The figure is set up so
+that $\\angle \\Pi OL = \\angle MOA$.
+Therefore, assuming uniform motion
+with center $O$, the time taken from
+$\\Pi$ to $L$ is the same as the time
+taken from $M$ to $A$. Now conside
+the apparent motion as viewed from the
+Earth at $G$. The angle $\\angle MGA$
+is greater than the angle $\\angle \\Pi
+G L$. Therefore the sun appears to move
+faster from $\\Pi$ to $L$ than it does
+from $M$ to $A$. Consequently Hipparchus'
+model gives the correct qualitative
+results: faster motion near perigee
+and slower apogee, when it is further
+away.
+
+FIGURE
+
+Hipparchus' model also yields a
+quantitative formula for the rate of
+change of the ecliptic longitude. While
+the original arguments were based on
+geometry and an early versifon of
+trigonometry, we shall use modern
+trigonometry and a bit of calculus.
+To state the result, let $\\omega$ be
+the angular velocity of the sun. This
+is the same as the rate of change in
+the ecliptic longitude of the sun,
+which is given by $\\phi = \\angle \\Pi
+GL$. Let $\\bar \\omega$ be the mean
+angular velocity. This is the rate of
+change in the angle $\\theta = \\angle
+\\Pi O L$, which is $0.9857 \\text{
+degrees/day}$. Now consider the ratio
+$k$ of the angular velocity to the
+mean angular velocity. This quantiy
+depends on $\\theta$, as does $\\omega$.
+Thefore we can write
+
+$$
+\\omega(\\theta) = k(\\theta)\\bar \\omega,
+$$
+
+We will show that $k(\\theta)$ satisfies
+the inequality
+
+$$
+1 - \\epsilon 
+  \\;\\lesssim\\;  k(\\theta) 
+  \\;\\lesssim \\;1 + \\epsilon
+$$
+
+This is a small quantity, with a value
+of about 0.03. The symbol $\\;\\lesssim\\;$
+stands for "approximate inequality."
+The discrepancy commited by this and
+the true, slightly more complicated
+inequality is about $\\epsilon^2$. When
+$\\epsilon = 0.03$, one has $\\epsilon^2
+\\sim 0.0001$.
+
+### Finding the parameters
+
+We can use this inequality to find the
+ratio $k = d/R$ using observational
+data. From the table XXX of the suns's
+motion for 2019, one finds that the
+mean angular velocity of the sun ranges
+from $0.953$ to $1.02$ degrees per day
+with an average of $0.98547$. Using
+the maximum, we find that $\\epsilon
+\\sim 0.02$. Using the minimum, we
+find $\\epsilon = 0.047$. Let's take
+$\\epsilon$ to be the average of these
+values, $0.0335$. This means that if
+we make physical version of Hipparchus'
+model with a radius $R$ of one meter,
+the Earth will be 3.4 centimeters
+off-center.
+
+FIGURE
+
+### Derivation
+
+From the figure, we have
+
+$$
+\\tan \\phi = \\frac{R\\sin \\theta}{R \\cos \\theta - d },
+$$
+
+so that
+
+$$
+\\phi = \\arctan \\frac{R\\sin \\theta}{R \\cos \\theta - d }
+$$
+
+Differentiate this equation with
+respect to time to obtain
+
+$$
+\\frac{d\\phi}{dt}
+  = 
+\\frac{1 - (d/R)\\cos\\theta}{1 - 2(d/R)\\cos\\theta + (d/R)^2} 
+\\frac{d\\theta}{dt}
+$$
+
+Set $k = d/R$ and rewrite the above
+to obtain
+
+$$
+\\frac{d\\phi}{dt} 
+  =
+\\frac{1 - k\\cos\\theta}{1 - 2k\\cos\\theta + k^2} \\frac{d\\theta}{dt}
+$$
+
+Then
+
+$$
+\\frac{d\\phi}{dt}
+  = k(\\theta)\\frac{d\\theta}{dt}
+$$
+
+with
+
+$$
+k(\\theta) = \\frac{1 - 2k\\cos\\theta + k^2}{1 - k\\cos\\theta}
+$$
+
+One finds that
+
+$$
+k(0) = \\frac{1}{1-k} \\sim 1 + k
+$$
+
+and
+
+$$
+k(180) = \\frac{1}{1 + k} \\sim 1 - k
+$$
+
+These are the minimum and maximum
+values, repectively
+
+### Approximations
+
+The formula for the geometric series is
+
+$$
+\\frac{1}{1 - q} = 1 + q + q^2 + q^3 + \\cdots,
+$$
+
+where $|q| < 1$. If we ignore terms
+of order two and higher in $q$ we have
+the approximation
+
+$$
+\\frac{1}{1-q} \\sim 1 + q,
+$$
+
+Let's see how good this approximation
+is for $q = 0.03$. In that case,
+
+$$
+\\frac{1}{1 - 0.03} = 1 + 0.03 + 0.0009 + 0.0000027 + \\ldots
+$$
+
+so
+
+$$
+\\frac{1}{1 - 0.03} \\sim 1.03,
+$$
+
+with an error of at most $0.00091$.
+For the same reason, we have the estimate
+
+$$
+1 - \\epsilon \\le k(\\theta) \\le 1 + \\epsilon
+$$
+
+## Epicycles
+
+![Epicycles::left](https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRBFgKMx3RF55RDSrFnSlm78yiO4dL1rvxRjKZ2IYq6QhzYtVlXcg) In the second model, the Earth is at
+the center of of the large circle. However,
+the moon moves not on that circle, but
+rather on a secondary circle attached to it.
+To get numbers of out of these models, one
+needs both geometry and trigonometry.
+Hipparchus had what amounted to trig tables, but
+for the chord function, not the sine.
+Referring to the figure below,
+
+$$
+\\text{chord } \\angle AOC = \\frac{AC}{AO}
+$$
+
+whereas
+
+$$
+\\sin\\angle AOB = \\frac{AB}{AO}
+$$
+
+FIGURE
+
+One of the criticisms of Greek astronomy
+is that neither the equant nor the
+epicycles are real, much less the
+celestial sphere. This is certainly
+so. However, it is worth noting that
+Claudius Ptolelemy (100–170 CE) gave
+proof in his book,the *Almagest*, that
+the two models were equivalent. For
+this reason, I believe it is doubtful
+that they took these models to be much
+more than a computational device.
+
+![epicylcle::left](https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQYfJQQeoGYhF8EKjHn1AOvfetlYQHhFqbiK0uhOJvDmxzyc7mk8Q)
+
+With the epicycle model, one could
+explain a heretefore puzzling
+phenomenon as well as make more accurate
+predictions. Planets, like the sun and
+moon, rise in the East after sunset,
+moving slowly towards the West, where
+they later set. But there is a second
+motion superimposed on this daily one.
+If you look up in the sky at the same
+hour every night, you will notice that
+the planets Mars, Jupiter, and Saturn
+will be a little further East each
+day. This motion, very roughly, is
+explainable by the single-circle
+model. Not the variations in speed,
+but certainly the average speed. One
+planet, however behaves differently.
+This is Mars. From to time its slower
+eastward motion slows, comes to a
+stop, and reverses direction, moving
+westward against the background of the
+stars. After a while it resumes its
+slow eastward motion. This phenomenon,
+known as *retrograde motion*, is
+explained by an epiclyclic model where
+the smaller circle rotates in the
+direction opposite of the big circle's
+rotation.
+
+As astronomers made more and more
+accurate measurements and kept better
+and better records, they noticed that
+the one-epicycle model gave predictions
+at variance with observation. After much
+checking and recalculating, they came
+to the conclusion that the observations
+were correct and the model was flawed.
+Another epicycle was added and its
+radius and rate of rotation tuned to
+give the best possible result. This
+cartoon descriptipon describes the long
+process between Ptolemy and Copernicus
+during which the Ptolemy's model was
+elaborated and made ever more accurate.
+Most of this work was carried on in
+the Muslim world, with distinguished
+scientist-scholars from Persia and
+Baghdad to Southern Spain.
+
+## Annotated References
+
+[A Modern Almagest, Robert Fitzpatrick](https://farside.ph.utexas.edu/Books/Syntaxis/Almagest.pdf) This is a
+PDF version of Fitzpatrick's book, also available from
+Amazon. It gives an account of
+Ptolemy's Almagest accessible to the modern reader and
+also debunks some of the
+standard but uninformed historical
+
+[Eccentrics, Deferents, Epicycles, and Equants](https://www.mathpages.com/home/kmath639/kmath639.htm) An excellent
+
+[Ephemerides of the sun](https://www.imo.net/resources/solar-longitude-tables/solar-longitudes-2019/) Tables of the
+
+[Drawing by epicycles](https://brettcvz.github.io/epicycles/)
+
+[Breakdown of Circular
+Paradigm](https://arxiv.org/ftp/physics/papers/0107/0107009.pdf)
+
+[Optimizing Ptolemy](https://arxiv.org/ftp/arxiv/papers/1502/1502.01967.pdf) Reference to
+
+[Summary of Ptolemaic
+Astronomy](http://users.clas.ufl.edu/ufhatch/pages/02-TeachingResources/HIS-SCI-STUDY-GUIDE/0034_summaryPtolemiacAstron.html)
 """
