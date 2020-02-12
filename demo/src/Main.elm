@@ -31,6 +31,7 @@ import Element
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
+import Element.Input as Input
 import Html as H exposing (Attribute, Html)
 import Html.Attributes as HA
 import Html.Events as HE
@@ -57,12 +58,16 @@ main =
 
 type alias Model =
     { editor : Editor
-    , lines : List String
     , renderingData : RenderingData Msg
     , counter : Int
     , width : Float
     , height : Float
     }
+
+
+type DocType
+    = MarkdownDoc
+    | MiniLaTeXDoc
 
 
 proportions : { width : Float, height : Float }
@@ -74,12 +79,12 @@ type Msg
     = NoOp
     | EditorMsg Editor.EditorMsg
     | WindowSize Int Int
+    | Load String
 
 
 init : Flags -> ( Model, Cmd Msg )
 init flags =
     { editor = Editor.initWithContent Data.about (config flags)
-    , lines = Data.markdownExample |> String.lines
     , renderingData = load 0 ( 0, 0 ) (OMarkdown ExtendedMath) Data.about
     , counter = 1
     , width = flags.width
@@ -88,6 +93,18 @@ init flags =
         |> Cmd.Extra.withCmds
             [ Dom.focus "editor" |> Task.attempt (always NoOp)
             ]
+
+
+
+--
+--loadDocument : DocType -> String -> Model -> Model
+--loadDocument docType source model =
+--    let
+--        lines = source |> String.l
+--
+--    case docType of
+--        MarkdownDoc ->
+--            lines =
 
 
 config flags =
@@ -154,6 +171,9 @@ update msg model =
             , Cmd.none
             )
 
+        Load title ->
+            ( model, Cmd.none )
+
 
 
 -- VIEW
@@ -169,7 +189,7 @@ mainColumn model =
     column [ centerX, centerY ]
         [ column []
             [ viewEditorAndRenderedText model
-            , viewFooter model model.width 30
+            , viewFooter model model.width 40
             ]
         ]
 
@@ -188,12 +208,17 @@ viewFooter model width_ height_ =
     row
         [ width (pxFloat (2 * proportions.width * width_ - 40))
         , height (pxFloat height_)
-        , Background.color (gray 100)
+        , Background.color (Element.rgb255 130 130 150)
         , Font.color (gray 240)
+        , Font.size 14
         , paddingXY 10 0
         , Element.moveUp 19
+        , spacing 12
         ]
-        [ text "Footer" ]
+        [ button 50 "About" (Load "about") []
+        , button 70 "Markdown" (Load "markdownExample") []
+        , button 50 "Math" (Load "mmathExample") []
+        ]
 
 
 gray g =
@@ -229,9 +254,16 @@ pxFloat p =
 -- BUTTONS
 
 
-rowButton width str msg attr =
-    H.div (rowButtonStyle ++ attr)
-        [ H.button ([ HE.onClick msg ] ++ rowButtonLabelStyle width) [ H.text str ] ]
+button width str msg attr =
+    Input.button
+        [ Border.width 1
+        , Border.color (gray 200)
+        , paddingXY 8 8
+        , Background.color (Element.rgb255 90 90 100)
+        ]
+        { onPress = Just msg
+        , label = el [] (text str)
+        }
 
 
 textField width str msg attr innerAttr =

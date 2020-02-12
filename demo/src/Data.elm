@@ -32,11 +32,6 @@ ctrl-O to open a file and ctrl-option-S
 to save the current contents of the
 editor to a file.
 
-## Examples
-
-The commands ctrl-1, ctrl-2, ... load
-examples into the editor.
-
 ## Roadmap
 
 This editor is a work in progress.
