@@ -39,7 +39,7 @@ import Markdown.Option exposing (Option(..))
 import Model exposing (Msg(..))
 import Render exposing (RenderingData, RenderingOption(..))
 import Style
-import Task
+import Task exposing (Task)
 
 
 type alias Flags =
@@ -77,6 +77,10 @@ proportions =
     { width = 0.35, height = 0.8 }
 
 
+
+-- MSG
+
+
 type Msg
     = NoOp
     | EditorMsg Editor.EditorMsg
@@ -84,6 +88,7 @@ type Msg
     | Load String
     | ToggleDocType
     | NewDocument
+    | SetViewPortForElement (Result Dom.Error ( Dom.Element, Dom.Viewport ))
 
 
 init : Flags -> ( Model, Cmd Msg )
@@ -101,29 +106,29 @@ init flags =
             ]
 
 
-loadDocumentByTitle : String -> Model -> ( Model, Cmd Msg )
+loadDocumentByTitle : String -> Model -> Model
 loadDocumentByTitle docTitle model =
     case docTitle of
         "about" ->
-            ( loadDocument docTitle Data.about MarkdownDoc model, Cmd.none )
+            loadDocument docTitle Data.about MarkdownDoc model
 
         "markdownExample" ->
-            ( loadDocument docTitle Data.markdownExample MarkdownDoc model, Cmd.none )
+            loadDocument docTitle Data.markdownExample MarkdownDoc model
 
         "mathExample" ->
-            ( loadDocument docTitle Data.mathExample MarkdownDoc model, Cmd.none )
+            loadDocument docTitle Data.mathExample MarkdownDoc model
 
         "astro" ->
-            ( loadDocument docTitle Data.astro MarkdownDoc model, Cmd.none )
+            loadDocument docTitle Data.astro MarkdownDoc model
 
         "aboutMiniLaTeX" ->
-            ( loadDocument docTitle Data.aboutMiniLaTeX MiniLaTeXDoc model, Cmd.none )
+            loadDocument docTitle Data.aboutMiniLaTeX MiniLaTeXDoc model
 
         "miniLaTeXExample" ->
-            ( loadDocument docTitle Data.miniLaTeXExample MiniLaTeXDoc model, Cmd.none )
+            loadDocument docTitle Data.miniLaTeXExample MiniLaTeXDoc model
 
         _ ->
-            ( model, Cmd.none )
+            model
 
 
 loadDocument : String -> String -> DocType -> Model -> Model
@@ -222,6 +227,7 @@ update msg model =
 
         Load title ->
             loadDocumentByTitle title model
+                |> withCmd (Cmd.batch [ scrollEditorToTop ])
 
         ToggleDocType ->
             let
@@ -239,11 +245,14 @@ update msg model =
             case model.docType of
                 MarkdownDoc ->
                     loadDocument "newFile" "" MarkdownDoc model
-                        |> withCmd Cmd.none
+                        |> withCmd (Cmd.batch [ scrollEditorToTop ])
 
                 MiniLaTeXDoc ->
                     loadDocument "newFile" "" MiniLaTeXDoc model
-                        |> withCmd Cmd.none
+                        |> withCmd (Cmd.batch [ scrollEditorToTop ])
+
+        SetViewPortForElement _ ->
+            ( model, Cmd.none )
 
 
 
@@ -411,20 +420,8 @@ textField width str msg attr innerAttr =
         ]
 
 
-rowButtonStyle =
-    [ HA.style "font-size" "12px"
-    , HA.style "border" "none"
-    ]
 
-
-rowButtonLabelStyle width =
-    [ HA.style "font-size" "12px"
-    , HA.style "background-color" "#666"
-    , HA.style "color" "#eee"
-    , HA.style "width" (String.fromInt width ++ "px")
-    , HA.style "height" "24px"
-    , HA.style "border" "none"
-    ]
+-- HELPERS: LOAD, RENDER, SYNC
 
 
 updateRenderingData : Array String -> Model -> Model
@@ -466,3 +463,46 @@ sync newEditor cmd model =
 load : Int -> ( Int, Int ) -> RenderingOption -> String -> RenderingData Msg
 load counter selectedId renderingOption str =
     Render.load selectedId counter renderingOption str
+
+
+
+-- SCROLLING
+
+
+setViewportForElement : String -> Cmd Msg
+setViewportForElement id =
+    Dom.getViewportOf "__rt_scroll__"
+        |> Task.andThen (\vp -> getElementWithViewPort vp id)
+        |> Task.attempt SetViewPortForElement
+
+
+scrollEditorToTop =
+    scrollToTopForElement "__editor__"
+
+
+scrollRendredTextToTop =
+    scrollToTopForElement "__rt_scroll__"
+
+
+scrollToTopForElement : String -> Cmd Msg
+scrollToTopForElement id =
+    Task.attempt (\_ -> NoOp) (Dom.setViewportOf id 0 0)
+
+
+getElementWithViewPort : Dom.Viewport -> String -> Task Dom.Error ( Dom.Element, Dom.Viewport )
+getElementWithViewPort vp id =
+    Dom.getElement id
+        |> Task.map (\el -> ( el, vp ))
+
+
+setViewPortForSelectedLineInRenderedText : Float -> Dom.Element -> Dom.Viewport -> Cmd Msg
+setViewPortForSelectedLineInRenderedText offset element viewport =
+    let
+        y =
+            viewport.viewport.y + element.element.y - verticalOffsetInRenderedText
+    in
+    Task.attempt (\_ -> NoOp) (Dom.setViewportOf "__rt_scroll__" 0 y)
+
+
+verticalOffsetInRenderedText =
+    0
