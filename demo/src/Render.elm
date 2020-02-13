@@ -11,9 +11,11 @@ module Render exposing
     , update
     )
 
+-- import Html exposing (Attribute, Html)
+
 import Dict exposing (Dict)
 import Html exposing (Html)
-import Html.Attributes as HA
+import Html.Attributes as Attribute
 import Markdown.ElmWithId
 import Markdown.Option as MDOption
 import Markdown.Parse as Parse
@@ -101,7 +103,7 @@ render selectedId rd =
                     ML data
 
                 Just fullText ->
-                    loadMiniLatex -2 fullText
+                    loadMiniLatex 0 fullText
 
 
 update : ( Int, Int ) -> Int -> String -> RenderingData msg -> RenderingData msg
@@ -131,8 +133,8 @@ get rd =
             data.renderedText
 
         ML data ->
-            { document = MiniLatex.Edit.get data.editRecord |> Html.div []
-            , title = Html.span [ HA.style "font-size" "24px" ] [ Html.text (getTitle data.editRecord) ]
+            { document = MiniLatex.Edit.get data.editRecord |> Html.div [ Attribute.attribute "id" "__RENDERED_TEXT__" ]
+            , title = Html.span [ Attribute.style "font-size" "24px" ] [ Html.text (getTitle data.editRecord) ]
             , toc = innerTableOfContents data.editRecord.latexState
             }
 
@@ -225,7 +227,7 @@ getFirstPart str =
 
 innerTableOfContents : MiniLatex.LatexState -> Html msg
 innerTableOfContents latexState =
-    Html.div [ HA.style "margin-top" "20px", HA.style "margin-left" "20px" ] (List.map innerTocItem (List.drop 1 latexState.tableOfContents))
+    Html.div [ Attribute.style "margin-top" "20px", Attribute.style "margin-left" "20px" ] (List.map innerTocItem (List.drop 1 latexState.tableOfContents))
 
 
 innerTocItem : MiniLatex.TocEntry -> Html msg
@@ -234,7 +236,7 @@ innerTocItem tocEntry =
         name =
             tocEntry.name |> String.replace " " "" |> String.toLower
     in
-    Html.div [ HA.style "margin-bottom" "8px" ]
-        [ Html.a [ HA.href <| "#_subsection_" ++ name, HA.style "font-size" "14px", HA.style "font-color" "blue" ]
+    Html.div [ Attribute.style "margin-bottom" "8px" ]
+        [ Html.a [ Attribute.href <| "#_subsection_" ++ name, Attribute.style "font-size" "14px", Attribute.style "font-color" "blue" ]
             [ Html.text <| tocEntry.label ++ " " ++ tocEntry.name ]
         ]

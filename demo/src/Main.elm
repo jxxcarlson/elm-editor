@@ -4,7 +4,7 @@ import Array exposing (Array)
 import Browser
 import Browser.Dom as Dom
 import Browser.Events
-import Cmd.Extra exposing (withCmd)
+import Cmd.Extra exposing (withCmd, withCmds)
 import ContextMenu exposing (Item(..))
 import Data
 import Editor exposing (Editor, EditorMsg)
@@ -32,8 +32,11 @@ import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
 import Element.Input as Input
-import Html as H exposing (Attribute, Html)
-import Html.Attributes as HA
+import File exposing (File)
+import File.Download as Download
+import File.Select as Select
+import Html exposing (Attribute, Html)
+import Html.Attributes as Attribute
 import Html.Events as HE
 import Markdown.Option exposing (Option(..))
 import Model exposing (Msg(..))
@@ -64,6 +67,7 @@ type alias Model =
     , height : Float
     , docTitle : String
     , docType : DocType
+    , fileName : Maybe String
     }
 
 
@@ -89,6 +93,10 @@ type Msg
     | ToggleDocType
     | NewDocument
     | SetViewPortForElement (Result Dom.Error ( Dom.Element, Dom.Viewport ))
+    | RequestFile
+    | RequestedFile File
+    | DocumentLoaded String
+    | SaveFile
 
 
 init : Flags -> ( Model, Cmd Msg )
@@ -100,6 +108,7 @@ init flags =
     , height = flags.height
     , docTitle = "about"
     , docType = MarkdownDoc
+    , fileName = Just "about.md                        "
     }
         |> Cmd.Extra.withCmds
             [ Dom.focus "editor" |> Task.attempt (always NoOp)
@@ -138,9 +147,13 @@ loadDocument title source docType model =
             let
                 renderingData =
                     Render.load ( 0, 0 ) model.counter (OMarkdown ExtendedMath) source
+
+                fileName =
+                    title ++ ".md"
             in
             { model
                 | renderingData = renderingData
+                , fileName = Just fileName
                 , counter = model.counter + 1
                 , editor = Editor.initWithContent source (config { width = model.width, height = model.height })
                 , docTitle = title
@@ -151,9 +164,13 @@ loadDocument title source docType model =
             let
                 renderingData =
                     Render.load ( 0, 0 ) model.counter OMiniLatex source
+
+                fileName =
+                    title ++ ".tex"
             in
             { model
                 | renderingData = renderingData
+                , fileName = Just fileName
                 , counter = model.counter + 1
                 , editor = Editor.initWithContent source (config { width = model.width, height = model.height })
                 , docTitle = title
@@ -227,7 +244,7 @@ update msg model =
 
         Load title ->
             loadDocumentByTitle title model
-                |> withCmd (Cmd.batch [ scrollEditorToTop ])
+                |> withCmd (Cmd.batch [ scrollEditorToTop, scrollRendredTextToTop ])
 
         ToggleDocType ->
             let
@@ -245,14 +262,45 @@ update msg model =
             case model.docType of
                 MarkdownDoc ->
                     loadDocument "newFile" "" MarkdownDoc model
-                        |> withCmd (Cmd.batch [ scrollEditorToTop ])
+                        |> withCmd (Cmd.batch [ scrollEditorToTop, scrollRendredTextToTop ])
 
                 MiniLaTeXDoc ->
                     loadDocument "newFile" "" MiniLaTeXDoc model
-                        |> withCmd (Cmd.batch [ scrollEditorToTop ])
+                        |> withCmd (Cmd.batch [ scrollEditorToTop, scrollRendredTextToTop ])
 
         SetViewPortForElement _ ->
             ( model, Cmd.none )
+
+        RequestFile ->
+            ( model, requestFile )
+
+        RequestedFile file ->
+            ( { model | fileName = Just (File.name file) }, read file )
+
+        DocumentLoaded source ->
+            case model.fileName of
+                Nothing ->
+                    ( model, Cmd.none )
+
+                Just fileName ->
+                    let
+                        docType =
+                            case fileExtension fileName of
+                                "md" ->
+                                    MarkdownDoc
+
+                                "tex" ->
+                                    MiniLaTeXDoc
+
+                                _ ->
+                                    MarkdownDoc
+                    in
+                    loadDocument fileName source docType model
+                        |> (\m -> { m | docType = docType })
+                        |> withCmds [ scrollRendredTextToTop, scrollEditorToTop ]
+
+        SaveFile ->
+            ( model, saveFile model )
 
 
 
@@ -261,7 +309,7 @@ update msg model =
 
 view : Model -> Html Msg
 view model =
-    Element.layout [ Background.color <| gray 80 ]
+    Element.layout [ Background.color <| gray 10 ]
         (mainColumn model)
 
 
@@ -270,6 +318,7 @@ mainColumn model =
         [ column []
             [ viewEditorAndRenderedText model
             , viewFooter model model.width 40
+            , viewFooter2 model model.width 40
             ]
         ]
 
@@ -288,7 +337,7 @@ viewFooter model width_ height_ =
     row
         [ width (pxFloat (2 * proportions.width * width_ - 40))
         , height (pxFloat height_)
-        , Background.color (Element.rgb255 130 130 150)
+        , Background.color (Element.rgb255 130 130 140)
         , Font.color (gray 240)
         , Font.size 14
         , paddingXY 10 0
@@ -296,7 +345,31 @@ viewFooter model width_ height_ =
         , spacing 36
         ]
         [ documentControls model
-        , markdownDocumentLoader model
+        ]
+
+
+separator model width_ height_ =
+    row
+        [ width (pxFloat (2 * proportions.width * width_ - 40))
+        , height (pxFloat height_)
+        , Background.color (gray 200)
+        , Element.moveUp 19
+        ]
+        []
+
+
+viewFooter2 model width_ height_ =
+    row
+        [ width (pxFloat (2 * proportions.width * width_ - 40))
+        , height (pxFloat height_)
+        , Background.color (Element.rgb255 80 80 90)
+        , Font.color (gray 240)
+        , Font.size 14
+        , paddingXY 10 0
+        , Element.moveUp 19
+        , spacing 36
+        ]
+        [ markdownDocumentLoader model
         , latexDocumentLoader model
         ]
 
@@ -305,7 +378,24 @@ documentControls model =
     row [ spacing 12 ]
         [ documentTypeButton model
         , newDocumentButton model
+        , openFileButton model
+        , saveFileButton model
+        , displayFilename model
         ]
+
+
+displayFilename : Model -> Element Msg
+displayFilename model =
+    let
+        message =
+            case model.fileName of
+                Nothing ->
+                    "No file"
+
+                Just fn ->
+                    "File: " ++ fn
+    in
+    el [ alignRight ] (text message)
 
 
 markdownDocumentLoader model =
@@ -331,24 +421,43 @@ gray g =
 
 
 viewEditor model =
-    Editor.view model.editor |> H.map EditorMsg |> Element.html
+    Editor.view model.editor |> Html.map EditorMsg |> Element.html
 
 
 viewRenderedText : Model -> Float -> Float -> Element Msg
 viewRenderedText model width_ height_ =
     column
-        [ scrollbarY
-        , width (pxFloat width_)
+        [ width (pxFloat width_)
         , height (pxFloat height_)
         , Font.size 14
-        , Element.htmlAttribute (HA.style "line-height" "20px")
+        , Element.htmlAttribute (Attribute.style "line-height" "20px")
         , paddingXY 14 0
         , Border.width 1
         , Background.color <| gray 240
         ]
-        [ (Render.get model.renderingData).title |> Element.html
+        [ showIf (model.docType == MarkdownDoc) ((Render.get model.renderingData).title |> Element.html)
         , (Render.get model.renderingData).document |> Element.html
         ]
+
+
+showIf : Bool -> Element Msg -> Element Msg
+showIf flag el =
+    case flag of
+        True ->
+            el
+
+        False ->
+            Element.none
+
+
+setHtmlId : String -> Html.Attribute msg
+setHtmlId id =
+    Attribute.attribute "id" id
+
+
+setElementId : String -> Element.Attribute msg
+setElementId id =
+    Element.htmlAttribute (setHtmlId id)
 
 
 pxFloat : Float -> Element.Length
@@ -358,6 +467,14 @@ pxFloat p =
 
 
 -- BUTTONS
+
+
+openFileButton model =
+    button 90 "Open" RequestFile []
+
+
+saveFileButton model =
+    button 90 "Save" SaveFile []
 
 
 newDocumentButton model =
@@ -405,19 +522,51 @@ button width str msg attr =
 
 
 textField width str msg attr innerAttr =
-    H.div ([ HA.style "margin-bottom" "10px" ] ++ attr)
-        [ H.input
-            ([ HA.style "height" "18px"
-             , HA.style "width" (String.fromInt width ++ "px")
-             , HA.type_ "text"
-             , HA.placeholder str
-             , HA.style "margin-right" "8px"
+    Html.div ([ Attribute.style "margin-bottom" "10px" ] ++ attr)
+        [ Html.input
+            ([ Attribute.style "height" "18px"
+             , Attribute.style "width" (String.fromInt width ++ "px")
+             , Attribute.type_ "text"
+             , Attribute.placeholder str
+             , Attribute.style "margin-right" "8px"
              , HE.onInput msg
              ]
                 ++ innerAttr
             )
             []
         ]
+
+
+
+-- FILE I/O
+
+
+fileExtension : String -> String
+fileExtension str =
+    str |> String.split "." |> List.reverse |> List.head |> Maybe.withDefault "md"
+
+
+read : File -> Cmd Msg
+read file =
+    Task.perform DocumentLoaded (File.toString file)
+
+
+requestFile : Cmd Msg
+requestFile =
+    Select.file [ "text/markdown" ] RequestedFile
+
+
+saveFile : Model -> Cmd msg
+saveFile model =
+    case ( model.docType, model.fileName ) of
+        ( MarkdownDoc, Just fileName ) ->
+            Download.string fileName "text/markdown" (Editor.getContent model.editor)
+
+        ( MiniLaTeXDoc, Just fileName ) ->
+            Download.string fileName "text/tex" (Editor.getContent model.editor)
+
+        ( _, _ ) ->
+            Cmd.none
 
 
 
@@ -481,7 +630,7 @@ scrollEditorToTop =
 
 
 scrollRendredTextToTop =
-    scrollToTopForElement "__rt_scroll__"
+    scrollToTopForElement "__RENDERED_TEXT__"
 
 
 scrollToTopForElement : String -> Cmd Msg

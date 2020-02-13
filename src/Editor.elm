@@ -1,7 +1,7 @@
 module Editor exposing
     ( Editor(..), init, loadArray
     , EditorMsg, getLines, getContextMenu, update, view
-    , initWithContent, loadString, resize, syncMessages
+    , getContent, initWithContent, loadString, resize, syncMessages
     )
 
 {-| Use the Editor module to embed a pure Elm text editor
@@ -52,6 +52,13 @@ view (Editor model) =
         , viewContextMenu model.width model
         , viewDebug model
         ]
+
+
+getContent : Editor -> String
+getContent editor =
+    getLines editor
+        |> Array.toList
+        |> String.join "\n"
 
 
 {-| Initialize the editor with a configuration

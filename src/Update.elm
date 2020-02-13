@@ -342,7 +342,7 @@ update msg model =
 
 
 
--- FILE I/Oi
+-- FILE I/O
 
 
 read : File -> Cmd Msg
