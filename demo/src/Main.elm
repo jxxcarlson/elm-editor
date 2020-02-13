@@ -509,9 +509,7 @@ loadDocumentButton model width docTitle buttonLabel =
 
 button width str msg attr =
     Input.button
-        ([ Border.width 1
-         , Border.color (gray 200)
-         , paddingXY 8 8
+        ([ paddingXY 8 8
          , Background.color (Element.rgb255 90 90 100)
          ]
             ++ attr

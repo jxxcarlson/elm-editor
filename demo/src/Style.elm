@@ -7,7 +7,7 @@ import Element
 
 
 redColor =
-    Element.rgb255 150 40 40
+    Element.rgb255 120 30 30
 
 
 grayColor =
