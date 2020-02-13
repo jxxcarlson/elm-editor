@@ -158,7 +158,7 @@ viewLineNumbers model =
 
 viewLineNumber : Int -> Html Msg
 viewLineNumber n =
-    H.span [ HA.style "background-color" "#bbc", HA.style "padding-left" "6px" ] [ H.text (String.fromInt n) ]
+    H.span [ HA.style "background-color" "#bbb", HA.style "padding-left" "6px" ] [ H.text (String.fromInt n) ]
 
 
 viewContent : Model -> Html Msg
@@ -414,7 +414,7 @@ viewHeader model =
     H.div
         [ HA.style "display" "flex"
         , HA.style "font-family" "monospace"
-        , HA.style "background-color" "#c0c0c9"
+        , HA.style "background-color" "#c0c0c0"
         , HA.style "padding-top" "2px"
         , HA.style "padding-bottom" "6px"
         , HA.style "width" (px model.width)
