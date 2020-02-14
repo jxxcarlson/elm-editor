@@ -11,7 +11,7 @@
     "start": "elm-live -p 8001 -d public/ src/Main.elm -- --output public/Main.js",
     "publish": "sh script/publish.sh",
     "go": "open -a /Applications/Firefox.app/ https://jxxcarlson.github.io/app/text-editor/index.html",
-    "cloc": "cloc --by-file src"
+    "cloc": "cloc --by-file --exclude-ext=html --exclude-list-file=exclude src"
   },
   "repository": {
     "type": "git",
