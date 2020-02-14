@@ -2,6 +2,7 @@ module Update exposing (update)
 
 import Action
 import Array exposing (Array)
+import Browser.Dom as Dom
 import Common exposing (..)
 import ContextMenu exposing (ContextMenu)
 import Debounce exposing (Debounce)
@@ -340,6 +341,39 @@ update msg model =
             in
             ( model, save markdown )
 
+        SendLine ->
+            sendLine model
+
+        GotViewport result ->
+            case result of
+                Ok vp ->
+                    let
+                        y =
+                            vp.viewport.y
+
+                        lineNumber =
+                            round (y / model.lineHeight)
+                    in
+                    ( { model | topLine = lineNumber }, Cmd.none )
+
+                Err _ ->
+                    ( model, Cmd.none )
+
+        GotViewportForSync cursor selection result ->
+            case result of
+                Ok vp ->
+                    let
+                        y =
+                            vp.viewport.y
+
+                        lineNumber =
+                            round (y / model.lineHeight)
+                    in
+                    ( { model | topLine = lineNumber, cursor = cursor, selection = selection }, Cmd.none )
+
+                Err _ ->
+                    ( model, Cmd.none )
+
 
 
 -- FILE I/O
@@ -553,3 +587,42 @@ putCursorAt position model =
 unload : String -> Cmd Msg
 unload s =
     Task.perform Unload (Task.succeed s)
+
+
+
+-- LR SYNC
+
+
+verticalOffsetInSourceText =
+    4
+
+
+sendLine : Model -> ( Model, Cmd Msg )
+sendLine model =
+    let
+        y =
+            -- max 0 (adjustedLineHeight state.config.lineHeightFactor state.config.lineHeight * toFloat state.cursor.line - 50)
+            max 0 (model.lineHeight * toFloat model.cursor.line - verticalOffsetInSourceText)
+
+        newCursor =
+            { line = model.cursor.line, column = 0 }
+
+        currentLine =
+            Array.get newCursor.line model.lines
+
+        selection =
+            case Maybe.map String.length currentLine of
+                Just n ->
+                    Selection newCursor (Position newCursor.line (n - 1))
+
+                Nothing ->
+                    NoSelection
+    in
+    ( { model | cursor = newCursor, selection = selection }, jumpToHeightForSync newCursor selection y )
+
+
+jumpToHeightForSync : Position -> Maybe Position -> Float -> Cmd Msg
+jumpToHeightForSync cursor selection y =
+    Dom.setViewportOf "__inner_editor__" 0 y
+        |> Task.andThen (\_ -> Dom.getViewportOf "__inner_editor__")
+        |> Task.attempt (\info -> GotViewportForSync cursor selection info)

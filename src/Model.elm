@@ -13,6 +13,7 @@ module Model exposing
     )
 
 import Array exposing (Array)
+import Browser.Dom as Dom
 import ContextMenu exposing (ContextMenu)
 import Debounce exposing (Debounce)
 import File exposing (File)
@@ -36,6 +37,7 @@ type alias Model =
     , contextMenu : ContextMenu Context
     , autoLineBreak : AutoLineBreak
     , debugOn : Bool
+    , topLine : Int
     }
 
 
@@ -105,6 +107,7 @@ init ( config, contextMenu ) =
     , contextMenu = contextMenu
     , autoLineBreak = AutoLineBreakON
     , debugOn = config.debugOn
+    , topLine = 0
     }
 
 
@@ -172,7 +175,12 @@ type Msg
     | ContextMenuMsg (ContextMenu.Msg Context)
     | Item Int
     | ToggleAutoLineBreak
+      --
     | RequestFile
     | RequestedFile File
     | MarkdownLoaded String
     | SaveFile
+      --
+    | SendLine
+    | GotViewport (Result Dom.Error Dom.Viewport)
+    | GotViewportForSync Position (Maybe Position) (Result Dom.Error Dom.Viewport)
