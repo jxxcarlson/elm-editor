@@ -10,8 +10,9 @@ import File exposing (File)
 import File.Download as Download
 import File.Select as Select
 import History
+import Markdown.Parse as Parse exposing (Id)
 import Model exposing (AutoLineBreak(..), Hover(..), Model, Msg(..), Position, Selection(..), Snapshot)
-import Task
+import Task exposing (Task)
 import UpdateFunction
 import Wrap exposing (WrapParams)
 
@@ -359,7 +360,7 @@ update msg model =
                 Err _ ->
                     ( model, Cmd.none )
 
-        GotViewportForSync cursor selection result ->
+        GotViewportForSync selection result ->
             case result of
                 Ok vp ->
                     let
@@ -369,7 +370,7 @@ update msg model =
                         lineNumber =
                             round (y / model.lineHeight)
                     in
-                    ( { model | topLine = lineNumber, cursor = cursor, selection = selection }, Cmd.none )
+                    ( { model | topLine = lineNumber, selection = selection }, Cmd.none )
 
                 Err _ ->
                     ( model, Cmd.none )
@@ -621,8 +622,38 @@ sendLine model =
     ( { model | cursor = newCursor, selection = selection }, jumpToHeightForSync newCursor selection y )
 
 
-jumpToHeightForSync : Position -> Maybe Position -> Float -> Cmd Msg
+jumpToHeightForSync : Position -> Selection -> Float -> Cmd Msg
 jumpToHeightForSync cursor selection y =
-    Dom.setViewportOf "__inner_editor__" 0 y
-        |> Task.andThen (\_ -> Dom.getViewportOf "__inner_editor__")
-        |> Task.attempt (\info -> GotViewportForSync cursor selection info)
+    Dom.setViewportOf "__editor__" 0 y
+        |> Task.andThen (\_ -> Dom.getViewportOf "__editor__")
+        |> Task.attempt (\info -> GotViewportForSync selection info)
+
+
+setViewportForElement : String -> Cmd Msg
+setViewportForElement id =
+    Dom.getViewportOf "__RENDERED_TEXT__"
+        |> Task.andThen (\vp -> getElementWithViewPort vp id)
+        |> Task.attempt SetViewPortForElement
+
+
+getElementWithViewPort : Dom.Viewport -> String -> Task Dom.Error ( Dom.Element, Dom.Viewport )
+getElementWithViewPort vp id =
+    Dom.getElement id
+        |> Task.map (\el -> ( el, vp ))
+
+
+
+--
+--syncAndHighlightRenderedText : String -> Cmd Msg -> Model -> ( Model, Cmd Msg )
+--syncAndHighlightRenderedText str cmd model =
+--    let
+--        ( _, id_ ) =
+--            Parse.getId (String.trim str) model.ren
+--                |> (\( s, i ) -> ( s, i |> Maybe.withDefault "i0v0" ))
+--
+--        id =
+--            Parse.idFromString id_ |> (\( id__, version ) -> ( id__, version + 1 ))
+--    in
+--    ( processContentForHighlighting model.sourceText { model | selectedId = id }
+--    , Cmd.batch [ cmd, setViewportForElement (Parse.stringFromId id) ]
+--    )

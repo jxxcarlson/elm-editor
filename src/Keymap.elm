@@ -218,8 +218,8 @@ keymaps =
               --, ( "C", WriteToSystemClipBoard )
               --, ( "V", CopyPasteClipboard )
               ( "W", WrapAll )
+            , ( "S", SendLine )
 
-            --, ( "S", SendLine )
             --, ( "A", SelectAll )
             ]
     }

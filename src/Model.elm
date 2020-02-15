@@ -183,4 +183,5 @@ type Msg
       --
     | SendLine
     | GotViewport (Result Dom.Error Dom.Viewport)
-    | GotViewportForSync Position (Maybe Position) (Result Dom.Error Dom.Viewport)
+    | SetViewPortForElement (Result Dom.Error ( Dom.Element, Dom.Viewport ))
+    | GotViewportForSync Selection (Result Dom.Error Dom.Viewport)
