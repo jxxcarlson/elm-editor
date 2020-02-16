@@ -182,7 +182,7 @@ type Msg
     | SaveFile
       --
     | SendLine
-    | GotViewportForSync Selection (Result Dom.Error Dom.Viewport)
+    | GotViewportForSync (Maybe String) Selection (Result Dom.Error Dom.Viewport)
 
 
 

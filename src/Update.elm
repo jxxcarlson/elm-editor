@@ -345,23 +345,7 @@ update msg model =
         SendLine ->
             sendLine model
 
-        --
-        --GotViewport result ->
-        --    case result of
-        --        Ok vp ->
-        --            let
-        --                y =
-        --                    vp.viewport.y
-        --
-        --                lineNumber =
-        --                    round (y / model.lineHeight)
-        --            in
-        --            ( { model | topLine = lineNumber }, Cmd.none )
-        --
-        --        Err _ ->
-        --            ( model, Cmd.none )
-        --
-        GotViewportForSync selection result ->
+        GotViewportForSync str selection result ->
             case result of
                 Ok vp ->
                     let
@@ -620,14 +604,14 @@ sendLine model =
                 Nothing ->
                     NoSelection
     in
-    ( { model | cursor = newCursor, selection = selection }, jumpToHeightForSync newCursor selection y )
+    ( { model | cursor = newCursor, selection = selection }, jumpToHeightForSync currentLine newCursor selection y )
 
 
-jumpToHeightForSync : Position -> Selection -> Float -> Cmd Msg
-jumpToHeightForSync cursor selection y =
-    Dom.setViewportOf "__editor__" 0 y
+jumpToHeightForSync : Maybe String -> Position -> Selection -> Float -> Cmd Msg
+jumpToHeightForSync currentLine cursor selection y =
+    Dom.setViewportOf "__editor__" 0 (y - 80)
         |> Task.andThen (\_ -> Dom.getViewportOf "__editor__")
-        |> Task.attempt (\info -> GotViewportForSync selection info)
+        |> Task.attempt (\info -> GotViewportForSync currentLine selection info)
 
 
 

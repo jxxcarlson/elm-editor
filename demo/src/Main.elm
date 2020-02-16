@@ -7,6 +7,7 @@ import Browser.Events
 import Cmd.Extra exposing (withCmd, withCmds)
 import ContextMenu exposing (Item(..))
 import Data
+import Dict
 import Editor exposing (Editor, EditorMsg)
 import Element
     exposing
@@ -76,6 +77,7 @@ type alias Model =
     , docType : DocType
     , fileName : Maybe String
     , selectedId : ( Int, Int )
+    , message : String
     }
 
 
@@ -119,6 +121,7 @@ init flags =
     , docType = MarkdownDoc
     , fileName = Just "about.md"
     , selectedId = ( 0, 0 )
+    , message = ""
     }
         |> Cmd.Extra.withCmds
             [ Dom.focus "editor" |> Task.attempt (always NoOp)
@@ -229,7 +232,19 @@ update msg model =
                     sync newEditor cmd model
 
                 SendLine ->
-                    syncAndHighlightRenderedText (Editor.lineAtCursor newEditor) (Cmd.map EditorMsg cmd) { model | editor = newEditor }
+                    syncAndHighlightRenderedText (Debug.log "LAT" <| Editor.lineAtCursor newEditor) (Cmd.map EditorMsg cmd) { model | editor = newEditor }
+
+                GotViewportForSync currentLine _ _ ->
+                    let
+                        _ =
+                            Debug.log "CL2 " currentLine
+                    in
+                    case currentLine of
+                        Nothing ->
+                            ( model, Cmd.none )
+
+                        Just str ->
+                            syncAndHighlightRenderedText str Cmd.none model
 
                 _ ->
                     case List.member msg (List.map EditorMsg Editor.syncMessages) of
@@ -281,8 +296,13 @@ update msg model =
                     loadDocument "newFile" "" MiniLaTeXDoc model
                         |> withCmd (Cmd.batch [ scrollEditorToTop, scrollRendredTextToTop ])
 
-        SetViewPortForElement _ ->
-            ( model, Cmd.none )
+        SetViewPortForElement result ->
+            case result of
+                Ok ( element, viewport ) ->
+                    ( { model | message = "synced" }, setViewPortForSelectedLineInRenderedText verticalOffsetInRenderedText element viewport )
+
+                Err _ ->
+                    ( { model | message = "sync error" }, Cmd.none )
 
         RequestFile ->
             ( model, requestFile )
@@ -368,6 +388,7 @@ viewFooter model width_ height_ =
         , newDocumentButton model
         , openFileButton model
         , saveFileButton model
+        , el [] (text model.message)
         , displayFilename model
         , syncLRButton model
         ]
@@ -605,16 +626,21 @@ syncAndHighlightRenderedText str cmd model =
 
 syncAndHighlightRenderedMarkdownText : String -> Cmd Msg -> Model -> MDData msg -> ( Model, Cmd Msg )
 syncAndHighlightRenderedMarkdownText str cmd model data =
+    -- TODO: make this work
     let
-        ( _, id_ ) =
-            Markdown.Parse.getId (String.trim str) data.sourceMap
-                |> (\( s, i ) -> ( s, i |> Maybe.withDefault "i0v0" ))
+        id_ =
+            Dict.get (Debug.log "DICT KEY" str) data.sourceMap
+                |> Maybe.withDefault "0v0"
+                |> Debug.log "ID_"
 
         id : ( Int, Int )
         id =
-            Markdown.Parse.idFromString id_ |> (\( id__, version ) -> ( id__, version + 1 ))
+            Markdown.Parse.idFromString id_
+                |> (\( id__, version ) -> ( id__, version ))
+                |> Debug.log "ID"
     in
-    ( processMarkdownContentForHighlighting (Editor.getContent model.editor) data { model | selectedId = id }
+    ( -- processMarkdownContentForHighlighting (Editor.getContent model.editor) data { model | selectedId = id }
+      { model | selectedId = id }
     , Cmd.batch [ cmd, setViewportForElement (Markdown.Parse.stringFromId id) ]
     )
 
@@ -680,8 +706,8 @@ load counter selectedId renderingOption str =
 
 setViewportForElement : String -> Cmd Msg
 setViewportForElement id =
-    Dom.getViewportOf "__rt_scroll__"
-        |> Task.andThen (\vp -> getElementWithViewPort vp id)
+    Dom.getViewportOf "__RENDERED_TEXT__"
+        |> Task.andThen (\vp -> getElementWithViewPort vp (Debug.log "ID*" id))
         |> Task.attempt SetViewPortForElement
 
 
@@ -710,8 +736,8 @@ setViewPortForSelectedLineInRenderedText offset element viewport =
         y =
             viewport.viewport.y + element.element.y - verticalOffsetInRenderedText
     in
-    Task.attempt (\_ -> NoOp) (Dom.setViewportOf "__rt_scroll__" 0 y)
+    Task.attempt (\_ -> NoOp) (Dom.setViewportOf "__RENDERED_TEXT__" 0 y)
 
 
 verticalOffsetInRenderedText =
-    0
+    160
