@@ -628,8 +628,13 @@ syncAndHighlightRenderedMarkdownText : String -> Cmd Msg -> Model -> MDData msg 
 syncAndHighlightRenderedMarkdownText str cmd model data =
     -- TODO: make this work
     let
+        str2 =
+            Markdown.Parse.toMDBlockTree 0 ExtendedMath str
+                |> Markdown.Parse.getLeadingTextFromAST
+                |> String.trim
+
         id_ =
-            Dict.get (Debug.log "DICT KEY" str) data.sourceMap
+            Dict.get (Debug.log "DICT KEY" str2) data.sourceMap
                 |> Maybe.withDefault "0v0"
                 |> Debug.log "ID_"
 
