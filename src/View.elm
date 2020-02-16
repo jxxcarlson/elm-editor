@@ -320,7 +320,7 @@ viewCursor position char =
 viewSelectedChar : Position -> String -> Html Msg
 viewSelectedChar position char =
     H.span
-        [ HA.style "background-color" "#ccc"
+        [ HA.style "background-color" "#cce"
         , onHover position
         ]
         [ H.text char ]

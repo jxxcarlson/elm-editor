@@ -33,13 +33,13 @@ to be rendered on the fly to Html.
 
 ## Using the editor
 
-Do ctrl-click in the green bar below to
+Do ctrl-click in the green bar below left to
 bring up a menu of commands, e.g.,
-ctrl-O to open a file and ctrl-option-S
-to save the current contents of the
-editor to a file.
+ctrl-shift-S to sync the rendered
+text with the source text, or ctrl-W
+to wrap the current selection.
 
-## Roadmap
+## Plans
 
 This editor is a work in progress.
 Version 1.0 will be announced when it is
@@ -62,6 +62,30 @@ learned a great deal from the work
 This editor will supersede [the previous version](https://package.elm-lang.org/packages/jxxcarlson/elm-text-editor/latest/).
 It has not yet been published on the [Elm package manager](https://package.elm-lang.org), but will be as soon as it reaches
 feature parity wth the previous version.
+
+
+## On the Horizon
+
+- ~~Left to right sync for Markown documents~~
+
+- Left to right sync for MiniLaTex documents
+
+- Right to left sync
+
+- Export to standard LaTeX doc from MiniLaTeX
+
+- ?? Html String output
+
+- External copy-paste
+
+- Search and replace
+
+- Autocompletion
+
+- Dark mode option
+
+
+
 
 
 """

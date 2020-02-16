@@ -384,14 +384,14 @@ viewFooter model width_ height_ =
         , newDocumentButton model
         , openFileButton model
         , saveFileButton model
-        , el [] (text model.message)
         , displayFilename model
         , syncLRButton model
+        , el [ alignRight, width (px 100) ] (text model.message)
         ]
 
 
 syncLRButton model =
-    button 50 "Sync L>R" SyncLR []
+    button 50 "Sync L > R" SyncLR [ alignRight ]
 
 
 separator model width_ height_ =
@@ -431,7 +431,7 @@ displayFilename model =
                 Just fn ->
                     "File: " ++ fn
     in
-    el [ alignRight ] (text message)
+    el [] (text message)
 
 
 markdownDocumentLoader model =
@@ -467,7 +467,7 @@ viewRenderedText model width_ height_ =
         , height (pxFloat height_)
         , Font.size 14
         , Element.htmlAttribute (Attribute.style "line-height" "20px")
-        , paddingXY 14 0
+        , Element.paddingEach { left = 14, top = 0, right = 14, bottom = 24 }
         , Border.width 1
         , Background.color <| gray 240
         ]
