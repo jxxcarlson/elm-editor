@@ -1,7 +1,7 @@
 module Editor exposing
     ( Editor(..), init, loadArray
     , EditorMsg, getLines, getContextMenu, update, view
-    , getContent, initWithContent, loadString, resize, syncMessages
+    , getContent, initWithContent, lineAtCursor, loadString, resize, sendLine, syncMessages
     )
 
 {-| Use the Editor module to embed a pure Elm text editor
@@ -35,6 +35,18 @@ import View exposing (viewDebug, viewEditor, viewHeader)
 -}
 type Editor
     = Editor Model
+
+
+sendLine : Editor -> ( Editor, Cmd Msg )
+sendLine (Editor model) =
+    U.sendLine model
+        |> (\( model_, message ) -> ( Editor model_, message ))
+
+
+lineAtCursor : Editor -> String
+lineAtCursor (Editor data) =
+    Array.get data.cursor.line data.lines
+        |> Maybe.withDefault "invalid cursor"
 
 
 resize : Float -> Float -> Editor -> Editor

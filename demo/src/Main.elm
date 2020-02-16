@@ -38,11 +38,14 @@ import File.Select as Select
 import Html exposing (Attribute, Html)
 import Html.Attributes as Attribute
 import Html.Events as HE
+import Markdown.ElmWithId
 import Markdown.Option exposing (Option(..))
+import Markdown.Parse
 import Model exposing (Msg(..))
-import Render exposing (RenderingData, RenderingOption(..))
+import Render exposing (MDData, MLData, RenderingData(..), RenderingOption(..))
 import Style
 import Task exposing (Task)
+import Tree.Diff
 
 
 type alias Flags =
@@ -59,6 +62,10 @@ main =
         }
 
 
+
+-- MODEL
+
+
 type alias Model =
     { editor : Editor
     , renderingData : RenderingData Msg
@@ -68,6 +75,7 @@ type alias Model =
     , docTitle : String
     , docType : DocType
     , fileName : Maybe String
+    , selectedId : ( Int, Int )
     }
 
 
@@ -97,6 +105,7 @@ type Msg
     | RequestedFile File
     | DocumentLoaded String
     | SaveFile
+    | SyncLR
 
 
 init : Flags -> ( Model, Cmd Msg )
@@ -108,7 +117,8 @@ init flags =
     , height = flags.height
     , docTitle = "about"
     , docType = MarkdownDoc
-    , fileName = Just "about.md                        "
+    , fileName = Just "about.md"
+    , selectedId = ( 0, 0 )
     }
         |> Cmd.Extra.withCmds
             [ Dom.focus "editor" |> Task.attempt (always NoOp)
@@ -218,6 +228,9 @@ update msg model =
                 MarkdownLoaded _ ->
                     sync newEditor cmd model
 
+                SendLine ->
+                    syncAndHighlightRenderedText (Editor.lineAtCursor newEditor) (Cmd.map EditorMsg cmd) { model | editor = newEditor }
+
                 _ ->
                     case List.member msg (List.map EditorMsg Editor.syncMessages) of
                         True ->
@@ -302,6 +315,13 @@ update msg model =
         SaveFile ->
             ( model, saveFile model )
 
+        SyncLR ->
+            let
+                ( newEditor, cmd ) =
+                    Editor.sendLine model.editor
+            in
+            ( { model | editor = newEditor }, Cmd.map EditorMsg cmd )
+
 
 
 -- VIEW
@@ -342,10 +362,19 @@ viewFooter model width_ height_ =
         , Font.size 14
         , paddingXY 10 0
         , Element.moveUp 19
-        , spacing 36
+        , spacing 12
         ]
-        [ documentControls model
+        [ documentTypeButton model
+        , newDocumentButton model
+        , openFileButton model
+        , saveFileButton model
+        , displayFilename model
+        , syncLRButton model
         ]
+
+
+syncLRButton model =
+    button 50 "Sync L>R" SyncLR []
 
 
 separator model width_ height_ =
@@ -371,16 +400,6 @@ viewFooter2 model width_ height_ =
         ]
         [ markdownDocumentLoader model
         , latexDocumentLoader model
-        ]
-
-
-documentControls model =
-    row [ spacing 12 ]
-        [ documentTypeButton model
-        , newDocumentButton model
-        , openFileButton model
-        , saveFileButton model
-        , displayFilename model
         ]
 
 
@@ -569,6 +588,49 @@ saveFile model =
 
 
 -- HELPERS: LOAD, RENDER, SYNC
+
+
+syncAndHighlightRenderedText : String -> Cmd Msg -> Model -> ( Model, Cmd Msg )
+syncAndHighlightRenderedText str cmd model =
+    case ( model.docType, model.renderingData ) of
+        ( MarkdownDoc, MD data ) ->
+            syncAndHighlightRenderedMarkdownText (Debug.log "SAHLRT" str) cmd model data
+
+        ( MiniLaTeXDoc, ML data ) ->
+            ( model, Cmd.none )
+
+        _ ->
+            ( model, Cmd.none )
+
+
+syncAndHighlightRenderedMarkdownText : String -> Cmd Msg -> Model -> MDData msg -> ( Model, Cmd Msg )
+syncAndHighlightRenderedMarkdownText str cmd model data =
+    let
+        ( _, id_ ) =
+            Markdown.Parse.getId (String.trim str) data.sourceMap
+                |> (\( s, i ) -> ( s, i |> Maybe.withDefault "i0v0" ))
+
+        id : ( Int, Int )
+        id =
+            Markdown.Parse.idFromString id_ |> (\( id__, version ) -> ( id__, version + 1 ))
+    in
+    ( processMarkdownContentForHighlighting (Editor.getContent model.editor) data { model | selectedId = id }
+    , Cmd.batch [ cmd, setViewportForElement (Markdown.Parse.stringFromId id) ]
+    )
+
+
+processMarkdownContentForHighlighting : String -> MDData msg -> Model -> Model
+processMarkdownContentForHighlighting str data model =
+    let
+        newAst_ =
+            Markdown.Parse.toMDBlockTree model.counter ExtendedMath str
+
+        newAst =
+            Tree.Diff.mergeWith Markdown.Parse.equalIds data.fullAst newAst_
+    in
+    { model
+        | counter = model.counter + 1
+    }
 
 
 updateRenderingData : Array String -> Model -> Model
