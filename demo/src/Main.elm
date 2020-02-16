@@ -7,7 +7,6 @@ import Browser.Events
 import Cmd.Extra exposing (withCmd, withCmds)
 import ContextMenu exposing (Item(..))
 import Data
-import Dict
 import Editor exposing (Editor, EditorMsg)
 import Element
     exposing
@@ -45,6 +44,7 @@ import Markdown.Parse
 import Model exposing (Msg(..))
 import Render exposing (MDData, MLData, RenderingData(..), RenderingOption(..))
 import Style
+import Sync
 import Task exposing (Task)
 import Tree.Diff
 
@@ -232,13 +232,9 @@ update msg model =
                     sync newEditor cmd model
 
                 SendLine ->
-                    syncAndHighlightRenderedText (Debug.log "LAT" <| Editor.lineAtCursor newEditor) (Cmd.map EditorMsg cmd) { model | editor = newEditor }
+                    syncAndHighlightRenderedText (Editor.lineAtCursor newEditor) (Cmd.map EditorMsg cmd) { model | editor = newEditor }
 
                 GotViewportForSync currentLine _ _ ->
-                    let
-                        _ =
-                            Debug.log "CL2 " currentLine
-                    in
                     case currentLine of
                         Nothing ->
                             ( model, Cmd.none )
@@ -615,7 +611,7 @@ syncAndHighlightRenderedText : String -> Cmd Msg -> Model -> ( Model, Cmd Msg )
 syncAndHighlightRenderedText str cmd model =
     case ( model.docType, model.renderingData ) of
         ( MarkdownDoc, MD data ) ->
-            syncAndHighlightRenderedMarkdownText (Debug.log "SAHLRT" str) cmd model data
+            syncAndHighlightRenderedMarkdownText str cmd model data
 
         ( MiniLaTeXDoc, ML data ) ->
             ( model, Cmd.none )
@@ -628,16 +624,18 @@ syncAndHighlightRenderedMarkdownText : String -> Cmd Msg -> Model -> MDData msg 
 syncAndHighlightRenderedMarkdownText str cmd model data =
     -- TODO: make this work
     let
+        str2 =
+            Markdown.Parse.toMDBlockTree 0 ExtendedMath str
+                |> Markdown.Parse.getLeadingTextFromAST
+
         id_ =
-            Dict.get (Debug.log "DICT KEY" str) data.sourceMap
+            Sync.get str2 data.sourceMap
                 |> Maybe.withDefault "0v0"
-                |> Debug.log "ID_"
 
         id : ( Int, Int )
         id =
             Markdown.Parse.idFromString id_
                 |> (\( id__, version ) -> ( id__, version ))
-                |> Debug.log "ID"
     in
     ( -- processMarkdownContentForHighlighting (Editor.getContent model.editor) data { model | selectedId = id }
       { model | selectedId = id }
@@ -707,7 +705,7 @@ load counter selectedId renderingOption str =
 setViewportForElement : String -> Cmd Msg
 setViewportForElement id =
     Dom.getViewportOf "__RENDERED_TEXT__"
-        |> Task.andThen (\vp -> getElementWithViewPort vp (Debug.log "ID*" id))
+        |> Task.andThen (\vp -> getElementWithViewPort vp id)
         |> Task.attempt SetViewPortForElement
 
 
