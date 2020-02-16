@@ -2,8 +2,7 @@
     "type": "application",
     "source-directories": [
         "src",
-        "../src",
-        "/Users/carlson/dev/elm/mylibraries/elm-markdown/src"
+        "../src"
     ],
     "elm-version": "0.19.1",
     "dependencies": {
@@ -22,6 +21,7 @@
             "jinjor/elm-contextmenu": "2.0.0",
             "jinjor/elm-debounce": "3.0.0",
             "jinjor/elm-diff": "1.0.6",
+            "jxxcarlson/elm-markdown": "6.0.1",
             "jxxcarlson/htree": "2.0.1",
             "jxxcarlson/meenylatex": "9.1.0",
             "mdgriffith/elm-ui": "1.1.5",
@@ -29,20 +29,19 @@
             "zwilias/elm-rosetree": "1.5.0"
         },
         "indirect": {
+            "NoRedInk/elm-string-conversions": "1.0.1",
             "elm/bytes": "1.0.8",
             "elm/http": "2.0.0",
             "elm/random": "1.0.0",
             "elm/time": "1.0.0",
             "elm/url": "1.0.0",
             "elm/virtual-dom": "1.0.2",
-            "elm-community/maybe-extra": "5.1.0"
+            "elm-community/maybe-extra": "5.1.0",
+            "zwilias/elm-html-string": "2.0.2"
         }
     },
     "test-dependencies": {
         "direct": {},
-        "indirect": {
-            "NoRedInk/elm-string-conversions": "1.0.1",
-            "zwilias/elm-html-string": "2.0.2"
-        }
+        "indirect": {}
     }
 }
