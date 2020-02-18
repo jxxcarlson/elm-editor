@@ -2,7 +2,8 @@
     "type": "application",
     "source-directories": [
         "src",
-        "../src"
+        "../src",
+        "/Users/carlson/dev/apps/MiniLatexProject/MiniLatex2/src"
     ],
     "elm-version": "0.19.1",
     "dependencies": {
@@ -23,7 +24,6 @@
             "jinjor/elm-diff": "1.0.6",
             "jxxcarlson/elm-markdown": "6.0.1",
             "jxxcarlson/htree": "2.0.1",
-            "jxxcarlson/meenylatex": "9.1.0",
             "mdgriffith/elm-ui": "1.1.5",
             "pablohirafuji/elm-syntax-highlight": "3.2.0",
             "zwilias/elm-rosetree": "1.5.0"

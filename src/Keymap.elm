@@ -94,8 +94,6 @@ modifierFromFlags ctrl shift option =
 keyToMsg : Keydown -> Decoder Msg
 keyToMsg { char, key, modifier } =
     let
-        --_ =
-        --    Debug.log "(c, k, m)" ( char, key, modifier )
         keyFrom keymap =
             Dict.get key keymap
                 |> Maybe.map JD.succeed

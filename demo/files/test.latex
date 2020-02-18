@@ -1,0 +1,104 @@
+
+
+\strong{Note.} This version of the MiniLaTeX
+demo uses MathJax 3, which is much faster than
+the 2.7.* versions and which gives a much better
+experience when doing live editing.
+
+\section{Introduction}
+
+MiniLatex is a subsert 
+of LaTeX that can
+be endered live in the browser using a custom parser.
+Mathematical text is rendered by
+ \href{https://mathjax.org}{MathJax}:
+
+$$
+\int_{-\infty}^\infty e^{-x^2} dx = \pi
+$$
+
+The combination of MiniLaTeX and MathJax
+gives you access to both text-mode
+and math-mode LaTeX in the browser.
+
+
+Feel free to
+experiment with MiniLatex using this app
+\mdash you can change the text in the
+left-hand window, or clear it and enter
+your own text. For more information about
+the MiniLaTeX project, please go to
+\href{https://minilatex.io}{minilatex.io},
+or write to jxxcarlson at gmail.
+
+
+An improper integral:
+
+\begin{equation}
+\label{integral:exp}
+\int_0^\infty e^{-x} dx = 1
+\end{equation}
+
+
+\section{Images}
+
+\image{http://psurl.s3.amazonaws.com/images/jc/beats-eca1.png}{Figure 1. Two-frequency beats}{width: 350, align: center}
+
+\section{Lists and Tables}
+
+A list
+
+\begin{itemize}
+
+\item This is \strong{just} a test.
+
+\item \italic{And so is this:} $a^2 + b^2 = c^2$
+
+\item And you can do this:
+$ \frac{1}{1 + \frac{2}{3}} $
+
+\end{itemize}
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus ut ante eget
+nunc mattis mollis. Suspendisse eleifend posuere neque at feugiat. Morbi
+ultrices sed urna sed interdum. Fusce elementum tristique imperdiet. Nulla
+pharetra mauris ipsum, et rutrum diam luctus vel. Vestibulum vel lobortis enim.
+Duis lobortis ante in ante facilisis, eget fermentum dolor ultricies. Duis
+scelerisque augue in pulvinar rhoncus. Mauris ultricies turpis tortor, sed
+efficitur purus porttitor eget. Vivamus accumsan libero fermentum magna ultrices
+vulputate. Aliquam id risus ligula. Cras fermentum metus ut tempus condimentum.
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut at iaculis odio.
+Curabitur ullamcorper metus sed facilisis molestie. Sed leo odio, tempus id
+tortor vitae, rutrum fringilla massa. Fusce sed est mauris. Donec sit amet nunc
+feugiat, fermentum ante vel, venenatis velit. Nam iaculis nibh lobortis, rutrum
+urna vitae, rhoncus justo. Maecenas molestie pellentesque ornare. Sed vitae
+accumsan purus, sit amet dapibus orci. Sed faucibus sem maximus, pellentesque
+nunc non, laoreet lorem. Fusce tempor velit et lacinia suscipit.
+
+Praesent sodales vehicula libero. Pellentesque vitae ex nunc. Nunc rutrum augue
+neque, ultrices viverra tellus venenatis id. Nulla dapibus maximus malesuada.
+Duis at tristique enim. Sed porttitor massa mattis, dictum arcu eget, semper
+lacus. Integer convallis dolor lobortis augue aliquam, imperdiet elementum arcu
+cursus. Pellentesque vel ipsum eu lacus feugiat tempus nec porta eros. Praesent
+in nisl sit amet velit mattis tristique ut quis ante. Vestibulum ultricies
+ultrices viverra. Duis nec arcu facilisis, eleifend orci nec, varius augue.
+Vestibulum consequat mi a congue imperdiet. Sed metus eros, elementum et tortor
+quis, consequat dapibus mi. Praesent sodales pharetra ultrices.
+
+Orci varius natoque penatibus et magnis dis parturient montes, nascetur
+ridiculus mus. Mauris sed imperdiet urna, ut pretium libero. Duis tempus sed
+nisi a porttitor. Nam hendrerit mi est, at scelerisque velit rutrum congue.
+Maecenas ut turpis risus. Pellentesque venenatis sollicitudin nunc. Quisque
+dapibus nibh vel gravida dignissim. Aenean bibendum volutpat leo ac ultrices.
+Fusce vehicula odio at dolor vehicula, sit amet euismod mauris facilisis.
+
+Aliquam fringilla, metus vitae hendrerit placerat, diam dolor molestie odio, ac
+pellentesque tellus lorem non felis. Aenean sit amet neque et felis posuere
+facilisis. Pellentesque aliquet eleifend mauris et tincidunt. Sed at neque a
+eros molestie mollis. Aliquam erat volutpat. Sed ornare nisi sit amet tortor
+mollis, quis accumsan tellus consequat. Suspendisse lacinia lorem quis odio
+mollis viverra. Nam imperdiet pulvinar enim, aliquet pharetra enim consectetur
+a. Praesent vulputate id purus a ullamcorper. 
+
+

@@ -77,6 +77,7 @@ type alias Model =
     , docType : DocType
     , fileName : Maybe String
     , selectedId : ( Int, Int )
+    , selectedId_ : String
     , message : String
     }
 
@@ -121,10 +122,13 @@ init flags =
     , docType = MarkdownDoc
     , fileName = Just "about.md"
     , selectedId = ( 0, 0 )
+    , selectedId_ = ""
     , message = ""
     }
         |> Cmd.Extra.withCmds
             [ Dom.focus "editor" |> Task.attempt (always NoOp)
+            , scrollEditorToTop
+            , scrollRendredTextToTop
             ]
 
 
@@ -318,7 +322,7 @@ update msg model =
                                 "md" ->
                                     MarkdownDoc
 
-                                "tex" ->
+                                "latex" ->
                                     MiniLaTeXDoc
 
                                 _ ->
@@ -470,6 +474,8 @@ viewRenderedText model width_ height_ =
         , Element.paddingEach { left = 14, top = 0, right = 14, bottom = 24 }
         , Border.width 1
         , Background.color <| gray 240
+
+        -- , Element.htmlAttribute (Attribute.id model.selectedId_ (Html.style "background-color" "#cce"))
         ]
         [ showIf (model.docType == MarkdownDoc) ((Render.get model.renderingData).title |> Element.html)
         , (Render.get model.renderingData).document |> Element.html
@@ -587,7 +593,7 @@ read file =
 
 requestFile : Cmd Msg
 requestFile =
-    Select.file [ "text/markdown" ] RequestedFile
+    Select.file [ "text/markdown", "application/x-latex" ] RequestedFile
 
 
 saveFile : Model -> Cmd msg
@@ -597,7 +603,7 @@ saveFile model =
             Download.string fileName "text/markdown" (Editor.getContent model.editor)
 
         ( MiniLaTeXDoc, Just fileName ) ->
-            Download.string fileName "text/tex" (Editor.getContent model.editor)
+            Download.string fileName "application/x-latex" (Editor.getContent model.editor)
 
         ( _, _ ) ->
             Cmd.none
@@ -614,7 +620,7 @@ syncAndHighlightRenderedText str cmd model =
             syncAndHighlightRenderedMarkdownText str cmd model data
 
         ( MiniLaTeXDoc, ML data ) ->
-            ( model, Cmd.none )
+            syncAndHighlightRenderedMiniLaTeXText str cmd model data
 
         _ ->
             ( model, Cmd.none )
@@ -622,7 +628,6 @@ syncAndHighlightRenderedText str cmd model =
 
 syncAndHighlightRenderedMarkdownText : String -> Cmd Msg -> Model -> MDData msg -> ( Model, Cmd Msg )
 syncAndHighlightRenderedMarkdownText str cmd model data =
-    -- TODO: make this work
     let
         str2 =
             Markdown.Parse.toMDBlockTree 0 ExtendedMath str
@@ -631,15 +636,22 @@ syncAndHighlightRenderedMarkdownText str cmd model data =
         id_ =
             Sync.get str2 data.sourceMap
                 |> Maybe.withDefault "0v0"
+    in
+    ( { model | selectedId_ = id_ }
+    , Cmd.batch [ cmd, setViewportForElement id_ ]
+    )
 
-        id : ( Int, Int )
+
+syncAndHighlightRenderedMiniLaTeXText : String -> Cmd Msg -> Model -> MLData msg -> ( Model, Cmd Msg )
+syncAndHighlightRenderedMiniLaTeXText str cmd model data =
+    let
         id =
-            Markdown.Parse.idFromString id_
-                |> (\( id__, version ) -> ( id__, version ))
+            Sync.get (Debug.log "KEY" str) data.editRecord.sourceMap
+                |> Maybe.withDefault "0v0"
     in
     ( -- processMarkdownContentForHighlighting (Editor.getContent model.editor) data { model | selectedId = id }
-      { model | selectedId = id }
-    , Cmd.batch [ cmd, setViewportForElement (Markdown.Parse.stringFromId id) ]
+      model
+    , Cmd.batch [ cmd, setViewportForElement id ]
     )
 
 
@@ -738,4 +750,4 @@ setViewPortForSelectedLineInRenderedText offset element viewport =
 
 
 verticalOffsetInRenderedText =
-    160
+    140
