@@ -97,7 +97,7 @@ update msg model =
                     { line = lineNumber, column = lastColumnOfLine }
 
                 newSelection =
-                    Selection newCursor lineEnd
+                    Selection model.cursor lineEnd
 
                 ( newLines, selectedText ) =
                     Action.deleteSelection newSelection model.lines
