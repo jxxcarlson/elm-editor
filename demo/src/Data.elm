@@ -1,6 +1,7 @@
 module Data exposing
     ( about
     , aboutMiniLaTeX
+    , aboutMiniLaTeX2
     , astro
     , markdownExample
     , mathExample
@@ -875,18 +876,27 @@ Astronomy](http://users.clas.ufl.edu/ufhatch/pages/02-TeachingResources/HIS-SCI-
 aboutMiniLaTeX =
     """
 
-\\section{About MiniLaTeX}
 
-\\innertableofcontents
 
-\\subsection{Introduction}
+\\title{About MiniLaTeX}
+% \\author{James Carlson}
+% \\email{jxxcarlson@gmail.com}
+% \\date{Feburary 19, 2020}
 
-You are looking at demo of an editor coupled
-to on-the-fly compilers for Markdown+Math and
-MiniLaTeX.  The first is a version of Markdown
-that can handle equations written in TeX.  The
-second is a subset of LaTeX.  As you can see
-from looking at this source, no ceremony with
+
+\\maketitle
+
+
+\\tableofcontents
+
+\\section{Introduction}
+
+You are looking at demo of an editor coupled to on-the-fly
+compilers for Markdown+Math and MiniLaTeX. The first is
+a version of Markdown that can handle equations written
+in TeX. The second, which we discuss here, is a subset of
+LaTeX. As you can see from looking at this source, the
+usual ceremony with
 
 \\begin{verbatim}
 \\begin{document}
@@ -896,46 +906,95 @@ from looking at this source, no ceremony with
 \\end{document}
 \\end{verbatim}
 
-is needed.  Just start typing what you want to
-say and watch it being rendered in real time in
+is not needed.  Just start typing and watch it
+being rendered in real time in
 the window on the right. To produce a
-stand-alone, stand-alone, standard LaTeX file,
+stand-alone, standard LaTeX file,
 press the \\strong{Export} button below. As an
 example, compare what you see when you push
 the \\strong{L1} button below with the
 \\href{http://jxxcarlson.s3.amazonaws.com/anharmonicOscillator.pdf}{PDF version}
-obtained by exporting the the doument and
+obtained by exporting the the document and
 running \\code{pdflatex} on it.
 
-\\subsection{Using this app}
+\\section{Using this app}
 
-Control-click on the green bar below to see a
-list of key commands that you can can use. For
-example \\code{ctrl-Z} is undo and \\code{ctrl-Y} is
-redo, while \\code{ctrl-shift-S} syncs the rendered
-text with the source text: the source text at the
-cursor is matched with the corresponding rendered
-text.
+\\highlight{Bear in mind that ths app is a work in
+progress}. That said, control-click on the green bar below
+to see a list of key commands that you can can use. For
+example \\code{ctrl-Z} is undo and \\code{ctrl-Y} is redo,
+while \\code{ctrl-shift-S} syncs the rendered text with
+the source text: the source text at the cursor is matched
+with the corresponding rendered text
+.
 
-\\subsection{Using MiniLaTeX}
+\\section{Using MiniLaTeX}
 
 The best way to see what you can do with
-MiniLaTeX is to look at examnples, comparing
+MiniLaTeX is to look at examples, comparing
 the source and rendered text. See documents
 \\strong{1}, \\strong{2}, etc. below in the
-\\strong{LaTeX Docs} section.
+\\strong{LaTeX Docs} section. See also
+the documents at \\href{https://knode.io}{knode.io},
+e.g, \\href{https://knode.io/424}{these course notes}.
+
+\\section{Examples}
+
+Here are few examples.  First, an equation:
+
+\\begin{equation}
+\\int_{-\\infty}^\\infty e^{-x^2} dx = \\pi
+\\end{equation}
+
+Of course, you can use double dollar signs as well.
+Second, a theorem environment:
+
+\\begin{theorem} There are are infinitely
+many primes $p \\equiv 1 \\ mod\\ 4$.
+\\end{theorem}
 
 
-\\subsection{Plans}
+Third, some code (yes, we need syntax highlighting!)
+
+\\begin{listing}
+filterMany : List (a -> Bool) -> List a -> List a
+filterMany predicates items =
+    let
+        makeFilter : (a -> Bool) -> List a -> List a
+        makeFilter predicate list =
+            List.filter predicate list
+    in
+    List.foldl makeFilter items predicates
+\\end{listing}
+
+
+Fourth and last, an image grabbed from the web:
+
+\\image{http://noteimages.s3.amazonaws.com/jxxcarlson/hummingbird2.jpg}{Figure 1. Meditation}{width: 350, align: center}
+
+\\section{Plans}
 
 The first order of business is to finish this
 demo app, bringing it to the point where it is
 useful for writing short documents which can
-be exported to standard LaTeX. This means
+be exported to standard LaTeX or to a file
+of HTML text ready for posting on the web. This means
 fixing bugs, adding features, smoothing rough
-spots, etc.
+spots, etc. It will also require some work on the
+MiniLaTeX compiler.
 
+The second order of business is integrate this work
+into \\href{https://knode.io}{knode.io}, a platform
+for creating, editing, and distributing MiniLaTeX
+content on the web.
 
+\\section{Feedback, Open Source}
+
+This project is open-source. If you find a bug
+or would like to make a feature request, you may
+post an issue on the
+\\href{https://github.com/jxxcarlson/elm-editor2}{Github Repo}.
+You can also contact me via gmail at jxxcarlson.
 
 
 
