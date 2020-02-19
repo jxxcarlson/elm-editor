@@ -2,26 +2,26 @@
 
 app.ports.infoForOutside.subscribe(msg => {
 
-    console.log("app.ports.infoForOutside")
+    console.log("!JS! app.ports.infoForOutside")
 
     switch(msg.tag) {
 
         case "AskForClipBoard":
-            console.log("AskForClipBoard")
+            console.log("!JS!  AskForClipBoard")
 
             navigator.clipboard.readText()
               .then(text => {
-                console.log('Clipboard (outside):', text);
+                console.log('!JS! Clipboard (outside):', text);
                 app.ports.infoForElm.send({tag: "GotClipboard", data:  text})
               })
               .catch(err => {
-                console.error('Failed to read clipboard: ', err);
+                console.error('!JS! Failed to read clipboard: ', err);
               });
 
              break;
 
         case "WriteToClipboard":
-            console.log("WriteToClipboard", JSON.stringify(msg.data))
+            console.log("!JS!  WriteToClipboard", JSON.stringify(msg.data))
 
             navigator.permissions.query({name: "clipboard-write"}).then(result => {
               if (result.state == "granted" || result.state == "prompt") {
@@ -34,23 +34,23 @@ app.ports.infoForOutside.subscribe(msg => {
 
          case "Highlight":
 
-           console.log("Highlight", msg.data)
+           console.log("!JS! Highlight", msg.data)
            var id = "#".concat(msg.data.id)
            var lastId = msg.data.lastId
-           console.log("Highlight (id, lastId)", id, lastId)
+           console.log("!JS! Highlight (id, lastId)", id, lastId)
 
            var element = document.querySelector(id)
            if (element != null) {
                  element.classList.add("highlight")
            } else {
-                 console.log("Add: could not find id", id)
+                 console.log("!JS! Add: could not find id", id)
            }
 
            var lastElement = document.querySelector(lastId)
            if (lastElement != null) {
                  lastElement.classList.remove("highlight")
            } else {
-                 console.log("Remove: could not find last id",lastId)
+                 console.log("!JS! Remove: could not find last id",lastId)
            }
 
            break;
@@ -59,9 +59,9 @@ app.ports.infoForOutside.subscribe(msg => {
 
     function updateClipboard(newClip) {
       navigator.clipboard.writeText(newClip).then(function() {
-        console.log("Wrote to clipboard");
+        console.log("!JS! Wrote to clipboard");
       }, function() {
-        console.log ("Clipboard write failed");
+        console.log ("!JS! Clipboard write failed");
       });
     }
 

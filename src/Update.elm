@@ -2,6 +2,7 @@ module Update exposing (sendLine, update)
 
 import Action
 import Array exposing (Array)
+import ArrayUtil
 import Browser.Dom as Dom
 import Common exposing (..)
 import ContextMenu exposing (ContextMenu)
@@ -358,6 +359,31 @@ update msg model =
                 Err _ ->
                     ( model, Cmd.none )
 
+        CopyPasteClipboard ->
+            {- The msg CopyPasteClipboard is detected and acted upon by the
+               host app's update function.
+            -}
+            ( model, Cmd.none )
+
+        WriteToSystemClipBoard ->
+            {- The msg WriteToSystemClipBoard is detected and acted upon by the
+               host app's update function.
+            -}
+            case model.selection of
+                Selection p1 p2 ->
+                    let
+                        selectedString =
+                            ArrayUtil.between p1 p2 model.lines
+
+                        newModel =
+                            { model | selectedString = Just selectedString }
+                    in
+                    ( model, Cmd.none )
+
+                -- |> recordHistory
+                _ ->
+                    ( model, Cmd.none )
+
 
 
 -- FILE I/O
@@ -618,10 +644,6 @@ jumpToHeightForSync currentLine cursor selection y =
 
 jumpToBottom : Model -> Cmd Msg
 jumpToBottom model =
-    let
-        info__ =
-            Debug.log "(line, arrayLength)" ( model.cursor.line, Array.length model.lines )
-    in
     case model.cursor.line == (Array.length model.lines - 1) of
         False ->
             Cmd.none

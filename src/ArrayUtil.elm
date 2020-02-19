@@ -1,5 +1,6 @@
 module ArrayUtil exposing
     ( Position
+    , between
     , cut
     , cutOut
     , cutString
@@ -254,6 +255,51 @@ cut pos1 pos2 array =
     , middle = middle
     , after = after
     }
+
+
+{-| copy string betwwen two positions
+-}
+between : Position -> Position -> Array String -> String
+between pos1 pos2 array =
+    case pos1.line == pos2.line of
+        True ->
+            let
+                middleLine =
+                    Array.get pos1.line array |> Maybe.withDefault ""
+
+                ( a_, part ) =
+                    splitStringAt pos1.column middleLine
+
+                ( _, _ ) =
+                    splitStringAt (pos2.column - String.length a_ + 1) part
+
+                middle__ =
+                    String.slice pos1.column (pos2.column + 1) middleLine
+            in
+            middle__
+
+        False ->
+            let
+                firstLine =
+                    Array.get pos1.line array |> Maybe.withDefault ""
+
+                lastLine =
+                    Array.get pos2.line array
+                        |> Maybe.withDefault ""
+
+                middle__ =
+                    Array.slice (pos1.line + 1) pos2.line array
+
+                ( _, part_1 ) =
+                    splitStringAt pos1.column firstLine
+
+                ( part_2, _ ) =
+                    splitStringAt (pos2.column + 0) lastLine
+
+                b__ =
+                    joinThree (Array.fromList [ part_1 ]) middle__ (Array.fromList [ part_2 ])
+            in
+            b__ |> Array.toList |> String.join "\n"
 
 
 cutString : Int -> Int -> Int -> Array String -> StringZipper

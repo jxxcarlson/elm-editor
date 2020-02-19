@@ -18,6 +18,7 @@ import ContextMenu exposing (ContextMenu)
 import Debounce exposing (Debounce)
 import File exposing (File)
 import History exposing (History)
+import Wrap exposing (WrapOption(..))
 
 
 type alias Model =
@@ -26,6 +27,7 @@ type alias Model =
     , hover : Hover
     , selection : Selection
     , selectedText : Array String
+    , selectedString : Maybe String
     , width : Float
     , height : Float
     , fontSize : Float
@@ -38,6 +40,8 @@ type alias Model =
     , autoLineBreak : AutoLineBreak
     , debugOn : Bool
     , topLine : Int
+    , wrapOption : WrapOption
+    , clipboard : String
     }
 
 
@@ -67,6 +71,7 @@ type alias Config =
     , fontSize : Float
     , verticalScrollOffset : Int
     , debugOn : Bool
+    , wrapOption : WrapOption
     }
 
 
@@ -96,6 +101,7 @@ init ( config, contextMenu ) =
     , hover = NoHover
     , selection = NoSelection
     , selectedText = Array.fromList [ "" ]
+    , selectedString = Nothing
     , width = config.width
     , height = config.height
     , fontSize = config.fontSize
@@ -108,6 +114,8 @@ init ( config, contextMenu ) =
     , autoLineBreak = AutoLineBreakON
     , debugOn = config.debugOn
     , topLine = 0
+    , wrapOption = config.wrapOption
+    , clipboard = ""
     }
 
 
@@ -183,6 +191,9 @@ type Msg
       --
     | SendLine
     | GotViewportForSync (Maybe String) Selection (Result Dom.Error Dom.Viewport)
+      --
+    | CopyPasteClipboard
+    | WriteToSystemClipBoard
 
 
 

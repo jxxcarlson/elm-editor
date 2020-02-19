@@ -14,7 +14,6 @@ import Array exposing (Array)
 import ArrayUtil
 import Common
 import Debounce exposing (Debounce)
-import List.Extra
 import Model exposing (Model, Msg(..), Selection(..))
 
 

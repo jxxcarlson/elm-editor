@@ -1,7 +1,7 @@
 module Editor exposing
     ( Editor(..), init, loadArray
     , EditorMsg, getLines, getContextMenu, update, view
-    , getContent, initWithContent, lineAtCursor, loadString, resize, sendLine, syncMessages
+    , getContent, getCursor, getSelectedString, getWrapOption, initWithContent, insertAtCursor, lineAtCursor, loadString, placeInClipboard, resize, sendLine, syncMessages
     )
 
 {-| Use the Editor module to embed a pure Elm text editor
@@ -21,6 +21,7 @@ code for an example.
 -}
 
 import Array exposing (Array)
+import ArrayUtil
 import Cmd.Extra
 import ContextMenu exposing (ContextMenu)
 import File.Select as Select
@@ -29,12 +30,55 @@ import Menu.View exposing (viewContextMenu)
 import Model exposing (Config, Context(..), Model, Msg(..))
 import Update as U
 import View exposing (viewDebug, viewEditor, viewHeader)
+import Wrap exposing (WrapOption)
 
 
 {-| Opaque type for the editor
 -}
 type Editor
     = Editor Model
+
+
+{-| Place string in the editor's clipboard
+-}
+placeInClipboard : String -> Editor -> Editor
+placeInClipboard str (Editor model) =
+    Editor { model | clipboard = str }
+
+
+insertAtCursor : String -> Editor -> Editor
+insertAtCursor str (Editor data) =
+    let
+        n =
+            str |> String.lines |> List.length
+
+        newLines =
+            ArrayUtil.insert data.cursor str data.lines
+
+        newCursor =
+            { line = data.cursor.line + n, column = data.cursor.column }
+    in
+    Editor
+        { data
+            | lines = newLines
+            , clipboard = str
+            , cursor = newCursor
+        }
+
+
+getCursor : Editor -> { line : Int, column : Int }
+getCursor (Editor model) =
+    model.cursor
+
+
+getWrapOption : Editor -> WrapOption
+getWrapOption (Editor model) =
+    model.wrapOption
+
+
+getSelectedString : Editor -> Maybe String
+getSelectedString (Editor model) =
+    model.selectedString
 
 
 sendLine : Editor -> ( Editor, Cmd Msg )

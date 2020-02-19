@@ -54,7 +54,7 @@ getInfo tagger onError =
 sendInfo : InfoForOutside -> Cmd msg
 sendInfo info =
     case info of
-        AskForClipBoard value ->
+        AskForClipBoard _ ->
             infoForOutside { tag = "AskForClipBoard", data = E.null }
 
         WriteToClipBoard str ->

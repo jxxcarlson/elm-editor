@@ -38,16 +38,20 @@ import File.Select as Select
 import Html exposing (Attribute, Html)
 import Html.Attributes as Attribute
 import Html.Events as HE
+import Json.Encode
 import Markdown.ElmWithId
 import Markdown.Option exposing (Option(..))
 import Markdown.Parse
 import MiniLatex.Export
 import Model exposing (Msg(..))
+import Outside
 import Render exposing (MDData, MLData, RenderingData(..), RenderingOption(..))
 import Style
 import Sync
 import Task exposing (Task)
 import Tree.Diff
+import UpdateFunction
+import Wrap exposing (WrapOption(..))
 
 
 type alias Flags =
@@ -111,6 +115,8 @@ type Msg
     | SaveFile
     | ExportFile
     | SyncLR
+    | Outside Outside.InfoForElm
+    | LogErr String
 
 
 init : Flags -> ( Model, Cmd Msg )
@@ -187,7 +193,9 @@ loadDocument title source docType model =
                 | renderingData = renderingData
                 , fileName = Just fileName
                 , counter = model.counter + 1
-                , editor = Editor.initWithContent source (config { width = model.width, height = model.height })
+                , editor =
+                    Editor.initWithContent source
+                        (config { width = model.width, height = model.height, wrapOption = DontWrap })
                 , docTitle = title
                 , docType = MarkdownDoc
             }
@@ -204,7 +212,9 @@ loadDocument title source docType model =
                 | renderingData = renderingData
                 , fileName = Just fileName
                 , counter = model.counter + 1
-                , editor = Editor.initWithContent source (config { width = model.width, height = model.height })
+                , editor =
+                    Editor.initWithContent source
+                        (config { width = model.width, height = model.height, wrapOption = DontWrap })
                 , docTitle = title
                 , docType = MiniLaTeXDoc
             }
@@ -216,6 +226,7 @@ config flags =
     , fontSize = 16
     , verticalScrollOffset = 3
     , debugOn = False
+    , wrapOption = DontWrap
     }
 
 
@@ -225,6 +236,7 @@ subscriptions model =
         [ ContextMenu.subscriptions (Editor.getContextMenu model.editor)
             |> Sub.map ContextMenuMsg
             |> Sub.map EditorMsg
+        , Outside.getInfo Outside LogErr
         , Browser.Events.onResize WindowSize
         ]
 
@@ -241,6 +253,18 @@ update msg model =
                     Editor.update editorMsg model.editor
             in
             case editorMsg of
+                CopyPasteClipboard ->
+                    let
+                        clipBoardCmd =
+                            Outside.sendInfo (Outside.AskForClipBoard Json.Encode.null)
+                    in
+                    model
+                        |> syncModel newEditor
+                        |> withCmds [ clipBoardCmd, Cmd.map EditorMsg cmd ]
+
+                WriteToSystemClipBoard ->
+                    ( { model | editor = newEditor }, Outside.sendInfo (Outside.WriteToClipBoard (Editor.getSelectedString model.editor |> Maybe.withDefault "Nothing!!")) )
+
                 Unload _ ->
                     sync newEditor cmd model
 
@@ -359,6 +383,29 @@ update msg model =
                     Editor.sendLine model.editor
             in
             ( { model | editor = newEditor }, Cmd.map EditorMsg cmd )
+
+        Outside infoForElm ->
+            case infoForElm of
+                Outside.GotClipboard clipboard ->
+                    pasteToEditorAndClipboard model clipboard
+
+        LogErr _ ->
+            ( model, Cmd.none )
+
+
+pasteToEditorAndClipboard : Model -> String -> ( Model, Cmd msg )
+pasteToEditorAndClipboard model str =
+    let
+        cursor =
+            Editor.getCursor model.editor
+
+        wrapOption =
+            Editor.getWrapOption model.editor
+
+        editor2 =
+            Editor.placeInClipboard str model.editor
+    in
+    { model | editor = Editor.insertAtCursor str editor2 } |> withCmd Cmd.none
 
 
 
@@ -749,6 +796,13 @@ sync newEditor cmd model =
         |> updateRenderingData (Editor.getLines newEditor)
         |> (\m -> { m | editor = newEditor })
         |> withCmd (Cmd.map EditorMsg cmd)
+
+
+syncModel : Editor -> Model -> Model
+syncModel newEditor model =
+    model
+        |> updateRenderingData (Editor.getLines newEditor)
+        |> (\m -> { m | editor = newEditor })
 
 
 load : Int -> ( Int, Int ) -> RenderingOption -> String -> RenderingData Msg

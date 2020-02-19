@@ -213,9 +213,9 @@ keymaps =
         Dict.fromList
             [ -- ( "ArrowRight", SelectToGroupEnd )
               --, ( "ArrowLeft", SelectToGroupStart )
-              --, ( "C", WriteToSystemClipBoard )
-              --, ( "V", CopyPasteClipboard )
-              ( "W", WrapAll )
+              ( "C", WriteToSystemClipBoard )
+            , ( "V", CopyPasteClipboard )
+            , ( "W", WrapAll )
             , ( "S", SendLine )
 
             --, ( "A", SelectAll )
