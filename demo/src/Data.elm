@@ -12,6 +12,8 @@ module Data exposing
 about =
     """
 
+*NOTE: this app is designed for computers, not phones.*
+
 # About this app
 
 What you see here is a demonstration of
@@ -43,7 +45,7 @@ to wrap the current selection.  The
 command ctrl-shift-V will paste whatever
 is in the clipboard into the editor
 at the cursor.  At the moment this works
-only in Google Chrome.  
+only in Google Chrome.
 
 ## Plans
 
