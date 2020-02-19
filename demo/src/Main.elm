@@ -155,6 +155,9 @@ loadDocumentByTitle docTitle model =
         "miniLaTeXExample" ->
             loadDocument docTitle Data.miniLaTeXExample MiniLaTeXDoc model
 
+        "aboutMiniLaTeX2" ->
+            loadDocument docTitle Data.aboutMiniLaTeX2 MiniLaTeXDoc model
+
         _ ->
             model
 
@@ -468,7 +471,8 @@ latexDocumentLoader model =
     row [ spacing 12 ]
         [ el [] (text "LaTeX Docs: ")
         , loadDocumentButton model 50 "aboutMiniLaTeX" "About"
-        , loadDocumentButton model 50 "miniLaTeXExample" "L1"
+        , loadDocumentButton model 50 "aboutMiniLaTeX2" "L1"
+        , loadDocumentButton model 50 "miniLaTeXExample" "L2"
         ]
 
 
