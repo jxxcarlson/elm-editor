@@ -65,10 +65,8 @@ update msg model =
                 |> recordHistory model
 
         NewLine ->
-            ( newLine model
-                |> Common.sanitizeHover
-            , jumpToBottom
-            )
+            (newLine model |> Common.sanitizeHover)
+                |> (\m -> ( m, jumpToBottom m ))
 
         InsertChar char ->
             let
@@ -618,11 +616,20 @@ jumpToHeightForSync currentLine cursor selection y =
         |> Task.attempt (\info -> GotViewportForSync currentLine selection info)
 
 
-jumpToBottom : Cmd Msg
-jumpToBottom =
-    Dom.getViewportOf "__editor__"
-        |> Task.andThen (\info -> Dom.setViewportOf "__editor__" 0 info.scene.height)
-        |> Task.attempt (\_ -> NoOp)
+jumpToBottom : Model -> Cmd Msg
+jumpToBottom model =
+    let
+        info__ =
+            Debug.log "(line, arrayLength)" ( model.cursor.line, Array.length model.lines )
+    in
+    case model.cursor.line == (Array.length model.lines - 1) of
+        False ->
+            Cmd.none
+
+        True ->
+            Dom.getViewportOf "__editor__"
+                |> Task.andThen (\info -> Dom.setViewportOf "__editor__" 0 info.scene.height)
+                |> Task.attempt (\_ -> NoOp)
 
 
 
