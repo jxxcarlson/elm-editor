@@ -11,6 +11,7 @@ module Data exposing
 
 about =
     """
+
 # About this app
 
 What you see here is a demonstration of
@@ -38,7 +39,11 @@ Do ctrl-click in the green bar below left to
 bring up a menu of commands, e.g.,
 ctrl-shift-S to sync the rendered
 text with the source text, or ctrl-W
-to wrap the current selection.
+to wrap the current selection.  The
+command ctrl-shift-V will paste whatever
+is in the clipboard into the editor
+at the cursor.  At the moment this works
+only in Google Chrome.  
 
 ## Plans
 
@@ -69,25 +74,25 @@ feature parity wth the previous version.
 
 - ~~Left to right sync for Markown documents~~
 
-- Left to right sync for MiniLaTex documents
+- ~~Left
+to right sync for MiniLaTex documents~~
 
 - Right to left sync
 
-- Export to standard LaTeX doc from MiniLaTeX
+- ~~Export
+to standard LaTeX doc from MiniLaTeX~~
 
 - ?? Html String output
 
-- External copy-paste
+- ~~Paste system clipboard into editor~~
+
+- Copy editor text to system clipboard
 
 - Search and replace
 
 - Autocompletion
 
 - Dark mode option
-
-
-
-
 
 """
 
