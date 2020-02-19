@@ -1,0 +1,35 @@
+\section{Introduction}
+
+\tableofcontents
+
+You are looking at demo of an editor coupled 
+to on-the-fly compilers for Markdown+Math and 
+MiniLaTeX.  The first is a version of Markdown 
+that can handle equations written in TeX.  The 
+second is a subset of LaTeX.  As you can see 
+from looking at this source, no ceremony with 
+
+\begin{verbatim}
+\begin{document}
+
+...
+
+\end{document}
+\end{verbatim}
+
+is needed.  Just start typing what you want to 
+say and watch it being rendered in real time in
+the window on the right. To produce a 
+stand-alone, stand-alone, standard LaTeX file, 
+press the \strong{Export} button below. As an 
+example, compare what you see when you push 
+the XXX button below with the 
+\href{http://jxxcarlson.s3.amazonaws.com/anharmonicOscillator.pdf}{PDF version}
+obtained by exporting the the doument and 
+running \code{pdflatex} on it.
+
+\section{Using this app}
+
+\section{Plans}
+
+

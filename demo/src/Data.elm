@@ -331,7 +331,7 @@ itself in state $\\beta$ after time $t$
 is given by the matrix element
 
 $$
-\\bra \\beta U(t)  \\ket \\alpha
+\\< \\beta U(t)  \\> \\alpha
 $$
 
 This is just the kind of information
@@ -875,6 +875,76 @@ Astronomy](http://users.clas.ufl.edu/ufhatch/pages/02-TeachingResources/HIS-SCI-
 aboutMiniLaTeX =
     """
 
+\\section{About MiniLaTeX}
+
+\\innertableofcontents
+
+\\subsection{Introduction}
+
+You are looking at demo of an editor coupled
+to on-the-fly compilers for Markdown+Math and
+MiniLaTeX.  The first is a version of Markdown
+that can handle equations written in TeX.  The
+second is a subset of LaTeX.  As you can see
+from looking at this source, no ceremony with
+
+\\begin{verbatim}
+\\begin{document}
+
+...
+
+\\end{document}
+\\end{verbatim}
+
+is needed.  Just start typing what you want to
+say and watch it being rendered in real time in
+the window on the right. To produce a
+stand-alone, stand-alone, standard LaTeX file,
+press the \\strong{Export} button below. As an
+example, compare what you see when you push
+the \\strong{L1} button below with the
+\\href{http://jxxcarlson.s3.amazonaws.com/anharmonicOscillator.pdf}{PDF version}
+obtained by exporting the the doument and
+running \\code{pdflatex} on it.
+
+\\subsection{Using this app}
+
+Control-click on the green bar below to see a
+list of key commands that you can can use. For
+example \\code{ctrl-Z} is undo and \\code{ctrl-Y} is
+redo, while \\code{ctrl-shift-S} syncs the rendered
+text with the source text: the source text at the
+cursor is matched with the corresponding rendered
+text.
+
+\\subsection{Using MiniLaTeX}
+
+The best way to see what you can do with
+MiniLaTeX is to look at examnples, comparing
+the source and rendered text. See documents
+\\strong{1}, \\strong{2}, etc. below in the
+\\strong{LaTeX Docs} section.
+
+
+\\subsection{Plans}
+
+The first order of business is to finish this
+demo app, bringing it to the point where it is
+useful for writing short documents which can
+be exported to standard LaTeX. This means
+fixing bugs, adding features, smoothing rough
+spots, etc.
+
+
+
+
+
+"""
+
+
+aboutMiniLaTeX2 =
+    """
+
 \\title{Sample MiniLaTeX Doc}
 % \\author{James Carlson}
 % \\email{jxxcarlson@gmail.com}
@@ -1200,9 +1270,9 @@ The $\\epsilon^1$ component of the equation reads
 Take the inner product with $\\psi_0$ :
 
 \\begin{equation}
-\\bra \\psi_0 | H_0  | \\psi_1\\ket +  \\bra \\psi_0  | V | \\psi_0 \\ket
+\\left< \\psi_0 | H_0  | \\psi_1\\right> +  \\left< \\psi_0  | V | \\psi_0 \\right>
  =
- E_0 \\bra \\psi_0  |  \\psi_1 \\ket +  E_1 \\bra \\psi_0  |  \\psi_0 \\ket
+ E_0 \\left< \\psi_0  |  \\psi_1 \\right> +  E_1 \\left< \\psi_0  |  \\psi_0 \\right>
 \\end{equation}
 
 Because $\\psi_0$ is an eigenfunction of $H_0$
@@ -1211,7 +1281,7 @@ first term on the right, so that
 
 \\begin{equation}
 \\label{perturbation_of_energy}
-E_1 =\\frac{\\bra\\psi_0 | V | \\psi_0 \\ket}{ ||\\psi_0||^2 }
+E_1 =\\frac{\\left<\\psi_0 | V | \\psi_0 \\right>}{ ||\\psi_0||^2 }
 \\end{equation}
 
 In other words, if $E^{(m)}$ is the energy of
@@ -1222,7 +1292,7 @@ system is $E^{(m)} + \\epsilon \\Delta E^{(m)}$
 
 \\begin{equation}
 \\label{perturbation_of_En}
-\\Delta E^{(m)} =\\frac{\\bra\\psi^{(m)} | V | \\psi^{(m)} \\ket}{ || \\psi^{(m)} ||^2 }
+\\Delta E^{(m)} =\\frac{\\left<\\psi^{(m)} | V | \\psi^{(m)} \\right>}{ || \\psi^{(m)} ||^2 }
 \\end{equation}
 
 To find the wave functions for the perturbed
@@ -1232,19 +1302,19 @@ and take the inner product of
 $\\psi^{(m)}$ for $m \\ne n$ . One obtains
 
 \\begin{equation}
-\\bra \\psi^{(m)} | H_0 | \\psi_1 \\ket + \\bra \\psi^{(m)} | V | \\psi_0 \\ket
+\\left< \\psi^{(m)} | H_0 | \\psi_1 \\right> + \\left< \\psi^{(m)} | V | \\psi_0 \\right>
   =
-E_0\\bra \\psi^{(m)} | \\psi_1 \\ket + E_1\\bra \\psi^{(m)} | \\psi_0 \\ket
+E_0\\left< \\psi^{(m)} | \\psi_1 \\right> + E_1\\left< \\psi^{(m)} | \\psi_0 \\right>
 \\end{equation}
 
-The first term on the left is $E_m\\bra
-\\psi^{(m)} | \\psi_1 \\ket$ and the last term
+The first term on the left is $E_m\\left<
+\\psi^{(m)} | \\psi_1 \\right>$ and the last term
 on the right vanishes, so that we obtain
 
 \\begin{equation}
 \\label{perturbation_fourier_coefficients}
-  \\bra \\psi^{(m)} | \\psi_1 \\ket
-  = \\frac{\\bra \\psi^{(m)} | V | \\psi_1 \\ket}{E_0 - E_m}
+  \\left< \\psi^{(m)} | \\psi_1 \\right>
+  = \\frac{\\left< \\psi^{(m)} | V | \\psi_1 \\right>}{E_0 - E_m}
 \\end{equation}
 
 The numbers are the Fourier coefficients of
@@ -1253,7 +1323,7 @@ the expansion of $\\psi$ :
 \\begin{equation}
 \\label{perturbation_fourier_expansion}
   \\psi = \\psi^{(n)}
-+ \\epsilon \\sum_{m \\ne n} \\frac{\\bra \\psi^{(n)} | V | \\psi^{(m)} \\ket}{  E^{(n)} - E^{(m)}  }\\psi^{(m)}
++ \\epsilon \\sum_{m \\ne n} \\frac{\\left< \\psi^{(n)} | V | \\psi^{(m)} \\right>}{  E^{(n)} - E^{(m)}  }\\psi^{(m)}
 \\end{equation}
 
 \\subsection{Quartic perturbation by Gaussian
@@ -1294,7 +1364,7 @@ level is given by
 
 \\begin{equation}
 \\label{DeltaEn]}
-\\Delta E_n = \\lambda g \\bra \\psi_n | x^4 | \\psi_n \\ket ,
+\\Delta E_n = \\lambda g \\left< \\psi_n | x^4 | \\psi_n \\right> ,
 \\end{equation}
 
 and where the $\\psi_n$ are normalized wave
@@ -1371,8 +1441,8 @@ that
 
 \\begin{align}
 \\label{aa4}
-\\Delta E_0 &= \\lambda g \\left(\\frac{ \\hbar }{  2m \\omega} \\right)^{2} \\bra \\psi_0 | ( a + a^\\dagger )^4 | \\psi_0 \\ket \\\\
-&= \\lambda \\frac{1}{16}\\,\\frac{\\omega \\hbar}{2}\\,\\bra \\psi_0 | ( a + a^\\dagger )^4 | \\psi_0 \\ket
+\\Delta E_0 &= \\lambda g \\left(\\frac{ \\hbar }{  2m \\omega} \\right)^{2} \\left< \\psi_0 | ( a + a^\\dagger )^4 | \\psi_0 \\right> \\\\
+&= \\lambda \\frac{1}{16}\\,\\frac{\\omega \\hbar}{2}\\,\\left< \\psi_0 | ( a + a^\\dagger )^4 | \\psi_0 \\right>
 \\end{align}
 
 The operator $(a + a^\\dagger)^4$ is a sum of
@@ -1440,8 +1510,8 @@ We are led to the conclusion that
 \\end{equation}
 
 where $M'$ is a sum of monomials different from
-1. Now think about expressions $\\bra \\psi_0 |
-M | \\psi_0 \\ket$ , where $M$ is a monomial in
+1. Now think about expressions $\\left< \\psi_0 |
+M | \\psi_0 \\right>$ , where $M$ is a monomial in
 normal order. It is zero if $M \\ne 1$ and is
 1 if $M = 1$ . We can therefore read off the
 value of the perturbation term for the energy:
@@ -1454,7 +1524,7 @@ This is in agreement with the value computed
 by doing a Gaussian integral.
 
 \\begin{remark}
-Let   $P(a,a^\\dagger)$  be  a  polynomial  in  the  creation  and  annihilation  operators.   Let   $m_M(P)$  be  the  multiplicity  with  which   $M$  appears  in  the  normal  order  expression  for   $P$ .  Then   $\\bra \\psi_0 | P(a,a^\\dagger) | \\psi_0 \\ket = m_1(P)$
+Let   $P(a,a^\\dagger)$  be  a  polynomial  in  the  creation  and  annihilation  operators.   Let   $m_M(P)$  be  the  multiplicity  with  which   $M$  appears  in  the  normal  order  expression  for   $P$ .  Then   $\\left< \\psi_0 | P(a,a^\\dagger) | \\psi_0 \\right> = m_1(P)$
 \\end{remark}
 
 Note the combinatorial flavor of the

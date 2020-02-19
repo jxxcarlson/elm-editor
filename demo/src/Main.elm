@@ -41,6 +41,7 @@ import Html.Events as HE
 import Markdown.ElmWithId
 import Markdown.Option exposing (Option(..))
 import Markdown.Parse
+import MiniLatex.Export
 import Model exposing (Msg(..))
 import Render exposing (MDData, MLData, RenderingData(..), RenderingOption(..))
 import Style
@@ -108,6 +109,7 @@ type Msg
     | RequestedFile File
     | DocumentLoaded String
     | SaveFile
+    | ExportFile
     | SyncLR
 
 
@@ -157,6 +159,16 @@ loadDocumentByTitle docTitle model =
             model
 
 
+titleFromFileName : String -> String
+titleFromFileName fileName =
+    fileName
+        |> String.split "."
+        |> List.reverse
+        |> List.drop 1
+        |> List.reverse
+        |> String.join "."
+
+
 loadDocument : String -> String -> DocType -> Model -> Model
 loadDocument title source docType model =
     case docType of
@@ -183,7 +195,7 @@ loadDocument title source docType model =
                     Render.load ( 0, 0 ) model.counter OMiniLatex source
 
                 fileName =
-                    title ++ ".tex"
+                    title ++ ".latex"
             in
             { model
                 | renderingData = renderingData
@@ -328,12 +340,15 @@ update msg model =
                                 _ ->
                                     MarkdownDoc
                     in
-                    loadDocument fileName source docType model
+                    loadDocument (titleFromFileName fileName) source docType model
                         |> (\m -> { m | docType = docType })
                         |> withCmds [ scrollRendredTextToTop, scrollEditorToTop ]
 
         SaveFile ->
             ( model, saveFile model )
+
+        ExportFile ->
+            ( model, exportFile model )
 
         SyncLR ->
             let
@@ -388,6 +403,7 @@ viewFooter model width_ height_ =
         , newDocumentButton model
         , openFileButton model
         , saveFileButton model
+        , exportFileButton model
         , displayFilename model
         , syncLRButton model
         , el [ alignRight, width (px 100) ] (text model.message)
@@ -442,9 +458,9 @@ markdownDocumentLoader model =
     row [ spacing 12 ]
         [ el [] (text "Markdown Docs: ")
         , loadDocumentButton model 50 "about" "About"
-        , loadDocumentButton model 50 "markdownExample" "Sample"
-        , loadDocumentButton model 50 "mathExample" "Math"
-        , loadDocumentButton model 50 "astro" "Astro"
+        , loadDocumentButton model 50 "markdownExample" "M1"
+        , loadDocumentButton model 50 "mathExample" "M2"
+        , loadDocumentButton model 50 "astro" "M3"
         ]
 
 
@@ -452,7 +468,7 @@ latexDocumentLoader model =
     row [ spacing 12 ]
         [ el [] (text "LaTeX Docs: ")
         , loadDocumentButton model 50 "aboutMiniLaTeX" "About"
-        , loadDocumentButton model 50 "miniLaTeXExample" "Sample"
+        , loadDocumentButton model 50 "miniLaTeXExample" "L1"
         ]
 
 
@@ -517,6 +533,15 @@ openFileButton model =
 
 saveFileButton model =
     button 90 "Save" SaveFile []
+
+
+exportFileButton model =
+    case model.docType of
+        MarkdownDoc ->
+            Element.none
+
+        MiniLaTeXDoc ->
+            button 90 "Export" ExportFile []
 
 
 newDocumentButton model =
@@ -609,6 +634,23 @@ saveFile model =
             Cmd.none
 
 
+exportFile : Model -> Cmd msg
+exportFile model =
+    case ( model.docType, model.fileName ) of
+        ( MarkdownDoc, Just fileName ) ->
+            Cmd.none
+
+        ( MiniLaTeXDoc, Just fileName ) ->
+            let
+                contentForExport =
+                    Editor.getContent model.editor |> MiniLatex.Export.toLaTeX
+            in
+            Download.string fileName "application/x-latex" contentForExport
+
+        ( _, _ ) ->
+            Cmd.none
+
+
 
 -- HELPERS: LOAD, RENDER, SYNC
 
@@ -646,7 +688,7 @@ syncAndHighlightRenderedMiniLaTeXText : String -> Cmd Msg -> Model -> MLData msg
 syncAndHighlightRenderedMiniLaTeXText str cmd model data =
     let
         id =
-            Sync.get (Debug.log "KEY" str) data.editRecord.sourceMap
+            Sync.get str data.editRecord.sourceMap
                 |> Maybe.withDefault "0v0"
     in
     ( -- processMarkdownContentForHighlighting (Editor.getContent model.editor) data { model | selectedId = id }
