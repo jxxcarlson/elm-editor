@@ -37,6 +37,7 @@ p {white-space: normal;}
 
 #__RENDERED_TEXT__ {
   overflow-y: scroll;
+  font-size: 14px;
   }
 
 .toc-level-0 { margin-left: 0em; font-size : 10pt; line-height: 4pt; font-weight: normal; text-decoration: none; }
