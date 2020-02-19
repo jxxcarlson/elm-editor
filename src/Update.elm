@@ -67,7 +67,7 @@ update msg model =
         NewLine ->
             ( newLine model
                 |> Common.sanitizeHover
-            , Cmd.none
+            , jumpToBottom
             )
 
         InsertChar char ->
@@ -607,11 +607,22 @@ sendLine model =
     ( { model | cursor = newCursor, selection = selection }, jumpToHeightForSync currentLine newCursor selection y )
 
 
+
+-- SCROLL
+
+
 jumpToHeightForSync : Maybe String -> Position -> Selection -> Float -> Cmd Msg
 jumpToHeightForSync currentLine cursor selection y =
     Dom.setViewportOf "__editor__" 0 (y - 80)
         |> Task.andThen (\_ -> Dom.getViewportOf "__editor__")
         |> Task.attempt (\info -> GotViewportForSync currentLine selection info)
+
+
+jumpToBottom : Cmd Msg
+jumpToBottom =
+    Dom.getViewportOf "__editor__"
+        |> Task.andThen (\info -> Dom.setViewportOf "__editor__" 0 info.scene.height)
+        |> Task.attempt (\_ -> NoOp)
 
 
 
