@@ -84,6 +84,29 @@ update msg model =
                 lineNumber =
                     model.cursor.line
 
+                lastColumnOfLine =
+                    Array.get lineNumber model.lines
+                        |> Maybe.map String.length
+                        |> Maybe.withDefault 0
+                        |> (\x -> x - 1)
+
+                lineEnd =
+                    { line = lineNumber, column = lastColumnOfLine }
+
+                newSelection =
+                    Selection model.cursor lineEnd
+
+                ( newLines, selectedText ) =
+                    Action.deleteSelection newSelection model.lines
+            in
+            ( { model | lines = newLines, selectedText = selectedText }, Cmd.none )
+                |> recordHistory model
+
+        DeleteLine ->
+            let
+                lineNumber =
+                    model.cursor.line
+
                 newCursor =
                     { line = lineNumber, column = 0 }
 
@@ -97,7 +120,7 @@ update msg model =
                     { line = lineNumber, column = lastColumnOfLine }
 
                 newSelection =
-                    Selection model.cursor lineEnd
+                    Selection newCursor lineEnd
 
                 ( newLines, selectedText ) =
                     Action.deleteSelection newSelection model.lines

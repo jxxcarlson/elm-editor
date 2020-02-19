@@ -201,6 +201,7 @@ keymaps =
             --, ( "r", ToggleReplacePanel )
             , ( "d", RemoveCharAfter )
             , ( "k", KillLine )
+            , ( "u", DeleteLine )
             , ( "o", RequestFile )
             , ( "v", Paste )
             , ( "a", MoveToLineStart )

@@ -156,6 +156,7 @@ type Msg
     | RemoveCharBefore
     | RemoveCharAfter
     | KillLine
+    | DeleteLine
     | Cut
     | Copy
     | Paste

@@ -39,6 +39,7 @@ toItemGroups context =
               , ( ContextMenu.item "Delete Forward" |> ContextMenu.shortcut "Ctrl-D", RemoveCharAfter )
               , ( ContextMenu.item "Line End" |> ContextMenu.shortcut "Ctrl-E", MoveToLineEnd )
               , ( ContextMenu.item "Kill Line" |> ContextMenu.shortcut "Ctrl-K", KillLine )
+              , ( ContextMenu.item "Delete Line" |> ContextMenu.shortcut "Ctrl-U", DeleteLine )
               , ( ContextMenu.item "Paste" |> ContextMenu.shortcut "Ctrl-V", Paste )
               , ( ContextMenu.item "Paste from system clipboard" |> ContextMenu.shortcut "Ctrl-shift-V", Paste )
               , ( ContextMenu.item "Cut" |> ContextMenu.shortcut "Ctrl-X", Cut )
