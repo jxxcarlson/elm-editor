@@ -12,19 +12,24 @@ module Data exposing
 about =
     """
 
+
 *NOTE: this app is designed for computers, not phones.*
 
 # About this app
 
 What you see here is a demonstration of
-a pure Elm text editor. The app has two
+a pure Elm text editor coupled to compilers
+for Markdown+Math and MiniLaTeX.
+
+The app has two
 windows.  On the left is the editor
 itself.  On the right is the content of
 the editor suitably rendered. This
-document is written in a [flavor of
-Markdown](https://package.elm-lang.org/packages/jxxcarlson/elm-markdown/latest/)
-that can handle mathematical
-notation, like this:
+document is written in  [Markdown+Math](
+https://package.elm-lang.org/packages/jxxca
+rlson/elm-markdown/latest/), a flavor of
+Markdown that can handle mathematical
+notation. Like this:
 
 $$
 \\int_0^1 x^n dx = \\frac{1}{n+1}
@@ -40,12 +45,22 @@ to be rendered on the fly to Html.
 Do ctrl-click in the green bar below left to
 bring up a menu of commands, e.g.,
 ctrl-shift-S to sync the rendered
-text with the source text, or ctrl-W
-to wrap the current selection.  The
-command ctrl-shift-V will paste whatever
-is in the clipboard into the editor
-at the cursor.  At the moment this works
-only in Google Chrome.
+text with the source text.  To sync the
+rendered text to the source text, just
+click in the rendered text.
+
+A few more commands: ctrl-W
+will wrap
+the current selection, while ctrl-shift-W
+will wrap the entire document.  If you
+make a mistake, use ctrl-Z to undo it. If that
+was a mistake, use ctrl-Y
+
+The command ctrl-shift-V will paste whatever
+is in the clipboard into the editor at the
+cursor. At the moment this works only in
+Google Chrome
+.
 
 ## Plans
 
@@ -79,12 +94,12 @@ feature parity wth the previous version.
 - ~~Left
 to right sync for MiniLaTex documents~~
 
-- Right to left sync
+- ~~ Right to left sync~~
 
 - ~~Export
 to standard LaTeX doc from MiniLaTeX~~
 
-- ?? Html String output
+- Html String output
 
 - ~~Paste system clipboard into editor~~
 
@@ -95,6 +110,7 @@ to standard LaTeX doc from MiniLaTeX~~
 - Autocompletion
 
 - Dark mode option
+
 
 """
 
