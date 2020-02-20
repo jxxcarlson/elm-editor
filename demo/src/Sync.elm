@@ -1,6 +1,7 @@
-module Sync exposing (ST, Step(..), f, filterMany, fuzzyGet, g, get, loop)
+module Sync exposing (ST, Step(..), f, filterMany, fuzzyGet, fuzzyGetOne, g, getId, getText, loop)
 
-import Dict exposing (Dict)
+import BiDict exposing (BiDict)
+import Set
 
 
 {-|
@@ -12,34 +13,52 @@ import Dict exposing (Dict)
         Dict.fromList kv
 
 -}
-get : String -> Dict String String -> Maybe String
-get key_ dict_ =
+getId : String -> BiDict String String -> Maybe String
+getId text_ dict_ =
     let
-        key =
-            clean key_
+        text =
+            clean text_
+
+        idSet =
+            BiDict.getReverse text dict_
     in
-    case Dict.get key dict_ of
-        Just str ->
-            Just str
+    case BiDict.getReverse text dict_ |> Set.isEmpty of
+        False ->
+            idSet
+                |> Set.toList
+                |> List.head
 
-        Nothing ->
-            fuzzyGetOne key dict_
+        True ->
+            fuzzyGetOne text dict_
 
 
-get_ :
-    String
-    -> (String -> Dict String String -> Maybe String)
-    -> Dict String String
-    -> Maybe String
-get_ key lookup dict_ =
-    case Dict.get (clean key) dict_ of
-        Just str ->
-            Just str
 
-        --Nothing ->
-        --    fuzzyGet key dict_ |> List.head
-        Nothing ->
-            lookup key dict_
+-- getText : String -> BiDict String String -> Maybe String
+
+
+getText : String -> BiDict String String -> Maybe String
+getText id dict_ =
+    BiDict.get id dict_
+
+
+
+--
+--
+--get_ :
+--    String
+--    -> (String -> Dict String String -> Maybe String)
+--    -> Dict String String
+--    -> Maybe String
+--get_ key lookup dict_ =
+--    case Dict.get (clean key) dict_ of
+--        Just str ->
+--            Just str
+--
+--        --Nothing ->
+--        --    fuzzyGet key dict_ |> List.head
+--        Nothing ->
+--            lookup key dict_
+--
 
 
 clean : String -> String
@@ -62,16 +81,18 @@ clean str =
     --> ["1","4"]
 
 -}
-fuzzyGet : String -> Dict String String -> Maybe String
+fuzzyGet : String -> BiDict String String -> Maybe String
 fuzzyGet key dict_ =
     let
+        associationList : List ( String, String )
         associationList =
-            Dict.toList dict_
+            BiDict.toList dict_
 
+        makePredicate : String -> ( a, String ) -> Bool
         makePredicate a =
-            \( b, _ ) -> String.contains a b
+            \( _, b_ ) -> String.contains a b_
 
-        predicates : List (( String, b ) -> Bool)
+        predicates : List (( b, String ) -> Bool)
         predicates =
             List.map makePredicate (String.words key)
     in
@@ -80,14 +101,15 @@ fuzzyGet key dict_ =
         |> List.head
 
 
-fuzzyGetOne : String -> Dict String String -> Maybe String
+fuzzyGetOne : String -> BiDict String String -> Maybe String
 fuzzyGetOne key dict_ =
     let
         associationList =
-            Dict.toList dict_
+            --Debug.log "ASSOC" <|
+            BiDict.toList dict_
 
         makePredicate a =
-            \( b, _ ) -> String.contains a b
+            \( _, b ) -> String.contains a b
 
         predicates =
             List.map makePredicate (String.words key)
@@ -101,12 +123,16 @@ type alias SearchState =
 
 nextSearchState : SearchState -> Step SearchState (Maybe String)
 nextSearchState { predicates, pairs } =
+    --let
+    --    _ =
+    --        Debug.log "(a,b)" ( predicates, pairs )
+    --in
     case ( List.head predicates, List.length pairs ) of
         ( _, 0 ) ->
             Done Nothing
 
         ( _, 1 ) ->
-            Done (List.head pairs |> Maybe.map Tuple.second)
+            Done (List.head pairs |> Maybe.map Tuple.first)
 
         ( Just p, _ ) ->
             Loop
@@ -114,8 +140,8 @@ nextSearchState { predicates, pairs } =
                 , pairs = List.filter p pairs
                 }
 
-        ( _, _ ) ->
-            Done Nothing
+        ( Nothing, _ ) ->
+            Done (List.head pairs |> Maybe.map Tuple.first)
 
 
 {-|

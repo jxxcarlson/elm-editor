@@ -2,12 +2,14 @@
     "type": "application",
     "source-directories": [
         "src",
-        "../src"
+        "../src",
+        "/Users/carlson/dev/elm/mylibraries/elm-markdown/src"
     ],
     "elm-version": "0.19.1",
     "dependencies": {
         "direct": {
             "Janiczek/cmd-extra": "1.1.0",
+            "Janiczek/elm-bidict": "2.0.1",
             "elm/browser": "1.0.2",
             "elm/core": "1.0.4",
             "elm/file": "1.0.5",
@@ -22,9 +24,8 @@
             "jinjor/elm-contextmenu": "2.0.0",
             "jinjor/elm-debounce": "3.0.0",
             "jinjor/elm-diff": "1.0.6",
-            "jxxcarlson/elm-markdown": "7.0.0",
             "jxxcarlson/htree": "2.0.1",
-            "jxxcarlson/meenylatex": "10.0.0",
+            "jxxcarlson/meenylatex": "10.0.1",
             "mdgriffith/elm-ui": "1.1.5",
             "pablohirafuji/elm-syntax-highlight": "3.2.0",
             "zwilias/elm-rosetree": "1.5.0"
@@ -37,6 +38,10 @@
             "elm/time": "1.0.0",
             "elm/url": "1.0.0",
             "elm/virtual-dom": "1.0.2",
+            "elm-community/dict-extra": "2.4.0",
+            "erlandsona/assoc-set": "1.1.0",
+            "pzp1997/assoc-list": "1.0.0",
+            "skyqrose/assoc-list-extra": "1.0.0",
             "zwilias/elm-html-string": "2.0.2"
         }
     },

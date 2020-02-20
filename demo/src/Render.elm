@@ -13,7 +13,7 @@ module Render exposing
 
 -- import Html exposing (Attribute, Html)
 
-import Dict exposing (Dict)
+import BiDict exposing (BiDict)
 import Html exposing (Html)
 import Html.Attributes as Attribute
 import Markdown.ElmWithId exposing (MarkdownMsg(..))
@@ -52,7 +52,7 @@ type alias MDData =
     , renderedText : RenderedText
     , initialAst : Tree Parse.MDBlockWithId
     , fullAst : Tree Parse.MDBlockWithId
-    , sourceMap : Dict String String
+    , sourceMap : BiDict String String
     }
 
 

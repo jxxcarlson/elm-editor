@@ -400,12 +400,55 @@ update msg model =
                 LaTeXMsg latexMsg ->
                     case latexMsg of
                         MLE.IDClicked id ->
-                            ( { model | message = "Clicked: " ++ id }, Cmd.none )
+                            syncOnId id model
 
                 MarkdownMsg markdownMsg ->
                     case markdownMsg of
                         MDE.IDClicked id ->
-                            ( { model | message = "Clicked: " ++ id }, Cmd.none )
+                            syncOnId id model
+
+
+
+-- TODO: handle id received
+
+
+syncOnId : String -> Model -> ( Model, Cmd Msg )
+syncOnId id model =
+    let
+        text =
+            case model.renderingData of
+                MD data ->
+                    Sync.getText id data.sourceMap |> Maybe.map (shorten 5)
+
+                ML data ->
+                    Sync.getText id data.editRecord.sourceMap |> Maybe.andThen leadingLine
+    in
+    ( { model | message = "Clicked: " ++ id }, Cmd.none )
+
+
+shorten : Int -> String -> String
+shorten n str =
+    str
+        |> String.words
+        |> List.take n
+        |> String.join " "
+
+
+leadingLine : String -> Maybe String
+leadingLine str =
+    str
+        |> Debug.log "STR"
+        |> String.lines
+        |> List.filter goodLine
+        |> List.head
+
+
+goodLine str =
+    not
+        (String.contains "$$" str
+            || String.contains "\\begin" str
+            || String.contains "\\end" str
+        )
 
 
 pasteToEditorAndClipboard : Model -> String -> ( Model, Cmd msg )
@@ -743,7 +786,7 @@ syncAndHighlightRenderedMarkdownText str cmd model data =
                 |> Markdown.Parse.getLeadingTextFromAST
 
         id_ =
-            Sync.get str2 data.sourceMap
+            Sync.getId str2 data.sourceMap
                 |> Maybe.withDefault "0v0"
     in
     ( { model | selectedId_ = id_ }
@@ -755,7 +798,7 @@ syncAndHighlightRenderedMiniLaTeXText : String -> Cmd Msg -> Model -> MLData -> 
 syncAndHighlightRenderedMiniLaTeXText str cmd model data =
     let
         id =
-            Sync.get str data.editRecord.sourceMap
+            Sync.getId (Debug.log "KEY" str) data.editRecord.sourceMap
                 |> Maybe.withDefault "0v0"
     in
     ( -- processMarkdownContentForHighlighting (Editor.getContent model.editor) data { model | selectedId = id }
