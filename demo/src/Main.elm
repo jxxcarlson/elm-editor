@@ -412,19 +412,18 @@ syncOnId : String -> Model -> ( Model, Cmd Msg )
 syncOnId id model =
     let
         ( index, line ) =
-            Debug.log ("TEXT (" ++ id ++ ")") <|
-                case model.renderingData of
-                    MD data ->
-                        Sync.getText id data.sourceMap
-                            |> Maybe.map (shorten 5)
-                            |> Maybe.andThen (Editor.indexOf model.editor)
-                            |> Maybe.withDefault ( -1, "error" )
+            case model.renderingData of
+                MD data ->
+                    Sync.getText id data.sourceMap
+                        |> Maybe.map (shorten 5)
+                        |> Maybe.andThen (Editor.indexOf model.editor)
+                        |> Maybe.withDefault ( -1, "error" )
 
-                    ML data ->
-                        Sync.getText id data.editRecord.sourceMap
-                            |> Maybe.andThen leadingLine
-                            |> Maybe.andThen (Editor.indexOf model.editor)
-                            |> Maybe.withDefault ( -1, "error" )
+                ML data ->
+                    Sync.getText id data.editRecord.sourceMap
+                        |> Maybe.andThen leadingLine
+                        |> Maybe.andThen (Editor.indexOf model.editor)
+                        |> Maybe.withDefault ( -1, "error" )
 
         ( newEditor, cmd ) =
             Editor.sendLine (Editor.setCursor { line = index, column = 0 } model.editor)
@@ -810,11 +809,10 @@ syncAndHighlightRenderedMiniLaTeXText : String -> Cmd Msg -> Model -> MLData -> 
 syncAndHighlightRenderedMiniLaTeXText str cmd model data =
     let
         id =
-            Sync.getId (Debug.log "KEY" str) data.editRecord.sourceMap
+            Sync.getId str data.editRecord.sourceMap
                 |> Maybe.withDefault "0v0"
     in
-    ( -- processMarkdownContentForHighlighting (Editor.getContent model.editor) data { model | selectedId = id }
-      model
+    ( model
     , Cmd.batch [ cmd, setViewportForElementInRenderedText id ]
     )
 
