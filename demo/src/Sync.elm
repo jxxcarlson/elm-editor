@@ -123,10 +123,6 @@ type alias SearchState =
 
 nextSearchState : SearchState -> Step SearchState (Maybe String)
 nextSearchState { predicates, pairs } =
-    --let
-    --    _ =
-    --        Debug.log "(a,b)" ( predicates, pairs )
-    --in
     case ( List.head predicates, List.length pairs ) of
         ( _, 0 ) ->
             Done Nothing

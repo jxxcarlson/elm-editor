@@ -341,7 +341,7 @@ update msg model =
         SetViewPortForElement result ->
             case result of
                 Ok ( element, viewport ) ->
-                    ( { model | message = "synced" }, setViewPortForSelectedLineInRenderedText verticalOffsetInRenderedText element viewport )
+                    ( { model | message = "synced" }, setViewPortForSelectedLineInRenderedText element viewport )
 
                 Err _ ->
                     ( { model | message = "sync error" }, Cmd.none )
@@ -408,22 +408,35 @@ update msg model =
                             syncOnId id model
 
 
-
--- TODO: handle id received
-
-
 syncOnId : String -> Model -> ( Model, Cmd Msg )
 syncOnId id model =
     let
-        text =
-            case model.renderingData of
-                MD data ->
-                    Sync.getText id data.sourceMap |> Maybe.map (shorten 5)
+        ( index, line ) =
+            Debug.log ("TEXT (" ++ id ++ ")") <|
+                case model.renderingData of
+                    MD data ->
+                        Sync.getText id data.sourceMap
+                            |> Maybe.map (shorten 5)
+                            |> Maybe.andThen (Editor.indexOf model.editor)
+                            |> Maybe.withDefault ( -1, "error" )
 
-                ML data ->
-                    Sync.getText id data.editRecord.sourceMap |> Maybe.andThen leadingLine
+                    ML data ->
+                        Sync.getText id data.editRecord.sourceMap
+                            |> Maybe.andThen leadingLine
+                            |> Maybe.andThen (Editor.indexOf model.editor)
+                            |> Maybe.withDefault ( -1, "error" )
+
+        ( newEditor, cmd ) =
+            Editor.sendLine (Editor.setCursor { line = index, column = 0 } model.editor)
     in
-    ( { model | message = "Clicked: " ++ id }, Cmd.none )
+    -- TODO: issue command to sync id and line
+    ( { model | editor = newEditor, message = "Clicked: (" ++ id ++ ", " ++ String.fromInt (index + 1) ++ ")" }
+    , Cmd.batch [ cmd |> Cmd.map EditorMsg, setViewportForElementInRenderedText id ]
+    )
+
+
+
+-- scrollEditorToLine model index
 
 
 shorten : Int -> String -> String
@@ -437,7 +450,6 @@ shorten n str =
 leadingLine : String -> Maybe String
 leadingLine str =
     str
-        |> Debug.log "STR"
         |> String.lines
         |> List.filter goodLine
         |> List.head
@@ -790,7 +802,7 @@ syncAndHighlightRenderedMarkdownText str cmd model data =
                 |> Maybe.withDefault "0v0"
     in
     ( { model | selectedId_ = id_ }
-    , Cmd.batch [ cmd, setViewportForElement id_ ]
+    , Cmd.batch [ cmd, setViewportForElementInRenderedText id_ ]
     )
 
 
@@ -803,7 +815,7 @@ syncAndHighlightRenderedMiniLaTeXText str cmd model data =
     in
     ( -- processMarkdownContentForHighlighting (Editor.getContent model.editor) data { model | selectedId = id }
       model
-    , Cmd.batch [ cmd, setViewportForElement id ]
+    , Cmd.batch [ cmd, setViewportForElementInRenderedText id ]
     )
 
 
@@ -873,8 +885,8 @@ load counter selectedId renderingOption str =
 -- SCROLLING
 
 
-setViewportForElement : String -> Cmd Msg
-setViewportForElement id =
+setViewportForElementInRenderedText : String -> Cmd Msg
+setViewportForElementInRenderedText id =
     Dom.getViewportOf "__RENDERED_TEXT__"
         |> Task.andThen (\vp -> getElementWithViewPort vp id)
         |> Task.attempt SetViewPortForElement
@@ -899,13 +911,22 @@ getElementWithViewPort vp id =
         |> Task.map (\el -> ( el, vp ))
 
 
-setViewPortForSelectedLineInRenderedText : Float -> Dom.Element -> Dom.Viewport -> Cmd Msg
-setViewPortForSelectedLineInRenderedText offset element viewport =
+setViewPortForSelectedLineInRenderedText : Dom.Element -> Dom.Viewport -> Cmd Msg
+setViewPortForSelectedLineInRenderedText element viewport =
     let
         y =
             viewport.viewport.y + element.element.y - verticalOffsetInRenderedText
     in
     Task.attempt (\_ -> NoOp) (Dom.setViewportOf "__RENDERED_TEXT__" 0 y)
+
+
+scrollEditorToLine : Model -> Int -> Cmd Msg
+scrollEditorToLine model line =
+    let
+        y =
+            Editor.getLineHeight model.editor * toFloat line - verticalOffsetInRenderedText
+    in
+    Task.attempt (\_ -> NoOp) (Dom.setViewportOf "__editor__" 0 y)
 
 
 verticalOffsetInRenderedText =

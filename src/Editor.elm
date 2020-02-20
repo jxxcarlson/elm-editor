@@ -1,7 +1,7 @@
 module Editor exposing
     ( Editor(..), init, loadArray
     , EditorMsg, getLines, getContextMenu, update, view
-    , getContent, getCursor, getSelectedString, getWrapOption, initWithContent, insertAtCursor, lineAtCursor, loadString, placeInClipboard, resize, sendLine, syncMessages
+    , getContent, getCursor, getLineHeight, getSelectedString, getWrapOption, indexOf, initWithContent, insertAtCursor, lineAtCursor, loadString, placeInClipboard, resize, sendLine, setCursor, syncMessages
     )
 
 {-| Use the Editor module to embed a pure Elm text editor
@@ -39,6 +39,16 @@ type Editor
     = Editor Model
 
 
+getLineHeight : Editor -> Float
+getLineHeight (Editor data) =
+    data.lineHeight
+
+
+indexOf : Editor -> String -> Maybe ( Int, String )
+indexOf (Editor data) key =
+    ArrayUtil.indexOf key data.lines
+
+
 {-| Place string in the editor's clipboard
 -}
 placeInClipboard : String -> Editor -> Editor
@@ -69,6 +79,11 @@ insertAtCursor str (Editor data) =
 getCursor : Editor -> { line : Int, column : Int }
 getCursor (Editor model) =
     model.cursor
+
+
+setCursor : { line : Int, column : Int } -> Editor -> Editor
+setCursor cursor (Editor data) =
+    Editor { data | cursor = cursor }
 
 
 getWrapOption : Editor -> WrapOption

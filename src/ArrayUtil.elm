@@ -5,6 +5,7 @@ module ArrayUtil exposing
     , cutOut
     , cutString
     , diceStringAt
+    , indexOf
     , insert
     , insertLineAfter
     , join
@@ -33,6 +34,65 @@ type alias StringZipper =
     , middle : Array String
     , after : Array String
     }
+
+
+indexOf : String -> Array String -> Maybe ( Int, String )
+indexOf key array =
+    array
+        |> Array.toIndexedList
+        |> fuzzyGetOne key
+
+
+type Step state a
+    = Loop state
+    | Done a
+
+
+loop : state -> (state -> Step state a) -> a
+loop s nextState =
+    case nextState s of
+        Loop s_ ->
+            loop s_ nextState
+
+        Done b ->
+            b
+
+
+fuzzyGetOne : String -> List ( Int, String ) -> Maybe ( Int, String )
+fuzzyGetOne key list =
+    let
+        makePredicate : String -> ( a, String ) -> Bool
+        makePredicate a =
+            \( _, b ) -> String.contains a b
+
+        predicates : List (( a, String ) -> Bool)
+        predicates =
+            List.map makePredicate (String.words key)
+    in
+    loop { predicates = predicates, pairs = list } nextSearchState
+
+
+type alias SearchState =
+    { predicates : List (( Int, String ) -> Bool), pairs : List ( Int, String ) }
+
+
+nextSearchState : SearchState -> Step SearchState (Maybe ( Int, String ))
+nextSearchState { predicates, pairs } =
+    case ( List.head predicates, List.length pairs ) of
+        ( _, 0 ) ->
+            Done Nothing
+
+        ( _, 1 ) ->
+            Done (List.head pairs)
+
+        ( Just p, _ ) ->
+            Loop
+                { predicates = List.drop 1 predicates
+                , pairs = List.filter p pairs
+                }
+
+        ( Nothing, _ ) ->
+            Done (List.head pairs)
 
 
 stringFromZipper : StringZipper -> String
