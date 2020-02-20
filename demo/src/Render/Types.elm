@@ -1,10 +1,17 @@
-module Render.Types exposing (DocType(..), RenderedText)
+module Render.Types exposing (DocType(..), RenderMsg(..), RenderedText)
 
 import Html exposing (Html)
+import Markdown.ElmWithId exposing (MarkdownMsg(..))
+import MiniLatex.Edit exposing (LaTeXMsg(..))
 
 
-type alias RenderedText msg =
-    { title : Html msg, toc : Html msg, document : Html msg }
+type RenderMsg
+    = LaTeXMsg LaTeXMsg
+    | MarkdownMsg MarkdownMsg
+
+
+type alias RenderedText =
+    { title : Html RenderMsg, toc : Html RenderMsg, document : Html RenderMsg }
 
 
 type DocType

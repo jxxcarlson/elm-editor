@@ -16,14 +16,14 @@ module Render exposing
 import Dict exposing (Dict)
 import Html exposing (Html)
 import Html.Attributes as Attribute
-import Markdown.ElmWithId
+import Markdown.ElmWithId exposing (MarkdownMsg(..))
 import Markdown.Option as MDOption
 import Markdown.Parse as Parse
 import MiniLatex
-import MiniLatex.Edit
+import MiniLatex.Edit exposing (LaTeXMsg(..))
 import MiniLatex.Render exposing (MathJaxRenderOption(..))
 import Render.Markdown
-import Render.Types exposing (RenderedText)
+import Render.Types exposing (RenderMsg(..), RenderedText)
 import Tree exposing (Tree)
 
 
@@ -36,20 +36,20 @@ import Tree exposing (Tree)
         MiniLatex
 
 -}
-type RenderingData msg
-    = MD (MDData msg)
-    | ML (MLData msg)
+type RenderingData
+    = MD MDData
+    | ML MLData
 
 
-type alias MLData msg =
+type alias MLData =
     { fullText : Maybe String
-    , editRecord : MiniLatex.Edit.Data (Html msg)
+    , editRecord : MiniLatex.Edit.Data (Html MiniLatex.Edit.LaTeXMsg)
     }
 
 
-type alias MDData msg =
+type alias MDData =
     { option : MDOption.Option
-    , renderedText : RenderedText msg
+    , renderedText : RenderedText
     , initialAst : Tree Parse.MDBlockWithId
     , fullAst : Tree Parse.MDBlockWithId
     , sourceMap : Dict String String
@@ -61,7 +61,7 @@ type RenderingOption
     | OMiniLatex
 
 
-getFullAst : RenderingData msg -> Maybe (Tree Parse.MDBlockWithId)
+getFullAst : RenderingData -> Maybe (Tree Parse.MDBlockWithId)
 getFullAst rd =
     case rd of
         ML _ ->
@@ -71,7 +71,7 @@ getFullAst rd =
             Just data.fullAst
 
 
-load : ( Int, Int ) -> Int -> RenderingOption -> String -> RenderingData msg
+load : ( Int, Int ) -> Int -> RenderingOption -> String -> RenderingData
 load selectedId counter option source =
     case option of
         OMarkdown opt ->
@@ -81,7 +81,7 @@ load selectedId counter option source =
             loadMiniLatex counter source
 
 
-loadFast : ( Int, Int ) -> Int -> RenderingOption -> String -> RenderingData msg
+loadFast : ( Int, Int ) -> Int -> RenderingOption -> String -> RenderingData
 loadFast selectedId counter option source =
     case option of
         OMarkdown opt ->
@@ -91,11 +91,12 @@ loadFast selectedId counter option source =
             loadMiniLatexFast counter source
 
 
-render : ( Int, Int ) -> RenderingData msg -> RenderingData msg
+render : ( Int, Int ) -> RenderingData -> RenderingData
 render selectedId rd =
     case rd of
         MD data ->
-            MD { data | renderedText = Markdown.ElmWithId.renderHtmlWithExternaTOC selectedId "Topics" data.fullAst }
+            MD
+                { data | renderedText = Render.Markdown.render selectedId data.fullAst }
 
         ML data ->
             case data.fullText of
@@ -106,7 +107,7 @@ render selectedId rd =
                     loadMiniLatex 0 fullText
 
 
-update : ( Int, Int ) -> Int -> String -> RenderingData msg -> RenderingData msg
+update : ( Int, Int ) -> Int -> String -> RenderingData -> RenderingData
 update selectedId version source rd =
     case rd of
         MD data ->
@@ -117,7 +118,9 @@ update selectedId version source rd =
             MD
                 { data
                     | fullAst = newAst
-                    , renderedText = Markdown.ElmWithId.renderHtmlWithExternaTOC selectedId "Topics" newAst
+
+                    -- , renderedText = Markdown.ElmWithId.renderHtmlWithExternalTOC selectedId "Topics" newAst
+                    , renderedText = Render.Markdown.render selectedId newAst
                     , initialAst = newAst
                     , sourceMap = Parse.sourceMap newAst
                 }
@@ -126,7 +129,7 @@ update selectedId version source rd =
             ML { data | editRecord = MiniLatex.Edit.update NoDelay version source data.editRecord }
 
 
-get : RenderingData msg -> RenderedText msg
+get : RenderingData -> RenderedText
 get rd =
     case rd of
         MD data ->
@@ -137,6 +140,17 @@ get rd =
             , title = Html.span [ Attribute.style "font-size" "24px" ] [ Html.text (getTitle data.editRecord) ]
             , toc = innerTableOfContents data.editRecord.latexState
             }
+                |> fixML
+
+
+fixML :
+    { a | title : Html.Html LaTeXMsg, toc : Html.Html LaTeXMsg, document : Html.Html LaTeXMsg }
+    -> { title : Html.Html RenderMsg, toc : Html.Html RenderMsg, document : Html.Html RenderMsg }
+fixML r =
+    { title = r.title |> Html.map LaTeXMsg
+    , toc = r.toc |> Html.map LaTeXMsg
+    , document = r.document |> Html.map LaTeXMsg
+    }
 
 
 getTitle : MiniLatex.Edit.Data (Html msg) -> String
@@ -151,7 +165,7 @@ getTitle data =
 {- HIDDEN, MARKDOWN -}
 
 
-loadMarkdown : ( Int, Int ) -> Int -> MDOption.Option -> String -> RenderingData msg
+loadMarkdown : ( Int, Int ) -> Int -> MDOption.Option -> String -> RenderingData
 loadMarkdown selectedId counter option str =
     let
         ast =
@@ -161,12 +175,12 @@ loadMarkdown selectedId counter option str =
         { option = option
         , initialAst = ast
         , fullAst = ast
-        , renderedText = Markdown.ElmWithId.renderHtmlWithExternaTOC selectedId "Topics" ast
+        , renderedText = Render.Markdown.render selectedId ast
         , sourceMap = Parse.sourceMap ast
         }
 
 
-loadMarkdownFast : ( Int, Int ) -> Int -> MDOption.Option -> String -> RenderingData msg
+loadMarkdownFast : ( Int, Int ) -> Int -> MDOption.Option -> String -> RenderingData
 loadMarkdownFast selectedId counter option str =
     let
         fullAst =
@@ -179,7 +193,7 @@ loadMarkdownFast selectedId counter option str =
         { option = option
         , initialAst = initialAst
         , fullAst = fullAst
-        , renderedText = Markdown.ElmWithId.renderHtmlWithExternaTOC selectedId "Topics" initialAst
+        , renderedText = Render.Markdown.render selectedId initialAst
         , sourceMap = Parse.sourceMap fullAst
         }
 
@@ -188,30 +202,14 @@ loadMarkdownFast selectedId counter option str =
 {- HIDDEN, MINILATEX -}
 
 
-loadMiniLatex : Int -> String -> RenderingData msg
+loadMiniLatex : Int -> String -> RenderingData
 loadMiniLatex version str =
     ML { fullText = Nothing, editRecord = MiniLatex.Edit.init Delay version str }
 
 
-loadMiniLatexFast : Int -> String -> RenderingData msg
+loadMiniLatexFast : Int -> String -> RenderingData
 loadMiniLatexFast version str =
     ML { fullText = Just str, editRecord = MiniLatex.Edit.init Delay version (getFirstPart str) }
-
-
-
---    let
---        fullAst =
---            Parse.toMDBlockTree (counter + 1) MDOption.ExtendedMath str
---
---        initialAst =
---            Parse.toMDBlockTree counter option (getFirstPart str)
---    in
---    MD
---        { option = option
---        , initialAst = initialAst
---        , fullAst = fullAst
---        , renderedText = Markdown.ElmWithId.renderHtmlWithExternaTOC "Topics" initialAst
---        }
 
 
 {-| HELPERS

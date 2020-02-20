@@ -39,13 +39,15 @@ import Html exposing (Attribute, Html)
 import Html.Attributes as Attribute
 import Html.Events as HE
 import Json.Encode
-import Markdown.ElmWithId
+import Markdown.ElmWithId as MDE
 import Markdown.Option exposing (Option(..))
 import Markdown.Parse
+import MiniLatex.Edit as MLE
 import MiniLatex.Export
 import Model exposing (Msg(..))
 import Outside
 import Render exposing (MDData, MLData, RenderingData(..), RenderingOption(..))
+import Render.Types exposing (RenderMsg(..))
 import Style
 import Sync
 import Task exposing (Task)
@@ -74,7 +76,7 @@ main =
 
 type alias Model =
     { editor : Editor
-    , renderingData : RenderingData Msg
+    , renderingData : RenderingData
     , counter : Int
     , width : Float
     , height : Float
@@ -117,6 +119,7 @@ type Msg
     | SyncLR
     | Outside Outside.InfoForElm
     | LogErr String
+    | RenderMsg RenderMsg
 
 
 init : Flags -> ( Model, Cmd Msg )
@@ -392,6 +395,18 @@ update msg model =
         LogErr _ ->
             ( model, Cmd.none )
 
+        RenderMsg renderMsg ->
+            case renderMsg of
+                LaTeXMsg latexMsg ->
+                    case latexMsg of
+                        MLE.IDClicked id ->
+                            ( { model | message = "Clicked: " ++ id }, Cmd.none )
+
+                MarkdownMsg markdownMsg ->
+                    case markdownMsg of
+                        MDE.IDClicked id ->
+                            ( { model | message = "Clicked: " ++ id }, Cmd.none )
+
 
 pasteToEditorAndClipboard : Model -> String -> ( Model, Cmd msg )
 pasteToEditorAndClipboard model str =
@@ -544,8 +559,9 @@ viewRenderedText model width_ height_ =
 
         -- , Element.htmlAttribute (Attribute.id model.selectedId_ (Html.style "background-color" "#cce"))
         ]
-        [ showIf (model.docType == MarkdownDoc) ((Render.get model.renderingData).title |> Element.html)
-        , (Render.get model.renderingData).document |> Element.html
+        [ showIf (model.docType == MarkdownDoc)
+            ((Render.get model.renderingData).title |> Html.map RenderMsg |> Element.html)
+        , (Render.get model.renderingData).document |> Html.map RenderMsg |> Element.html
         ]
 
 
@@ -719,7 +735,7 @@ syncAndHighlightRenderedText str cmd model =
             ( model, Cmd.none )
 
 
-syncAndHighlightRenderedMarkdownText : String -> Cmd Msg -> Model -> MDData msg -> ( Model, Cmd Msg )
+syncAndHighlightRenderedMarkdownText : String -> Cmd Msg -> Model -> MDData -> ( Model, Cmd Msg )
 syncAndHighlightRenderedMarkdownText str cmd model data =
     let
         str2 =
@@ -735,7 +751,7 @@ syncAndHighlightRenderedMarkdownText str cmd model data =
     )
 
 
-syncAndHighlightRenderedMiniLaTeXText : String -> Cmd Msg -> Model -> MLData msg -> ( Model, Cmd Msg )
+syncAndHighlightRenderedMiniLaTeXText : String -> Cmd Msg -> Model -> MLData -> ( Model, Cmd Msg )
 syncAndHighlightRenderedMiniLaTeXText str cmd model data =
     let
         id =
@@ -748,7 +764,7 @@ syncAndHighlightRenderedMiniLaTeXText str cmd model data =
     )
 
 
-processMarkdownContentForHighlighting : String -> MDData msg -> Model -> Model
+processMarkdownContentForHighlighting : String -> MDData -> Model -> Model
 processMarkdownContentForHighlighting str data model =
     let
         newAst_ =
@@ -783,7 +799,7 @@ loadRenderingData source model =
         counter =
             model.counter + 1
 
-        newRenderingData : RenderingData Msg
+        newRenderingData : RenderingData
         newRenderingData =
             Render.update ( 0, 0 ) counter source model.renderingData
     in
@@ -805,7 +821,7 @@ syncModel newEditor model =
         |> (\m -> { m | editor = newEditor })
 
 
-load : Int -> ( Int, Int ) -> RenderingOption -> String -> RenderingData Msg
+load : Int -> ( Int, Int ) -> RenderingOption -> String -> RenderingData
 load counter selectedId renderingOption str =
     Render.load selectedId counter renderingOption str
 
