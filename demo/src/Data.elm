@@ -302,6 +302,7 @@ Then open `index.html` to run the app.
 
 mathExample =
     """
+
 # Propagation and Evolution
 
 
@@ -355,7 +356,7 @@ itself in state $\\beta$ after time $t$
 is given by the matrix element
 
 $$
-\\< \\beta U(t)  \\> \\alpha
+\\left< \\beta U(t)\\ |\\ \\alpha \\right>
 $$
 
 This is just the kind of information
@@ -430,6 +431,7 @@ t=4
 plt.plot(x, np.cos(x**2/t)/np.sqrt(t))
 plt.title('Free particle propagator, t=4');
 ```
+
 
 """
 
