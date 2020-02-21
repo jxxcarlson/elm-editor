@@ -1,5 +1,8 @@
 MathJax = {
   tex: {inlineMath: [['$', '$'], ['\\(', '\\)']]},
+  chtml: {
+      displayAlign: 'left'
+  },
   options: {
     skipHtmlTags: {'[+]': ['math-text']}
   },
@@ -18,6 +21,7 @@ MathJax = {
       const HTMLHandler = MathJax._.handlers.html.HTMLHandler.HTMLHandler;
       const AbstractHandler = MathJax._.core.Handler.AbstractHandler.prototype;
       const startup = MathJax.startup;
+      MathJax.handleRetriesFor = MathJax._.mathjax.mathjax.handleRetriesFor;
 
       //
       //  Extend HTMLAdaptor to handle shadowDOM as the document
@@ -84,7 +88,10 @@ MathJax = {
         const InputJax = startup.getInputJax();
         const OutputJax = startup.getOutputJax();
         const html = mathjax.document(root, {InputJax, OutputJax});
-        html.render();
+        MathJax.handleRetriesFor(() => {
+            OutputJax.clearCache();
+            html.render();
+        });
         return html;
       }
 
