@@ -18,6 +18,7 @@ import ContextMenu exposing (ContextMenu)
 import Debounce exposing (Debounce)
 import File exposing (File)
 import History exposing (History)
+import RollingList exposing (RollingList)
 import Wrap exposing (WrapOption(..))
 
 
@@ -42,6 +43,9 @@ type alias Model =
     , topLine : Int
     , wrapOption : WrapOption
     , clipboard : String
+    , searchTerm : String
+    , searchResults : RollingList Selection
+    , searchResultIndex : Int
     }
 
 
@@ -116,6 +120,9 @@ init ( config, contextMenu ) =
     , topLine = 0
     , wrapOption = config.wrapOption
     , clipboard = ""
+    , searchTerm = ""
+    , searchResults = RollingList.fromList []
+    , searchResultIndex = 0
     }
 
 
@@ -195,6 +202,8 @@ type Msg
       --
     | CopyPasteClipboard
     | WriteToSystemClipBoard
+      --
+    | DoSearch String
 
 
 

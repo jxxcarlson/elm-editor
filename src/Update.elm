@@ -4,6 +4,7 @@ import Action
 import Array exposing (Array)
 import ArrayUtil
 import Browser.Dom as Dom
+import Cmd.Extra exposing (withCmd, withCmds)
 import Common exposing (..)
 import ContextMenu exposing (ContextMenu)
 import Debounce exposing (Debounce)
@@ -13,6 +14,7 @@ import File.Select as Select
 import History
 import Markdown.Parse as Parse exposing (Id)
 import Model exposing (AutoLineBreak(..), Hover(..), Model, Msg(..), Position, Selection(..), Snapshot)
+import Search
 import Task exposing (Task)
 import UpdateFunction
 import Wrap exposing (WrapParams)
@@ -405,6 +407,9 @@ update msg model =
 
                 _ ->
                     ( model, Cmd.none )
+
+        DoSearch key ->
+            Search.do key model |> withCmd Cmd.none
 
 
 

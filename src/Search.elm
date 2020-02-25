@@ -1,8 +1,34 @@
-module Search exposing (hits)
+module Search exposing (do, hits)
 
 import Array exposing (Array)
 import ArrayUtil exposing (Position)
-import Model exposing (Selection(..))
+import Model exposing (Model, Selection(..))
+import RollingList
+
+
+{-| Search for str and scroll to first hit. Used internally.
+-}
+do : String -> Model -> Model
+do str model =
+    let
+        searchResults =
+            hits str model.lines
+    in
+    case List.head searchResults of
+        Nothing ->
+            { model | searchResults = RollingList.fromList [], searchTerm = str, selection = NoSelection }
+
+        Just ((Selection first last) as selection) ->
+            { model
+                | cursor = first
+                , selection = selection
+                , searchResults = RollingList.fromList searchResults
+                , searchTerm = str
+                , searchResultIndex = 0
+            }
+
+        Just _ ->
+            { model | searchResults = RollingList.fromList [], searchTerm = str, selection = NoSelection }
 
 
 {-|
