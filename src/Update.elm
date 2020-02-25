@@ -401,9 +401,8 @@ update msg model =
                         newModel =
                             { model | selectedString = Just selectedString }
                     in
-                    ( model, Cmd.none )
+                    ( newModel, Cmd.none )
 
-                -- |> recordHistory
                 _ ->
                     ( model, Cmd.none )
 

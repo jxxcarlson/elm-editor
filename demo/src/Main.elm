@@ -266,7 +266,7 @@ update msg model =
                         |> withCmds [ clipBoardCmd, Cmd.map EditorMsg cmd ]
 
                 WriteToSystemClipBoard ->
-                    ( { model | editor = newEditor }, Outside.sendInfo (Outside.WriteToClipBoard (Editor.getSelectedString model.editor |> Maybe.withDefault "Nothing!!")) )
+                    ( { model | editor = newEditor }, Outside.sendInfo (Outside.WriteToClipBoard (Editor.getSelectedString newEditor |> Maybe.withDefault "Nothing!!")) )
 
                 Unload _ ->
                     sync newEditor cmd model

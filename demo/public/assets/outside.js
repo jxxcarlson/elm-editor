@@ -59,7 +59,7 @@ app.ports.infoForOutside.subscribe(msg => {
 
     function updateClipboard(newClip) {
       navigator.clipboard.writeText(newClip).then(function() {
-        console.log("!JS! Wrote to clipboard");
+        console.log("!JS! Wrote to system clipboard");
       }, function() {
         console.log ("!JS! Clipboard write failed");
       });
