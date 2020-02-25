@@ -58,7 +58,9 @@ was a mistake, use ctrl-Y
 
 The command ctrl-shift-V will paste whatever
 is in the clipboard into the editor at the
-cursor. At the moment this works only in
+cursor, while ctrl-shift-C will copy the
+current selection to the system clipboard.
+At the moment these two features work only in
 Google Chrome
 .
 
@@ -99,17 +101,17 @@ to right sync for MiniLaTex documents~~
 - ~~Export
 to standard LaTeX doc from MiniLaTeX~~
 
-- Html String output
-
 - ~~Paste system clipboard into editor~~
 
-- Copy editor text to system clipboard
+- ~~Copy editor text to system clipboard~~
 
 - Search and replace
 
 - Autocompletion
 
 - Dark mode option
+
+- Html String output
 
 
 """
