@@ -10,10 +10,10 @@ module Render.Markdown exposing
 -- import Cmd.Document
 
 import Html
-import Markdown.ElmWithId exposing (MarkdownMsg)
 import Markdown.Option exposing (..)
 import Markdown.Parse as Parse
-import Render.Types exposing (RenderMsg(..), RenderedText)
+import Markdown.Render exposing (DocumentParts, MarkdownMsg, MarkdownOutput)
+import Render.Types exposing (RenderMsg(..))
 import Tree exposing (Tree)
 import Tree.Diff as Diff
 
@@ -23,12 +23,12 @@ emptyAst =
     Parse.toMDBlockTree -1 ExtendedMath ""
 
 
-emptyRenderedText : RenderedText
+emptyRenderedText : MarkdownOutput
 emptyRenderedText =
-    render ( 0, 0 ) emptyAst
+    Markdown.Render.withOptionsFromAST ExtendedMath (ExternalTOC "Topics") ( 0, 0 ) emptyAst
 
 
-parse : Option -> Int -> String -> Tree Parse.MDBlockWithId
+parse : MarkdownOption -> Int -> String -> Tree Parse.MDBlockWithId
 parse flavor counter str =
     Parse.toMDBlockTree counter flavor str
 
@@ -36,7 +36,7 @@ parse flavor counter str =
 {-| compute a new AST from an old one and some text, preserving the ids of unchanged blocs.
 The counter is used for the version number in the block ids.
 -}
-diffUpdateAst : Option -> Int -> String -> Tree Parse.MDBlockWithId -> Tree Parse.MDBlockWithId
+diffUpdateAst : MarkdownOption -> Int -> String -> Tree Parse.MDBlockWithId -> Tree Parse.MDBlockWithId
 diffUpdateAst option counter text lastAst =
     let
         newAst : Tree Parse.MDBlockWithId
@@ -46,10 +46,14 @@ diffUpdateAst option counter text lastAst =
     Diff.mergeWith Parse.equalContent lastAst newAst
 
 
-render : ( Int, Int ) -> Tree Parse.MDBlockWithId -> RenderedText
+render : ( Int, Int ) -> Tree Parse.MDBlockWithId -> MarkdownOutput
 render selectedId ast =
-    Markdown.ElmWithId.renderHtmlWithExternalTOC selectedId "Topics" ast
-        |> fix
+    Markdown.Render.withOptionsFromAST ExtendedMath (ExternalTOC "Topics") selectedId ast
+
+
+
+-- |> fix
+-- MarkdownOption -> OutputOption -> Id -> Int -> String
 
 
 fix :
@@ -76,7 +80,7 @@ fix r =
 --    | MarkdownMsg MarkdownMsg
 --
 --
---type alias RenderedText =
+--type alias DocumentParts =
 --    { title : Html RenderMsg, toc : Html RenderMsg, document : Html RenderMsg }
 
 

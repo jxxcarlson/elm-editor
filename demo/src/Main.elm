@@ -39,9 +39,9 @@ import Html exposing (Attribute, Html)
 import Html.Attributes as Attribute
 import Html.Events as HE
 import Json.Encode
-import Markdown.ElmWithId as MDE
-import Markdown.Option exposing (Option(..))
+import Markdown.Option exposing (..)
 import Markdown.Parse
+import Markdown.Render exposing (MarkdownMsg(..))
 import MiniLatex.Edit as MLE
 import MiniLatex.Export
 import Model exposing (Msg(..))
@@ -404,7 +404,7 @@ update msg model =
 
                 MarkdownMsg markdownMsg ->
                     case markdownMsg of
-                        MDE.IDClicked id ->
+                        IDClicked id ->
                             syncOnId id model
 
 

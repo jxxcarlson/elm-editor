@@ -1,7 +1,7 @@
 module Render.Types exposing (DocType(..), RenderMsg(..), RenderedText)
 
 import Html exposing (Html)
-import Markdown.ElmWithId exposing (MarkdownMsg(..))
+import Markdown.Render exposing (MarkdownMsg(..))
 import MiniLatex.Edit exposing (LaTeXMsg(..))
 
 

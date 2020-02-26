@@ -16,9 +16,9 @@ module Render exposing
 import BiDict exposing (BiDict)
 import Html exposing (Html)
 import Html.Attributes as Attribute
-import Markdown.ElmWithId exposing (MarkdownMsg(..))
-import Markdown.Option as MDOption
+import Markdown.Option exposing (..)
 import Markdown.Parse as Parse
+import Markdown.Render exposing (MarkdownMsg(..), MarkdownOutput(..))
 import MiniLatex
 import MiniLatex.Edit exposing (LaTeXMsg(..))
 import MiniLatex.Render exposing (MathJaxRenderOption(..))
@@ -48,8 +48,8 @@ type alias MLData =
 
 
 type alias MDData =
-    { option : MDOption.Option
-    , renderedText : RenderedText
+    { option : MarkdownOption
+    , renderedText : MarkdownOutput
     , initialAst : Tree Parse.MDBlockWithId
     , fullAst : Tree Parse.MDBlockWithId
     , sourceMap : BiDict String String
@@ -57,7 +57,7 @@ type alias MDData =
 
 
 type RenderingOption
-    = OMarkdown MDOption.Option
+    = OMarkdown MarkdownOption
     | OMiniLatex
 
 
@@ -134,6 +134,7 @@ get rd =
     case rd of
         MD data ->
             data.renderedText
+                |> fixMD
 
         ML data ->
             { document = MiniLatex.Edit.get data.editRecord |> Html.div [ Attribute.attribute "id" "__RENDERED_TEXT__" ]
@@ -143,9 +144,17 @@ get rd =
                 |> fixML
 
 
+fixMD : MarkdownOutput -> RenderedText
+fixMD markdownOutput =
+    { title = Markdown.Render.title markdownOutput |> Html.map MarkdownMsg
+    , toc = Markdown.Render.toc markdownOutput |> Html.map MarkdownMsg
+    , document = Markdown.Render.content markdownOutput |> Html.map MarkdownMsg
+    }
+
+
 fixML :
     { a | title : Html.Html LaTeXMsg, toc : Html.Html LaTeXMsg, document : Html.Html LaTeXMsg }
-    -> { title : Html.Html RenderMsg, toc : Html.Html RenderMsg, document : Html.Html RenderMsg }
+    -> RenderedText
 fixML r =
     { title = r.title |> Html.map LaTeXMsg
     , toc = r.toc |> Html.map LaTeXMsg
@@ -165,11 +174,11 @@ getTitle data =
 {- HIDDEN, MARKDOWN -}
 
 
-loadMarkdown : ( Int, Int ) -> Int -> MDOption.Option -> String -> RenderingData
+loadMarkdown : ( Int, Int ) -> Int -> MarkdownOption -> String -> RenderingData
 loadMarkdown selectedId counter option str =
     let
         ast =
-            Parse.toMDBlockTree counter MDOption.ExtendedMath str
+            Parse.toMDBlockTree counter ExtendedMath str
     in
     MD
         { option = option
@@ -180,11 +189,11 @@ loadMarkdown selectedId counter option str =
         }
 
 
-loadMarkdownFast : ( Int, Int ) -> Int -> MDOption.Option -> String -> RenderingData
+loadMarkdownFast : ( Int, Int ) -> Int -> MarkdownOption -> String -> RenderingData
 loadMarkdownFast selectedId counter option str =
     let
         fullAst =
-            Parse.toMDBlockTree (counter + 1) MDOption.ExtendedMath str
+            Parse.toMDBlockTree (counter + 1) ExtendedMath str
 
         initialAst =
             Parse.toMDBlockTree counter option (getFirstPart str)
