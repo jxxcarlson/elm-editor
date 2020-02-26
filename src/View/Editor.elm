@@ -1,8 +1,7 @@
-module View exposing (viewDebug, viewEditor, viewHeader, viewReplacePanel, viewSearchPanel)
+module View.Editor exposing (viewDebug, viewEditor, viewHeader)
 
 import Array exposing (Array)
 import Common exposing (..)
-import EditorStyle
 import Html as H exposing (Attribute, Html)
 import Html.Attributes as HA
 import Html.Events as HE
@@ -10,8 +9,6 @@ import Html.Lazy
 import Json.Decode as JD exposing (Decoder)
 import Keymap
 import Model exposing (AutoLineBreak(..), Config, Context(..), Hover(..), Model, Msg(..), Position, Selection(..))
-import RollingList
-import Widget
 
 
 lineNumbersDisplay : Model -> Html Msg
@@ -453,145 +450,6 @@ viewHeader model =
 
         -- , rowButton 60 "Open" RequestFile [ HA.style "margin-left" "24px", HA.style "margin-top" "4px" ]
         ]
-
-
-viewSearchPanel model =
-    showIf model.showSearchPanel (searchPanel model)
-
-
-searchPanel model =
-    H.div
-        [ HA.style "width" (px model.width)
-        , HA.style "padding-top" "5px"
-        , HA.style "display" "flex"
-        , HA.style "flex-direction" "row"
-        , HA.style "justify-content" "space-evenly"
-        , HA.style "align-items" "baseline"
-        , HA.style "height" "30px"
-
-        -- , HA.style "padding-left" "8px"
-        , HA.style "background-color" EditorStyle.lightGray
-        , HA.style "opacity" "0.9"
-        , HA.style "font-size" "14px"
-        ]
-        [ searchTextButton
-        , acceptSearchText
-        , numberOfHitsDisplay model
-        , searchForwardButton
-        , searchBackwardButton
-        , dismissSearchPanel
-        , openReplaceField
-        ]
-
-
-viewReplacePanel model =
-    showIf (model.canReplace && model.showSearchPanel) (replacePanel model)
-
-
-replacePanel model =
-    H.div
-        [ HA.style "width" (px model.width)
-        , HA.style "padding-top" "5px"
-        , HA.style "display" "flex"
-        , HA.style "flex-direction" "row"
-        , HA.style "justify-content" "flex-start"
-        , HA.style "align-items" "baseline"
-        , HA.style "height" "30px"
-        , HA.style "background-color" EditorStyle.mediumGray
-        , HA.style "opacity" "0.9"
-        , HA.style "font-size" "14px"
-        ]
-        [ replaceTextButton
-        , acceptReplaceText
-        , dismissReplacePanel
-        ]
-
-
-dismissSearchPanel =
-    Widget.lightRowButton 25
-        ToggleSearchPanel
-        "X"
-        [ HA.style "float" "left", HA.style "float" "left" ]
-
-
-dismissReplacePanel =
-    Widget.lightRowButton 25
-        ToggleReplacePanel
-        "X"
-        [ HA.style "float" "left", HA.style "float" "left" ]
-
-
-openReplaceField =
-    Widget.rowButton 25
-        OpenReplaceField
-        "R"
-        []
-
-
-numberOfHitsDisplay : Model -> Html Msg
-numberOfHitsDisplay model =
-    let
-        n =
-            model.searchResults
-                |> RollingList.toList
-                |> List.length
-
-        txt =
-            String.fromInt (model.searchResultIndex + 1) ++ "/" ++ String.fromInt n
-    in
-    Widget.rowButton 40 NoOp txt [ HA.style "float" "left" ]
-
-
-searchForwardButton =
-    Widget.rowButton 30 RollSearchSelectionForward ">" [ HA.style "float" "left" ]
-
-
-searchBackwardButton =
-    Widget.rowButton 30 RollSearchSelectionBackward "<" [ HA.style "float" "left" ]
-
-
-searchTextButton =
-    Widget.rowButton 60 NoOp "Search" [ HA.style "float" "left" ]
-
-
-replaceTextButton =
-    Widget.rowButton 70 ReplaceCurrentSelection "Replace" [ HA.style "margin-left" "10px" ]
-
-
-acceptLineNumber =
-    Widget.textField 30
-        AcceptLineNumber
-        ""
-        [ HA.style "margin-top" "5px", HA.style "float" "left" ]
-        [ setHtmlId "line-number-input" ]
-
-
-acceptSearchText =
-    Widget.textField 130
-        AcceptSearchText
-        ""
-        [ HA.style "float" "left"
-        ]
-        [ setHtmlId "editor-search-box", HA.style "height" "20px" ]
-
-
-acceptReplaceText =
-    Widget.textField 130 AcceptReplacementText "" [ HA.style "float" "left" ] [ setHtmlId "replacement-box" ]
-
-
-setHtmlId : String -> Attribute msg
-setHtmlId id =
-    HA.attribute "id" id
-
-
-showIf : Bool -> Html Msg -> Html Msg
-showIf flag el =
-    case flag of
-        True ->
-            el
-
-        False ->
-            H.div [] []
 
 
 autoLinBreakTitle : Model -> String

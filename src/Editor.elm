@@ -29,7 +29,8 @@ import Html as H exposing (Html)
 import Menu.View exposing (viewContextMenu)
 import Model exposing (Config, Context(..), Model, Msg(..))
 import Update as U
-import View exposing (viewDebug, viewEditor, viewHeader, viewReplacePanel, viewSearchPanel)
+import View.Editor
+import View.Search
 import Wrap exposing (WrapOption)
 
 
@@ -118,12 +119,12 @@ resize width height (Editor model) =
 view : Editor -> Html Msg
 view (Editor model) =
     H.div []
-        [ viewHeader model
-        , viewSearchPanel model
-        , viewReplacePanel model
-        , viewEditor model
+        [ View.Editor.viewHeader model
+        , View.Search.searchPanel model
+        , View.Search.replacePanel model
+        , View.Editor.viewEditor model
         , viewContextMenu model.width model
-        , viewDebug model
+        , View.Editor.viewDebug model
         ]
 
 
