@@ -29,4 +29,4 @@ npm start
 ## Note
 
 The present package, `jxxcarlson/elm-editor`, supersedes
-`jxxcarlson/elm-text-editor`.
+`jxxcarlson/elm-text-editor`.  Better to use this one!
