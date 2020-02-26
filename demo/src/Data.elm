@@ -42,23 +42,30 @@ to be rendered on the fly to Html.
 
 ## Using the editor
 
-Do ctrl-click in the green bar below left to
-bring up a menu of commands, e.g.,
-ctrl-shift-S to sync the rendered
+Do `ctrl-click` in the green bar below left to
+bring up a menu of commands. Below are
+a few of them.
+
+
+**Sync.** `ctrl-shift-S` will sync the rendered
 text with the source text.  To sync the
 rendered text to the source text, just
-click in the rendered text.
+click in the rendered text.  *Coming soon:
+the rendered text element will be highlighted.*
 
-A few more commands: ctrl-W
-will wrap
-the current selection, while ctrl-shift-W
-will wrap the entire document.  If you
-make a mistake, use ctrl-Z to undo it. If that
-was a mistake, use ctrl-Y
+**Wrap.** `ctrl-W` will wrap
+the current selection, while `ctrl-shift-W`
+will wrap the entire document.
 
-The command ctrl-shift-V will paste whatever
-is in the clipboard into the editor at the
-cursor, while ctrl-shift-C will copy the
+**Undo/redo.** If you
+make a mistake, use `ctrl-Z` to undo it. If that
+was a mistake, use `ctrl-Y` .
+
+**Copy and Paste.**  The commands `ctrl-C` , `ctrl-X` , and
+`ctrl-V` are the Editor copy-cut-paste functions.
+Use  `ctrl-shift-V` to paste whatever
+is in the clipboard into the editor (at the
+cursor).  Use `ctrl-shift-C` to copy the
 current selection to the system clipboard.
 At the moment these two features work only in
 Google Chrome
@@ -91,6 +98,10 @@ feature parity wth the previous version.
 
 ## On the Horizon
 
+Some of the features below are not pure editor
+features; nonetheless, they rely on hooks in the editor,
+hence need to be tested in this app.
+
 - ~~Left to right sync for Markown documents~~
 
 - ~~Left
@@ -98,14 +109,13 @@ to right sync for MiniLaTex documents~~
 
 - ~~ Right to left sync~~
 
-- ~~Export
-to standard LaTeX doc from MiniLaTeX~~
-
 - ~~Paste system clipboard into editor~~
 
 - ~~Copy editor text to system clipboard~~
 
-- Search and replace
+- ~~Search and replace~~
+
+- Highlight rendered text element on sync
 
 - Autocompletion
 
@@ -113,7 +123,7 @@ to standard LaTeX doc from MiniLaTeX~~
 
 - Vim mode ?
 
-- Html String output
+
 
 
 """
