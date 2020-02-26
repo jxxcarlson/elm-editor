@@ -111,6 +111,8 @@ to standard LaTeX doc from MiniLaTeX~~
 
 - Dark mode option
 
+- Vim mode ?
+
 - Html String output
 
 
