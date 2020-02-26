@@ -1,4 +1,4 @@
-module Helper.Sync exposing (sync, syncAndHighlightRenderedText, syncModel)
+module Helper.Sync exposing (onId, sync, syncAndHighlightRenderedText, syncModel)
 
 import Array exposing (Array)
 import Cmd.Extra exposing (withCmd)
@@ -100,3 +100,53 @@ updateRenderingData lines model =
             Render.update ( 0, 0 ) counter source model.renderingData
     in
     { model | renderingData = newRenderingData, counter = counter }
+
+
+onId : String -> Model -> ( Model, Cmd Msg )
+onId id model =
+    let
+        ( index, line ) =
+            case model.renderingData of
+                MD data ->
+                    Sync.getText id data.sourceMap
+                        |> Maybe.map (shorten 5)
+                        |> Maybe.andThen (Editor.indexOf model.editor)
+                        |> Maybe.withDefault ( -1, "error" )
+
+                ML data ->
+                    Sync.getText id data.editRecord.sourceMap
+                        |> Maybe.andThen leadingLine
+                        |> Maybe.andThen (Editor.indexOf model.editor)
+                        |> Maybe.withDefault ( -1, "error" )
+
+        ( newEditor, cmd ) =
+            Editor.sendLine (Editor.setCursor { line = index, column = 0 } model.editor)
+    in
+    -- TODO: issue command to sync id and line
+    ( { model | editor = newEditor, message = "Clicked: (" ++ id ++ ", " ++ String.fromInt (index + 1) ++ ")" }
+    , Cmd.batch [ cmd |> Cmd.map EditorMsg, View.Scroll.setViewportForElementInRenderedText id ]
+    )
+
+
+shorten : Int -> String -> String
+shorten n str =
+    str
+        |> String.words
+        |> List.take n
+        |> String.join " "
+
+
+leadingLine : String -> Maybe String
+leadingLine str =
+    str
+        |> String.lines
+        |> List.filter goodLine
+        |> List.head
+
+
+goodLine str =
+    not
+        (String.contains "$$" str
+            || String.contains "\\begin" str
+            || String.contains "\\end" str
+        )

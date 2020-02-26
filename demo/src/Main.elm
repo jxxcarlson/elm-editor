@@ -1,6 +1,5 @@
 module Main exposing (main)
 
-import Array exposing (Array)
 import Browser
 import Browser.Dom as Dom
 import Browser.Events
@@ -16,14 +15,11 @@ import Element
         , centerY
         , column
         , el
-        , fill
         , height
-        , padding
         , paddingXY
         , px
         , rgb255
         , row
-        , scrollbarY
         , spacing
         , text
         , width
@@ -33,17 +29,17 @@ import Element.Border as Border
 import Element.Font as Font
 import Element.Input as Input
 import File exposing (File)
+import Helper.Common
 import Helper.File
+import Helper.Load
 import Helper.Sync
 import Html exposing (Attribute, Html)
 import Html.Attributes as Attribute
 import Html.Events as HE
 import Json.Encode
 import Markdown.Option exposing (..)
-import Markdown.Parse
 import Markdown.Render exposing (MarkdownMsg(..))
 import MiniLatex.Edit as MLE
-import MiniLatex.Export
 import Model exposing (Msg(..))
 import Outside
 import Render exposing (MDData, MLData, RenderingData(..), RenderingOption(..))
@@ -51,9 +47,7 @@ import Render.Types exposing (RenderMsg(..))
 import Style
 import Sync
 import Task exposing (Task)
-import Tree.Diff
 import Types exposing (DocType(..), Model, Msg(..))
-import Update.Function
 import View.Scroll
 import Wrap exposing (WrapOption(..))
 
@@ -72,14 +66,9 @@ main =
         }
 
 
-proportions : { width : Float, height : Float }
-proportions =
-    { width = 0.35, height = 0.8 }
-
-
 init : Flags -> ( Model, Cmd Msg )
 init flags =
-    { editor = Editor.initWithContent Data.about (config flags)
+    { editor = Editor.initWithContent Data.about (Helper.Load.config flags)
     , renderingData = load 0 ( 0, 0 ) (OMarkdown ExtendedMath) Data.about
     , counter = 1
     , width = flags.width
@@ -175,13 +164,13 @@ update msg model =
             ( { model
                 | width = w
                 , height = h
-                , editor = Editor.resize (proportions.width * w) (proportions.height * h) model.editor
+                , editor = Editor.resize (Helper.Common.proportions.width * w) (Helper.Common.proportions.height * h) model.editor
               }
             , Cmd.none
             )
 
         Load title ->
-            loadDocumentByTitle title model
+            Helper.Load.loadDocumentByTitle title model
                 |> withCmd (Cmd.batch [ View.Scroll.toEditorTop, View.Scroll.toRenderedTextTop ])
 
         ToggleDocType ->
@@ -199,11 +188,11 @@ update msg model =
         NewDocument ->
             case model.docType of
                 MarkdownDoc ->
-                    loadDocument "newFile" "" MarkdownDoc model
+                    Helper.Load.loadDocument "newFile" "" MarkdownDoc model
                         |> withCmd (Cmd.batch [ View.Scroll.toEditorTop, View.Scroll.toRenderedTextTop ])
 
                 MiniLaTeXDoc ->
-                    loadDocument "newFile" "" MiniLaTeXDoc model
+                    Helper.Load.loadDocument "newFile" "" MiniLaTeXDoc model
                         |> withCmd (Cmd.batch [ View.Scroll.toEditorTop, View.Scroll.toRenderedTextTop ])
 
         SetViewPortForElement result ->
@@ -238,7 +227,7 @@ update msg model =
                                 _ ->
                                     MarkdownDoc
                     in
-                    loadDocument (titleFromFileName fileName) source docType model
+                    Helper.Load.loadDocument (Helper.File.titleFromFileName fileName) source docType model
                         |> (\m -> { m | docType = docType })
                         |> withCmds [ View.Scroll.toRenderedTextTop, View.Scroll.toEditorTop ]
 
@@ -268,66 +257,12 @@ update msg model =
                 LaTeXMsg latexMsg ->
                     case latexMsg of
                         MLE.IDClicked id ->
-                            syncOnId id model
+                            Helper.Sync.onId id model
 
                 MarkdownMsg markdownMsg ->
                     case markdownMsg of
                         IDClicked id ->
-                            syncOnId id model
-
-
-syncOnId : String -> Model -> ( Model, Cmd Msg )
-syncOnId id model =
-    let
-        ( index, line ) =
-            case model.renderingData of
-                MD data ->
-                    Sync.getText id data.sourceMap
-                        |> Maybe.map (shorten 5)
-                        |> Maybe.andThen (Editor.indexOf model.editor)
-                        |> Maybe.withDefault ( -1, "error" )
-
-                ML data ->
-                    Sync.getText id data.editRecord.sourceMap
-                        |> Maybe.andThen leadingLine
-                        |> Maybe.andThen (Editor.indexOf model.editor)
-                        |> Maybe.withDefault ( -1, "error" )
-
-        ( newEditor, cmd ) =
-            Editor.sendLine (Editor.setCursor { line = index, column = 0 } model.editor)
-    in
-    -- TODO: issue command to sync id and line
-    ( { model | editor = newEditor, message = "Clicked: (" ++ id ++ ", " ++ String.fromInt (index + 1) ++ ")" }
-    , Cmd.batch [ cmd |> Cmd.map EditorMsg, View.Scroll.setViewportForElementInRenderedText id ]
-    )
-
-
-
--- scrollEditorToLine model index
-
-
-shorten : Int -> String -> String
-shorten n str =
-    str
-        |> String.words
-        |> List.take n
-        |> String.join " "
-
-
-leadingLine : String -> Maybe String
-leadingLine str =
-    str
-        |> String.lines
-        |> List.filter goodLine
-        |> List.head
-
-
-goodLine str =
-    not
-        (String.contains "$$" str
-            || String.contains "\\begin" str
-            || String.contains "\\end" str
-        )
+                            Helper.Sync.onId id model
 
 
 pasteToEditorAndClipboard : Model -> String -> ( Model, Cmd msg )
@@ -347,99 +282,6 @@ pasteToEditorAndClipboard model str =
 
 
 -- HELPER
-
-
-loadDocumentByTitle : String -> Model -> Model
-loadDocumentByTitle docTitle model =
-    case docTitle of
-        "about" ->
-            loadDocument docTitle Data.about MarkdownDoc model
-
-        "markdownExample" ->
-            loadDocument docTitle Data.markdownExample MarkdownDoc model
-
-        "mathExample" ->
-            loadDocument docTitle Data.mathExample MarkdownDoc model
-
-        "astro" ->
-            loadDocument docTitle Data.astro MarkdownDoc model
-
-        "aboutMiniLaTeX" ->
-            loadDocument docTitle Data.aboutMiniLaTeX MiniLaTeXDoc model
-
-        "miniLaTeXExample" ->
-            loadDocument docTitle Data.miniLaTeXExample MiniLaTeXDoc model
-
-        "aboutMiniLaTeX2" ->
-            loadDocument docTitle Data.aboutMiniLaTeX2 MiniLaTeXDoc model
-
-        _ ->
-            model
-
-
-titleFromFileName : String -> String
-titleFromFileName fileName =
-    fileName
-        |> String.split "."
-        |> List.reverse
-        |> List.drop 1
-        |> List.reverse
-        |> String.join "."
-
-
-loadDocument : String -> String -> DocType -> Model -> Model
-loadDocument title source docType model =
-    case docType of
-        MarkdownDoc ->
-            let
-                renderingData =
-                    Render.load ( 0, 0 ) model.counter (OMarkdown ExtendedMath) source
-
-                fileName =
-                    title ++ ".md"
-            in
-            { model
-                | renderingData = renderingData
-                , fileName = Just fileName
-                , counter = model.counter + 1
-                , editor =
-                    Editor.initWithContent source
-                        (config { width = model.width, height = model.height, wrapOption = DontWrap })
-                , docTitle = title
-                , docType = MarkdownDoc
-            }
-
-        MiniLaTeXDoc ->
-            let
-                renderingData =
-                    Render.load ( 0, 0 ) model.counter OMiniLatex source
-
-                fileName =
-                    title ++ ".latex"
-            in
-            { model
-                | renderingData = renderingData
-                , fileName = Just fileName
-                , counter = model.counter + 1
-                , editor =
-                    Editor.initWithContent source
-                        (config { width = model.width, height = model.height, wrapOption = DontWrap })
-                , docTitle = title
-                , docType = MiniLaTeXDoc
-            }
-
-
-config flags =
-    { width = proportions.width * flags.width
-    , height = proportions.height * (flags.height - 40)
-    , fontSize = 16
-    , verticalScrollOffset = 3
-    , debugOn = False
-    , wrapOption = DontWrap
-    }
-
-
-
 -- VIEW
 
 
@@ -464,14 +306,14 @@ viewEditorAndRenderedText model =
         [ viewEditor model
         , viewRenderedText
             model
-            (proportions.width * model.width - 40)
-            (proportions.height * model.height + 40)
+            (Helper.Common.proportions.width * model.width - 40)
+            (Helper.Common.proportions.height * model.height + 40)
         ]
 
 
 viewFooter model width_ height_ =
     row
-        [ width (pxFloat (2 * proportions.width * width_ - 40))
+        [ width (pxFloat (2 * Helper.Common.proportions.width * width_ - 40))
         , height (pxFloat height_)
         , Background.color (Element.rgb255 130 130 140)
         , Font.color (gray 240)
@@ -497,7 +339,7 @@ syncLRButton model =
 
 separator model width_ height_ =
     row
-        [ width (pxFloat (2 * proportions.width * width_ - 40))
+        [ width (pxFloat (2 * Helper.Common.proportions.width * width_ - 40))
         , height (pxFloat height_)
         , Background.color (gray 200)
         , Element.moveUp 19
@@ -507,7 +349,7 @@ separator model width_ height_ =
 
 viewFooter2 model width_ height_ =
     row
-        [ width (pxFloat (2 * proportions.width * width_ - 40))
+        [ width (pxFloat (2 * Helper.Common.proportions.width * width_ - 40))
         , height (pxFloat height_)
         , Background.color (Element.rgb255 80 80 90)
         , Font.color (gray 240)

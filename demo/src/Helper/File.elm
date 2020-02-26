@@ -1,4 +1,4 @@
-module Helper.File exposing (exportFile, fileExtension, read, requestFile, saveFile)
+module Helper.File exposing (exportFile, fileExtension, read, requestFile, saveFile, titleFromFileName)
 
 import Editor
 import File exposing (File)
@@ -56,3 +56,13 @@ exportFile model =
 
         ( _, _ ) ->
             Cmd.none
+
+
+titleFromFileName : String -> String
+titleFromFileName fileName =
+    fileName
+        |> String.split "."
+        |> List.reverse
+        |> List.drop 1
+        |> List.reverse
+        |> String.join "."
