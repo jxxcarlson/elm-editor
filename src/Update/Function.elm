@@ -60,7 +60,7 @@ pasteSelection model =
     )
 
 
-replaceLines : Model -> Array String -> ( Model, Cmd Msg )
+replaceLines : Model -> Array String -> Model
 replaceLines model strings =
     let
         n =
@@ -71,16 +71,14 @@ replaceLines model strings =
     in
     case model.selection of
         Selection p1 p2 ->
-            ( { model
+            { model
                 | lines = ArrayUtil.replaceLines p1 p2 strings model.lines
 
                 -- , cursor = newCursor
-              }
-            , Cmd.none
-            )
+            }
 
         _ ->
-            ( model, Cmd.none )
+            model
 
 
 deleteSelection : Model -> ( Model, Cmd Msg )

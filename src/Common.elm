@@ -21,6 +21,7 @@ module Common exposing
     , nextLine
     , previousLine
     , recordHistory
+    , recordHistory_
     , removeCharAfter
     , removeCharBefore
     , sanitizeHover
@@ -408,3 +409,17 @@ recordHistory oldModel ( newModel, cmd ) =
       }
     , cmd
     )
+
+
+recordHistory_ : Model -> Model -> Model
+recordHistory_ oldModel newModel =
+    { newModel
+        | history =
+            if oldModel.lines /= newModel.lines then
+                History.push
+                    (stateToSnapshot oldModel)
+                    newModel.history
+
+            else
+                newModel.history
+    }
