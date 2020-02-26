@@ -1,4 +1,4 @@
-module Update exposing (sendLine, update)
+module Update exposing (update)
 
 import Action
 import Array exposing (Array)
@@ -7,14 +7,12 @@ import Cmd.Extra exposing (withCmd, withCmds, withNoCmd)
 import Common exposing (..)
 import ContextMenu exposing (ContextMenu)
 import Debounce exposing (Debounce)
-import File exposing (File)
-import File.Download as Download
-import File.Select as Select
 import History
 import Markdown.Parse as Parse exposing (Id)
 import Model exposing (AutoLineBreak(..), Hover(..), Model, Msg(..), Position, Selection(..), Snapshot)
 import Search
 import Task exposing (Task)
+import Update.File
 import Update.Function as Function
 import Update.Line
 import Update.Scroll
@@ -35,7 +33,7 @@ update msg model =
                 ( debounce, cmd ) =
                     Debounce.update
                         Model.debounceConfig
-                        (Debounce.takeLast unload)
+                        (Debounce.takeLast Function.unload)
                         msg_
                         model.debounce
             in
@@ -69,7 +67,7 @@ update msg model =
                 |> recordHistory model
 
         NewLine ->
-            (newLine model |> Common.sanitizeHover)
+            (Function.newLine model |> Common.sanitizeHover)
                 |> (\m -> ( m, Update.Scroll.jumpToBottom m ))
 
         InsertChar char ->
@@ -77,7 +75,7 @@ update msg model =
                 ( debounce, debounceCmd ) =
                     Debounce.push Model.debounceConfig char model.debounce
             in
-            ( insertChar char { model | debounce = debounce } |> Update.Line.break
+            ( Function.insertChar char { model | debounce = debounce } |> Update.Line.break
             , debounceCmd
             )
                 |> recordHistory model
@@ -312,10 +310,10 @@ update msg model =
                     ( { model | autoLineBreak = AutoLineBreakOFF }, Cmd.none )
 
         RequestFile ->
-            ( model, requestMarkdownFile )
+            ( model, Update.File.requestMarkdownFile )
 
         RequestedFile file ->
-            ( model, read file )
+            ( model, Update.File.read file )
 
         MarkdownLoaded str ->
             ( { model | lines = str |> String.lines |> Array.fromList }, Cmd.none )
@@ -327,10 +325,10 @@ update msg model =
                         |> Array.toList
                         |> String.join "\n"
             in
-            ( model, save markdown )
+            ( model, Update.File.save markdown )
 
         SendLine ->
-            sendLine model
+            Update.Scroll.sendLine model
 
         GotViewportForSync str selection result ->
             case result of
@@ -426,156 +424,3 @@ update msg model =
 
                 Err _ ->
                     ( model, Cmd.none )
-
-
-
--- FILE I/O
-
-
-read : File -> Cmd Msg
-read file =
-    Task.perform MarkdownLoaded (File.toString file)
-
-
-requestMarkdownFile : Cmd Msg
-requestMarkdownFile =
-    Select.file [ "text/markdown" ] RequestedFile
-
-
-save : String -> Cmd msg
-save markdown =
-    Download.string "foo.md" "text/markdown" markdown
-
-
-newLine : Model -> Model
-newLine ({ cursor, lines } as model) =
-    let
-        { line, column } =
-            cursor
-
-        linesList : List String
-        linesList =
-            Array.toList lines
-
-        line_ : Int
-        line_ =
-            line + 1
-
-        contentUntilCursor : List String
-        contentUntilCursor =
-            linesList
-                |> List.take line_
-                |> List.indexedMap
-                    (\i content ->
-                        if i == line then
-                            String.left column content
-
-                        else
-                            content
-                    )
-
-        restOfLineAfterCursor : String
-        restOfLineAfterCursor =
-            String.dropLeft column (lineContent lines line)
-
-        restOfLines : List String
-        restOfLines =
-            List.drop line_ linesList
-
-        newLines : Array String
-        newLines =
-            (contentUntilCursor
-                ++ [ restOfLineAfterCursor ]
-                ++ restOfLines
-            )
-                |> Array.fromList
-
-        newCursor : Position
-        newCursor =
-            { line = line_
-            , column = 0
-            }
-    in
-    { model
-        | lines = newLines
-        , cursor = newCursor
-    }
-
-
-insertChar : String -> Model -> Model
-insertChar char ({ cursor, lines } as model) =
-    let
-        { line, column } =
-            cursor
-
-        maxLineLength =
-            20
-
-        lineWithCharAdded : String -> String
-        lineWithCharAdded content =
-            String.left column content
-                ++ char
-                ++ String.dropLeft column content
-
-        newLines : Array String
-        newLines =
-            lines
-                |> Array.indexedMap
-                    (\i content ->
-                        if i == line then
-                            lineWithCharAdded content
-
-                        else
-                            content
-                    )
-
-        newCursor : Position
-        newCursor =
-            { line = line
-            , column = column + 1
-            }
-    in
-    { model
-        | lines = newLines
-        , cursor = newCursor
-    }
-
-
-
--- DEBOUNCE
-
-
-unload : String -> Cmd Msg
-unload s =
-    Task.perform Unload (Task.succeed s)
-
-
-
--- LR SYNC
-
-
-verticalOffsetInSourceText =
-    4
-
-
-sendLine : Model -> ( Model, Cmd Msg )
-sendLine model =
-    let
-        y =
-            max 0 (model.lineHeight * toFloat model.cursor.line - verticalOffsetInSourceText)
-
-        newCursor =
-            { line = model.cursor.line, column = 0 }
-
-        currentLine =
-            Array.get newCursor.line model.lines
-
-        selection =
-            case Maybe.map String.length currentLine of
-                Just n ->
-                    Selection newCursor (Position newCursor.line (n - 1))
-
-                Nothing ->
-                    NoSelection
-    in
-    ( { model | cursor = newCursor, selection = selection }, Update.Scroll.jumpToHeightForSync currentLine newCursor selection y )

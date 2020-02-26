@@ -24,11 +24,11 @@ import Array exposing (Array)
 import ArrayUtil
 import Cmd.Extra
 import ContextMenu exposing (ContextMenu)
-import File.Select as Select
 import Html as H exposing (Html)
 import Menu.View exposing (viewContextMenu)
 import Model exposing (Config, Context(..), Model, Msg(..))
 import Update as U
+import Update.Scroll
 import View.Editor
 import View.Search
 import Wrap exposing (WrapOption)
@@ -99,7 +99,7 @@ getSelectedString (Editor model) =
 
 sendLine : Editor -> ( Editor, Cmd Msg )
 sendLine (Editor model) =
-    U.sendLine model
+    Update.Scroll.sendLine model
         |> (\( model_, message ) -> ( Editor model_, message ))
 
 

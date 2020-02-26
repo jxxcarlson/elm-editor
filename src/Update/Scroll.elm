@@ -3,6 +3,7 @@ module Update.Scroll exposing
     , jumpToHeightForSync
     , rollSearchSelectionBackward
     , rollSearchSelectionForward
+    , sendLine
     , setEditorViewportForLine
     , toString
     )
@@ -159,3 +160,30 @@ rollSearchSelectionBackward model =
 
         _ ->
             ( model, Cmd.none )
+
+
+sendLine : Model -> ( Model, Cmd Msg )
+sendLine model =
+    let
+        y =
+            max 0 (model.lineHeight * toFloat model.cursor.line - verticalOffsetInSourceText)
+
+        newCursor =
+            { line = model.cursor.line, column = 0 }
+
+        currentLine =
+            Array.get newCursor.line model.lines
+
+        selection =
+            case Maybe.map String.length currentLine of
+                Just n ->
+                    Selection newCursor (Position newCursor.line (n - 1))
+
+                Nothing ->
+                    NoSelection
+    in
+    ( { model | cursor = newCursor, selection = selection }, jumpToHeightForSync currentLine newCursor selection y )
+
+
+verticalOffsetInSourceText =
+    4
