@@ -78,8 +78,8 @@ Version 1.0 will be announced when it is
 ready. I appreciate feedback and bug
 reports.  The best way is to post an
 issue on the [Github
-repo](https://github.com/jxxcarlson/elm-ed
-itor2). Email to jxxcarlson@gmail.com
+repo](https://github.com/jxxcarlson/elm-editor2). Email
+to jxxcarlson@gmail.com
 also works.
 
 ## Acknowledgements
