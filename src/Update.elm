@@ -501,26 +501,17 @@ rollSearchSelectionBackward model =
 setEditorViewportForLine : Float -> Int -> Cmd Msg
 setEditorViewportForLine lineHeight lineNumber =
     let
-        lineHeightFactor =
-            1.4
-
         y =
-            toFloat lineNumber
-                * adjustedLineHeight lineHeightFactor lineHeight
+            toFloat lineNumber * lineHeight
     in
     case y >= 0 of
         True ->
-            Dom.setViewportOf "__inner_editor__" 0 y
-                |> Task.andThen (\_ -> Dom.getViewportOf "__inner_editor__")
+            Dom.setViewportOf "__editor__" 0 y
+                |> Task.andThen (\_ -> Dom.getViewportOf "__editor__")
                 |> Task.attempt (\info -> GotViewport info)
 
         False ->
             Cmd.none
-
-
-adjustedLineHeight : Float -> Float -> Float
-adjustedLineHeight factor lineHeight =
-    factor * lineHeight
 
 
 {-| Search for str and scroll to first hit. Used internally.
@@ -684,7 +675,6 @@ sendLine : Model -> ( Model, Cmd Msg )
 sendLine model =
     let
         y =
-            -- max 0 (adjustedLineHeight state.config.lineHeightFactor state.config.lineHeight * toFloat state.cursor.line - 50)
             max 0 (model.lineHeight * toFloat model.cursor.line - verticalOffsetInSourceText)
 
         newCursor =
