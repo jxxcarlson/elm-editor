@@ -4,10 +4,10 @@ import Action
 import Array exposing (Array)
 import ArrayUtil
 import Expect exposing (Expectation)
+import Function as UF
 import Fuzz exposing (Fuzzer, int, list, string)
 import Model exposing (Position, Selection(..))
 import Test exposing (..)
-import UpdateFunction as UF
 
 
 ex1 =

@@ -17,8 +17,8 @@ import Model exposing (AutoLineBreak(..), Hover(..), Model, Msg(..), Position, S
 import RollingList
 import Search
 import Task exposing (Task)
+import Update.Function as Function
 import Update.Line
-import UpdateFunction
 import Wrap exposing (WrapParams)
 
 
@@ -133,18 +133,18 @@ update msg model =
                 |> recordHistory model
 
         Cut ->
-            UpdateFunction.deleteSelection model
+            Function.deleteSelection model
                 |> recordHistory model
 
         Copy ->
-            UpdateFunction.copySelection model
+            Function.copySelection model
 
         Paste ->
-            UpdateFunction.pasteSelection model
+            Function.pasteSelection model
                 |> recordHistory model
 
         RemoveCharBefore ->
-            UpdateFunction.deleteSelection model
+            Function.deleteSelection model
                 |> recordHistory model
 
         FirstLine ->
@@ -325,7 +325,7 @@ update msg model =
                         newCursor =
                             { line = p1.line + n - 1, column = c }
                     in
-                    UpdateFunction.replaceLines { model | cursor = newCursor } newLines
+                    Function.replaceLines { model | cursor = newCursor } newLines
                         |> recordHistory model
 
                 _ ->

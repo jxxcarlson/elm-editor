@@ -1,4 +1,4 @@
-module UpdateFunction exposing
+module Update.Function exposing
     ( breakLineAfter
     , breakLineBefore
     , copySelection

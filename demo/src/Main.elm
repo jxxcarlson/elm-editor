@@ -52,7 +52,7 @@ import Style
 import Sync
 import Task exposing (Task)
 import Tree.Diff
-import UpdateFunction
+import Update.Function
 import Wrap exposing (WrapOption(..))
 
 

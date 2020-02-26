@@ -2,7 +2,7 @@ module Update.Line exposing (break)
 
 import Array
 import Model exposing (AutoLineBreak(..), Model, Position)
-import UpdateFunction
+import Update.Function
 
 
 break : Model -> Model
@@ -35,7 +35,7 @@ break model =
                         False ->
                             case currentLineLength == model.cursor.column of
                                 True ->
-                                    case UpdateFunction.breakLineBefore k currentLine of
+                                    case Update.Function.breakLineBefore k currentLine of
                                         ( _, Nothing ) ->
                                             model
 
@@ -45,12 +45,12 @@ break model =
                                                     { line = line + 1, column = String.length extraLine }
                                             in
                                             model
-                                                |> UpdateFunction.replaceLineAt line adjustedLine
-                                                |> UpdateFunction.insertLineAfter line extraLine
+                                                |> Update.Function.replaceLineAt line adjustedLine
+                                                |> Update.Function.insertLineAfter line extraLine
                                                 |> putCursorAt newCursor
 
                                 False ->
-                                    case UpdateFunction.breakLineAfter model.cursor.column currentLine of
+                                    case Update.Function.breakLineAfter model.cursor.column currentLine of
                                         ( _, Nothing ) ->
                                             model
 
@@ -60,8 +60,8 @@ break model =
                                                     model.cursor
                                             in
                                             model
-                                                |> UpdateFunction.replaceLineAt line adjustedLine
-                                                |> UpdateFunction.insertLineAfter line extraLine
+                                                |> Update.Function.replaceLineAt line adjustedLine
+                                                |> Update.Function.insertLineAfter line extraLine
                                                 |> putCursorAt newCursor
 
 
