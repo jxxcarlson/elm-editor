@@ -438,14 +438,13 @@ viewSearchPanel model =
 
 searchPanel model =
     H.div
-        [ HA.style "width" "595px"
+        [ HA.style "width" "450px"
         , HA.style "padding-top" "5px"
         , HA.style "height" "30px"
         , HA.style "padding-left" "8px"
         , HA.style "background-color" EditorStyle.lightGray
         , HA.style "opacity" "0.9"
         , HA.style "font-size" "14px"
-        , HA.style "float" "left"
         ]
         [ searchTextButton
         , acceptSearchText

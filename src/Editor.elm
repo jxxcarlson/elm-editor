@@ -119,9 +119,9 @@ view : Editor -> Html Msg
 view (Editor model) =
     H.div []
         [ viewHeader model
+        , viewSearchPanel model
         , viewEditor model
         , viewContextMenu model.width model
-        , viewSearchPanel model
         , viewDebug model
         ]
 
