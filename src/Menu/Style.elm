@@ -162,7 +162,7 @@ backgroundStyles : List (Attribute msg)
 backgroundStyles =
     [ style "top" "0"
     , style "left" "0"
-    , style "width" "50px"
+    , style "width" "40px"
     , style "height" "15px"
     , style "position" "relative"
     , style "background-color" "#77b"
@@ -173,8 +173,8 @@ objectStyles : Float -> List (Attribute msg)
 objectStyles width =
     [ style "position" "relative"
     , style "top" "0"
-    , style "left" "50px"
-    , style "width" (px <| width - 50)
+    , style "left" "40px"
+    , style "width" (px <| width - 40)
     , style "height" "15px"
     , style "background-color" "#8aa"
     ]
