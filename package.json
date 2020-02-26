@@ -10,7 +10,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "compile": "elm make src/Editor.elm",
     "debug": "elm make --debug src/Editor.elm",
-    "go": "open -a /Applications/Firefox.app/ https://jxxcarlson.github.io/app/janiczek-editor/index.html",
+    "go": "open -a /Applications/Firefox.app/ https://jxxcarlson.github.io/app/text-editor/index.html",
     "cloc": "cloc --by-file src"
   },
   "repository": {
