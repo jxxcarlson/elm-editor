@@ -4,7 +4,7 @@ import Action
 import Array exposing (Array)
 import ArrayUtil
 import Browser.Dom as Dom
-import Cmd.Extra exposing (withCmd, withCmds)
+import Cmd.Extra exposing (withCmd, withCmds, withNoCmd)
 import Common exposing (..)
 import ContextMenu exposing (ContextMenu)
 import Debounce exposing (Debounce)
@@ -14,6 +14,7 @@ import File.Select as Select
 import History
 import Markdown.Parse as Parse exposing (Id)
 import Model exposing (AutoLineBreak(..), Hover(..), Model, Msg(..), Position, Selection(..), Snapshot)
+import RollingList
 import Search
 import Task exposing (Task)
 import UpdateFunction
@@ -410,6 +411,176 @@ update msg model =
 
         DoSearch key ->
             Search.do key model |> withCmd Cmd.none
+
+        ToggleSearchPanel ->
+            { model | showSearchPanel = not model.showSearchPanel } |> withNoCmd
+
+        OpenReplaceField ->
+            { model | canReplace = True } |> withNoCmd
+
+        RollSearchSelectionForward ->
+            rollSearchSelectionForward model
+
+        RollSearchSelectionBackward ->
+            rollSearchSelectionBackward model
+
+        AcceptReplacementText str ->
+            { model | replacementText = str } |> withNoCmd
+
+        ReplaceCurrentSelection ->
+            case model.selection of
+                Selection from to ->
+                    let
+                        newLines =
+                            ArrayUtil.replace model.cursor to model.replacementText model.lines
+                    in
+                    rollSearchSelectionForward { model | lines = newLines }
+
+                -- TODO: FIX THIS
+                -- |> recordHistory
+                _ ->
+                    ( model, Cmd.none )
+
+        AcceptLineNumber str ->
+            model |> withNoCmd
+
+        AcceptSearchText str ->
+            scrollToTextInternal str model
+
+        GotViewport result ->
+            case result of
+                Ok vp ->
+                    let
+                        y =
+                            vp.viewport.y
+
+                        lineNumber =
+                            round (y / model.lineHeight)
+                    in
+                    ( { model | topLine = lineNumber }, Cmd.none )
+
+                Err _ ->
+                    ( model, Cmd.none )
+
+
+rollSearchSelectionForward : Model -> ( Model, Cmd Msg )
+rollSearchSelectionForward model =
+    let
+        searchResults_ =
+            RollingList.roll model.searchResults
+
+        searchResultList =
+            RollingList.toList searchResults_
+
+        maxSearchHitIndex =
+            searchResultList |> List.length |> (\x -> x - 1)
+
+        newSearchResultIndex =
+            if model.searchResultIndex >= maxSearchHitIndex then
+                0
+
+            else
+                model.searchResultIndex + 1
+    in
+    case RollingList.current searchResults_ of
+        Just (Selection cursor end) ->
+            ( { model
+                | cursor = cursor
+                , selection = Selection cursor end
+                , searchResults = searchResults_
+                , searchResultIndex = newSearchResultIndex
+              }
+            , setEditorViewportForLine model.lineHeight (max 0 (cursor.line - 5))
+            )
+
+        _ ->
+            ( model, Cmd.none )
+
+
+rollSearchSelectionBackward : Model -> ( Model, Cmd Msg )
+rollSearchSelectionBackward model =
+    let
+        searchResults_ =
+            RollingList.rollBack model.searchResults
+
+        searchResultList =
+            RollingList.toList searchResults_
+
+        maxSearchResultIndex =
+            searchResultList |> List.length |> (\x -> x - 1)
+
+        newSearchResultIndex =
+            if model.searchResultIndex == 0 then
+                maxSearchResultIndex
+
+            else
+                model.searchResultIndex - 1
+    in
+    case RollingList.current searchResults_ of
+        Just (Selection cursor end) ->
+            ( { model
+                | cursor = cursor
+                , selection = Selection cursor end
+                , searchResults = searchResults_
+                , searchResultIndex = newSearchResultIndex
+              }
+            , setEditorViewportForLine model.lineHeight (max 0 (cursor.line - 5))
+            )
+
+        _ ->
+            ( model, Cmd.none )
+
+
+setEditorViewportForLine : Float -> Int -> Cmd Msg
+setEditorViewportForLine lineHeight lineNumber =
+    let
+        lineHeightFactor =
+            1.4
+
+        y =
+            toFloat lineNumber
+                * adjustedLineHeight lineHeightFactor lineHeight
+    in
+    case y >= 0 of
+        True ->
+            Dom.setViewportOf "__inner_editor__" 0 y
+                |> Task.andThen (\_ -> Dom.getViewportOf "__inner_editor__")
+                |> Task.attempt (\info -> GotViewport info)
+
+        False ->
+            Cmd.none
+
+
+adjustedLineHeight : Float -> Float -> Float
+adjustedLineHeight factor lineHeight =
+    factor * lineHeight
+
+
+{-| Search for str and scroll to first hit. Used internally.
+-}
+scrollToTextInternal : String -> Model -> ( Model, Cmd Msg )
+scrollToTextInternal str model =
+    let
+        searchResults =
+            Search.hits str model.lines
+    in
+    case List.head searchResults of
+        Nothing ->
+            ( { model | searchResults = RollingList.fromList [], searchTerm = str, selection = NoSelection }, Cmd.none )
+
+        Just (Selection cursor end) ->
+            ( { model
+                | cursor = cursor
+                , selection = Selection cursor end
+                , searchResults = RollingList.fromList searchResults
+                , searchTerm = str
+                , searchResultIndex = 0
+              }
+            , setEditorViewportForLine model.lineHeight (max 0 (cursor.line - 5))
+            )
+
+        _ ->
+            ( { model | searchResults = RollingList.fromList [], searchTerm = str, selection = NoSelection }, Cmd.none )
 
 
 

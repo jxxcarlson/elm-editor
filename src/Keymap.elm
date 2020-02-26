@@ -196,8 +196,8 @@ keymaps =
             --, ( ",", RollSearchSelectionBackward )
             --, ( "h", ToggleHelp )
             , ( "x", Cut )
+            , ( "s", ToggleSearchPanel )
 
-            --, ( "s", ToggleSearchPanel )
             --, ( "r", ToggleReplacePanel )
             , ( "d", RemoveCharAfter )
             , ( "k", KillLine )

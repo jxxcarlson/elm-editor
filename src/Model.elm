@@ -46,6 +46,9 @@ type alias Model =
     , searchTerm : String
     , searchResults : RollingList Selection
     , searchResultIndex : Int
+    , showSearchPanel : Bool
+    , canReplace : Bool
+    , replacementText : String
     }
 
 
@@ -123,6 +126,9 @@ init ( config, contextMenu ) =
     , searchTerm = ""
     , searchResults = RollingList.fromList []
     , searchResultIndex = 0
+    , showSearchPanel = False
+    , canReplace = False
+    , replacementText = ""
     }
 
 
@@ -181,7 +187,7 @@ type Msg
     | Redo
       --
     | AcceptLineToGoTo String
-      --
+      -- Debouncer
     | DebounceMsg Debounce.Msg
     | Unload String
       --
@@ -191,7 +197,7 @@ type Msg
     | ContextMenuMsg (ContextMenu.Msg Context)
     | Item Int
     | ToggleAutoLineBreak
-      --
+      -- File
     | RequestFile
     | RequestedFile File
     | MarkdownLoaded String
@@ -202,8 +208,17 @@ type Msg
       --
     | CopyPasteClipboard
     | WriteToSystemClipBoard
-      --
+      -- Search
     | DoSearch String
+    | ToggleSearchPanel
+    | OpenReplaceField
+    | RollSearchSelectionForward
+    | RollSearchSelectionBackward
+    | ReplaceCurrentSelection
+    | AcceptLineNumber String
+    | AcceptSearchText String
+    | AcceptReplacementText String
+    | GotViewport (Result Dom.Error Dom.Viewport)
 
 
 
