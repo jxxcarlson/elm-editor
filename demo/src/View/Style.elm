@@ -1,4 +1,4 @@
-module Style exposing
+module View.Style exposing
     ( grayColor
     , redColor
     )

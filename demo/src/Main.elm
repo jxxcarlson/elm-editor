@@ -27,7 +27,6 @@ import Element
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
-import Element.Input as Input
 import File exposing (File)
 import Helper.Common
 import Helper.File
@@ -35,7 +34,6 @@ import Helper.Load
 import Helper.Sync
 import Html exposing (Attribute, Html)
 import Html.Attributes as Attribute
-import Html.Events as HE
 import Json.Encode
 import Markdown.Option exposing (..)
 import Markdown.Render exposing (MarkdownMsg(..))
@@ -44,12 +42,11 @@ import Model exposing (Msg(..))
 import Outside
 import Render exposing (MDData, MLData, RenderingData(..), RenderingOption(..))
 import Render.Types exposing (RenderMsg(..))
-import Style
-import Sync
 import Task exposing (Task)
 import Types exposing (DocType(..), Model, Msg(..))
 import View.Scroll
-import Wrap exposing (WrapOption(..))
+import View.Style as Style
+import View.Widget
 
 
 type alias Flags =
@@ -265,6 +262,10 @@ update msg model =
                             Helper.Sync.onId id model
 
 
+
+-- HELPER
+
+
 pasteToEditorAndClipboard : Model -> String -> ( Model, Cmd msg )
 pasteToEditorAndClipboard model str =
     let
@@ -280,8 +281,25 @@ pasteToEditorAndClipboard model str =
     { model | editor = Editor.insertAtCursor str editor2 } |> withCmd Cmd.none
 
 
+loadRenderingData : String -> Model -> Model
+loadRenderingData source model =
+    let
+        counter =
+            model.counter + 1
 
--- HELPER
+        newRenderingData : RenderingData
+        newRenderingData =
+            Render.update ( 0, 0 ) counter source model.renderingData
+    in
+    { model | renderingData = newRenderingData, counter = counter }
+
+
+load : Int -> ( Int, Int ) -> RenderingOption -> String -> RenderingData
+load counter selectedId renderingOption str =
+    Render.load selectedId counter renderingOption str
+
+
+
 -- VIEW
 
 
@@ -322,29 +340,15 @@ viewFooter model width_ height_ =
         , Element.moveUp 19
         , spacing 12
         ]
-        [ documentTypeButton model
-        , newDocumentButton model
-        , openFileButton model
-        , saveFileButton model
-        , exportFileButton model
+        [ View.Widget.documentTypeButton model
+        , View.Widget.newDocumentButton model
+        , View.Widget.openFileButton model
+        , View.Widget.saveFileButton model
+        , View.Widget.exportFileButton model
         , displayFilename model
-        , syncLRButton model
+        , View.Widget.syncLRButton model
         , el [ alignRight, width (px 100) ] (text model.message)
         ]
-
-
-syncLRButton model =
-    button 50 "Sync L > R" SyncLR [ alignRight ]
-
-
-separator model width_ height_ =
-    row
-        [ width (pxFloat (2 * Helper.Common.proportions.width * width_ - 40))
-        , height (pxFloat height_)
-        , Background.color (gray 200)
-        , Element.moveUp 19
-        ]
-        []
 
 
 viewFooter2 model width_ height_ =
@@ -361,6 +365,16 @@ viewFooter2 model width_ height_ =
         [ markdownDocumentLoader model
         , latexDocumentLoader model
         ]
+
+
+separator model width_ height_ =
+    row
+        [ width (pxFloat (2 * Helper.Common.proportions.width * width_ - 40))
+        , height (pxFloat height_)
+        , Background.color (gray 200)
+        , Element.moveUp 19
+        ]
+        []
 
 
 displayFilename : Model -> Element Msg
@@ -380,19 +394,19 @@ displayFilename model =
 markdownDocumentLoader model =
     row [ spacing 12 ]
         [ el [] (text "Markdown Docs: ")
-        , loadDocumentButton model 50 "about" "About"
-        , loadDocumentButton model 50 "markdownExample" "M1"
-        , loadDocumentButton model 50 "mathExample" "M2"
-        , loadDocumentButton model 50 "astro" "M3"
+        , View.Widget.loadDocumentButton model 50 "about" "About"
+        , View.Widget.loadDocumentButton model 50 "markdownExample" "M1"
+        , View.Widget.loadDocumentButton model 50 "mathExample" "M2"
+        , View.Widget.loadDocumentButton model 50 "astro" "M3"
         ]
 
 
 latexDocumentLoader model =
     row [ spacing 12 ]
         [ el [] (text "LaTeX Docs: ")
-        , loadDocumentButton model 50 "aboutMiniLaTeX" "About"
-        , loadDocumentButton model 50 "aboutMiniLaTeX2" "L1"
-        , loadDocumentButton model 50 "miniLaTeXExample" "L2"
+        , View.Widget.loadDocumentButton model 50 "aboutMiniLaTeX" "About"
+        , View.Widget.loadDocumentButton model 50 "aboutMiniLaTeX2" "L1"
+        , View.Widget.loadDocumentButton model 50 "miniLaTeXExample" "L2"
         ]
 
 
@@ -446,104 +460,3 @@ setElementId id =
 pxFloat : Float -> Element.Length
 pxFloat p =
     px (round p)
-
-
-
--- BUTTONS
-
-
-openFileButton model =
-    button 90 "Open" RequestFile []
-
-
-saveFileButton model =
-    button 90 "Save" SaveFile []
-
-
-exportFileButton model =
-    case model.docType of
-        MarkdownDoc ->
-            Element.none
-
-        MiniLaTeXDoc ->
-            button 90 "Export" ExportFile []
-
-
-newDocumentButton model =
-    button 90 "New" NewDocument []
-
-
-documentTypeButton model =
-    let
-        title =
-            case model.docType of
-                MarkdownDoc ->
-                    "Markdown"
-
-                MiniLaTeXDoc ->
-                    "LaTeX"
-    in
-    button width title ToggleDocType [ Background.color Style.redColor ]
-
-
-loadDocumentButton model width docTitle buttonLabel =
-    let
-        bgColor =
-            case model.docTitle == docTitle of
-                True ->
-                    Style.redColor
-
-                False ->
-                    Style.grayColor
-    in
-    button width buttonLabel (Load docTitle) [ Background.color bgColor ]
-
-
-button width str msg attr =
-    Input.button
-        ([ paddingXY 8 8
-         , Background.color (Element.rgb255 90 90 100)
-         ]
-            ++ attr
-        )
-        { onPress = Just msg
-        , label = el attr (text str)
-        }
-
-
-textField width str msg attr innerAttr =
-    Html.div ([ Attribute.style "margin-bottom" "10px" ] ++ attr)
-        [ Html.input
-            ([ Attribute.style "height" "18px"
-             , Attribute.style "width" (String.fromInt width ++ "px")
-             , Attribute.type_ "text"
-             , Attribute.placeholder str
-             , Attribute.style "margin-right" "8px"
-             , HE.onInput msg
-             ]
-                ++ innerAttr
-            )
-            []
-        ]
-
-
-
--- HELPERS: LOAD, RENDER, SYNC
-
-
-loadRenderingData : String -> Model -> Model
-loadRenderingData source model =
-    let
-        counter =
-            model.counter + 1
-
-        newRenderingData : RenderingData
-        newRenderingData =
-            Render.update ( 0, 0 ) counter source model.renderingData
-    in
-    { model | renderingData = newRenderingData, counter = counter }
-
-
-load : Int -> ( Int, Int ) -> RenderingOption -> String -> RenderingData
-load counter selectedId renderingOption str =
-    Render.load selectedId counter renderingOption str
