@@ -18,7 +18,7 @@ read file =
 
 requestMarkdownFile : Cmd Msg
 requestMarkdownFile =
-    Select.file [ "text/markdown" ] RequestedFile
+    Select.file [ "text/markdown" ] EditorRequestedFile
 
 
 save : String -> Cmd msg

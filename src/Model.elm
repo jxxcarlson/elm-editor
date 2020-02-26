@@ -149,7 +149,7 @@ debounceConfig =
 
 
 type Msg
-    = NoOp
+    = EditorNoOp
       --
     | MoveUp
     | MoveDown
@@ -198,10 +198,10 @@ type Msg
     | Item Int
     | ToggleAutoLineBreak
       -- File
-    | RequestFile
-    | RequestedFile File
+    | EditorRequestFile
+    | EditorRequestedFile File
     | MarkdownLoaded String
-    | SaveFile
+    | EditorSaveFile
       --
     | SendLine
     | GotViewportForSync (Maybe String) Selection (Result Dom.Error Dom.Viewport)

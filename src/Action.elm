@@ -147,7 +147,7 @@ lineEnd line model =
 
 scrollToTopForElement : String -> Cmd Msg
 scrollToTopForElement id =
-    Task.attempt (\_ -> NoOp) (Dom.setViewportOf id 0 0)
+    Task.attempt (\_ -> EditorNoOp) (Dom.setViewportOf id 0 0)
 
 
 scrollToLine : Float -> Int -> Cmd Msg
@@ -156,12 +156,12 @@ scrollToLine lineHeight n =
         y =
             toFloat n * lineHeight
     in
-    Task.attempt (\_ -> NoOp) (Dom.setViewportOf "__editor__" 0 y)
+    Task.attempt (\_ -> EditorNoOp) (Dom.setViewportOf "__editor__" 0 y)
 
 
 scrollToYCoordinate : Float -> Cmd Msg
 scrollToYCoordinate y =
-    Task.attempt (\_ -> NoOp) (Dom.setViewportOf "__editor__" 0 y)
+    Task.attempt (\_ -> EditorNoOp) (Dom.setViewportOf "__editor__" 0 y)
 
 
 yValueOfLine : Float -> Int -> Float

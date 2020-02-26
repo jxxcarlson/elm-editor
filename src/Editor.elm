@@ -1,7 +1,9 @@
 module Editor exposing
-    ( Editor(..), init, loadArray
+    ( Editor(..), init, initWithContent, loadArray, loadString, resize, sendLine, syncMessages
     , EditorMsg, getLines, getContextMenu, update, view
-    , getContent, getCursor, getLineHeight, getSelectedString, getWrapOption, indexOf, initWithContent, insertAtCursor, lineAtCursor, loadString, placeInClipboard, resize, sendLine, setCursor, syncMessages
+    , insertAtCursor, lineAtCursor, getCursor, setCursor
+    , placeInClipboard
+    , getContent, getLineHeight, getSelectedString, getWrapOption, indexOf
     )
 
 {-| Use the Editor module to embed a pure Elm text editor
@@ -11,12 +13,27 @@ code for an example.
 
 ## Setting up the editor
 
-@docs Editor, init, loadArray
+@docs Editor, init, initWithContent, loadArray, loadString, resize, sendLine, syncMessages
 
 
 ## Using the editor
 
 @docs EditorMsg, getLines, getContextMenu, update, view
+
+
+## Cursor
+
+@docs insertAtCursor, lineAtCursor, getCursor, setCursor
+
+
+## Clipboard
+
+@docs placeInClipboard
+
+
+## Getting data from the editor
+
+@docs getContent, getLineHeight, getSelectedString, getWrapOption, indexOf
 
 -}
 
@@ -40,11 +57,16 @@ type Editor
     = Editor Model
 
 
+{-| -}
 getLineHeight : Editor -> Float
 getLineHeight (Editor data) =
     data.lineHeight
 
 
+{-| Return (lineNumber, target) where target in the
+editor's array of lines is a string
+which matches the key
+-}
 indexOf : Editor -> String -> Maybe ( Int, String )
 indexOf (Editor data) key =
     ArrayUtil.indexOf key data.lines
@@ -57,6 +79,9 @@ placeInClipboard str (Editor model) =
     Editor { model | clipboard = str }
 
 
+{-| Insert a string into the editor at a
+given cursor location
+-}
 insertAtCursor : String -> Editor -> Editor
 insertAtCursor str (Editor data) =
     let
@@ -77,38 +102,50 @@ insertAtCursor str (Editor data) =
         }
 
 
+{-| -}
 getCursor : Editor -> { line : Int, column : Int }
 getCursor (Editor model) =
     model.cursor
 
 
+{-| Set the editor's cursor to a given position
+-}
 setCursor : { line : Int, column : Int } -> Editor -> Editor
 setCursor cursor (Editor data) =
     Editor { data | cursor = cursor }
 
 
+{-| -}
 getWrapOption : Editor -> WrapOption
 getWrapOption (Editor model) =
     model.wrapOption
 
 
+{-| -}
 getSelectedString : Editor -> Maybe String
 getSelectedString (Editor model) =
     model.selectedString
 
 
+{-| Used by a host app to scroll the editor to scroll the
+editor display to the line where the cursor is.
+-}
 sendLine : Editor -> ( Editor, Cmd Msg )
 sendLine (Editor model) =
     Update.Scroll.sendLine model
         |> (\( model_, message ) -> ( Editor model_, message ))
 
 
+{-| Return the line where the cursor is
+-}
 lineAtCursor : Editor -> String
 lineAtCursor (Editor data) =
     Array.get data.cursor.line data.lines
         |> Maybe.withDefault "invalid cursor"
 
 
+{-| Resize the editor
+-}
 resize : Float -> Float -> Editor -> Editor
 resize width height (Editor model) =
     Editor { model | width = width, height = height }
@@ -128,6 +165,8 @@ view (Editor model) =
         ]
 
 
+{-| Retrieve text from editor
+-}
 getContent : Editor -> String
 getContent editor =
     getLines editor
@@ -153,6 +192,9 @@ init config =
         |> Cmd.Extra.withCmd cmd
 
 
+{-| -Initialize the the editor with
+given content : String
+-}
 initWithContent : String -> Config -> Editor
 initWithContent content config =
     let
@@ -193,6 +235,8 @@ loadArray array (Editor model) =
     Editor { model | lines = array }
 
 
+{-| Load a string into the editor
+-}
 loadString : String -> Editor -> Editor
 loadString str (Editor model) =
     Editor { model | lines = str |> String.lines |> Array.fromList }
@@ -212,6 +256,8 @@ getContextMenu (Editor model) =
     model.contextMenu
 
 
+{-| Messages to be handles by a host app in some default way
+-}
 syncMessages : List Msg
 syncMessages =
     [ RemoveCharBefore

@@ -8,7 +8,6 @@ import Common exposing (..)
 import ContextMenu exposing (ContextMenu)
 import Debounce exposing (Debounce)
 import History
-import Markdown.Parse as Parse exposing (Id)
 import Model exposing (AutoLineBreak(..), Hover(..), Model, Msg(..), Position, Selection(..), Snapshot)
 import Search
 import Task exposing (Task)
@@ -22,7 +21,7 @@ import Update.Wrap
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        NoOp ->
+        EditorNoOp ->
             ( model, Cmd.none )
 
         Test ->
@@ -309,16 +308,16 @@ update msg model =
                 AutoLineBreakON ->
                     ( { model | autoLineBreak = AutoLineBreakOFF }, Cmd.none )
 
-        RequestFile ->
+        EditorRequestFile ->
             ( model, Update.File.requestMarkdownFile )
 
-        RequestedFile file ->
+        EditorRequestedFile file ->
             ( model, Update.File.read file )
 
         MarkdownLoaded str ->
             ( { model | lines = str |> String.lines |> Array.fromList }, Cmd.none )
 
-        SaveFile ->
+        EditorSaveFile ->
             let
                 markdown =
                     model.lines

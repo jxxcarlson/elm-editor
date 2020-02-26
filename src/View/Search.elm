@@ -92,7 +92,7 @@ numberOfHitsDisplay model =
         txt =
             String.fromInt (model.searchResultIndex + 1) ++ "/" ++ String.fromInt n
     in
-    Widget.rowButton 40 NoOp txt [ HA.style "float" "left" ]
+    Widget.rowButton 40 EditorNoOp txt [ HA.style "float" "left" ]
 
 
 searchForwardButton =
@@ -104,7 +104,7 @@ searchBackwardButton =
 
 
 searchTextButton =
-    Widget.rowButton 60 NoOp "Search" [ HA.style "float" "left" ]
+    Widget.rowButton 60 EditorNoOp "Search" [ HA.style "float" "left" ]
 
 
 replaceTextButton =

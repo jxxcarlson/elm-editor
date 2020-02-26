@@ -52,7 +52,9 @@ import Style
 import Sync
 import Task exposing (Task)
 import Tree.Diff
+import Types exposing (DocType(..), Model, Msg(..))
 import Update.Function
+import View.Scroll
 import Wrap exposing (WrapOption(..))
 
 
@@ -70,56 +72,9 @@ main =
         }
 
 
-
--- MODEL
-
-
-type alias Model =
-    { editor : Editor
-    , renderingData : RenderingData
-    , counter : Int
-    , width : Float
-    , height : Float
-    , docTitle : String
-    , docType : DocType
-    , fileName : Maybe String
-    , selectedId : ( Int, Int )
-    , selectedId_ : String
-    , message : String
-    }
-
-
-type DocType
-    = MarkdownDoc
-    | MiniLaTeXDoc
-
-
 proportions : { width : Float, height : Float }
 proportions =
     { width = 0.35, height = 0.8 }
-
-
-
--- MSG
-
-
-type Msg
-    = NoOp
-    | EditorMsg Editor.EditorMsg
-    | WindowSize Int Int
-    | Load String
-    | ToggleDocType
-    | NewDocument
-    | SetViewPortForElement (Result Dom.Error ( Dom.Element, Dom.Viewport ))
-    | RequestFile
-    | RequestedFile File
-    | DocumentLoaded String
-    | SaveFile
-    | ExportFile
-    | SyncLR
-    | Outside Outside.InfoForElm
-    | LogErr String
-    | RenderMsg RenderMsg
 
 
 init : Flags -> ( Model, Cmd Msg )
@@ -138,9 +93,260 @@ init flags =
     }
         |> Cmd.Extra.withCmds
             [ Dom.focus "editor" |> Task.attempt (always NoOp)
-            , scrollEditorToTop
-            , scrollRendredTextToTop
+            , View.Scroll.toEditorTop
+            , View.Scroll.toRenderedTextTop
             ]
+
+
+subscriptions : Model -> Sub Msg
+subscriptions model =
+    Sub.batch
+        [ ContextMenu.subscriptions (Editor.getContextMenu model.editor)
+            |> Sub.map ContextMenuMsg
+            |> Sub.map EditorMsg
+        , Outside.getInfo Outside LogErr
+        , Browser.Events.onResize WindowSize
+        ]
+
+
+update : Msg -> Model -> ( Model, Cmd Msg )
+update msg model =
+    case msg of
+        NoOp ->
+            ( model, Cmd.none )
+
+        EditorMsg editorMsg ->
+            -- Handle messages from the Editor.  The messages CopyPasteClipboard, ... GotViewportForSync
+            -- require special handling.  The others are passed to a default handler
+            let
+                ( newEditor, cmd ) =
+                    Editor.update editorMsg model.editor
+            in
+            case editorMsg of
+                CopyPasteClipboard ->
+                    let
+                        clipBoardCmd =
+                            Outside.sendInfo (Outside.AskForClipBoard Json.Encode.null)
+                    in
+                    model
+                        |> syncModel newEditor
+                        |> withCmds [ clipBoardCmd, Cmd.map EditorMsg cmd ]
+
+                WriteToSystemClipBoard ->
+                    ( { model | editor = newEditor }, Outside.sendInfo (Outside.WriteToClipBoard (Editor.getSelectedString newEditor |> Maybe.withDefault "Nothing!!")) )
+
+                Unload _ ->
+                    sync newEditor cmd model
+
+                InsertChar _ ->
+                    sync newEditor cmd model
+
+                MarkdownLoaded _ ->
+                    sync newEditor cmd model
+
+                SendLine ->
+                    syncAndHighlightRenderedText (Editor.lineAtCursor newEditor) (Cmd.map EditorMsg cmd) { model | editor = newEditor }
+
+                GotViewportForSync currentLine _ _ ->
+                    case currentLine of
+                        Nothing ->
+                            ( model, Cmd.none )
+
+                        Just str ->
+                            syncAndHighlightRenderedText str Cmd.none model
+
+                _ ->
+                    -- Handle the default cases
+                    case List.member msg (List.map EditorMsg Editor.syncMessages) of
+                        True ->
+                            sync newEditor cmd model
+
+                        False ->
+                            ( { model | editor = newEditor }, Cmd.map EditorMsg cmd )
+
+        WindowSize width height ->
+            let
+                w =
+                    toFloat width
+
+                h =
+                    toFloat height
+            in
+            ( { model
+                | width = w
+                , height = h
+                , editor = Editor.resize (proportions.width * w) (proportions.height * h) model.editor
+              }
+            , Cmd.none
+            )
+
+        Load title ->
+            loadDocumentByTitle title model
+                |> withCmd (Cmd.batch [ View.Scroll.toEditorTop, View.Scroll.toRenderedTextTop ])
+
+        ToggleDocType ->
+            let
+                newDocType =
+                    case model.docType of
+                        MarkdownDoc ->
+                            MiniLaTeXDoc
+
+                        MiniLaTeXDoc ->
+                            MarkdownDoc
+            in
+            ( { model | docType = newDocType }, Cmd.none )
+
+        NewDocument ->
+            case model.docType of
+                MarkdownDoc ->
+                    loadDocument "newFile" "" MarkdownDoc model
+                        |> withCmd (Cmd.batch [ View.Scroll.toEditorTop, View.Scroll.toRenderedTextTop ])
+
+                MiniLaTeXDoc ->
+                    loadDocument "newFile" "" MiniLaTeXDoc model
+                        |> withCmd (Cmd.batch [ View.Scroll.toEditorTop, View.Scroll.toRenderedTextTop ])
+
+        SetViewPortForElement result ->
+            case result of
+                Ok ( element, viewport ) ->
+                    ( { model | message = "synced" }, View.Scroll.setViewPortForSelectedLineInRenderedText element viewport )
+
+                Err _ ->
+                    ( { model | message = "sync error" }, Cmd.none )
+
+        RequestFile ->
+            ( model, requestFile )
+
+        RequestedFile file ->
+            ( { model | fileName = Just (File.name file) }, read file )
+
+        DocumentLoaded source ->
+            case model.fileName of
+                Nothing ->
+                    ( model, Cmd.none )
+
+                Just fileName ->
+                    let
+                        docType =
+                            case fileExtension fileName of
+                                "md" ->
+                                    MarkdownDoc
+
+                                "latex" ->
+                                    MiniLaTeXDoc
+
+                                _ ->
+                                    MarkdownDoc
+                    in
+                    loadDocument (titleFromFileName fileName) source docType model
+                        |> (\m -> { m | docType = docType })
+                        |> withCmds [ View.Scroll.toRenderedTextTop, View.Scroll.toEditorTop ]
+
+        SaveFile ->
+            ( model, saveFile model )
+
+        ExportFile ->
+            ( model, exportFile model )
+
+        SyncLR ->
+            let
+                ( newEditor, cmd ) =
+                    Editor.sendLine model.editor
+            in
+            ( { model | editor = newEditor }, Cmd.map EditorMsg cmd )
+
+        Outside infoForElm ->
+            case infoForElm of
+                Outside.GotClipboard clipboard ->
+                    pasteToEditorAndClipboard model clipboard
+
+        LogErr _ ->
+            ( model, Cmd.none )
+
+        RenderMsg renderMsg ->
+            case renderMsg of
+                LaTeXMsg latexMsg ->
+                    case latexMsg of
+                        MLE.IDClicked id ->
+                            syncOnId id model
+
+                MarkdownMsg markdownMsg ->
+                    case markdownMsg of
+                        IDClicked id ->
+                            syncOnId id model
+
+
+syncOnId : String -> Model -> ( Model, Cmd Msg )
+syncOnId id model =
+    let
+        ( index, line ) =
+            case model.renderingData of
+                MD data ->
+                    Sync.getText id data.sourceMap
+                        |> Maybe.map (shorten 5)
+                        |> Maybe.andThen (Editor.indexOf model.editor)
+                        |> Maybe.withDefault ( -1, "error" )
+
+                ML data ->
+                    Sync.getText id data.editRecord.sourceMap
+                        |> Maybe.andThen leadingLine
+                        |> Maybe.andThen (Editor.indexOf model.editor)
+                        |> Maybe.withDefault ( -1, "error" )
+
+        ( newEditor, cmd ) =
+            Editor.sendLine (Editor.setCursor { line = index, column = 0 } model.editor)
+    in
+    -- TODO: issue command to sync id and line
+    ( { model | editor = newEditor, message = "Clicked: (" ++ id ++ ", " ++ String.fromInt (index + 1) ++ ")" }
+    , Cmd.batch [ cmd |> Cmd.map EditorMsg, View.Scroll.setViewportForElementInRenderedText id ]
+    )
+
+
+
+-- scrollEditorToLine model index
+
+
+shorten : Int -> String -> String
+shorten n str =
+    str
+        |> String.words
+        |> List.take n
+        |> String.join " "
+
+
+leadingLine : String -> Maybe String
+leadingLine str =
+    str
+        |> String.lines
+        |> List.filter goodLine
+        |> List.head
+
+
+goodLine str =
+    not
+        (String.contains "$$" str
+            || String.contains "\\begin" str
+            || String.contains "\\end" str
+        )
+
+
+pasteToEditorAndClipboard : Model -> String -> ( Model, Cmd msg )
+pasteToEditorAndClipboard model str =
+    let
+        cursor =
+            Editor.getCursor model.editor
+
+        wrapOption =
+            Editor.getWrapOption model.editor
+
+        editor2 =
+            Editor.placeInClipboard str model.editor
+    in
+    { model | editor = Editor.insertAtCursor str editor2 } |> withCmd Cmd.none
+
+
+
+-- HELPER
 
 
 loadDocumentByTitle : String -> Model -> Model
@@ -231,250 +437,6 @@ config flags =
     , debugOn = False
     , wrapOption = DontWrap
     }
-
-
-subscriptions : Model -> Sub Msg
-subscriptions model =
-    Sub.batch
-        [ ContextMenu.subscriptions (Editor.getContextMenu model.editor)
-            |> Sub.map ContextMenuMsg
-            |> Sub.map EditorMsg
-        , Outside.getInfo Outside LogErr
-        , Browser.Events.onResize WindowSize
-        ]
-
-
-update : Msg -> Model -> ( Model, Cmd Msg )
-update msg model =
-    case msg of
-        NoOp ->
-            ( model, Cmd.none )
-
-        EditorMsg editorMsg ->
-            let
-                ( newEditor, cmd ) =
-                    Editor.update editorMsg model.editor
-            in
-            case editorMsg of
-                CopyPasteClipboard ->
-                    let
-                        clipBoardCmd =
-                            Outside.sendInfo (Outside.AskForClipBoard Json.Encode.null)
-                    in
-                    model
-                        |> syncModel newEditor
-                        |> withCmds [ clipBoardCmd, Cmd.map EditorMsg cmd ]
-
-                WriteToSystemClipBoard ->
-                    ( { model | editor = newEditor }, Outside.sendInfo (Outside.WriteToClipBoard (Editor.getSelectedString newEditor |> Maybe.withDefault "Nothing!!")) )
-
-                Unload _ ->
-                    sync newEditor cmd model
-
-                InsertChar _ ->
-                    sync newEditor cmd model
-
-                MarkdownLoaded _ ->
-                    sync newEditor cmd model
-
-                SendLine ->
-                    syncAndHighlightRenderedText (Editor.lineAtCursor newEditor) (Cmd.map EditorMsg cmd) { model | editor = newEditor }
-
-                GotViewportForSync currentLine _ _ ->
-                    case currentLine of
-                        Nothing ->
-                            ( model, Cmd.none )
-
-                        Just str ->
-                            syncAndHighlightRenderedText str Cmd.none model
-
-                _ ->
-                    case List.member msg (List.map EditorMsg Editor.syncMessages) of
-                        True ->
-                            sync newEditor cmd model
-
-                        False ->
-                            ( { model | editor = newEditor }, Cmd.map EditorMsg cmd )
-
-        WindowSize width height ->
-            let
-                w =
-                    toFloat width
-
-                h =
-                    toFloat height
-            in
-            ( { model
-                | width = w
-                , height = h
-                , editor = Editor.resize (proportions.width * w) (proportions.height * h) model.editor
-              }
-            , Cmd.none
-            )
-
-        Load title ->
-            loadDocumentByTitle title model
-                |> withCmd (Cmd.batch [ scrollEditorToTop, scrollRendredTextToTop ])
-
-        ToggleDocType ->
-            let
-                newDocType =
-                    case model.docType of
-                        MarkdownDoc ->
-                            MiniLaTeXDoc
-
-                        MiniLaTeXDoc ->
-                            MarkdownDoc
-            in
-            ( { model | docType = newDocType }, Cmd.none )
-
-        NewDocument ->
-            case model.docType of
-                MarkdownDoc ->
-                    loadDocument "newFile" "" MarkdownDoc model
-                        |> withCmd (Cmd.batch [ scrollEditorToTop, scrollRendredTextToTop ])
-
-                MiniLaTeXDoc ->
-                    loadDocument "newFile" "" MiniLaTeXDoc model
-                        |> withCmd (Cmd.batch [ scrollEditorToTop, scrollRendredTextToTop ])
-
-        SetViewPortForElement result ->
-            case result of
-                Ok ( element, viewport ) ->
-                    ( { model | message = "synced" }, setViewPortForSelectedLineInRenderedText element viewport )
-
-                Err _ ->
-                    ( { model | message = "sync error" }, Cmd.none )
-
-        RequestFile ->
-            ( model, requestFile )
-
-        RequestedFile file ->
-            ( { model | fileName = Just (File.name file) }, read file )
-
-        DocumentLoaded source ->
-            case model.fileName of
-                Nothing ->
-                    ( model, Cmd.none )
-
-                Just fileName ->
-                    let
-                        docType =
-                            case fileExtension fileName of
-                                "md" ->
-                                    MarkdownDoc
-
-                                "latex" ->
-                                    MiniLaTeXDoc
-
-                                _ ->
-                                    MarkdownDoc
-                    in
-                    loadDocument (titleFromFileName fileName) source docType model
-                        |> (\m -> { m | docType = docType })
-                        |> withCmds [ scrollRendredTextToTop, scrollEditorToTop ]
-
-        SaveFile ->
-            ( model, saveFile model )
-
-        ExportFile ->
-            ( model, exportFile model )
-
-        SyncLR ->
-            let
-                ( newEditor, cmd ) =
-                    Editor.sendLine model.editor
-            in
-            ( { model | editor = newEditor }, Cmd.map EditorMsg cmd )
-
-        Outside infoForElm ->
-            case infoForElm of
-                Outside.GotClipboard clipboard ->
-                    pasteToEditorAndClipboard model clipboard
-
-        LogErr _ ->
-            ( model, Cmd.none )
-
-        RenderMsg renderMsg ->
-            case renderMsg of
-                LaTeXMsg latexMsg ->
-                    case latexMsg of
-                        MLE.IDClicked id ->
-                            syncOnId id model
-
-                MarkdownMsg markdownMsg ->
-                    case markdownMsg of
-                        IDClicked id ->
-                            syncOnId id model
-
-
-syncOnId : String -> Model -> ( Model, Cmd Msg )
-syncOnId id model =
-    let
-        ( index, line ) =
-            case model.renderingData of
-                MD data ->
-                    Sync.getText id data.sourceMap
-                        |> Maybe.map (shorten 5)
-                        |> Maybe.andThen (Editor.indexOf model.editor)
-                        |> Maybe.withDefault ( -1, "error" )
-
-                ML data ->
-                    Sync.getText id data.editRecord.sourceMap
-                        |> Maybe.andThen leadingLine
-                        |> Maybe.andThen (Editor.indexOf model.editor)
-                        |> Maybe.withDefault ( -1, "error" )
-
-        ( newEditor, cmd ) =
-            Editor.sendLine (Editor.setCursor { line = index, column = 0 } model.editor)
-    in
-    -- TODO: issue command to sync id and line
-    ( { model | editor = newEditor, message = "Clicked: (" ++ id ++ ", " ++ String.fromInt (index + 1) ++ ")" }
-    , Cmd.batch [ cmd |> Cmd.map EditorMsg, setViewportForElementInRenderedText id ]
-    )
-
-
-
--- scrollEditorToLine model index
-
-
-shorten : Int -> String -> String
-shorten n str =
-    str
-        |> String.words
-        |> List.take n
-        |> String.join " "
-
-
-leadingLine : String -> Maybe String
-leadingLine str =
-    str
-        |> String.lines
-        |> List.filter goodLine
-        |> List.head
-
-
-goodLine str =
-    not
-        (String.contains "$$" str
-            || String.contains "\\begin" str
-            || String.contains "\\end" str
-        )
-
-
-pasteToEditorAndClipboard : Model -> String -> ( Model, Cmd msg )
-pasteToEditorAndClipboard model str =
-    let
-        cursor =
-            Editor.getCursor model.editor
-
-        wrapOption =
-            Editor.getWrapOption model.editor
-
-        editor2 =
-            Editor.placeInClipboard str model.editor
-    in
-    { model | editor = Editor.insertAtCursor str editor2 } |> withCmd Cmd.none
 
 
 
@@ -801,7 +763,7 @@ syncAndHighlightRenderedMarkdownText str cmd model data =
                 |> Maybe.withDefault "0v0"
     in
     ( { model | selectedId_ = id_ }
-    , Cmd.batch [ cmd, setViewportForElementInRenderedText id_ ]
+    , Cmd.batch [ cmd, View.Scroll.setViewportForElementInRenderedText id_ ]
     )
 
 
@@ -813,7 +775,7 @@ syncAndHighlightRenderedMiniLaTeXText str cmd model data =
                 |> Maybe.withDefault "0v0"
     in
     ( model
-    , Cmd.batch [ cmd, setViewportForElementInRenderedText id ]
+    , Cmd.batch [ cmd, View.Scroll.setViewportForElementInRenderedText id ]
     )
 
 
@@ -877,55 +839,3 @@ syncModel newEditor model =
 load : Int -> ( Int, Int ) -> RenderingOption -> String -> RenderingData
 load counter selectedId renderingOption str =
     Render.load selectedId counter renderingOption str
-
-
-
--- SCROLLING
-
-
-setViewportForElementInRenderedText : String -> Cmd Msg
-setViewportForElementInRenderedText id =
-    Dom.getViewportOf "__RENDERED_TEXT__"
-        |> Task.andThen (\vp -> getElementWithViewPort vp id)
-        |> Task.attempt SetViewPortForElement
-
-
-scrollEditorToTop =
-    scrollToTopForElement "__editor__"
-
-
-scrollRendredTextToTop =
-    scrollToTopForElement "__RENDERED_TEXT__"
-
-
-scrollToTopForElement : String -> Cmd Msg
-scrollToTopForElement id =
-    Task.attempt (\_ -> NoOp) (Dom.setViewportOf id 0 0)
-
-
-getElementWithViewPort : Dom.Viewport -> String -> Task Dom.Error ( Dom.Element, Dom.Viewport )
-getElementWithViewPort vp id =
-    Dom.getElement id
-        |> Task.map (\el -> ( el, vp ))
-
-
-setViewPortForSelectedLineInRenderedText : Dom.Element -> Dom.Viewport -> Cmd Msg
-setViewPortForSelectedLineInRenderedText element viewport =
-    let
-        y =
-            viewport.viewport.y + element.element.y - verticalOffsetInRenderedText
-    in
-    Task.attempt (\_ -> NoOp) (Dom.setViewportOf "__RENDERED_TEXT__" 0 y)
-
-
-scrollEditorToLine : Model -> Int -> Cmd Msg
-scrollEditorToLine model line =
-    let
-        y =
-            Editor.getLineHeight model.editor * toFloat line - verticalOffsetInRenderedText
-    in
-    Task.attempt (\_ -> NoOp) (Dom.setViewportOf "__editor__" 0 y)
-
-
-verticalOffsetInRenderedText =
-    140

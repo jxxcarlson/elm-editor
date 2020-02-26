@@ -75,7 +75,7 @@ jumpToBottom model =
         True ->
             Dom.getViewportOf "__editor__"
                 |> Task.andThen (\info -> Dom.setViewportOf "__editor__" 0 info.scene.height)
-                |> Task.attempt (\_ -> NoOp)
+                |> Task.attempt (\_ -> EditorNoOp)
 
 
 
