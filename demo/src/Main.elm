@@ -367,16 +367,6 @@ viewFooter2 model width_ height_ =
         ]
 
 
-separator model width_ height_ =
-    row
-        [ width (pxFloat (2 * Helper.Common.proportions.width * width_ - 40))
-        , height (pxFloat height_)
-        , Background.color (gray 200)
-        , Element.moveUp 19
-        ]
-        []
-
-
 displayFilename : Model -> Element Msg
 displayFilename model =
     let
@@ -410,10 +400,6 @@ latexDocumentLoader model =
         ]
 
 
-gray g =
-    rgb255 g g g
-
-
 viewEditor model =
     Editor.view model.editor |> Html.map EditorMsg |> Element.html
 
@@ -435,6 +421,10 @@ viewRenderedText model width_ height_ =
             ((Render.get model.renderingData).title |> Html.map RenderMsg |> Element.html)
         , (Render.get model.renderingData).document |> Html.map RenderMsg |> Element.html
         ]
+
+
+
+-- VIEW HELPERS
 
 
 showIf : Bool -> Element Msg -> Element Msg
@@ -460,3 +450,7 @@ setElementId id =
 pxFloat : Float -> Element.Length
 pxFloat p =
     px (round p)
+
+
+gray g =
+    rgb255 g g g
