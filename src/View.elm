@@ -1,4 +1,4 @@
-module View exposing (viewDebug, viewEditor, viewHeader, viewSearchPanel)
+module View exposing (viewDebug, viewEditor, viewHeader, viewReplacePanel, viewSearchPanel)
 
 import Array exposing (Array)
 import Common exposing (..)
@@ -116,7 +116,7 @@ viewEditor model =
         , HA.style "font-size" (px model.fontSize)
         , HA.style "line-height" (px model.lineHeight)
         , HA.style "white-space" "pre"
-        , HA.style "height" (px model.height)
+        , HA.style "height" (px (editorHeight model))
         , HA.style "overflow-y" "scroll"
         , HA.style "width" (px model.width)
         , Keymap.handle
@@ -127,6 +127,29 @@ viewEditor model =
         [ viewLineNumbers model
         , viewContent model
         ]
+
+
+editorHeight : Model -> Float
+editorHeight model =
+    let
+        defaultHeight =
+            model.height
+
+        barHeight =
+            35
+    in
+    case ( model.showSearchPanel, model.canReplace ) of
+        ( False, False ) ->
+            defaultHeight
+
+        ( True, False ) ->
+            defaultHeight - barHeight
+
+        ( True, True ) ->
+            defaultHeight - (2 * barHeight)
+
+        ( False, True ) ->
+            defaultHeight
 
 
 onTripleClick : msg -> Attribute msg
@@ -438,10 +461,15 @@ viewSearchPanel model =
 
 searchPanel model =
     H.div
-        [ HA.style "width" "450px"
+        [ HA.style "width" (px model.width)
         , HA.style "padding-top" "5px"
+        , HA.style "display" "flex"
+        , HA.style "flex-direction" "row"
+        , HA.style "justify-content" "space-evenly"
+        , HA.style "align-items" "baseline"
         , HA.style "height" "30px"
-        , HA.style "padding-left" "8px"
+
+        -- , HA.style "padding-left" "8px"
         , HA.style "background-color" EditorStyle.lightGray
         , HA.style "opacity" "0.9"
         , HA.style "font-size" "14px"
@@ -449,20 +477,46 @@ searchPanel model =
         [ searchTextButton
         , acceptSearchText
         , numberOfHitsDisplay model
-
-        -- , syncButton
-        , showIf (not model.canReplace) openReplaceField
-        , showIf model.canReplace replaceTextButton
-        , showIf model.canReplace acceptReplaceText
         , searchForwardButton
         , searchBackwardButton
         , dismissSearchPanel
+        , openReplaceField
+        ]
+
+
+viewReplacePanel model =
+    showIf (model.canReplace && model.showSearchPanel) (replacePanel model)
+
+
+replacePanel model =
+    H.div
+        [ HA.style "width" (px model.width)
+        , HA.style "padding-top" "5px"
+        , HA.style "display" "flex"
+        , HA.style "flex-direction" "row"
+        , HA.style "justify-content" "flex-start"
+        , HA.style "align-items" "baseline"
+        , HA.style "height" "30px"
+        , HA.style "background-color" EditorStyle.mediumGray
+        , HA.style "opacity" "0.9"
+        , HA.style "font-size" "14px"
+        ]
+        [ replaceTextButton
+        , acceptReplaceText
+        , dismissReplacePanel
         ]
 
 
 dismissSearchPanel =
     Widget.lightRowButton 25
         ToggleSearchPanel
+        "X"
+        [ HA.style "float" "left", HA.style "float" "left" ]
+
+
+dismissReplacePanel =
+    Widget.lightRowButton 25
+        ToggleReplacePanel
         "X"
         [ HA.style "float" "left", HA.style "float" "left" ]
 
@@ -501,7 +555,7 @@ searchTextButton =
 
 
 replaceTextButton =
-    Widget.rowButton 70 ReplaceCurrentSelection "Replace" [ HA.style "float" "left" ]
+    Widget.rowButton 70 ReplaceCurrentSelection "Replace" [ HA.style "margin-left" "10px" ]
 
 
 acceptLineNumber =
@@ -513,7 +567,12 @@ acceptLineNumber =
 
 
 acceptSearchText =
-    Widget.textField 130 AcceptSearchText "" [ HA.style "float" "left" ] [ setHtmlId "editor-search-box" ]
+    Widget.textField 130
+        AcceptSearchText
+        ""
+        [ HA.style "float" "left"
+        ]
+        [ setHtmlId "editor-search-box", HA.style "height" "20px" ]
 
 
 acceptReplaceText =

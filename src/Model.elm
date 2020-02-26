@@ -211,6 +211,7 @@ type Msg
       -- Search
     | DoSearch String
     | ToggleSearchPanel
+    | ToggleReplacePanel
     | OpenReplaceField
     | RollSearchSelectionForward
     | RollSearchSelectionBackward

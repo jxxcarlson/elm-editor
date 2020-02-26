@@ -29,7 +29,7 @@ import Html as H exposing (Html)
 import Menu.View exposing (viewContextMenu)
 import Model exposing (Config, Context(..), Model, Msg(..))
 import Update as U
-import View exposing (viewDebug, viewEditor, viewHeader, viewSearchPanel)
+import View exposing (viewDebug, viewEditor, viewHeader, viewReplacePanel, viewSearchPanel)
 import Wrap exposing (WrapOption)
 
 
@@ -120,6 +120,7 @@ view (Editor model) =
     H.div []
         [ viewHeader model
         , viewSearchPanel model
+        , viewReplacePanel model
         , viewEditor model
         , viewContextMenu model.width model
         , viewDebug model

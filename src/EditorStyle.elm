@@ -1,4 +1,4 @@
-module EditorStyle exposing (darkBlue, darkGray, lightBlue, lightGray)
+module EditorStyle exposing (darkBlue, darkGray, lightBlue, lightGray, mediumGray)
 
 
 lightBlue =
@@ -11,6 +11,10 @@ darkBlue =
 
 lightGray =
     "#a5a6ab"
+
+
+mediumGray =
+    "#75767b"
 
 
 darkGray =

@@ -415,6 +415,9 @@ update msg model =
         ToggleSearchPanel ->
             { model | showSearchPanel = not model.showSearchPanel } |> withNoCmd
 
+        ToggleReplacePanel ->
+            { model | canReplace = not model.canReplace } |> withNoCmd
+
         OpenReplaceField ->
             { model | canReplace = True } |> withNoCmd
 

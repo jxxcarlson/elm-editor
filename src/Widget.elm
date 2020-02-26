@@ -91,8 +91,8 @@ rowButton width msg str attr =
 textField width msg str attr innerAttr =
     div ([ style "margin-bottom" "10px" ] ++ attr)
         [ input
-            ([ style "height" "18px"
-             , style "width" (String.fromInt width ++ "px")
+            ([ -- style "height" "18px"
+               style "width" (String.fromInt width ++ "px")
              , type_ "text"
              , placeholder str
              , style "margin-right" "8px"
