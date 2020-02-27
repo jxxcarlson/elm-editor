@@ -3,4 +3,5 @@
 **/Main.js
 **/*.min.js
 demo/src/index.html
+**/node_modules/
 

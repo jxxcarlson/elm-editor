@@ -19,7 +19,12 @@ about =
 
 What you see here is a demonstration of
 a pure Elm text editor coupled to compilers
-for Markdown+Math and MiniLaTeX.
+for Markdown+Math and MiniLaTeX to produce
+an interactive editing environment for
+these markup languages.  Files with extention
+`.md` and `.latex` can be opened and saved,
+MiniLaTeX documents can also be exported
+to standard LaTeX.
 
 The app has two
 windows.  On the left is the editor
