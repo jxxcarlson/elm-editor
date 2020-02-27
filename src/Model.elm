@@ -8,6 +8,7 @@ module Model exposing
     , Position
     , Selection(..)
     , Snapshot
+    , ViewMode(..)
     , debounceConfig
     , init
     )
@@ -49,7 +50,13 @@ type alias Model =
     , showSearchPanel : Bool
     , canReplace : Bool
     , replacementText : String
+    , viewMode : ViewMode
     }
+
+
+type ViewMode
+    = Light
+    | Dark
 
 
 type Context
@@ -129,6 +136,7 @@ init ( config, contextMenu ) =
     , showSearchPanel = False
     , canReplace = False
     , replacementText = ""
+    , viewMode = Light
     }
 
 
@@ -220,6 +228,8 @@ type Msg
     | AcceptSearchText String
     | AcceptReplacementText String
     | GotViewport (Result Dom.Error Dom.Viewport)
+      --
+    | ToggleViewMode
 
 
 

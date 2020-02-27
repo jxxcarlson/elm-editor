@@ -9,6 +9,7 @@ module Update.Function exposing
     , pasteSelection
     , replaceLineAt
     , replaceLines
+    , toggleViewMode
     , unload
     )
 
@@ -17,7 +18,7 @@ import Array exposing (Array)
 import ArrayUtil
 import Common
 import Debounce exposing (Debounce)
-import Model exposing (Model, Msg(..), Position, Selection(..))
+import Model exposing (Model, Msg(..), Position, Selection(..), ViewMode(..))
 import Task
 
 
@@ -302,3 +303,17 @@ insertChar char ({ cursor, lines } as model) =
 unload : String -> Cmd Msg
 unload s =
     Task.perform Unload (Task.succeed s)
+
+
+
+--
+
+
+toggleViewMode : Model -> Model
+toggleViewMode model =
+    case model.viewMode of
+        Light ->
+            { model | viewMode = Dark }
+
+        Dark ->
+            { model | viewMode = Light }

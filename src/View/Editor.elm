@@ -8,7 +8,7 @@ import Html.Events as HE
 import Html.Lazy
 import Json.Decode as JD exposing (Decoder)
 import Keymap
-import Model exposing (AutoLineBreak(..), Config, Context(..), Hover(..), Model, Msg(..), Position, Selection(..))
+import Model exposing (AutoLineBreak(..), Config, Context(..), Hover(..), Model, Msg(..), Position, Selection(..), ViewMode(..))
 
 
 lineNumbersDisplay : Model -> Html Msg
@@ -104,6 +104,42 @@ selectedText selection currentHover lines =
             positionsToString from to
 
 
+editorBackgroundColor viewMode_ =
+    case viewMode_ of
+        Light ->
+            HA.style "background-color" "#f0f0f0"
+
+        Dark ->
+            HA.style "background-color" "#444"
+
+
+editorFontColor viewMode_ =
+    case viewMode_ of
+        Light ->
+            HA.style "color" "#444"
+
+        Dark ->
+            HA.style "color" "#f0f0f0"
+
+
+borderBackgroundColor viewMode_ =
+    case viewMode_ of
+        Light ->
+            HA.style "background-color" "#bbb"
+
+        Dark ->
+            HA.style "background-color" "#252525"
+
+
+borderFontColor viewMode_ =
+    case viewMode_ of
+        Light ->
+            HA.style "color" "#444          "
+
+        Dark ->
+            HA.style "color" "#f0f0f0"
+
+
 viewEditor : Model -> Html Msg
 viewEditor model =
     H.div
@@ -170,9 +206,10 @@ viewLineNumbers model =
     H.div
         [ HA.style "width" "2.5em"
         , HA.style "text-align" "left"
-        , HA.style "color" "#444"
         , HA.style "display" "flex"
         , HA.style "flex-direction" "column"
+        , borderBackgroundColor model.viewMode
+        , borderFontColor model.viewMode
         ]
         (List.range 1 (Array.length model.lines)
             |> List.map viewLineNumber
@@ -181,7 +218,7 @@ viewLineNumbers model =
 
 viewLineNumber : Int -> Html Msg
 viewLineNumber n =
-    H.span [ HA.style "background-color" "#bbb", HA.style "padding-left" "6px" ] [ H.text (String.fromInt n) ]
+    H.span [ HA.style "padding-left" "6px" ] [ H.text (String.fromInt n) ]
 
 
 viewContent : Model -> Html Msg
@@ -197,25 +234,26 @@ viewContent model =
         , HE.onClick GoToHoveredPosition
         , HE.onMouseOut (Hover NoHover)
         ]
-        [ viewLines model.lineHeight model.cursor model.hover model.selection model.lines ]
+        [ viewLines model.viewMode model.lineHeight model.cursor model.hover model.selection model.lines ]
 
 
-viewLines : Float -> Position -> Hover -> Selection -> Array String -> Html Msg
-viewLines lineHeight position hover selection lines =
-    H.div []
+viewLines : ViewMode -> Float -> Position -> Hover -> Selection -> Array String -> Html Msg
+viewLines viewMode_ lineHeight position hover selection lines =
+    H.div
+        []
         (lines
-            |> Array.indexedMap (viewLine lineHeight position hover selection lines)
+            |> Array.indexedMap (viewLine viewMode_ lineHeight position hover selection lines)
             |> Array.toList
         )
 
 
-viewLine : Float -> Position -> Hover -> Selection -> Array String -> Int -> String -> Html Msg
-viewLine lineHeight position hover selection lines line content =
-    Html.Lazy.lazy7 viewLine_ lineHeight position hover selection lines line content
+viewLine : ViewMode -> Float -> Position -> Hover -> Selection -> Array String -> Int -> String -> Html Msg
+viewLine viewMode_ lineHeight position hover selection lines line content =
+    Html.Lazy.lazy8 viewLine_ viewMode_ lineHeight position hover selection lines line content
 
 
-viewLine_ : Float -> Position -> Hover -> Selection -> Array String -> Int -> String -> Html Msg
-viewLine_ lineHeight position hover selection lines line content =
+viewLine_ : ViewMode -> Float -> Position -> Hover -> Selection -> Array String -> Int -> String -> Html Msg
+viewLine_ viewMode_ lineHeight position hover selection lines line content =
     H.div
         [ HA.style "position" "absolute"
         , HA.style "position" "absolute"
@@ -224,6 +262,8 @@ viewLine_ lineHeight position hover selection lines line content =
         , HA.style "left" "0"
         , HA.style "right" "0"
         , HA.style "padding-left" "4px"
+        , editorBackgroundColor viewMode_
+        , editorFontColor viewMode_
         , HA.style "height" (px lineHeight)
         , HA.style "top" (px (toFloat line * lineHeight))
         , HE.onMouseOver (Hover (HoverLine line))

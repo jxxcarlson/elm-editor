@@ -215,6 +215,7 @@ keymaps =
             [ -- ( "ArrowRight", SelectToGroupEnd )
               --, ( "ArrowLeft", SelectToGroupStart )
               ( "C", WriteToSystemClipBoard )
+            , ( "M", ToggleViewMode )
             , ( "V", CopyPasteClipboard )
             , ( "W", WrapAll )
             , ( "S", SendLine )
