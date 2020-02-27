@@ -148,7 +148,7 @@ fixMD : MarkdownOutput -> RenderedText
 fixMD markdownOutput =
     { title = Markdown.Render.title markdownOutput |> Html.map MarkdownMsg
     , toc = Markdown.Render.toc markdownOutput |> Html.map MarkdownMsg
-    , document = Markdown.Render.content markdownOutput |> Html.map MarkdownMsg
+    , document = Markdown.Render.document markdownOutput |> Html.map MarkdownMsg
     }
 
 

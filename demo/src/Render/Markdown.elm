@@ -25,7 +25,7 @@ emptyAst =
 
 emptyRenderedText : MarkdownOutput
 emptyRenderedText =
-    Markdown.Render.withOptionsFromAST ExtendedMath (ExternalTOC "Topics") ( 0, 0 ) emptyAst
+    Markdown.Render.fromASTWithOptions ExtendedMath (ExternalTOC "Topics") ( 0, 0 ) emptyAst
 
 
 parse : MarkdownOption -> Int -> String -> Tree Parse.MDBlockWithId
@@ -48,7 +48,7 @@ diffUpdateAst option counter text lastAst =
 
 render : ( Int, Int ) -> Tree Parse.MDBlockWithId -> MarkdownOutput
 render selectedId ast =
-    Markdown.Render.withOptionsFromAST ExtendedMath (ExternalTOC "Topics") selectedId ast
+    Markdown.Render.fromASTWithOptions ExtendedMath (ExternalTOC "Topics") selectedId ast
 
 
 
