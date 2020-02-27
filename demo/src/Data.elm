@@ -69,6 +69,8 @@ cursor).  Use `ctrl-shift-C` to copy the
 current selection to the system clipboard.
 At the moment these two features work only in
 Google Chrome
+
+**An Extra.** Use `ctrl-shift-D` to toggle dark mode.
 .
 
 ## Plans
@@ -91,9 +93,7 @@ learned a great deal from the work
 
 ## Note
 
-This editor will supersede [the previous version](https://package.elm-lang.org/packages/jxxcarlson/elm-text-editor/latest/).
-It has not yet been published on the [Elm package manager](https://package.elm-lang.org), but will be as soon as it reaches
-feature parity wth the previous version.
+This editor supersedes [the previous version](https://package.elm-lang.org/packages/jxxcarlson/elm-text-editor/latest/).
 
 
 ## On the Horizon
@@ -115,11 +115,14 @@ to right sync for MiniLaTex documents~~
 
 - ~~Search and replace~~
 
+- ~~Dark mode option~~
+
 - Highlight rendered text element on sync
 
-- Autocompletion
+- Matching of parentheses, brackets, etc.
 
-- Dark mode option
+- Additional features from Nemzer's editor that
+have not yet been implemented.
 
 - Vim mode ?
 

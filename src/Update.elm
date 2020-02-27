@@ -424,5 +424,5 @@ update msg model =
                 Err _ ->
                     ( model, Cmd.none )
 
-        ToggleViewMode ->
+        ToggleDarkMode ->
             Function.toggleViewMode model |> withNoCmd

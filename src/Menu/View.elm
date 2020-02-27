@@ -69,7 +69,7 @@ toItemGroups context =
             --, [ ( ContextMenu.item "Open file" |> ContextMenu.shortcut "Ctrl-O", RequestFile )
             --  , ( ContextMenu.item "Save file" |> ContextMenu.shortcut "Ctrl-Opt-S", SaveFile )
             --  ]
-            , [ ( ContextMenu.item "Test (go to line 30)" |> ContextMenu.shortcut "Ctrl-Opt-T", Test )
+            , [ ( ContextMenu.item "Toggle dark mode" |> ContextMenu.shortcut "Ctrl-Shift-D", ToggleDarkMode )
               ]
             ]
 

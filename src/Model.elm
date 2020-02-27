@@ -229,7 +229,7 @@ type Msg
     | AcceptReplacementText String
     | GotViewport (Result Dom.Error Dom.Viewport)
       --
-    | ToggleViewMode
+    | ToggleDarkMode
 
 
 

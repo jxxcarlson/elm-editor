@@ -305,7 +305,7 @@ load counter selectedId renderingOption str =
 
 view : Model -> Html Msg
 view model =
-    Element.layout [ Background.color <| gray 45 ]
+    Element.layout [ Background.color <| gray 55 ]
         (mainColumn model)
 
 

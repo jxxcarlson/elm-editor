@@ -137,7 +137,7 @@ borderFontColor viewMode_ =
             HA.style "color" "#444          "
 
         Dark ->
-            HA.style "color" "#f0f0f0"
+            HA.style "color" "#aaa"
 
 
 viewEditor : Model -> Html Msg
@@ -148,7 +148,7 @@ viewEditor model =
         , HA.style "font-family" "monospace"
         , HA.style "font-size" (px model.fontSize)
         , HA.style "line-height" (px model.lineHeight)
-        , HA.style "white-space" "pre"
+        , HA.style "white-space" "pre-wrap"
         , HA.style "height" (px (editorHeight model))
         , HA.style "overflow-y" "scroll"
         , HA.style "width" (px model.width)
@@ -212,13 +212,13 @@ viewLineNumbers model =
         , borderFontColor model.viewMode
         ]
         (List.range 1 (Array.length model.lines)
-            |> List.map viewLineNumber
+            |> List.map (viewLineNumber model.viewMode)
         )
 
 
-viewLineNumber : Int -> Html Msg
-viewLineNumber n =
-    H.span [ HA.style "padding-left" "6px" ] [ H.text (String.fromInt n) ]
+viewLineNumber : ViewMode -> Int -> Html Msg
+viewLineNumber viewMode_ n =
+    H.span [ HA.style "padding-left" "6px", borderBackgroundColor viewMode_, borderFontColor viewMode_ ] [ H.text (String.fromInt n) ]
 
 
 viewContent : Model -> Html Msg
@@ -269,30 +269,30 @@ viewLine_ viewMode_ lineHeight position hover selection lines line content =
         , HE.onMouseOver (Hover (HoverLine line))
         ]
         (if position.line == line && isLastColumn lines line position.column then
-            viewChars position hover selection lines line content
+            viewChars viewMode_ position hover selection lines line content
                 ++ [ viewCursor position nbsp ]
 
          else
-            viewChars position hover selection lines line content
+            viewChars viewMode_ position hover selection lines line content
         )
 
 
-viewChars : Position -> Hover -> Selection -> Array String -> Int -> String -> List (Html Msg)
-viewChars position hover selection lines line content =
+viewChars : ViewMode -> Position -> Hover -> Selection -> Array String -> Int -> String -> List (Html Msg)
+viewChars viewMode_ position hover selection lines line content =
     content
         |> String.toList
-        |> List.indexedMap (viewChar position hover selection lines line)
+        |> List.indexedMap (viewChar viewMode_ position hover selection lines line)
 
 
-viewChar : Position -> Hover -> Selection -> Array String -> Int -> Int -> Char -> Html Msg
-viewChar position hover selection lines line column char =
+viewChar : ViewMode -> Position -> Hover -> Selection -> Array String -> Int -> Int -> Char -> Html Msg
+viewChar viewMode_ position hover selection lines line column char =
     if position.line == line && position.column == column then
         viewCursor
             position
             (String.fromChar char)
 
     else if selection /= NoSelection && isSelected lines selection hover line column then
-        viewSelectedChar
+        viewSelectedChar viewMode_
             { line = line, column = column }
             (String.fromChar char)
 
@@ -380,13 +380,26 @@ viewCursor position char =
         [ H.text char ]
 
 
-viewSelectedChar : Position -> String -> Html Msg
-viewSelectedChar position char =
+viewSelectedChar : ViewMode -> Position -> String -> Html Msg
+viewSelectedChar viewMode_ position char =
     H.span
-        [ HA.style "background-color" "#cce"
+        [ selectedColor viewMode_
         , onHover position
         ]
         [ H.text char ]
+
+
+selectedColor viewMode_ =
+    case viewMode_ of
+        Light ->
+            HA.style "background-color" "#cce"
+
+        Dark ->
+            HA.style "background-color" "#44a"
+
+
+
+-- TODO: background color
 
 
 onHover : Position -> Attribute Msg
@@ -412,7 +425,7 @@ rowButton width str msg attr =
 textField width str msg attr innerAttr =
     H.div attr
         [ H.input
-            ([ HA.style "height" "18px"
+            ([ HA.style "height" "24px"
              , HA.style "width" (String.fromInt width ++ "px")
              , HA.type_ "text"
              , HA.placeholder str
@@ -480,16 +493,37 @@ viewHeader model =
         , HA.style "background-color" "#c0c0c0"
         , HA.style "padding-top" "2px"
         , HA.style "padding-bottom" "6px"
+        , HA.style "align-items" "baseline"
         , HA.style "width" (px model.width)
+        , borderFontColor model.viewMode
+        , borderBackgroundColor model.viewMode
         ]
         [ lineNumbersDisplay model
         , wordCountDisplay model
         , rowButton 32 "Go" GoToLine [ HA.style "margin-left" "24px", HA.style "margin-top" "4px" ]
-        , textField 32 "" AcceptLineToGoTo [ HA.style "margin-left" "4px", HA.style "margin-top" "4px" ] [ HA.style "font-size" "14px" ]
+        , textField 32 "" AcceptLineToGoTo [ HA.style "margin-left" "4px", HA.style "margin-top" "4px" ] [ textFieldFontColor model, textFieldBackgroundColor model, HA.style "font-size" "14px" ]
         , rowButton 60 (autoLinBreakTitle model) ToggleAutoLineBreak [ HA.style "margin-left" "24px", HA.style "margin-top" "4px" ]
 
         -- , rowButton 60 "Open" RequestFile [ HA.style "margin-left" "24px", HA.style "margin-top" "4px" ]
         ]
+
+
+textFieldBackgroundColor model =
+    case model.viewMode of
+        Light ->
+            HA.style "background-color" "#eee"
+
+        Dark ->
+            HA.style "background-color" "#999"
+
+
+textFieldFontColor model =
+    case model.viewMode of
+        Light ->
+            HA.style "color" "#222"
+
+        Dark ->
+            HA.style "color" "#eee"
 
 
 autoLinBreakTitle : Model -> String
