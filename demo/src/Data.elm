@@ -129,7 +129,8 @@ to right sync for MiniLaTex documents~~
 - Additional features from Nemzer's editor that
 have not yet been implemented.
 
-- Vim mode ?
+- Vim mode.  This will take a while to implement.
+Now in the meditation phase.
 
 
 
@@ -433,7 +434,6 @@ $t = 1, 2, 4,16$.
 
 ![xx::center](http://noteimages.s3.amazonaws.com/jim_images/propagator-t=1-63c8.png)
 
-
 ![xx::centerhttp://noteimages.s3.amazonaws.com/jim_images/propagator-t=2-6feb.png)
 
 ![xx::center](http://noteimages.s3.amazonaws.com/jim_images/propagator-t=4-a035.png)
@@ -547,8 +547,6 @@ sun is in Scorpio; its longitude is
 231 degrees."
 
 ## Uniform Motion
-
-Thi 
 
 Hipparchus' goal was to be able to
 compute the eclipitic longitude of the
