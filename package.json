@@ -1,7 +1,7 @@
 {
-  "name": "jxxcarlson/elm-editor",
+  "name": "text-editor",
   "version": "1.0.0",
-  "description": "A pure Elm text editor, credits to prior work of Janiczek and Nemzer",
+  "description": "Pure Elm text editor",
   "main": "Main.js",
   "directories": {
     "test": "tests"
