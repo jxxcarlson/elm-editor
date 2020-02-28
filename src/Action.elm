@@ -1,7 +1,9 @@
 module Action exposing
-    ( deleteSelection
+    ( deIndent
+    , deleteSelection
     , firstLine
     , goToLine
+    , indent
     , lastLine
     , moveToLineEnd
     , moveToLineStart
@@ -16,6 +18,20 @@ import ArrayUtil
 import Browser.Dom as Dom
 import Model exposing (Model, Msg(..), Selection(..))
 import Task exposing (Task)
+
+
+
+-- INDENT
+
+
+indent : Model -> Model
+indent model =
+    model
+
+
+deIndent : Model -> Model
+deIndent model =
+    model
 
 
 

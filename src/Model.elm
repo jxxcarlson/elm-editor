@@ -173,6 +173,8 @@ type Msg
       --
     | NewLine
     | InsertChar String
+    | Indent
+    | Deindent
       --
     | RemoveCharBefore
     | RemoveCharAfter

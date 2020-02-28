@@ -79,6 +79,18 @@ update msg model =
             )
                 |> recordHistory model
 
+        Indent ->
+            model
+                |> Action.indent
+                |> recordHistory_ model
+                |> withNoCmd
+
+        Deindent ->
+            model
+                |> Action.deIndent
+                |> recordHistory_ model
+                |> withNoCmd
+
         KillLine ->
             let
                 lineNumber =
