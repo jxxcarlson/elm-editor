@@ -152,18 +152,18 @@ keymaps =
             , ( "Enter", NewLine )
             , ( "Home", MoveToLineStart )
             , ( "End", MoveToLineEnd )
-
-            --, ( "Tab", Indent )
+            , ( "Tab", Indent )
             ]
     , shift =
         Dict.fromList
-            [-- ( "ArrowUp", SelectUp )
-             --, ( "ArrowDown", SelectDown )
-             --, ( "ArrowLeft", SelectLeft )
-             --, ( "ArrowRight", SelectRight )
-             --, ( "Tab", Deindent )
-             --, ( "Home", SelectToLineStart )
-             --, ( "End", SelectToLineEnd )
+            [ -- ( "ArrowUp", SelectUp )
+              --, ( "ArrowDown", SelectDown )
+              --, ( "ArrowLeft", SelectLeft )
+              --, ( "ArrowRight", SelectRight )
+              ( "Tab", Deindent )
+
+            --, ( "Home", SelectToLineStart )
+            --, ( "End", SelectToLineEnd )
             ]
     , option =
         Dict.fromList
@@ -192,8 +192,9 @@ keymaps =
               ( "c", Copy )
 
             --, ( "g", ToggleGoToLinePanel )
-            --, ( ".", RollSearchSelectionForward )
-            --, ( ",", RollSearchSelectionBackward )
+            , ( ".", RollSearchSelectionForward )
+            , ( ",", RollSearchSelectionBackward )
+
             --, ( "h", ToggleHelp )
             , ( "x", Cut )
             , ( "s", ToggleSearchPanel )

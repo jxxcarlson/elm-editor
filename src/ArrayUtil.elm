@@ -5,6 +5,7 @@ module ArrayUtil exposing
     , cutOut
     , cutString
     , diceStringAt
+    , indent
     , indexOf
     , insert
     , insertLineAfter
@@ -497,3 +498,47 @@ paste position newContent lines =
             split position lines
     in
     joinThree before newContent after
+
+
+{-| Indent a range of lines by 'offset'; 'offset' may be negative
+-}
+indent : Int -> Int -> Int -> Array String -> Array String
+indent offset first last lines =
+    let
+        f lineNumber line =
+            if lineNumber >= first && lineNumber <= last then
+                indentLine offset line
+
+            else
+                line
+    in
+    Array.indexedMap f lines
+
+
+indentLine : Int -> String -> String
+indentLine offset line =
+    case offset >= 0 of
+        True ->
+            indentLinePos offset line
+
+        False ->
+            indentLineNeg -offset line
+
+
+indentLinePos : Int -> String -> String
+indentLinePos offset line =
+    String.repeat offset " " ++ line
+
+
+indentLineNeg : Int -> String -> String
+indentLineNeg offset line =
+    let
+        leadingBlanks =
+            String.repeat offset " "
+    in
+    case String.left offset line == leadingBlanks of
+        True ->
+            String.dropLeft offset line
+
+        False ->
+            line

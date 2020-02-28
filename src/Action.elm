@@ -26,12 +26,30 @@ import Task exposing (Task)
 
 indent : Model -> Model
 indent model =
-    model
+    let
+        newLines =
+            case model.selection of
+                Selection p1 p2 ->
+                    ArrayUtil.indent model.indentationOffset p1.line p2.line model.lines
+
+                _ ->
+                    model.lines
+    in
+    { model | lines = newLines }
 
 
 deIndent : Model -> Model
 deIndent model =
-    model
+    let
+        newLines =
+            case model.selection of
+                Selection p1 p2 ->
+                    ArrayUtil.indent -model.indentationOffset p1.line p2.line model.lines
+
+                _ ->
+                    model.lines
+    in
+    { model | lines = newLines }
 
 
 

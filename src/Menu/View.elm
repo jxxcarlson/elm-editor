@@ -50,6 +50,16 @@ toItemGroups context =
               , ( ContextMenu.item "Wrap" |> ContextMenu.shortcut "Ctrl-W", WrapSelection )
               , ( ContextMenu.item "Wrap all" |> ContextMenu.shortcut "Ctrl-shift-W", WrapAll )
               ]
+            , [ ( ContextMenu.item "Indent" |> ContextMenu.shortcut "TAB", Clear )
+              , ( ContextMenu.item "Deindent" |> ContextMenu.shortcut "shift-TAB", Clear )
+              ]
+            , [ ( ContextMenu.item "Search" |> ContextMenu.shortcut "ctrl-S", Clear )
+              , ( ContextMenu.item "Next search hit (Think >)" |> ContextMenu.shortcut "ctrl-.", Indent )
+              , ( ContextMenu.item "Previous search hit (Think <)" |> ContextMenu.shortcut "ctrl-.", Deindent )
+              ]
+            , [ ( ContextMenu.item "Indent" |> ContextMenu.shortcut "TAB", Clear )
+              , ( ContextMenu.item "Deindent" |> ContextMenu.shortcut "shift-TAB", Clear )
+              ]
             , [ ( ContextMenu.item "Clear" |> ContextMenu.shortcut "Ctrl-Opt-C", Clear )
               ]
             , [ ( ContextMenu.item "Move up" |> ContextMenu.shortcut "ArrowUp", MoveUp )

@@ -51,6 +51,7 @@ type alias Model =
     , canReplace : Bool
     , replacementText : String
     , viewMode : ViewMode
+    , indentationOffset : Int
     }
 
 
@@ -137,6 +138,7 @@ init ( config, contextMenu ) =
     , canReplace = False
     , replacementText = ""
     , viewMode = Light
+    , indentationOffset = 4
     }
 
 
