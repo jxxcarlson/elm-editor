@@ -1,8 +1,8 @@
 module Update.Line exposing (break)
 
 import Array
+import ArrayUtil
 import Model exposing (AutoLineBreak(..), Model, Position)
-import Update.Function
 
 
 break : Model -> Model
@@ -35,7 +35,7 @@ break model =
                         False ->
                             case currentLineLength == model.cursor.column of
                                 True ->
-                                    case Update.Function.breakLineBefore k currentLine of
+                                    case breakLineBefore k currentLine of
                                         ( _, Nothing ) ->
                                             model
 
@@ -45,12 +45,12 @@ break model =
                                                     { line = line + 1, column = String.length extraLine }
                                             in
                                             model
-                                                |> Update.Function.replaceLineAt line adjustedLine
-                                                |> Update.Function.insertLineAfter line extraLine
+                                                |> replaceLineAt line adjustedLine
+                                                |> insertLineAfter line extraLine
                                                 |> putCursorAt newCursor
 
                                 False ->
-                                    case Update.Function.breakLineAfter model.cursor.column currentLine of
+                                    case breakLineAfter model.cursor.column currentLine of
                                         ( _, Nothing ) ->
                                             model
 
@@ -60,8 +60,8 @@ break model =
                                                     model.cursor
                                             in
                                             model
-                                                |> Update.Function.replaceLineAt line adjustedLine
-                                                |> Update.Function.insertLineAfter line extraLine
+                                                |> replaceLineAt line adjustedLine
+                                                |> insertLineAfter line extraLine
                                                 |> putCursorAt newCursor
 
 
@@ -84,3 +84,70 @@ charactersPerLine screenWidth fontSize =
 putCursorAt : Position -> Model -> Model
 putCursorAt position model =
     { model | cursor = position }
+
+
+replaceLineAt : Int -> String -> Model -> Model
+replaceLineAt k str model =
+    { model | lines = Array.set k str model.lines }
+
+
+insertLineAfter : Int -> String -> Model -> Model
+insertLineAfter k str model =
+    { model | lines = ArrayUtil.insertLineAfter k str model.lines }
+
+
+breakLineAfter : Int -> String -> ( String, Maybe String )
+breakLineAfter k str =
+    case String.length str > k of
+        False ->
+            ( str, Nothing )
+
+        True ->
+            let
+                indexOfSucceedingBlank =
+                    str
+                        |> String.indexes " "
+                        |> List.filter (\i -> i > k)
+                        |> List.head
+                        |> Maybe.withDefault k
+            in
+            splitStringAt (indexOfSucceedingBlank + 1) str
+                |> (\( a, b ) -> ( a, Just b ))
+
+
+splitStringAt : Int -> String -> ( String, String )
+splitStringAt k str =
+    let
+        n =
+            String.length str
+    in
+    ( String.slice 0 k str, String.slice k n str )
+
+
+
+-- BREAK LINES
+
+
+breakLineBefore : Int -> String -> ( String, Maybe String )
+breakLineBefore k str =
+    case String.length str > k of
+        False ->
+            ( str, Nothing )
+
+        True ->
+            let
+                indexOfPrecedingBlank =
+                    str
+                        |> String.indexes " "
+                        |> List.filter (\i -> i < k)
+                        |> List.reverse
+                        |> List.head
+                        |> Maybe.withDefault k
+            in
+            case indexOfPrecedingBlank <= k of
+                False ->
+                    ( str, Nothing )
+
+                True ->
+                    splitStringAt (indexOfPrecedingBlank + 1) str
+                        |> (\( a, b ) -> ( a, Just b ))

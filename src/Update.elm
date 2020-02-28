@@ -75,7 +75,6 @@ update msg model =
                     Debounce.push Model.debounceConfig char model.debounce
             in
             Function.insertChar model.editMode char { model | debounce = debounce }
-                |> Update.Line.break
                 |> withCmd debounceCmd
                 |> recordHistory model
 

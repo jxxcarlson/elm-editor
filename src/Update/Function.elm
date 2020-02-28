@@ -1,13 +1,9 @@
 module Update.Function exposing
-    ( breakLineAfter
-    , breakLineBefore
-    , copySelection
+    ( copySelection
     , deleteSelection
     , insertChar
-    , insertLineAfter
     , newLine
     , pasteSelection
-    , replaceLineAt
     , replaceLines
     , toggleEditMode
     , toggleHelpState
@@ -22,6 +18,7 @@ import Common
 import Debounce exposing (Debounce)
 import Model exposing (EditMode(..), HelpState(..), Model, Msg(..), Position, Selection(..), ViewMode(..), VimMode(..))
 import Task
+import Update.Line
 import Update.Vim
 
 
@@ -135,73 +132,6 @@ deleteSelection model =
 
 
 
--- BREAK LINES
-
-
-breakLineBefore : Int -> String -> ( String, Maybe String )
-breakLineBefore k str =
-    case String.length str > k of
-        False ->
-            ( str, Nothing )
-
-        True ->
-            let
-                indexOfPrecedingBlank =
-                    str
-                        |> String.indexes " "
-                        |> List.filter (\i -> i < k)
-                        |> List.reverse
-                        |> List.head
-                        |> Maybe.withDefault k
-            in
-            case indexOfPrecedingBlank <= k of
-                False ->
-                    ( str, Nothing )
-
-                True ->
-                    splitStringAt (indexOfPrecedingBlank + 1) str
-                        |> (\( a, b ) -> ( a, Just b ))
-
-
-breakLineAfter : Int -> String -> ( String, Maybe String )
-breakLineAfter k str =
-    case String.length str > k of
-        False ->
-            ( str, Nothing )
-
-        True ->
-            let
-                indexOfSucceedingBlank =
-                    str
-                        |> String.indexes " "
-                        |> List.filter (\i -> i > k)
-                        |> List.head
-                        |> Maybe.withDefault k
-            in
-            splitStringAt (indexOfSucceedingBlank + 1) str
-                |> (\( a, b ) -> ( a, Just b ))
-
-
-splitStringAt : Int -> String -> ( String, String )
-splitStringAt k str =
-    let
-        n =
-            String.length str
-    in
-    ( String.slice 0 k str, String.slice k n str )
-
-
-replaceLineAt : Int -> String -> Model -> Model
-replaceLineAt k str model =
-    { model | lines = Array.set k str model.lines }
-
-
-insertLineAfter : Int -> String -> Model -> Model
-insertLineAfter k str model =
-    { model | lines = ArrayUtil.insertLineAfter k str model.lines }
-
-
-
 -- MORE STUFF
 
 
@@ -265,9 +195,11 @@ insertChar editMode char model =
     case editMode of
         StandardEditor ->
             insertChar_ char model
+                |> Update.Line.break
 
         VimEditor VimInsert ->
             insertChar_ char model
+                |> Update.Line.break
 
         VimEditor VimNormal ->
             Update.Vim.process char model
