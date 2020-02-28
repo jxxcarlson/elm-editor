@@ -209,6 +209,7 @@ keymaps =
             , ( "z", Undo )
             , ( "w", WrapSelection )
             , ( "y", Redo )
+            , ( "\\", SendLine )
             ]
     , controlAndShift =
         Dict.fromList
