@@ -9,6 +9,7 @@ module Update.Function exposing
     , pasteSelection
     , replaceLineAt
     , replaceLines
+    , toggleHelpState
     , toggleViewMode
     , unload
     )
@@ -18,7 +19,7 @@ import Array exposing (Array)
 import ArrayUtil
 import Common
 import Debounce exposing (Debounce)
-import Model exposing (Model, Msg(..), Position, Selection(..), ViewMode(..))
+import Model exposing (HelpState(..), Model, Msg(..), Position, Selection(..), ViewMode(..))
 import Task
 
 
@@ -317,3 +318,13 @@ toggleViewMode model =
 
         Dark ->
             { model | viewMode = Light }
+
+
+toggleHelpState : Model -> Model
+toggleHelpState model =
+    case model.helpState of
+        HelpOff ->
+            { model | helpState = HelpOn }
+
+        HelpOn ->
+            { model | helpState = HelpOff }

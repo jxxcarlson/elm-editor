@@ -256,7 +256,7 @@ update msg model =
                         MLE.IDClicked id ->
                             Helper.Sync.onId id model
 
-                MarkdownMsg markdownMsg ->
+                Render.Types.MarkdownMsg markdownMsg ->
                     case markdownMsg of
                         IDClicked id ->
                             Helper.Sync.onId id model

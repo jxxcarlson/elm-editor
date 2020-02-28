@@ -194,8 +194,7 @@ keymaps =
             --, ( "g", ToggleGoToLinePanel )
             , ( ".", RollSearchSelectionForward )
             , ( ",", RollSearchSelectionBackward )
-
-            --, ( "h", ToggleHelp )
+            , ( "h", ToggleHelp )
             , ( "x", Cut )
             , ( "s", ToggleSearchPanel )
 

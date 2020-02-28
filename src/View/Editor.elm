@@ -11,25 +11,22 @@ import Keymap
 import Model exposing (AutoLineBreak(..), Config, Context(..), Hover(..), Model, Msg(..), Position, Selection(..), ViewMode(..))
 
 
-lineNumbersDisplay : Model -> Html Msg
-lineNumbersDisplay model =
-    H.span
-        displayStyle
-        [ H.text <| "Lines: " ++ String.fromInt (Array.length model.lines) ]
-
-
-wordCountDisplay : Model -> Html Msg
-wordCountDisplay model =
+statisticsDisplay : Model -> Html Msg
+statisticsDisplay model =
     let
-        words =
+        w =
             model.lines
                 |> Array.map (String.words >> List.length)
                 |> Array.toList
                 |> List.sum
+                |> String.fromInt
+
+        l =
+            String.fromInt (Array.length model.lines)
     in
     H.span
         displayStyle
-        [ H.text <| "Words: " ++ String.fromInt words ]
+        [ H.text <| "(" ++ l ++ ", " ++ w ++ ")" ]
 
 
 displayStyle =
@@ -498,8 +495,8 @@ viewHeader model =
         , borderFontColor model.viewMode
         , borderBackgroundColor model.viewMode
         ]
-        [ lineNumbersDisplay model
-        , wordCountDisplay model
+        [ rowButton 60 "Help" ToggleHelp [ HA.style "margin-left" "24px", HA.style "margin-top" "4px" ]
+        , statisticsDisplay model
         , rowButton 32 "Go" GoToLine [ HA.style "margin-left" "24px", HA.style "margin-top" "4px" ]
         , textField 32 "" AcceptLineToGoTo [ HA.style "margin-left" "4px", HA.style "margin-top" "4px" ] [ textFieldFontColor model, textFieldBackgroundColor model, HA.style "font-size" "14px" ]
         , rowButton 60 (autoLinBreakTitle model) ToggleAutoLineBreak [ HA.style "margin-left" "24px", HA.style "margin-top" "4px" ]

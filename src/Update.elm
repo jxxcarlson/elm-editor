@@ -438,3 +438,9 @@ update msg model =
 
         ToggleDarkMode ->
             Function.toggleViewMode model |> withNoCmd
+
+        ToggleHelp ->
+            Function.toggleHelpState model |> withNoCmd
+
+        MarkdownMsg _ ->
+            model |> withNoCmd

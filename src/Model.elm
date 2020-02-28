@@ -2,6 +2,7 @@ module Model exposing
     ( AutoLineBreak(..)
     , Config
     , Context(..)
+    , HelpState(..)
     , Hover(..)
     , Model
     , Msg(..)
@@ -19,6 +20,7 @@ import ContextMenu exposing (ContextMenu)
 import Debounce exposing (Debounce)
 import File exposing (File)
 import History exposing (History)
+import Markdown.Render exposing (MarkdownMsg(..))
 import RollingList exposing (RollingList)
 import Wrap exposing (WrapOption(..))
 
@@ -52,6 +54,7 @@ type alias Model =
     , replacementText : String
     , viewMode : ViewMode
     , indentationOffset : Int
+    , helpState : HelpState
     }
 
 
@@ -63,6 +66,11 @@ type ViewMode
 type Context
     = Object
     | Background
+
+
+type HelpState
+    = HelpOn
+    | HelpOff
 
 
 type alias Snapshot =
@@ -139,6 +147,7 @@ init ( config, contextMenu ) =
     , replacementText = ""
     , viewMode = Light
     , indentationOffset = 4
+    , helpState = HelpOff
     }
 
 
@@ -234,6 +243,9 @@ type Msg
     | GotViewport (Result Dom.Error Dom.Viewport)
       --
     | ToggleDarkMode
+    | ToggleHelp
+      --
+    | MarkdownMsg MarkdownMsg
 
 
 

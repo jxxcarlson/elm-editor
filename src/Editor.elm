@@ -47,6 +47,7 @@ import Model exposing (Config, Context(..), Model, Msg(..))
 import Update as U
 import Update.Scroll
 import View.Editor
+import View.Help
 import View.Search
 import Wrap exposing (WrapOption)
 
@@ -162,6 +163,7 @@ view (Editor model) =
         , View.Editor.viewEditor model
         , viewContextMenu model.width model
         , View.Editor.viewDebug model
+        , View.Help.view model |> H.map MarkdownMsg
         ]
 
 

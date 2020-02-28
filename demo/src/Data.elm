@@ -47,9 +47,10 @@ to be rendered on the fly to Html.
 
 ## Using the editor
 
-Do `ctrl-click` in the green bar below left to
-bring up a menu of commands. Below are
-a few of them.
+Type ctrl-H (Help) to toggle a list of
+editor commands.  Or use the **Help**
+button, upper left. Below are a few
+examples.
 
 
 **Sync.** `ctrl-shift-S` will sync the rendered
