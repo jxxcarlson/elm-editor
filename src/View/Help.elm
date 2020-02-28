@@ -28,7 +28,7 @@ The items in the menu bar are
 
 - Help:  toggles this help page
 - (142,  589) or something like that: the number of lines and words
-- GoL enter a line number and press this button
+- Go: enter a line number and press this button
 - brkOn: toggle automatic line-breaking
 
 

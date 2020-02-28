@@ -442,5 +442,8 @@ update msg model =
         ToggleHelp ->
             Function.toggleHelpState model |> withNoCmd
 
+        ToggleEditMode ->
+            Function.toggleEditMode model |> withNoCmd
+
         MarkdownMsg _ ->
             model |> withNoCmd

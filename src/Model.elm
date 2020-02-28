@@ -2,6 +2,7 @@ module Model exposing
     ( AutoLineBreak(..)
     , Config
     , Context(..)
+    , EditMode(..)
     , HelpState(..)
     , Hover(..)
     , Model
@@ -10,6 +11,7 @@ module Model exposing
     , Selection(..)
     , Snapshot
     , ViewMode(..)
+    , VimMode(..)
     , debounceConfig
     , init
     )
@@ -55,6 +57,7 @@ type alias Model =
     , viewMode : ViewMode
     , indentationOffset : Int
     , helpState : HelpState
+    , editMode : EditMode
     }
 
 
@@ -148,7 +151,18 @@ init ( config, contextMenu ) =
     , viewMode = Light
     , indentationOffset = 4
     , helpState = HelpOff
+    , editMode = StandardEditor
     }
+
+
+type EditMode
+    = StandardEditor
+    | VimEditor VimMode
+
+
+type VimMode
+    = VimNormal
+    | VimInsert
 
 
 type AutoLineBreak
@@ -244,6 +258,7 @@ type Msg
       --
     | ToggleDarkMode
     | ToggleHelp
+    | ToggleEditMode
       --
     | MarkdownMsg MarkdownMsg
 

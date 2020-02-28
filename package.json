@@ -1,5 +1,5 @@
 {
-  "name": "jxxcarlson/elm-ditor",
+  "name": "jxxcarlson/elm-editor",
   "version": "1.0.0",
   "description": "A pure Elm text editor, credits to prior work of Janiczek and Nemzer",
   "main": "Main.js",

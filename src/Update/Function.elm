@@ -19,7 +19,7 @@ import Array exposing (Array)
 import ArrayUtil
 import Common
 import Debounce exposing (Debounce)
-import Model exposing (HelpState(..), Model, Msg(..), Position, Selection(..), ViewMode(..))
+import Model exposing (EditMode(..), VimMode(..), HelpState(..), Model, Msg(..), Position, Selection(..), ViewMode(..))
 import Task
 
 
@@ -328,3 +328,14 @@ toggleHelpState model =
 
         HelpOn ->
             { model | helpState = HelpOff }
+
+
+toggleEditMode : Model -> Model
+toggleEditMode model =
+    case model.editMode of
+        StandardEditor ->
+            { model | editMode = VimEditor VimNormal}
+
+        VimEditor _ ->
+            { model | editMode =  StandardEditor  }
+ }
