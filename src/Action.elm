@@ -1,5 +1,7 @@
 module Action exposing
-    ( deIndent
+    ( cursorLeft
+    , cursorRight
+    , deIndent
     , deleteSelection
     , firstLine
     , goToLine
@@ -16,6 +18,7 @@ module Action exposing
 import Array exposing (Array)
 import ArrayUtil
 import Browser.Dom as Dom
+import Common
 import Model exposing (Model, Msg(..), Selection(..))
 import Task exposing (Task)
 
@@ -206,3 +209,17 @@ yValueOfLine lineHeight n =
 linesPerPage : Model -> Int
 linesPerPage model =
     floor (model.height / model.lineHeight)
+
+
+
+--- CURSOR ACTIONS
+
+
+cursorRight : Model -> Model
+cursorRight model =
+    { model | cursor = Common.moveRight model.cursor model.lines }
+
+
+cursorLeft : Model -> Model
+cursorLeft model =
+    { model | cursor = Common.moveLeft model.cursor model.lines }

@@ -103,6 +103,15 @@ Wrap all         ctrl-shift-W
 ````
 Toggle dark mode   ctrl-Shift-D
 Toggle help        ctrl-H
+Toggle edit mode   ctrl-shift-|
+
+The last command is to toggle between normal
+editing and Vim mode.  Vim mode is not yet
+operational and it will be a while before it is.
+So far I have implemented only the **h** and
+**l** commands — move cursor left and right.
+I will do a little more, reserving plenty
+of things for the April 25 hackathon in Paris.
 ````
 
 """

@@ -9,6 +9,7 @@ module Update.Function exposing
     , pasteSelection
     , replaceLineAt
     , replaceLines
+    , toggleEditMode
     , toggleHelpState
     , toggleViewMode
     , unload
@@ -19,8 +20,9 @@ import Array exposing (Array)
 import ArrayUtil
 import Common
 import Debounce exposing (Debounce)
-import Model exposing (EditMode(..), VimMode(..), HelpState(..), Model, Msg(..), Position, Selection(..), ViewMode(..))
+import Model exposing (EditMode(..), HelpState(..), Model, Msg(..), Position, Selection(..), ViewMode(..), VimMode(..))
 import Task
+import Update.Vim
 
 
 copySelection : Model -> ( Model, Cmd Msg )
@@ -258,8 +260,21 @@ newLine ({ cursor, lines } as model) =
     }
 
 
-insertChar : String -> Model -> Model
-insertChar char ({ cursor, lines } as model) =
+insertChar : EditMode -> String -> Model -> Model
+insertChar editMode char model =
+    case editMode of
+        StandardEditor ->
+            insertChar_ char model
+
+        VimEditor VimInsert ->
+            insertChar_ char model
+
+        VimEditor VimNormal ->
+            Update.Vim.process char model
+
+
+insertChar_ : String -> Model -> Model
+insertChar_ char ({ cursor, lines } as model) =
     let
         { line, column } =
             cursor
@@ -334,8 +349,7 @@ toggleEditMode : Model -> Model
 toggleEditMode model =
     case model.editMode of
         StandardEditor ->
-            { model | editMode = VimEditor VimNormal}
+            { model | editMode = VimEditor VimNormal }
 
         VimEditor _ ->
-            { model | editMode =  StandardEditor  }
- }
+            { model | editMode = StandardEditor }

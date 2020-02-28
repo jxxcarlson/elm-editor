@@ -220,6 +220,7 @@ keymaps =
             , ( "V", CopyPasteClipboard )
             , ( "W", WrapAll )
             , ( "S", SendLine )
+            , ( "|", ToggleEditMode )
 
             --, ( "A", SelectAll )
             ]

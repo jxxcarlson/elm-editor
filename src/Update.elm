@@ -54,16 +54,14 @@ update msg model =
                 |> recordHistory model
 
         MoveLeft ->
-            ( { model | cursor = moveLeft model.cursor model.lines }
-            , Cmd.none
-            )
-                |> recordHistory model
+            Action.cursorLeft model
+                |> recordHistory_ model
+                |> withNoCmd
 
         MoveRight ->
-            ( { model | cursor = moveRight model.cursor model.lines }
-            , Cmd.none
-            )
-                |> recordHistory model
+            Action.cursorRight model
+                |> recordHistory_ model
+                |> withNoCmd
 
         NewLine ->
             (Function.newLine model |> Common.sanitizeHover)
@@ -74,9 +72,9 @@ update msg model =
                 ( debounce, debounceCmd ) =
                     Debounce.push Model.debounceConfig char model.debounce
             in
-            ( Function.insertChar char { model | debounce = debounce } |> Update.Line.break
-            , debounceCmd
-            )
+            Function.insertChar model.editMode char { model | debounce = debounce }
+                |> Update.Line.break
+                |> withCmd debounceCmd
                 |> recordHistory model
 
         Indent ->

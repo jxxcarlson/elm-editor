@@ -8,7 +8,7 @@ import Html.Events as HE
 import Html.Lazy
 import Json.Decode as JD exposing (Decoder)
 import Keymap
-import Model exposing (AutoLineBreak(..), Config, Context(..), Hover(..), Model, Msg(..), Position, Selection(..), ViewMode(..))
+import Model exposing (AutoLineBreak(..), Context(..), EditMode(..), Hover(..), Model, Msg(..), Position, Selection(..), ViewMode(..), VimMode(..))
 
 
 statisticsDisplay : Model -> Html Msg
@@ -500,9 +500,26 @@ viewHeader model =
         , rowButton 32 "Go" GoToLine [ HA.style "margin-left" "24px", HA.style "margin-top" "4px" ]
         , textField 32 "" AcceptLineToGoTo [ HA.style "margin-left" "4px", HA.style "margin-top" "4px" ] [ textFieldFontColor model, textFieldBackgroundColor model, HA.style "font-size" "14px" ]
         , rowButton 60 (autoLinBreakTitle model) ToggleAutoLineBreak [ HA.style "margin-left" "24px", HA.style "margin-top" "4px" ]
+        , editModeDisplay model
 
         -- , rowButton 60 "Open" RequestFile [ HA.style "margin-left" "24px", HA.style "margin-top" "4px" ]
         ]
+
+
+editModeDisplay model =
+    let
+        message =
+            case model.editMode of
+                StandardEditor ->
+                    "E:STD"
+
+                VimEditor VimNormal ->
+                    "E:Vim"
+
+                VimEditor VimInsert ->
+                    "E:Vim (i)"
+    in
+    H.span [ HA.style "font-size" "12px", HA.style "margin-left" "25px", HA.style "color" "#a44" ] [ H.text message ]
 
 
 textFieldBackgroundColor model =
