@@ -106,12 +106,23 @@ Toggle help        ctrl-H
 Toggle edit mode   ctrl-shift-|
 
 The last command is to toggle between normal
-editing and Vim mode.  Vim mode is not yet
+editing and Vim mode.
+````
+
+### About Vim Mode
+
+Vim mode is not yet
 operational and it will be a while before it is.
-So far I have implemented only the **h** and
-**l** commands — move cursor left and right.
-I will do a little more, reserving plenty
+So far I have installed a primitive scaffolding for
+building this feature, but have implemented only the commands listed
+below.  I will do a little more, reserving plenty
 of things for the April 25 hackathon in Paris.
+
+### Vim commands implemented so far
+
+````
+i, ESC
+h, j, k, l
 ````
 
 """

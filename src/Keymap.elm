@@ -94,6 +94,9 @@ modifierFromFlags ctrl shift option =
 keyToMsg : Keydown -> Decoder Msg
 keyToMsg { char, key, modifier } =
     let
+        _ =
+            Debug.log "{ char, key, modifier }" ( char, key, modifier )
+
         keyFrom keymap =
             Dict.get key keymap
                 |> Maybe.map JD.succeed
@@ -107,6 +110,8 @@ keyToMsg { char, key, modifier } =
                     |> Maybe.withDefault
                         (JD.fail "This key does nothing")
                 ]
+
+        -- (Nothing,"Escape",None)
     in
     case modifier of
         None ->
@@ -153,6 +158,7 @@ keymaps =
             , ( "Home", MoveToLineStart )
             , ( "End", MoveToLineEnd )
             , ( "Tab", Indent )
+            , ( "Escape", ExitVimInsertMode )
             ]
     , shift =
         Dict.fromList

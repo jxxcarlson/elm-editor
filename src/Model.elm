@@ -184,6 +184,7 @@ debounceConfig =
 type Msg
     = EditorNoOp
       --
+    | ExitVimInsertMode
     | MoveUp
     | MoveDown
     | MoveLeft

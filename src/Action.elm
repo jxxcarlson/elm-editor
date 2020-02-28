@@ -1,6 +1,8 @@
 module Action exposing
-    ( cursorLeft
+    ( cursorDown
+    , cursorLeft
     , cursorRight
+    , cursorUp
     , deIndent
     , deleteSelection
     , firstLine
@@ -223,3 +225,13 @@ cursorRight model =
 cursorLeft : Model -> Model
 cursorLeft model =
     { model | cursor = Common.moveLeft model.cursor model.lines }
+
+
+cursorUp : Model -> Model
+cursorUp model =
+    { model | cursor = Common.moveUp model.cursor model.lines }
+
+
+cursorDown : Model -> Model
+cursorDown model =
+    { model | cursor = Common.moveDown model.cursor model.lines }

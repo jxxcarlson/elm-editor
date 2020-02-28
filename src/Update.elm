@@ -8,7 +8,7 @@ import Common exposing (..)
 import ContextMenu exposing (ContextMenu)
 import Debounce exposing (Debounce)
 import History
-import Model exposing (AutoLineBreak(..), Hover(..), Model, Msg(..), Position, Selection(..), Snapshot)
+import Model exposing (AutoLineBreak(..), EditMode(..), Hover(..), Model, Msg(..), Position, Selection(..), Snapshot, VimMode(..))
 import Search
 import Task exposing (Task)
 import Update.File
@@ -23,6 +23,10 @@ update msg model =
     case msg of
         EditorNoOp ->
             ( model, Cmd.none )
+
+        ExitVimInsertMode ->
+            { model | editMode = VimEditor VimNormal }
+                |> withNoCmd
 
         Test ->
             Action.goToLine 30 model
@@ -42,16 +46,14 @@ update msg model =
             ( { model | debounce = model.debounce }, Cmd.none )
 
         MoveUp ->
-            ( { model | cursor = moveUp model.cursor model.lines }
-            , Cmd.none
-            )
-                |> recordHistory model
+            Action.cursorUp model
+                |> recordHistory_ model
+                |> withNoCmd
 
         MoveDown ->
-            ( { model | cursor = moveDown model.cursor model.lines }
-            , Cmd.none
-            )
-                |> recordHistory model
+            Action.cursorDown model
+                |> recordHistory_ model
+                |> withNoCmd
 
         MoveLeft ->
             Action.cursorLeft model

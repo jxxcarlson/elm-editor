@@ -517,9 +517,9 @@ editModeDisplay model =
                     "E:Vim"
 
                 VimEditor VimInsert ->
-                    "E:Vim (i)"
+                    "E:Vim(i)"
     in
-    H.span [ HA.style "font-size" "12px", HA.style "margin-left" "25px", HA.style "color" "#a44" ] [ H.text message ]
+    H.span [ HA.style "font-style" "bold", HA.style "font-size" "12px", HA.style "margin-left" "25px", HA.style "color" "#a44" ] [ H.text message ]
 
 
 textFieldBackgroundColor model =
