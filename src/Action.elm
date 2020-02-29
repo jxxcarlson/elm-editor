@@ -15,6 +15,7 @@ module Action exposing
     , pageUp
     , scrollToLine
     , selectLine
+    , selectUp
     )
 
 import Array exposing (Array)
@@ -235,3 +236,20 @@ cursorUp model =
 cursorDown : Model -> Model
 cursorDown model =
     { model | cursor = Common.moveDown model.cursor model.lines }
+
+
+selectUp : Model -> Model
+selectUp model =
+    let
+        extendSelection a_ b =
+            Selection (Common.moveUp a_ model.lines) b
+
+        newSelection =
+            case model.selection of
+                Selection a b ->
+                    extendSelection a b
+
+                _ ->
+                    extendSelection model.cursor model.cursor
+    in
+    { model | selection = newSelection }

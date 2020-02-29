@@ -21,6 +21,7 @@ module Common exposing
     , nextLine
     , previousLine
     , recordHistory
+    , recordHistoryX
     , recordHistory_
     , removeCharAfter
     , removeCharBefore
@@ -30,6 +31,7 @@ module Common exposing
     )
 
 import Array exposing (Array)
+import Cmd.Extra exposing (withNoCmd)
 import History
 import Model exposing (Hover(..), Model, Msg(..), Position, Snapshot)
 
@@ -409,6 +411,13 @@ recordHistory oldModel ( newModel, cmd ) =
       }
     , cmd
     )
+
+
+recordHistoryX : Model -> ( Model, Cmd Msg )
+recordHistoryX model =
+    model
+        |> recordHistory_ model
+        |> withNoCmd
 
 
 recordHistory_ : Model -> Model -> Model

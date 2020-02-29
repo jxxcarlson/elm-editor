@@ -248,6 +248,11 @@ update msg model =
         SelectLine ->
             Action.selectLine model
 
+        SelectUp ->
+            Action.selectUp model
+                |> recordHistory_ model
+                |> withNoCmd
+
         MoveToLineStart ->
             Action.moveToLineStart model
 
