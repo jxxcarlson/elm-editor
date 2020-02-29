@@ -16,10 +16,23 @@ import Array exposing (Array)
 import ArrayUtil
 import Common
 import Debounce exposing (Debounce)
+import Dict exposing (Dict)
 import Model exposing (EditMode(..), HelpState(..), Model, Msg(..), Position, Selection(..), ViewMode(..), VimMode(..))
 import Task
 import Update.Line
 import Update.Vim
+
+
+autoclose : Dict String String
+autoclose =
+    Dict.fromList
+        [ ( "[", "]" )
+        , ( "{", "}" )
+        , ( "(", ")" )
+        , ( "\"", "\"" )
+        , ( "'", "'" )
+        , ( "`", "`" )
+        ]
 
 
 copySelection : Model -> ( Model, Cmd Msg )
@@ -48,21 +61,25 @@ copySelection model =
             ( model, Cmd.none )
 
 
-pasteSelection : Model -> ( Model, Cmd Msg )
+pasteSelection : Model -> Model
 pasteSelection model =
+    -- TODO: This needs work! (a hack for now)
     let
-        n =
-            Array.length model.selectedText
+        selectedText =
+            Debug.log "selectedText"
+                model.selectedText
+                |> Array.toList
+                |> String.join "\n"
 
         newCursor =
-            { line = model.cursor.line + n, column = model.cursor.column }
+            Debug.log "newCursor"
+                { line = model.cursor.line, column = model.cursor.column + String.length selectedText }
     in
-    ( { model
-        | lines = ArrayUtil.paste model.cursor model.selectedText model.lines
+    { model
+        | -- lines = ArrayUtil.paste model.cursor model.selectedText model.lines
+          lines = ArrayUtil.replace model.cursor model.cursor selectedText model.lines
         , cursor = newCursor
-      }
-    , Cmd.none
-    )
+    }
 
 
 replaceLines : Model -> Array String -> Model
@@ -194,19 +211,59 @@ insertChar : EditMode -> String -> Model -> Model
 insertChar editMode char model =
     case editMode of
         StandardEditor ->
-            insertChar_ char model
+            insertDispatch char model
                 |> Update.Line.break
 
         VimEditor VimInsert ->
-            insertChar_ char model
+            insertDispatch char model
                 |> Update.Line.break
 
         VimEditor VimNormal ->
             Update.Vim.process char model
 
 
-insertChar_ : String -> Model -> Model
-insertChar_ char ({ cursor, lines } as model) =
+insertDispatch : String -> Model -> Model
+insertDispatch str model =
+    case ( model.selection, Dict.get str autoclose ) of
+        ( selection, Just closing ) ->
+            insertWithMatching selection closing str model
+
+        _ ->
+            insertSimple str model
+
+
+insertWithMatching : Selection -> String -> String -> Model -> Model
+insertWithMatching selection closing str model =
+    -- TODO: working on this
+    let
+        _ =
+            Debug.log "closing" closing
+
+        ( start, end ) =
+            Debug.log " start, end )" <|
+                case selection of
+                    Selection a b ->
+                        ( a, b )
+
+                    _ ->
+                        ( model.cursor, model.cursor )
+
+        insertion =
+            Debug.log "insertion"
+                (str ++ ArrayUtil.between start end model.lines ++ closing)
+
+        newCursor =
+            Debug.log "newCursor"
+                { line = model.cursor.line, column = model.cursor.column + String.length insertion - 1 }
+
+        newLines =
+            ArrayUtil.replace start end insertion model.lines
+    in
+    { model | lines = newLines, cursor = newCursor }
+
+
+insertSimple : String -> Model -> Model
+insertSimple char ({ cursor, lines } as model) =
     let
         { line, column } =
             cursor

@@ -148,7 +148,7 @@ update msg model =
 
         Paste ->
             Function.pasteSelection model
-                |> recordHistoryWithCmd model
+                |> recordHistory
 
         RemoveCharBefore ->
             Function.deleteSelection model

@@ -322,8 +322,11 @@ cut pos1 pos2 array =
 -}
 between : Position -> Position -> Array String -> String
 between pos1 pos2 array =
-    case pos1.line == pos2.line of
-        True ->
+    case ( pos1.line == pos2.line, pos1.column == pos2.column ) of
+        ( True, True ) ->
+            ""
+
+        ( True, False ) ->
             let
                 middleLine =
                     Array.get pos1.line array |> Maybe.withDefault ""
@@ -339,7 +342,7 @@ between pos1 pos2 array =
             in
             middle__
 
-        False ->
+        ( False, _ ) ->
             let
                 firstLine =
                     Array.get pos1.line array |> Maybe.withDefault ""
