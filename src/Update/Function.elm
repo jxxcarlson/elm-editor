@@ -66,14 +66,12 @@ pasteSelection model =
     -- TODO: This needs work! (a hack for now)
     let
         selectedText =
-            Debug.log "selectedText"
-                model.selectedText
+            model.selectedText
                 |> Array.toList
                 |> String.join "\n"
 
         newCursor =
-            Debug.log "newCursor"
-                { line = model.cursor.line, column = model.cursor.column + String.length selectedText }
+            { line = model.cursor.line, column = model.cursor.column + String.length selectedText }
     in
     { model
         | -- lines = ArrayUtil.paste model.cursor model.selectedText model.lines
@@ -236,25 +234,19 @@ insertWithMatching : Selection -> String -> String -> Model -> Model
 insertWithMatching selection closing str model =
     -- TODO: working on this
     let
-        _ =
-            Debug.log "closing" closing
-
         ( start, end ) =
-            Debug.log " start, end )" <|
-                case selection of
-                    Selection a b ->
-                        ( a, b )
+            case selection of
+                Selection a b ->
+                    ( a, b )
 
-                    _ ->
-                        ( model.cursor, model.cursor )
+                _ ->
+                    ( model.cursor, model.cursor )
 
         insertion =
-            Debug.log "insertion"
-                (str ++ ArrayUtil.between start end model.lines ++ closing)
+            str ++ ArrayUtil.between start end model.lines ++ closing
 
         newCursor =
-            Debug.log "newCursor"
-                { line = model.cursor.line, column = model.cursor.column + String.length insertion - 1 }
+            { line = model.cursor.line, column = model.cursor.column + String.length insertion - 1 }
 
         newLines =
             ArrayUtil.replace start end insertion model.lines

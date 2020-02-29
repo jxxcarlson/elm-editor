@@ -105,7 +105,6 @@ fuzzyGetOne : String -> BiDict String String -> Maybe String
 fuzzyGetOne key dict_ =
     let
         associationList =
-            --Debug.log "ASSOC" <|
             BiDict.toList dict_
 
         makePredicate a =

@@ -2,6 +2,14 @@
 
 Most recent first
 
+- 2/29/2020. Add matching insertion for parents, brackets, etc.
+
+- 2/29/2020: Add extend selection with shift + arrow key
+
+- 2/28/2020: Add scaffolding for Vim mode plus a few commands
+
+- 2/28/2020: Better help system using markdown doc popup
+
 - 2/28/2020. Add ctrl-. (Think >) to go to next search hit
 
 - 2/28/2020. Add ctrl-, (Think <) to go to previous search hit
