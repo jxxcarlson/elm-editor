@@ -26,7 +26,16 @@ npm install
 npm start
 ```
 
-## Note
+## Notes
 
-The present package, `jxxcarlson/elm-editor`, supersedes
+- The present package, `jxxcarlson/elm-editor`, supersedes
 `jxxcarlson/elm-text-editor`.  Better to use this one!
+
+- Vim mode: just a barebones start on this.  The plan is to do a bit 
+more between now and April 25, then see how much of Vim we can add
+at the hackathon in Paris
+
+- Under consideration: an Electron version.  I know nothing about doing
+this, so if anyone wants lend a helping hand, that would be great. We
+might also try this at the hackathon.
+
