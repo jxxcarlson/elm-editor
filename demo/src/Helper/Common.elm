@@ -1,6 +1,11 @@
-module Helper.Common exposing (proportions)
+module Helper.Common exposing (windowHeight, windowWidth)
 
 
-proportions : { width : Float, height : Float }
-proportions =
-    { width = 0.35, height = 0.8 }
+windowWidth : Float -> Float
+windowWidth appWidth =
+    min (0.5 * appWidth) 550
+
+
+windowHeight : Float -> Float
+windowHeight appHeight =
+    appHeight - 100

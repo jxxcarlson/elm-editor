@@ -161,7 +161,7 @@ update msg model =
             ( { model
                 | width = w
                 , height = h
-                , editor = Editor.resize (Helper.Common.proportions.width * w) (Helper.Common.proportions.height * h) model.editor
+                , editor = Editor.resize (Helper.Common.windowWidth w) (Helper.Common.windowHeight h) model.editor
               }
             , Cmd.none
             )
@@ -324,14 +324,14 @@ viewEditorAndRenderedText model =
         [ viewEditor model
         , viewRenderedText
             model
-            (Helper.Common.proportions.width * model.width - 40)
-            (Helper.Common.proportions.height * model.height + 40)
+            (Helper.Common.windowWidth model.width - 40)
+            (Helper.Common.windowHeight model.height + 40)
         ]
 
 
 viewFooter model width_ height_ =
     row
-        [ width (pxFloat (2 * Helper.Common.proportions.width * width_ - 40))
+        [ width (pxFloat (2 * Helper.Common.windowWidth width_ - 40))
         , height (pxFloat height_)
         , Background.color (Element.rgb255 130 130 140)
         , Font.color (gray 240)
@@ -353,7 +353,7 @@ viewFooter model width_ height_ =
 
 viewFooter2 model width_ height_ =
     row
-        [ width (pxFloat (2 * Helper.Common.proportions.width * width_ - 40))
+        [ width (pxFloat (2 * Helper.Common.windowWidth width_ - 40))
         , height (pxFloat height_)
         , Background.color (Element.rgb255 80 80 90)
         , Font.color (gray 240)
