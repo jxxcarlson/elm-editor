@@ -161,11 +161,11 @@ keymaps =
             ]
     , shift =
         Dict.fromList
-            [ -- ( "ArrowUp", SelectUp )
-              --, ( "ArrowDown", SelectDown )
-              --, ( "ArrowLeft", SelectLeft )
-              --, ( "ArrowRight", SelectRight )
-              ( "Tab", Deindent )
+            [ ( "ArrowUp", SelectUp )
+            , ( "ArrowDown", SelectDown )
+            , ( "ArrowLeft", SelectLeft )
+            , ( "ArrowRight", SelectRight )
+            , ( "Tab", Deindent )
 
             --, ( "Home", SelectToLineStart )
             --, ( "End", SelectToLineEnd )

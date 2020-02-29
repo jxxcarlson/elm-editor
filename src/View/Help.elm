@@ -81,6 +81,10 @@ Page up     ArrowUp
 Page down   opt-ArrowDown
 ````
 
+### Selection
+
+Extend selection using shift + an arrow key (left, right, up, down)
+
 ### Lines
 
 ````

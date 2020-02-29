@@ -21,7 +21,7 @@ module Common exposing
     , nextLine
     , previousLine
     , recordHistory
-    , recordHistoryX
+    , recordHistoryWithCmd
     , recordHistory_
     , removeCharAfter
     , removeCharBefore
@@ -394,11 +394,11 @@ stateToSnapshot model =
     { cursor = model.cursor, selection = model.selection, lines = model.lines }
 
 
-recordHistory :
+recordHistoryWithCmd :
     Model
     -> ( Model, Cmd Msg )
     -> ( Model, Cmd Msg )
-recordHistory oldModel ( newModel, cmd ) =
+recordHistoryWithCmd oldModel ( newModel, cmd ) =
     ( { newModel
         | history =
             if oldModel.lines /= newModel.lines then
@@ -413,8 +413,8 @@ recordHistory oldModel ( newModel, cmd ) =
     )
 
 
-recordHistoryX : Model -> ( Model, Cmd Msg )
-recordHistoryX model =
+recordHistory : Model -> ( Model, Cmd Msg )
+recordHistory model =
     model
         |> recordHistory_ model
         |> withNoCmd

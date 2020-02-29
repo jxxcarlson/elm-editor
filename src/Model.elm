@@ -219,6 +219,9 @@ type Msg
     | StopSelecting
     | SelectLine
     | SelectUp
+    | SelectDown
+    | SelectLeft
+    | SelectRight
       --
     | Undo
     | Redo

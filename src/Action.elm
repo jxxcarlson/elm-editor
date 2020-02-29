@@ -14,7 +14,10 @@ module Action exposing
     , pageDown
     , pageUp
     , scrollToLine
+    , selectDown
+    , selectLeft
     , selectLine
+    , selectRight
     , selectUp
     )
 
@@ -243,6 +246,57 @@ selectUp model =
     let
         extendSelection a_ b =
             Selection (Common.moveUp a_ model.lines) b
+
+        newSelection =
+            case model.selection of
+                Selection a b ->
+                    extendSelection a b
+
+                _ ->
+                    extendSelection model.cursor model.cursor
+    in
+    { model | selection = newSelection }
+
+
+selectDown : Model -> Model
+selectDown model =
+    let
+        extendSelection a b_ =
+            Selection a (Common.moveDown b_ model.lines)
+
+        newSelection =
+            case model.selection of
+                Selection a b ->
+                    extendSelection a b
+
+                _ ->
+                    extendSelection model.cursor model.cursor
+    in
+    { model | selection = newSelection }
+
+
+selectLeft : Model -> Model
+selectLeft model =
+    let
+        extendSelection a_ b =
+            Selection (Common.moveLeft a_ model.lines) b
+
+        newSelection =
+            case model.selection of
+                Selection a b ->
+                    extendSelection a b
+
+                _ ->
+                    extendSelection model.cursor model.cursor
+    in
+    { model | selection = newSelection }
+
+
+selectRight : Model -> Model
+selectRight model =
+    let
+        extendSelection a b_ =
+            Selection a (Common.moveRight b_ model.lines)
 
         newSelection =
             case model.selection of

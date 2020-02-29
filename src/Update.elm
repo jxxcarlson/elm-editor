@@ -76,7 +76,7 @@ update msg model =
             in
             Function.insertChar model.editMode char { model | debounce = debounce }
                 |> withCmd debounceCmd
-                |> recordHistory model
+                |> recordHistoryWithCmd model
 
         Indent ->
             model
@@ -111,7 +111,7 @@ update msg model =
                     Action.deleteSelection newSelection model.lines
             in
             ( { model | lines = newLines, selectedText = selectedText }, Cmd.none )
-                |> recordHistory model
+                |> recordHistoryWithCmd model
 
         DeleteLine ->
             let
@@ -137,22 +137,22 @@ update msg model =
                     Action.deleteSelection newSelection model.lines
             in
             ( { model | lines = newLines, selectedText = selectedText }, Cmd.none )
-                |> recordHistory model
+                |> recordHistoryWithCmd model
 
         Cut ->
             Function.deleteSelection model
-                |> recordHistory model
+                |> recordHistoryWithCmd model
 
         Copy ->
             Function.copySelection model
 
         Paste ->
             Function.pasteSelection model
-                |> recordHistory model
+                |> recordHistoryWithCmd model
 
         RemoveCharBefore ->
             Function.deleteSelection model
-                |> recordHistory model
+                |> recordHistoryWithCmd model
 
         FirstLine ->
             Action.firstLine model
@@ -200,7 +200,7 @@ update msg model =
                 |> Common.sanitizeHover
             , Cmd.none
             )
-                |> recordHistory model
+                |> recordHistoryWithCmd model
 
         StartSelecting ->
             ( { model | selection = SelectingFrom model.hover }
@@ -250,8 +250,19 @@ update msg model =
 
         SelectUp ->
             Action.selectUp model
-                |> recordHistory_ model
-                |> withNoCmd
+                |> recordHistory
+
+        SelectDown ->
+            Action.selectDown model
+                |> recordHistory
+
+        SelectLeft ->
+            Action.selectLeft model
+                |> recordHistory
+
+        SelectRight ->
+            Action.selectRight model
+                |> recordHistory
 
         MoveToLineStart ->
             Action.moveToLineStart model
