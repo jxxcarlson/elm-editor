@@ -2,7 +2,7 @@
 
 Most recent first
 
-- 2/29/2020. Add matching insertion for parents, brackets, etc.
+- 2/29/2020. Add matching parens, brackets, etc
 
 - 2/29/2020: Add extend selection with shift + arrow key
 

@@ -67,6 +67,10 @@ Paste from system clipboard    ctrl-shift-V
 
 Indent     TAB
 Deindent   shift-TAB
+
+Type (, [, {, ` and the editor will
+match with ), ], }, `.  Works also
+if there is a selection.
 ````
 
 ### Cursor
