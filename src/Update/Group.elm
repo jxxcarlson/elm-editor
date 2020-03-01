@@ -106,12 +106,14 @@ tuple3CharsPred pred =
     tuple3MapAll (Maybe.map pred >> Maybe.withDefault False)
 
 
+{-| Start at the position and move right using the rules of `groupHelp`.
+-}
 groupEnd : Int -> String -> Int
 groupEnd column str =
     groupHelp Forward (String.dropLeft column str) column None
 
 
-{-| Start at the position and move left. Uses the same rules as `groupEnd`.
+{-| Start at the position and move left using the rules of `groupHelp`.
 -}
 groupStart : Int -> String -> Int
 groupStart column str =
@@ -120,9 +122,7 @@ groupStart column str =
 
 {-| Start at the position and move in the direction using the following rules:
 
-  - Skip consecutive whitespace. Skip a single newline if it follows the whitespace,
-    then continue skipping whitespace.
-  - If the next character is a newline, stop
+  - Skip consecutive whitespace.
   - If the next character is a non-word character, skip consecutive non-word
     characters then stop
   - If the next character is a word character, skip consecutive word characters
