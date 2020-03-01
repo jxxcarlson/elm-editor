@@ -87,7 +87,9 @@ Page down   opt-ArrowDown
 
 ### Selection
 
-Extend selection using shift + an arrow key (left, right, up, down)
+Extend selection using shift + an arrow key (left, right, up, down).
+Double-click (or ctrl-J) to select a word, triple-click (or ctrl-L)
+to select a line.
 
 ### Lines
 

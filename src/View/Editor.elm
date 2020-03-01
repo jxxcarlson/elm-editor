@@ -151,7 +151,10 @@ viewEditor model =
         , HA.style "width" (px model.width)
         , Keymap.handle
         , HA.tabindex 0
-        , onTripleClick SelectLine
+
+        -- , onDoubleClick SelectGroup
+        --, onTripleClick SelectLine
+        , onMultiplelick SelectGroup SelectLine
         , HA.id "__editor__"
         ]
         [ viewLineNumbers model
@@ -182,15 +185,18 @@ editorHeight model =
             defaultHeight
 
 
-onTripleClick : msg -> Attribute msg
-onTripleClick msg =
+onMultiplelick : msg -> msg -> Attribute msg
+onMultiplelick msg1 msg2 =
     HE.on
         "click"
         (JD.field "detail" JD.int
             |> JD.andThen
                 (\detail ->
-                    if detail >= 3 then
-                        JD.succeed msg
+                    if detail == 2 then
+                        JD.succeed msg1
+
+                    else if detail >= 3 then
+                        JD.succeed msg2
 
                     else
                         JD.fail ""

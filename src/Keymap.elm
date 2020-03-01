@@ -193,13 +193,14 @@ keymaps =
         Dict.fromList
             [ -- ( "Backspace", RemoveGroupBefore )
               --, ( "Delete", RemoveGroupAfter )
-              ( "b", SelectGroup )
+              ( "j", SelectGroup )
             , ( "c", Copy )
 
             --, ( "g", ToggleGoToLinePanel )
             , ( ".", RollSearchSelectionForward )
             , ( ",", RollSearchSelectionBackward )
             , ( "h", ToggleHelp )
+            , ( "l", SelectLine )
             , ( "x", Cut )
             , ( "s", ToggleSearchPanel )
 

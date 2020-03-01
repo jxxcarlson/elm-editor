@@ -29,53 +29,44 @@ groupRange ({ line, column } as position) strArray =
             let
                 chars : ( Maybe Char, Maybe Char, Maybe Char )
                 chars =
-                    Debug.log "charsAround" <|
-                        charsAround column text
+                    charsAround column text
 
                 range : (Char -> Bool) -> Maybe ( Int, Int )
                 range pred =
                     case tuple3CharsPred pred chars of
                         ( True, True, True ) ->
-                            Debug.log "TTT"
-                                Just
-                                ( groupStart column text
-                                , groupEnd column text
+                            Just
+                                ( groupStart column text + 1
+                                , groupEnd column text - 1
                                 )
 
                         ( False, True, True ) ->
-                            Debug.log "FTT"
-                                Just
+                            Just
                                 ( column
-                                , groupEnd column text
+                                , groupEnd column text - 1
                                 )
 
                         ( True, True, False ) ->
-                            Debug.log "TTF"
-                                Just
-                                ( groupStart column text
+                            Just
+                                ( groupStart column text + 1
                                 , column + 1
                                 )
 
                         ( True, False, _ ) ->
-                            Debug.log "TF_"
-                                Just
-                                ( groupStart column text
+                            Just
+                                ( groupStart column text + 1
                                 , column
                                 )
 
                         ( False, True, False ) ->
-                            Debug.log "FTF"
-                                Just
+                            Just
                                 ( column, column + 1 )
 
                         _ ->
-                            Debug.log "---"
-                                Nothing
+                            Nothing
             in
-            Debug.log "OUT"
-                (range isWordChar
-                    |> Maybe.Extra.orElseLazy (\() -> range isNonWordChar)
-                )
+            range isWordChar
+                |> Maybe.Extra.orElseLazy (\() -> range isNonWordChar)
 
 
 charsAround : Int -> String -> ( Maybe Char, Maybe Char, Maybe Char )

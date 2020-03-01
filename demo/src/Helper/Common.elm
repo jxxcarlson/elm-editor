@@ -8,4 +8,4 @@ windowWidth appWidth =
 
 windowHeight : Float -> Float
 windowHeight appHeight =
-    appHeight - 100
+    appHeight - 140
