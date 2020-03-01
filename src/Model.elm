@@ -222,6 +222,7 @@ type Msg
     | SelectDown
     | SelectLeft
     | SelectRight
+    | SelectGroup
       --
     | Undo
     | Redo

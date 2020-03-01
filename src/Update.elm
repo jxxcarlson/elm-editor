@@ -13,6 +13,7 @@ import Search
 import Task exposing (Task)
 import Update.File
 import Update.Function as Function
+import Update.Group
 import Update.Line
 import Update.Scroll
 import Update.Wrap
@@ -462,3 +463,23 @@ update msg model =
 
         MarkdownMsg _ ->
             model |> withNoCmd
+
+        SelectGroup ->
+            let
+                range =
+                    Update.Group.groupRange model.cursor model.lines
+
+                line =
+                    model.cursor.line
+            in
+            case range of
+                Just ( start, end ) ->
+                    ( { model
+                        | cursor = { line = line, column = end }
+                        , selection = Selection { line = line, column = start } { line = line, column = end }
+                      }
+                    , Cmd.none
+                    )
+
+                Nothing ->
+                    ( model, Cmd.none )

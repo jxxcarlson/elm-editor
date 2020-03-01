@@ -18,7 +18,9 @@ module Common exposing
     , moveLeft
     , moveRight
     , moveUp
+    , nextColumn
     , nextLine
+    , previousColumn
     , previousLine
     , recordHistory
     , recordHistoryWithCmd
@@ -432,3 +434,22 @@ recordHistory_ oldModel newModel =
             else
                 newModel.history
     }
+
+
+
+-- ADDED
+
+
+addColumn : Int -> Position -> Position
+addColumn amount position =
+    { position | column = position.column + amount }
+
+
+nextColumn : Position -> Position
+nextColumn =
+    addColumn 1
+
+
+previousColumn : Position -> Position
+previousColumn =
+    addColumn -1
