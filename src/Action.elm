@@ -158,7 +158,7 @@ selectLine model =
                 |> (\x -> x - 1)
     in
     ( { model
-        | cursor = { line = line, column = 0 }
+        | cursor = { line = line, column = lineEnd_ + 1 }
         , selection = Selection { line = line, column = 0 } { line = line, column = lineEnd_ }
       }
     , Cmd.none
