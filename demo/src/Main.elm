@@ -250,7 +250,7 @@ update msg model =
             ( model, Cmd.none )
 
         RenderMsg renderMsg ->
-            {- DOC sync: renderMsg receives the id of the element clicked in
+            {- DOC sync RL: renderMsg receives the id of the element clicked in
                the rendered text.  It is used highlight the corresponding
                source text (RL sync)
             -}
@@ -397,7 +397,7 @@ markdownDocumentLoader model =
 
 latexDocumentLoader model =
     row [ spacing 12 ]
-        [ el [] (text "LaTeX Docs: ")
+        [ el [] (text "MiniLaTeX Docs: ")
         , View.Widget.loadDocumentButton model 50 "aboutMiniLaTeX" "About"
         , View.Widget.loadDocumentButton model 50 "aboutMiniLaTeX2" "L1"
         , View.Widget.loadDocumentButton model 50 "miniLaTeXExample" "L2"

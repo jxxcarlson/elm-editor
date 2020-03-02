@@ -1245,18 +1245,24 @@ Beryllium& Be& 4& 9.012 \\\\
 \\end{tabular}
 \\end{indent}
 
+
 \\section{Errors and related matters}
 
-\\href{http://nytimes.com}{NYT
+Errors, as illustrated below, are rendered in real
+time and are reported in red, in place.
+For example, suppose the user types the  text
 
-Pythagoras is said to have said that $z^2 + b^2 = c^2
+\\begin{verbatim}
+  $$
+  a^2 + b^2 = c^2
+\\end{verbatim}
 
-Errors, as illustrated above, are rendered in real
-time and are reported in red, in place. Compare
-with the source text on the left.
+Then she will see this:
 
-We plan to make error reporting still better, giving
-detailed context.  Note, by the way, what happens
+\\image{http://jxxcarlson.s3.amazonaws.com/miniLaTeXErrorMsg-2020-02-22.png}{Fig 2. Error message}{width: 200}
+
+
+Note, by the way, what happens
 when a nonexistent macro like \\italic{hohoho } is used:
 
 \\begin{indent}
@@ -1272,7 +1278,10 @@ the philosopher, and the engineer?
 \\end{joke}
 
 This default treatment of unkown environments
- is also intentional, and can even be useful.
+ is also intentional, and can even be useful:
+ when a document is exported to standard LaTeX,
+ the default environment definition can be
+ replaced by one of the user's choice.
 
 \\section{Technology}
 

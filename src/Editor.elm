@@ -133,7 +133,7 @@ editor display to the line where the cursor is.
 -}
 sendLine : Editor -> ( Editor, Cmd Msg )
 sendLine (Editor model) =
-    {- DOC sync: scroll line -}
+    {- DOC sync RL: scroll line -}
     Update.Scroll.sendLine model
         |> (\( model_, message ) -> ( Editor model_, message ))
 

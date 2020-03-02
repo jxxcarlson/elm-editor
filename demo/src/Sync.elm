@@ -1,4 +1,4 @@
-module Sync exposing (ST, Step(..), f, filterMany, fuzzyGet, fuzzyGetOne, g, getId, getText, loop)
+module Sync exposing (ST, Step(..), f, filterMany, fuzzyGet, fuzzyGetOne, getId, getText, loop)
 
 import BiDict exposing (BiDict)
 import Set
@@ -183,6 +183,13 @@ type alias ST =
     { counter : Int, value : Int }
 
 
+{-|
+
+    Add integers 1 .. 5
+    > loop {counter = 5, value = 0} f
+    15
+
+-}
 f : ST -> Step ST Int
 f st =
     case st.counter of
@@ -191,12 +198,3 @@ f st =
 
         _ ->
             Loop { st | counter = st.counter - 1, value = st.value + st.counter }
-
-
-g : ST -> Step ST Int
-g st =
-    if st.counter == 0 then
-        Done st.value
-
-    else
-        f { st | counter = st.counter - 1, value = st.value + 1 }

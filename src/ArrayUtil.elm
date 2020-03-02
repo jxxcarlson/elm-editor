@@ -13,6 +13,7 @@ module ArrayUtil exposing
     , joinEnds
     , joinThree
     , paragraphEnd
+    , paragraphStart
     , paste
     , put
     , replace
@@ -548,11 +549,116 @@ indentLineNeg offset line =
             line
 
 
-paragraphEnd : Position -> Array String -> Maybe Int
+paragraphStart : Position -> Array String -> Int
+paragraphStart position lines =
+    let
+        start =
+            paragraphBoundary BeginParagraph position lines
+    in
+    case start == position.line of
+        True ->
+            start
+
+        False ->
+            start + 1
+
+
+paragraphEnd : Position -> Array String -> Int
 paragraphEnd position lines =
-    lines
-        |> Array.indexedMap (\i line -> ( i, line ))
-        |> Array.filter (\( i, line ) -> i > position.line && line == "")
-        |> Array.toList
-        |> List.head
-        |> Maybe.map Tuple.first
+    let
+        start =
+            paragraphBoundary EndParagraph position lines
+    in
+    case start == position.line of
+        True ->
+            start
+
+        False ->
+            start - 1
+
+
+
+--paragraphEnd : Position -> Array String -> Maybe Int
+--paragraphEnd position lines =
+--    lines
+--        |> Array.indexedMap (\i line -> ( i, line ))
+--        |> Array.filter (\( i, line ) -> i > position.line && line == "")
+--        |> Array.toList
+--        |> List.head
+--        |> Maybe.map Tuple.first
+
+
+type alias ST =
+    { lastIndex : Int, lines : Array String, currentLine : Int }
+
+
+type Direction
+    = Forward
+    | Backward
+
+
+type ParagraphBoundary
+    = BeginParagraph
+    | EndParagraph
+
+
+paragraphBoundary : ParagraphBoundary -> Position -> Array String -> Int
+paragraphBoundary boundary position lines =
+    let
+        initialState =
+            { lastIndex = Array.length lines - 1, lines = lines, currentLine = position.line }
+    in
+    case boundary of
+        BeginParagraph ->
+            loop initialState (next Backward)
+
+        EndParagraph ->
+            loop initialState (next Forward)
+
+
+next : Direction -> ST -> Step ST Int
+next direction st =
+    case Array.get st.currentLine st.lines == Just "" of
+        True ->
+            Done st.currentLine
+
+        False ->
+            case direction of
+                Forward ->
+                    case st.currentLine < st.lastIndex of
+                        True ->
+                            Loop { st | currentLine = st.currentLine + 1 }
+
+                        False ->
+                            Done st.lastIndex
+
+                Backward ->
+                    case st.currentLine == 0 of
+                        True ->
+                            Done 0
+
+                        False ->
+                            Loop { st | currentLine = st.currentLine - 1 }
+
+
+
+--
+--type alias STX =
+--    { counter : Int, value : Int }
+--
+--
+--{-|
+--
+--    Add integers 1 .. 5
+--    > loop {counter = 5, value = 0} f
+--    15
+--
+---}
+--f : STX -> Step STX Int
+--f st =
+--    case st.counter of
+--        0 ->
+--            Done st.value
+--
+--        _ ->
+--            Loop { st | counter = st.counter - 1, value = st.value + st.counter }

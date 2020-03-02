@@ -165,7 +165,7 @@ rollSearchSelectionBackward model =
 
 sendLine : Model -> ( Model, Cmd Msg )
 sendLine model =
-    {- DOC sync: scroll line -}
+    {- DOC sync RL: scroll line -}
     let
         y =
             max 0 (model.lineHeight * toFloat model.cursor.line - verticalOffsetInSourceText)
@@ -173,27 +173,36 @@ sendLine model =
         newCursor =
             { line = model.cursor.line, column = 0 }
 
+        currentLine : Maybe String
         currentLine =
             Array.get newCursor.line model.lines
 
+        paragraphStart : Int
+        paragraphStart =
+            ArrayUtil.paragraphStart newCursor model.lines
+
+        firstLine : Maybe String
+        firstLine =
+            Array.get paragraphStart model.lines
+
+        paragraphEnd : Int
         paragraphEnd =
             ArrayUtil.paragraphEnd newCursor model.lines
 
+        lastLine : Maybe String
+        lastLine =
+            Array.get paragraphEnd model.lines
+
         endColumn : Maybe Int
         endColumn =
-            case paragraphEnd of
-                Nothing ->
-                    Maybe.map String.length currentLine |> Maybe.map (\x -> x - 1)
-
-                Just nn ->
-                    Maybe.map String.length (Array.get nn model.lines)
+            Maybe.map String.length lastLine
 
         selection =
-            case ( paragraphEnd, endColumn ) of
-                ( Just line, Just column ) ->
-                    Selection newCursor (Position line column)
+            case endColumn of
+                Just column ->
+                    Selection (Position paragraphStart 0) (Position paragraphEnd column)
 
-                _ ->
+                Nothing ->
                     NoSelection
     in
     ( { model | cursor = newCursor, selection = selection }, jumpToHeightForSync currentLine newCursor selection y )

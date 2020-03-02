@@ -34,7 +34,7 @@ syncModel newEditor model =
 
 syncAndHighlightRenderedText : String -> Cmd Msg -> Model -> ( Model, Cmd Msg )
 syncAndHighlightRenderedText str cmd model =
-    {- DOC sync -}
+    {- DOC sync RL -}
     case ( model.docType, model.renderingData ) of
         ( MarkdownDoc, MD data ) ->
             syncAndHighlightRenderedMarkdownText str cmd model data
@@ -105,7 +105,7 @@ updateRenderingData lines model =
 
 onId : String -> Model -> ( Model, Cmd Msg )
 onId id model =
-    {- DOC sync: (1) Given the id received after clicking on the rendered text,
+    {- DOC sync RL: (1) Given the id received after clicking on the rendered text,
        look up the corresponding text using a source map; (2) Use that text
         to find the index in the string array of the leading line of the paragraph
         corresponding to the leading leading line; (3) send that index to the
