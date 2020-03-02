@@ -53,7 +53,7 @@ button, upper left. Below are a few
 examples.
 
 
-**Sync.** `ctrl-shift-S` will sync the rendered
+**Sync.** `option-S` will sync the rendered
 text with the source text.  To sync the
 rendered text to the source text, just
 click in the rendered text.  *Coming soon:

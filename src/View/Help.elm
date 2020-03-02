@@ -73,6 +73,12 @@ match with ), ], }, `.  Works also
 if there is a selection.
 ````
 
+### Sync
+
+Press `option-S` in the source text to sync
+it to the rendered text.  Click in the rendered
+text to sync to the source text.
+
 ### Cursor
 
 ````
@@ -111,9 +117,9 @@ Wrap all         ctrl-shift-W
 ### Other
 
 ````
-Toggle dark mode   ctrl-Shift-D
+Toggle dark mode   option-D
 Toggle help        ctrl-H
-Toggle edit mode   ctrl-shift-|
+Toggle edit mode   option-E
 
 The last command is to toggle between normal
 editing and Vim mode.

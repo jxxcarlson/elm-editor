@@ -130,7 +130,7 @@ update msg model =
                 MarkdownLoaded _ ->
                     Helper.Sync.sync newEditor cmd model
 
-                SendLine ->
+                SendLineForLRSync ->
                     Helper.Sync.syncAndHighlightRenderedText (Editor.lineAtCursor newEditor) (Cmd.map EditorMsg cmd) { model | editor = newEditor }
 
                 GotViewportForSync currentLine _ _ ->

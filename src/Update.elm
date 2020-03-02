@@ -354,7 +354,7 @@ update msg model =
             in
             ( model, Update.File.save markdown )
 
-        SendLine ->
+        SendLineForLRSync ->
             Update.Scroll.sendLine model
 
         GotViewportForSync str selection result ->

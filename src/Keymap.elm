@@ -94,8 +94,9 @@ modifierFromFlags ctrl shift option =
 keyToMsg : Keydown -> Decoder Msg
 keyToMsg { char, key, modifier } =
     let
-        --_ =
-        --    Debug.log "{ char, key, modifier }" ( char, key, modifier )
+        _ =
+            Debug.log "{ char, key, modifier }" ( char, key, modifier )
+
         keyFrom keymap =
             Dict.get key keymap
                 |> Maybe.map JD.succeed
@@ -176,6 +177,9 @@ keymaps =
             , ( "ArrowDown", PageDown )
             , ( "ArrowLeft", MoveToLineStart )
             , ( "ArrowRight", MoveToLineEnd )
+            , ( "ß", SendLineForLRSync ) -- option s
+            , ( "∂", ToggleDarkMode ) -- option d
+            , ( "´", ToggleEditMode ) -- option e
             ]
     , controlAndOption =
         Dict.fromList
@@ -215,18 +219,16 @@ keymaps =
             , ( "z", Undo )
             , ( "w", WrapSelection )
             , ( "y", Redo )
-            , ( "\\", SendLine )
+            , ( "\\", SendLineForLRSync )
             ]
     , controlAndShift =
         Dict.fromList
             [ -- ( "ArrowRight", SelectToGroupEnd )
               --, ( "ArrowLeft", SelectToGroupStart )
               ( "C", WriteToSystemClipBoard )
-            , ( "D", ToggleDarkMode )
             , ( "V", CopyPasteClipboard )
             , ( "W", WrapAll )
-            , ( "S", SendLine )
-            , ( "|", ToggleEditMode )
+            , ( "S", SendLineForLRSync )
 
             --, ( "A", SelectAll )
             ]

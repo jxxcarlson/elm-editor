@@ -226,6 +226,7 @@ viewLineNumber viewMode_ n =
 
 viewContent : Model -> Html Msg
 viewContent model =
+    -- TODO: handle option mouseclick for LR sync
     H.div
         [ HA.style "position" "relative"
         , HA.style "flex" "1"

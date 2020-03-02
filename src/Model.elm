@@ -244,7 +244,7 @@ type Msg
     | MarkdownLoaded String
     | EditorSaveFile
       --
-    | SendLine
+    | SendLineForLRSync
     | GotViewportForSync (Maybe String) Selection (Result Dom.Error Dom.Viewport)
       --
     | CopyPasteClipboard
