@@ -12,6 +12,7 @@ module ArrayUtil exposing
     , join
     , joinEnds
     , joinThree
+    , paragraphEnd
     , paste
     , put
     , replace
@@ -545,3 +546,13 @@ indentLineNeg offset line =
 
         False ->
             line
+
+
+paragraphEnd : Position -> Array String -> Maybe Int
+paragraphEnd position lines =
+    lines
+        |> Array.indexedMap (\i line -> ( i, line ))
+        |> Array.filter (\( i, line ) -> i > position.line && line == "")
+        |> Array.toList
+        |> List.head
+        |> Maybe.map Tuple.first

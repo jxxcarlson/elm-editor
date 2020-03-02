@@ -250,6 +250,10 @@ update msg model =
             ( model, Cmd.none )
 
         RenderMsg renderMsg ->
+            {- DOC sync: renderMsg receives the id of the element clicked in
+               the rendered text.  It is used highlight the corresponding
+               source text (RL sync)
+            -}
             case renderMsg of
                 LaTeXMsg latexMsg ->
                     case latexMsg of

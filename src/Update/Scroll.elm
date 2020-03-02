@@ -9,6 +9,7 @@ module Update.Scroll exposing
     )
 
 import Array
+import ArrayUtil
 import Browser.Dom as Dom
 import Model exposing (Model, Msg(..), Position, Selection(..))
 import RollingList
@@ -164,6 +165,7 @@ rollSearchSelectionBackward model =
 
 sendLine : Model -> ( Model, Cmd Msg )
 sendLine model =
+    {- DOC sync: scroll line -}
     let
         y =
             max 0 (model.lineHeight * toFloat model.cursor.line - verticalOffsetInSourceText)
@@ -174,12 +176,24 @@ sendLine model =
         currentLine =
             Array.get newCursor.line model.lines
 
-        selection =
-            case Maybe.map String.length currentLine of
-                Just n ->
-                    Selection newCursor (Position newCursor.line (n - 1))
+        paragraphEnd =
+            ArrayUtil.paragraphEnd newCursor model.lines
 
+        endColumn : Maybe Int
+        endColumn =
+            case paragraphEnd of
                 Nothing ->
+                    Maybe.map String.length currentLine |> Maybe.map (\x -> x - 1)
+
+                Just nn ->
+                    Maybe.map String.length (Array.get nn model.lines)
+
+        selection =
+            case ( paragraphEnd, endColumn ) of
+                ( Just line, Just column ) ->
+                    Selection newCursor (Position line column)
+
+                _ ->
                     NoSelection
     in
     ( { model | cursor = newCursor, selection = selection }, jumpToHeightForSync currentLine newCursor selection y )
