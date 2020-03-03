@@ -61,8 +61,11 @@ loadDocument title source docType model =
 
         MiniLaTeXDoc ->
             let
+                _ =
+                    Debug.log "loading" "MiniLaTeXDoc"
+
                 renderingData =
-                    Render.load ( 0, 0 ) model.counter OMiniLatex source
+                    Render.load ( 0, 0 ) (model.counter + 1) OMiniLatex source
 
                 fileName =
                     title ++ ".latex"
@@ -70,7 +73,7 @@ loadDocument title source docType model =
             { model
                 | renderingData = renderingData
                 , fileName = Just fileName
-                , counter = model.counter + 1
+                , counter = model.counter + 2
                 , editor =
                     Editor.initWithContent source
                         (config { width = model.width, height = model.height, wrapOption = DontWrap })

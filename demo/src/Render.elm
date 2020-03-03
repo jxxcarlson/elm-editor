@@ -213,12 +213,12 @@ loadMarkdownFast selectedId counter option str =
 
 loadMiniLatex : Int -> String -> RenderingData
 loadMiniLatex version str =
-    ML { fullText = Nothing, editRecord = MiniLatex.Edit.init Delay version str }
+    ML { fullText = Nothing, editRecord = MiniLatex.Edit.init NoDelay version str }
 
 
 loadMiniLatexFast : Int -> String -> RenderingData
 loadMiniLatexFast version str =
-    ML { fullText = Just str, editRecord = MiniLatex.Edit.init Delay version (getFirstPart str) }
+    ML { fullText = Just str, editRecord = MiniLatex.Edit.init NoDelay version (getFirstPart str) }
 
 
 {-| HELPERS

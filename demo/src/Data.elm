@@ -1371,7 +1371,6 @@ powers, we have
 
 \\begin{equation}
 H_0\\psi_0 + \\epsilon H_0 \\psi_1 + \\epsilon V\\psi_0
- =
 E_0\\psi_0 + \\epsilon E_0 \\psi_1 + \\epsilon E_1 \\psi_0
 \\end{equation}
 
@@ -1399,8 +1398,8 @@ The $\\epsilon^1$ component of the equation reads
 Take the inner product with $\\psi_0$ :
 
 \\begin{equation}
-\\left< \\psi_0 | H_0  | \\psi_1\\right> +  \\left< \\psi_0  | V | \\psi_0 \\right>
- =
+\\left< \\psi_0 | H_0  | \\psi_1\\right> +  \\left< \\psi_0  | V | \\psi_0 \\right> \\
+ = \\
  E_0 \\left< \\psi_0  |  \\psi_1 \\right> +  E_1 \\left< \\psi_0  |  \\psi_0 \\right>
 \\end{equation}
 
