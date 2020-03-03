@@ -61,9 +61,6 @@ loadDocument title source docType model =
 
         MiniLaTeXDoc ->
             let
-                _ =
-                    Debug.log "loading" "MiniLaTeXDoc"
-
                 renderingData =
                     Render.load ( 0, 0 ) (model.counter + 1) OMiniLatex source
 
