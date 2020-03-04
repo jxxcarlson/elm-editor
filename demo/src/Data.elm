@@ -1503,7 +1503,8 @@ shift in energy levels is given by a Gaussian
 integral:
 
 \\begin{equation}
-\\Delta E_0 = \\lambda g \\left(\\frac{m\\omega}{\\pi\\hbar}\\right)^{ 1/2 } \\int_{-\\infty}^\\infty x^4 e^{-m\\omega x^2 / \\hbar} dx
+\\Delta E_0 = \\lambda g
+ \\left(\\frac{m\\omega}{\\pi\\hbar}\\right)^{ 1/2 } \\int_{-\\infty}^\\infty x^4 e^{-m\\omega x^2 / \\hbar} dx
 \\end{equation}
 
 The integral to be evaluated has the form
@@ -1567,11 +1568,19 @@ x = \\left(\\frac{ \\hbar }{  2m \\omega} \\right)^{1/2} (a + a^\\dagger )
 Substituting this into (<<DeltaEn>>), we find
 that
 
-\\begin{align}
+\\begin{equation}
 \\label{aa4}
-\\Delta E_0 &= \\lambda g \\left(\\frac{ \\hbar }{  2m \\omega} \\right)^{2} \\left< \\psi_0 | ( a + a^\\dagger )^4 | \\psi_0 \\right> \\\\
-&= \\lambda \\frac{1}{16}\\,\\frac{\\omega \\hbar}{2}\\,\\left< \\psi_0 | ( a + a^\\dagger )^4 | \\psi_0 \\right>
-\\end{align}
+\\Delta E_0 = \\lambda g \\left(\\frac{ \\hbar }{  2m \\omega} \\right)^{2} \\left< \\psi_0 | ( a + a^\\dagger )^4 | \\psi_0 \\right>
+\\end{equation}
+
+
+or, expanding,
+
+\\begin{equation}
+\\label{aa4}
+\\Delta E_0 =
+= \\lambda \\frac{1}{16}\\frac{\\omega \\hbar}{2}\\left< \\psi_0 | ( a + a^\\dagger )^4 | \\psi_0 \\right>
+\\end{equation}
 
 The operator $(a + a^\\dagger)^4$ is a sum of
 sixteen noncommutative monomials which can be
@@ -1645,7 +1654,7 @@ normal order. It is zero if $M \\ne 1$ and is
 value of the perturbation term for the energy:
 
 \\begin{equation}
-\\Delta E_0 = \\frac{3}{16}\\,\\left( \\frac{\\omega \\hbar}{2}\\right)  \\lambda
+\\Delta E_0 = \\frac{3}{16}\\left( \\frac{\\omega \\hbar}{2}\\right)  \\lambda
 \\end{equation}
 
 This is in agreement with the value computed
