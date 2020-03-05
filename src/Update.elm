@@ -3,6 +3,7 @@ module Update exposing (update)
 import Action
 import Array exposing (Array)
 import ArrayUtil
+import Browser.Dom as Dom
 import Cmd.Extra exposing (withCmd, withCmds, withNoCmd)
 import Common exposing (..)
 import ContextMenu exposing (ContextMenu)
@@ -400,7 +401,13 @@ update msg model =
             Search.do key model |> withCmd Cmd.none
 
         ToggleSearchPanel ->
-            { model | showSearchPanel = not model.showSearchPanel } |> withNoCmd
+            -- TODO: FOCUS ON "editor-search-box"
+            let
+                focusSearchBox : Cmd Msg
+                focusSearchBox =
+                    Task.attempt (\_ -> EditorNoOp) (Dom.focus "editor-search-box")
+            in
+            { model | showSearchPanel = not model.showSearchPanel } |> withCmd focusSearchBox
 
         ToggleReplacePanel ->
             { model | canReplace = not model.canReplace } |> withNoCmd

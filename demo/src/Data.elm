@@ -1083,6 +1083,12 @@ be visible in the
 rendered text.
 \\end{comment}
 
+\\begin{mathmacro}
+\\newcommand{\\bt}[1]{\\bf{#1}}
+\\newcommand{\\mca}[0]{\\mathcal{A}}
+\\end{mathmacro}
+
+
 \\tableofcontents
 
 \\strong{Note.} This version of the MiniLaTeX
@@ -1133,6 +1139,76 @@ An improper integral:
 \\label{integral:exp}
 \\int_0^\\infty e^{-x} dx = 1
 \\end{equation}
+
+
+\\section{Math-mode macros}
+
+
+
+You can add math mode macros to your document
+as in the example below.
+
+\\begin{verbatim}
+\\begin{mathmacro}
+\\newcommand{\\bt}[1]{\\bf{#1}}
+\\newcommand{\\mca}[0]{\\mathcal{A}}
+\\end{mathmacro}
+\\end{verbatim}
+
+Then saying
+
+\\begin{verbatim}
+ $$
+ a^2 = \\bt{Z}/\\mca
+ $$
+\\end{verbatim}
+
+yields
+
+$$
+a^2 = \\bt{Z}/\\mca
+$$
+
+Likewise, saying
+
+\\begin{verbatim}
+\\begin{equation}
+\\label{eq:function.type}
+\\mca^{\\bt{Z}} = \\bt{Z} \\to \\mca
+\\end{equation}
+
+\\end{verbatim}
+
+yields
+
+\\begin{equation}
+\\label{eq:function.type}
+\\mca^{\\bt{Z}} = \\bt{Z} \\to \\mca
+\\end{equation}
+
+
+There are some restrictions:
+
+\\begin{verbatim}
+1. No regions, e.g, use \\bf{#1},
+   not {\\bf #1}
+
+2. Macros with no arguments:
+   Say \\newcommand{\\mca}[0]{\\mathcal{A}},
+   not \\newcommand{\\mca}{\\mathcal{A}}
+
+3. No recursion: the body of the macro
+   cannot refer to other macros defined
+   in the mathmacro environment.
+
+4. Put the mathmacro environment at
+   the beginning of the document
+\\end{verbatim}
+
+
+Items 1—3 will be eliminated in a
+future release.
+
 
 
 \\section{Text-mode Macros}
@@ -1579,7 +1655,7 @@ or, expanding,
 \\begin{equation}
 \\label{aa4}
 \\Delta E_0 =
-= \\lambda \\frac{1}{16}\\frac{\\omega \\hbar}{2}\\left< \\psi_0 | ( a + a^\\dagger )^4 | \\psi_0 \\right>
+     \\lambda \\frac{1}{16}\\frac{\\omega \\hbar}{2}\\left< \\psi_0 | ( a + a^\\dagger )^4 | \\psi_0 \\right>
 \\end{equation}
 
 The operator $(a + a^\\dagger)^4$ is a sum of

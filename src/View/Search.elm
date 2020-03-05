@@ -125,7 +125,7 @@ acceptSearchText =
         ""
         [ HA.style "float" "left"
         ]
-        [ setHtmlId "editor-search-box", HA.style "height" "20px" ]
+        [ setHtmlId "editor-search-box" ]
 
 
 acceptReplaceText =
