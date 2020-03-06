@@ -79,36 +79,6 @@ syncAndHighlightRenderedMarkdownText str cmd model data =
     )
 
 
-
---
---{-| DOC sync LR
----}
---syncAndHighlightRenderedText : String -> Cmd Msg -> Model -> ( Model, Cmd Msg )
---syncAndHighlightRenderedText str cmd model =
---    let
---        targetId =
---            Parse.searchAST str model.lastAst |> Maybe.withDefault ( 0, 0 )
---
---        newAst =
---            Parse.incrementVersion targetId model.lastAst
---
---        ( i, v ) =
---            targetId
---
---        newId =
---            ( i, v + 1 )
---
---        newIdString =
---            Parse.stringFromId newId
---
---        renderedText =
---            Markdown.Render.fromASTWithOptions ExtendedMath (ExternalTOC "Contents") newId newAst
---    in
---    ( { model | renderedText = renderedText, lastAst = newAst, selectedId = newId }
---    , Cmd.batch [ cmd, setViewportForElement newIdString ]
---    )
-
-
 syncAndHighlightRenderedMiniLaTeXText : String -> Cmd Msg -> Model -> MLData -> ( Model, Cmd Msg )
 syncAndHighlightRenderedMiniLaTeXText str cmd model data =
     let
