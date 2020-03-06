@@ -48,6 +48,8 @@ diffUpdateAst option counter text lastAst =
 
 render : ( Int, Int ) -> Tree Parse.MDBlockWithId -> MarkdownOutput
 render selectedId ast =
+    -- Markdown.Render.fromASTWithOptions ExtendedMath (ExternalTOC "Topics") selectedId ast
+    -- Markdown.Render.fromASTWithOptions ExtendedMath (ExternalTOC "Topics") ( 5, 0 ) ast
     Markdown.Render.fromASTWithOptions ExtendedMath (ExternalTOC "Topics") selectedId ast
 
 

@@ -1,6 +1,19 @@
-module Sync exposing (ST, Step(..), f, filterMany, fuzzyGet, fuzzyGetOne, getId, getText, loop)
+module Sync exposing
+    ( ST
+    , Step(..)
+    , f
+    , filterMany
+    , fuzzyGet
+    , fuzzyGetOne
+    , getId
+    , getIdFromString
+    , getText
+    , loop
+    , stringFromId
+    )
 
 import BiDict exposing (BiDict)
+import Parser exposing ((|.), (|=), Parser)
 import Set
 
 
@@ -30,6 +43,30 @@ getId text_ dict_ =
 
         True ->
             fuzzyGetOne text dict_
+
+
+getIdFromString : String -> Maybe ( Int, Int )
+getIdFromString str =
+    case Parser.run parseId str of
+        Ok result ->
+            Just result
+
+        Err _ ->
+            Nothing
+
+
+stringFromId : ( Int, Int ) -> String
+stringFromId ( i, v ) =
+    "i" ++ String.fromInt i ++ "v" ++ String.fromInt v
+
+
+parseId : Parser ( Int, Int )
+parseId =
+    Parser.succeed (\i v -> ( i, v ))
+        |. Parser.symbol "i"
+        |= Parser.int
+        |. Parser.symbol "v"
+        |= Parser.int
 
 
 

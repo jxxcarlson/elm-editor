@@ -35,6 +35,10 @@ syncModel newEditor model =
 syncAndHighlightRenderedText : String -> Cmd Msg -> Model -> ( Model, Cmd Msg )
 syncAndHighlightRenderedText str cmd model =
     {- DOC sync RL -}
+    let
+        _ =
+            Debug.log "ENTER" "syncAndHighlightRenderedText"
+    in
     case ( model.docType, model.renderingData ) of
         ( MarkdownDoc, MD data ) ->
             syncAndHighlightRenderedMarkdownText str cmd model data
@@ -53,13 +57,62 @@ syncAndHighlightRenderedMarkdownText str cmd model data =
             Markdown.Parse.toMDBlockTree 0 ExtendedMath str
                 |> Markdown.Parse.getLeadingTextFromAST
 
-        id_ =
-            Sync.getId str2 data.sourceMap
-                |> Maybe.withDefault "0v0"
+        idString =
+            Debug.log "Sync ID"
+                (Sync.getId str2 data.sourceMap
+                    |> Maybe.withDefault "0v0"
+                )
+
+        targetId =
+            Sync.getIdFromString idString |> Maybe.withDefault ( 0, -1 )
+
+        ( i, v ) =
+            targetId
+
+        newId =
+            ( i, v + 1 )
+
+        newRendingData =
+            model.renderingData
+                |> Render.incrementVersion targetId
+                |> Render.updateFromAstWithId newId
+
+        newIdString =
+            Sync.stringFromId newId
     in
-    ( { model | selectedId_ = id_ }
-    , Cmd.batch [ cmd, View.Scroll.setViewportForElementInRenderedText id_ ]
+    ( { model | selectedId_ = idString, renderingData = newRendingData }
+    , Cmd.batch [ cmd, View.Scroll.setViewportForElementInRenderedText newIdString ]
     )
+
+
+
+--
+--{-| DOC sync LR
+---}
+--syncAndHighlightRenderedText : String -> Cmd Msg -> Model -> ( Model, Cmd Msg )
+--syncAndHighlightRenderedText str cmd model =
+--    let
+--        targetId =
+--            Parse.searchAST str model.lastAst |> Maybe.withDefault ( 0, 0 )
+--
+--        newAst =
+--            Parse.incrementVersion targetId model.lastAst
+--
+--        ( i, v ) =
+--            targetId
+--
+--        newId =
+--            ( i, v + 1 )
+--
+--        newIdString =
+--            Parse.stringFromId newId
+--
+--        renderedText =
+--            Markdown.Render.fromASTWithOptions ExtendedMath (ExternalTOC "Contents") newId newAst
+--    in
+--    ( { model | renderedText = renderedText, lastAst = newAst, selectedId = newId }
+--    , Cmd.batch [ cmd, setViewportForElement newIdString ]
+--    )
 
 
 syncAndHighlightRenderedMiniLaTeXText : String -> Cmd Msg -> Model -> MLData -> ( Model, Cmd Msg )

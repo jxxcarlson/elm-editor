@@ -5,10 +5,12 @@ module Render exposing
     , RenderingOption(..)
     , get
     , getFullAst
+    , incrementVersion
     , load
     , loadFast
     , render
     , update
+    , updateFromAstWithId
     )
 
 -- import Html exposing (Attribute, Html)
@@ -17,7 +19,7 @@ import BiDict exposing (BiDict)
 import Html exposing (Html)
 import Html.Attributes as Attribute
 import Markdown.Option exposing (..)
-import Markdown.Parse as Parse
+import Markdown.Parse
 import Markdown.Render exposing (MarkdownMsg(..), MarkdownOutput(..))
 import MiniLatex
 import MiniLatex.Edit exposing (LaTeXMsg(..))
@@ -50,8 +52,8 @@ type alias MLData =
 type alias MDData =
     { option : MarkdownOption
     , renderedText : MarkdownOutput
-    , initialAst : Tree Parse.MDBlockWithId
-    , fullAst : Tree Parse.MDBlockWithId
+    , initialAst : Tree Markdown.Parse.MDBlockWithId
+    , fullAst : Tree Markdown.Parse.MDBlockWithId
     , sourceMap : BiDict String String
     }
 
@@ -61,7 +63,7 @@ type RenderingOption
     | OMiniLatex
 
 
-getFullAst : RenderingData -> Maybe (Tree Parse.MDBlockWithId)
+getFullAst : RenderingData -> Maybe (Tree Markdown.Parse.MDBlockWithId)
 getFullAst rd =
     case rd of
         ML _ ->
@@ -122,7 +124,7 @@ update selectedId version source rd =
                     -- , renderedText = Markdown.ElmWithId.renderHtmlWithExternalTOC selectedId "Topics" newAst
                     , renderedText = Render.Markdown.render selectedId newAst
                     , initialAst = newAst
-                    , sourceMap = Parse.sourceMap newAst
+                    , sourceMap = Markdown.Parse.sourceMap newAst
                 }
 
         ML data ->
@@ -178,14 +180,14 @@ loadMarkdown : ( Int, Int ) -> Int -> MarkdownOption -> String -> RenderingData
 loadMarkdown selectedId counter option str =
     let
         ast =
-            Parse.toMDBlockTree counter ExtendedMath str
+            Markdown.Parse.toMDBlockTree counter ExtendedMath str
     in
     MD
         { option = option
         , initialAst = ast
         , fullAst = ast
         , renderedText = Render.Markdown.render selectedId ast
-        , sourceMap = Parse.sourceMap ast
+        , sourceMap = Markdown.Parse.sourceMap ast
         }
 
 
@@ -193,17 +195,17 @@ loadMarkdownFast : ( Int, Int ) -> Int -> MarkdownOption -> String -> RenderingD
 loadMarkdownFast selectedId counter option str =
     let
         fullAst =
-            Parse.toMDBlockTree (counter + 1) ExtendedMath str
+            Markdown.Parse.toMDBlockTree (counter + 1) ExtendedMath str
 
         initialAst =
-            Parse.toMDBlockTree counter option (getFirstPart str)
+            Markdown.Parse.toMDBlockTree counter option (getFirstPart str)
     in
     MD
         { option = option
         , initialAst = initialAst
         , fullAst = fullAst
         , renderedText = Render.Markdown.render selectedId initialAst
-        , sourceMap = Parse.sourceMap fullAst
+        , sourceMap = Markdown.Parse.sourceMap fullAst
         }
 
 
@@ -247,3 +249,23 @@ innerTocItem tocEntry =
         [ Html.a [ Attribute.href <| "#_subsection_" ++ name, Attribute.style "font-size" "14px", Attribute.style "font-color" "blue" ]
             [ Html.text <| tocEntry.label ++ " " ++ tocEntry.name ]
         ]
+
+
+incrementVersion : ( Int, Int ) -> RenderingData -> RenderingData
+incrementVersion id renderingData =
+    case renderingData of
+        ML data ->
+            ML data
+
+        MD data ->
+            MD { data | fullAst = Markdown.Parse.incrementVersion id data.fullAst }
+
+
+updateFromAstWithId : ( Int, Int ) -> RenderingData -> RenderingData
+updateFromAstWithId id renderingData =
+    case renderingData of
+        ML data ->
+            ML data
+
+        MD data ->
+            MD { data | renderedText = Render.Markdown.render id data.fullAst }
