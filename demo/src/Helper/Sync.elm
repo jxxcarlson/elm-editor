@@ -35,10 +35,6 @@ syncModel newEditor model =
 syncAndHighlightRenderedText : String -> Cmd Msg -> Model -> ( Model, Cmd Msg )
 syncAndHighlightRenderedText str cmd model =
     {- DOC sync RL -}
-    let
-        _ =
-            Debug.log "ENTER" "syncAndHighlightRenderedText"
-    in
     case ( model.docType, model.renderingData ) of
         ( MarkdownDoc, MD data ) ->
             syncAndHighlightRenderedMarkdownText str cmd model data
@@ -58,10 +54,8 @@ syncAndHighlightRenderedMarkdownText str cmd model data =
                 |> Markdown.Parse.getLeadingTextFromAST
 
         idString =
-            Debug.log "Sync ID"
-                (Sync.getId str2 data.sourceMap
-                    |> Maybe.withDefault "0v0"
-                )
+            Sync.getId str2 data.sourceMap
+                |> Maybe.withDefault "0v0"
 
         targetId =
             Sync.getIdFromString idString |> Maybe.withDefault ( 0, -1 )
