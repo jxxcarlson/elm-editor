@@ -60,8 +60,8 @@ in  a line of the source text.  To sync the
 source text to the rendered text, just
 click in the rendered text.  Both
 elements of the source and rendered text
-will be highlighted.  **NOTE:** *This feature
-is still quite buggy and under active development.*
+will be highlighted.   *This feature
+is quite new and needs more testing.*
 
 **Wrap.** `ctrl-W` will wrap
 the current selection, while `ctrl-shift-W`
