@@ -45,6 +45,10 @@ getId text_ dict_ =
             fuzzyGetOne text dict_
 
 
+
+-- fuzzyGet text dict_
+
+
 getIdFromString : String -> Maybe ( Int, Int )
 getIdFromString str =
     case Parser.run parseId str of
@@ -69,33 +73,9 @@ parseId =
         |= Parser.int
 
 
-
--- getText : String -> BiDict String String -> Maybe String
-
-
 getText : String -> BiDict String String -> Maybe String
 getText id dict_ =
     BiDict.get id dict_
-
-
-
---
---
---get_ :
---    String
---    -> (String -> Dict String String -> Maybe String)
---    -> Dict String String
---    -> Maybe String
---get_ key lookup dict_ =
---    case Dict.get (clean key) dict_ of
---        Just str ->
---            Just str
---
---        --Nothing ->
---        --    fuzzyGet key dict_ |> List.head
---        Nothing ->
---            lookup key dict_
---
 
 
 clean : String -> String
@@ -210,7 +190,7 @@ loop : state -> (state -> Step state a) -> a
 loop s nextState =
     case nextState s of
         Loop s_ ->
-            loop s_ nextState
+            loop (Debug.log "ST" s_) nextState
 
         Done b ->
             b
