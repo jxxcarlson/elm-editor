@@ -190,7 +190,7 @@ loop : state -> (state -> Step state a) -> a
 loop s nextState =
     case nextState s of
         Loop s_ ->
-            loop (Debug.log "ST" s_) nextState
+            loop s_ nextState
 
         Done b ->
             b

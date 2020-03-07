@@ -148,12 +148,12 @@ getIndexAndText id model =
     case model.renderingData of
         MD data ->
             Sync.getText id data.sourceMap
-                |> Debug.log "SOURCE"
+                -- |> Debug.log "SOURCE"
                 |> Maybe.map (shorten 5)
-                |> Debug.log "Short KEY"
+                -- |> Debug.log "Short KEY"
                 |> Maybe.andThen (Editor.indexOf model.editor)
-                |> Debug.log "INDEX"
 
+        -- |> Debug.log "INDEX"
         ML data ->
             Sync.getText id data.editRecord.sourceMap
                 |> Maybe.andThen leadingLine
