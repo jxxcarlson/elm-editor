@@ -1,9 +1,4 @@
-module ArraySearch exposing
-    ( filter
-    , filterWithKey
-    , init
-    , testData
-    )
+module ArraySearch exposing (filter)
 
 import Array exposing (Array)
 
