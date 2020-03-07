@@ -75,7 +75,7 @@ if there is a selection.
 
 ### Sync
 
-Press `option-S` in the source text to sync
+Press `ctrl-\\` in the source text to sync
 it to the rendered text.  Click in the rendered
 text to sync to the source text.
 

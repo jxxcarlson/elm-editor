@@ -417,13 +417,13 @@ viewRenderedText model width_ height_ =
         , Element.htmlAttribute (Attribute.style "line-height" "20px")
         , Element.paddingEach { left = 14, top = 0, right = 14, bottom = 24 }
         , Border.width 1
-        , Background.color <| gray 240
+        , Background.color <| gray 255
 
         -- , Element.htmlAttribute (Attribute.id model.selectedId_ (Html.style "background-color" "#cce"))
         ]
         [ showIf (model.docType == MarkdownDoc)
-            ((Render.get model.renderingData).title |> Html.map RenderMsg |> Element.html)
-        , (Render.get model.renderingData).document |> Html.map RenderMsg |> Element.html
+            ((Render.get model.selectedId_ model.renderingData).title |> Html.map RenderMsg |> Element.html)
+        , (Render.get model.selectedId_ model.renderingData).document |> Html.map RenderMsg |> Element.html
         ]
 
 

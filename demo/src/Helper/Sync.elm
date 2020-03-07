@@ -66,7 +66,7 @@ syncAndHighlightRenderedMarkdownText str cmd model data =
         newId =
             ( i, v + 1 )
 
-        newRendingData =
+        newRenderingData =
             model.renderingData
                 |> Render.incrementVersion targetId
                 |> Render.updateFromAstWithId newId
@@ -74,7 +74,7 @@ syncAndHighlightRenderedMarkdownText str cmd model data =
         newIdString =
             Sync.stringFromId newId
     in
-    ( { model | selectedId_ = idString, renderingData = newRendingData }
+    ( { model | selectedId_ = idString, renderingData = newRenderingData }
     , Cmd.batch [ cmd, View.Scroll.setViewportForElementInRenderedText newIdString ]
     )
 
@@ -82,12 +82,13 @@ syncAndHighlightRenderedMarkdownText str cmd model data =
 syncAndHighlightRenderedMiniLaTeXText : String -> Cmd Msg -> Model -> MLData -> ( Model, Cmd Msg )
 syncAndHighlightRenderedMiniLaTeXText str cmd model data =
     let
-        id =
+        idString : String
+        idString =
             Sync.getId str data.editRecord.sourceMap
                 |> Maybe.withDefault "0v0"
     in
-    ( model
-    , Cmd.batch [ cmd, View.Scroll.setViewportForElementInRenderedText id ]
+    ( { model | selectedId_ = idString }
+    , Cmd.batch [ cmd, View.Scroll.setViewportForElementInRenderedText idString ]
     )
 
 

@@ -131,15 +131,15 @@ update selectedId version source rd =
             ML { data | editRecord = MiniLatex.Edit.update NoDelay version source data.editRecord }
 
 
-get : RenderingData -> RenderedText
-get rd =
+get : String -> RenderingData -> RenderedText
+get selectedId rd =
     case rd of
         MD data ->
             data.renderedText
                 |> fixMD
 
         ML data ->
-            { document = MiniLatex.Edit.get data.editRecord |> Html.div [ Attribute.attribute "id" "__RENDERED_TEXT__" ]
+            { document = MiniLatex.Edit.get selectedId data.editRecord |> Html.div [ Attribute.attribute "id" "__RENDERED_TEXT__" ]
             , title = Html.span [ Attribute.style "font-size" "24px" ] [ Html.text (getTitle data.editRecord) ]
             , toc = innerTableOfContents data.editRecord.latexState
             }

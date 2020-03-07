@@ -396,10 +396,14 @@ viewSelectedChar viewMode_ position char =
 selectedColor viewMode_ =
     case viewMode_ of
         Light ->
-            HA.style "background-color" "#cce"
+            HA.style "background-color" highlightColorLight
 
         Dark ->
             HA.style "background-color" "#44a"
+
+
+highlightColorLight =
+    "#d7d6ff"
 
 
 

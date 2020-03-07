@@ -53,11 +53,14 @@ button, upper left. Below are a few
 examples.
 
 
-**Sync.** `option-S` will sync the rendered
-text with the source text.  To sync the
-rendered text to the source text, just
-click in the rendered text.  *Coming soon:
-the rendered text element will be highlighted.*
+**Sync.**
+To sync the rendered
+text to the source text, type `ctrl-\\`
+in  a line of the source text.  To sync the
+source text to the rendered text, just
+click in the rendered text.  Both
+elements of the source and rendered text
+will be highlighted.
 
 **Wrap.** `ctrl-W` will wrap
 the current selection, while `ctrl-shift-W`
@@ -123,32 +126,16 @@ to right sync for MiniLaTex documents~~
 
 - ~~Dark mode option~~
 
-- Highlight rendered text element on sync
+- ~~Highlight rendered text element on sync~~
 
-- Matching of parentheses, brackets, etc.
+- ~~Matching of parentheses, brackets, etc.~~
 
 - Additional features from Nemzer's editor that
 have not yet been implemented.
 
-- Vim mode.  This will take a while to implement.
-Now in the meditation phase.
-
-
-## CHANGELOG
-
-Most recent first
-
-- 2/28/2020. Add ctrl-. (Think >) to go to next search hit
-
-- 2/28/2020. Add ctrl-, (Think <) to go to previous search hit
-
-- 2/28/2020. Add <TAB> to indent by default amount
-
-- 2/28/2020. Add <TAB> to indent by default amount
-
-- 2/28/2020. Add shift-<TAB> to deindent by default amount
-
-- 2/28/2020. Add ctrl-/ for left-to-right sync
+- Vim mode.  This will take a while to implement. A scaffold
+has been constructed and a few commands
+added: `h` `j` `k` `l` as well as `i` and `ESC` .
 
 
 """
