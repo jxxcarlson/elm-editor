@@ -74,7 +74,7 @@ syncAndHighlightRenderedMarkdownText str cmd model data =
         newIdString =
             Sync.stringFromId newId
     in
-    ( { model | selectedId_ = idString, renderingData = newRenderingData }
+    ( { model | selectedId_ = newIdString, renderingData = newRenderingData }
     , Cmd.batch [ cmd, View.Scroll.setViewportForElementInRenderedText newIdString ]
     )
 
@@ -129,28 +129,39 @@ onId id model =
         corresponding to the leading leading line; (3) send that index to the
         Editor so that it can highlight/raise that line (or its paragraph)
     -}
-    let
-        ( index, line ) =
-            case model.renderingData of
-                MD data ->
-                    Sync.getText id data.sourceMap
-                        |> Maybe.map (shorten 5)
-                        |> Maybe.andThen (Editor.indexOf model.editor)
-                        |> Maybe.withDefault ( -1, "error" )
+    case getIndexAndText id model of
+        Just ( index, line ) ->
+            let
+                ( newEditor, cmd ) =
+                    Editor.sendLine (Editor.setCursor { line = index, column = 0 } model.editor)
+            in
+            ( { model | editor = newEditor, message = "Clicked: (" ++ id ++ ", " ++ String.fromInt (index + 1) ++ ")" }
+            , Cmd.batch [ cmd |> Cmd.map EditorMsg, View.Scroll.setViewportForElementInRenderedText id ]
+            )
 
-                ML data ->
-                    Sync.getText id data.editRecord.sourceMap
-                        |> Maybe.andThen leadingLine
-                        |> Maybe.andThen (Editor.indexOf model.editor)
-                        |> Maybe.withDefault ( -1, "error" )
+        Nothing ->
+            ( { model | message = "Clicked: (" ++ id ++ " (sync error [2])" }, Cmd.none )
 
-        ( newEditor, cmd ) =
-            Editor.sendLine (Editor.setCursor { line = index, column = 0 } model.editor)
-    in
-    -- TODO: issue command to sync id and line
-    ( { model | editor = newEditor, message = "Clicked: (" ++ id ++ ", " ++ String.fromInt (index + 1) ++ ")" }
-    , Cmd.batch [ cmd |> Cmd.map EditorMsg, View.Scroll.setViewportForElementInRenderedText id ]
-    )
+
+getIndexAndText : String -> Model -> Maybe ( Int, String )
+getIndexAndText id model =
+    case model.renderingData of
+        MD data ->
+            Sync.getText id data.sourceMap
+                |> Debug.log "SOURCE"
+                |> Maybe.map (shorten 5)
+                |> Debug.log "Short KEY"
+                |> Maybe.andThen (Editor.indexOf model.editor)
+                |> Debug.log "INDEX"
+
+        ML data ->
+            Sync.getText id data.editRecord.sourceMap
+                |> Maybe.andThen leadingLine
+                |> Maybe.andThen (Editor.indexOf model.editor)
+
+
+
+-- TODO: issue command to sync id and line
 
 
 shorten : Int -> String -> String
