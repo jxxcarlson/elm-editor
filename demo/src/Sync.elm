@@ -30,19 +30,25 @@ getId : String -> BiDict String String -> Maybe String
 getId text_ dict_ =
     let
         text =
-            clean text_
+            Debug.log "getId, text"
+                (clean (Debug.log "getId, text_" text_))
 
         idSet =
-            BiDict.getReverse text_ dict_
+            Debug.log "getId, idSet"
+                BiDict.getReverse
+                text_
+                dict_
     in
-    case BiDict.getReverse text dict_ |> Set.isEmpty of
+    case BiDict.getReverse text_ dict_ |> Set.isEmpty of
         False ->
             idSet
                 |> Set.toList
                 |> List.head
+                |> Debug.log "get, output (1)"
 
         True ->
             fuzzyGetOne text dict_
+                |> Debug.log "get, output (2)"
 
 
 
@@ -139,6 +145,10 @@ type alias SearchState =
 
 nextSearchState : SearchState -> Step SearchState (Maybe String)
 nextSearchState { predicates, pairs } =
+    let
+        _ =
+            Debug.log "predicates, pairs" ( predicates, pairs )
+    in
     case ( List.head predicates, List.length pairs ) of
         ( _, 0 ) ->
             Done Nothing
