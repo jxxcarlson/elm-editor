@@ -34,7 +34,7 @@ syncModel newEditor model =
 
 syncAndHighlightRenderedText : String -> Cmd Msg -> Model -> ( Model, Cmd Msg )
 syncAndHighlightRenderedText str cmd model =
-    {- DOC sync RL -}
+    {- DOC sync RL and LR (4) -}
     case ( model.docType, model.renderingData ) of
         ( MarkdownDoc, MD data ) ->
             syncAndHighlightRenderedMarkdownText str cmd model data
@@ -86,9 +86,12 @@ syncAndHighlightRenderedMiniLaTeXText str cmd model data =
         idString =
             Sync.getId str data.editRecord.sourceMap
                 |> Maybe.withDefault "0v0"
+
+        idStringSelected =
+            "select:" ++ idString
     in
     ( { model | selectedId_ = idString }
-    , Cmd.batch [ cmd, View.Scroll.setViewportForElementInRenderedText idString ]
+    , Cmd.batch [ cmd, View.Scroll.setViewportForElementInRenderedText idStringSelected ]
     )
 
 
