@@ -16,7 +16,21 @@ as an issue on [Github](https://github.com/jxxcarlson/elm-editor2)
 
 ## The Demo
 
-[Live](https://jxxcarlson.github.io/app/text-editor/index.html)
+Run the demo and experiment with the editor:
+
+[Live here!](https://jxxcarlson.github.io/app/text-editor/index.html)
+
+The "landing page" explains many features of the editor.  Write 
+ text in the editor (left-hand window) in 
+
+- a dialect of Markdown (Markdown/Math) that can
+handle equations written in LaTeX.
+
+- or MiniLaTeX, a subset of LaTeX
+
+This source text will be rendered on the fly to Html, as you will
+see in the right-hand window.
+
 
 ### Installation 
 
