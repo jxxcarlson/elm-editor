@@ -351,7 +351,6 @@ viewFooter model width_ height_ =
         , View.Widget.saveFileButton model
         , View.Widget.exportFileButton model
         , displayFilename model
-        , View.Widget.syncLRButton model
         , el [ alignRight, width (px 100) ] (text model.message)
         ]
 

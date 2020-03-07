@@ -6,7 +6,6 @@ module View.Widget exposing
     , newDocumentButton
     , openFileButton
     , saveFileButton
-    , syncLRButton
     , textField
     )
 
@@ -73,10 +72,6 @@ loadDocumentButton model width docTitle buttonLabel =
                     Style.grayColor
     in
     button width buttonLabel (Load docTitle) [ Background.color bgColor ]
-
-
-syncLRButton model =
-    button 50 "Sync L > R" SyncLR [ alignRight ]
 
 
 button width str msg attr =
