@@ -33,7 +33,7 @@ getId text_ dict_ =
             clean text_
 
         idSet =
-            BiDict.getReverse text dict_
+            BiDict.getReverse text_ dict_
     in
     case BiDict.getReverse text dict_ |> Set.isEmpty of
         False ->
@@ -128,7 +128,7 @@ fuzzyGetOne key dict_ =
             \( _, b ) -> String.contains a b
 
         predicates =
-            List.map makePredicate (String.words key)
+            List.map makePredicate (String.words (Debug.log "KEY WORDS" key))
     in
     loop { predicates = predicates, pairs = associationList } nextSearchState
 
