@@ -165,7 +165,7 @@ rollSearchSelectionBackward model =
 
 sendLine : Model -> ( Model, Cmd Msg )
 sendLine model =
-    {- DOC sync RL: scroll line -}
+    {- DOC sync RL and LR: scroll line (2) -}
     let
         y =
             max 0 (model.lineHeight * toFloat model.cursor.line - verticalOffsetInSourceText)

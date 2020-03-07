@@ -131,6 +131,7 @@ update msg model =
                     Helper.Sync.sync newEditor cmd model
 
                 SendLineForLRSync ->
+                    {- DOC scroll LR (3) -}
                     Helper.Sync.syncAndHighlightRenderedText (Editor.lineAtCursor newEditor) (Cmd.map EditorMsg cmd) { model | editor = newEditor }
 
                 GotViewportForSync currentLine _ _ ->
