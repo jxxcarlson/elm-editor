@@ -130,34 +130,36 @@ onId id model =
         Editor so that it can highlight/raise that line (or its paragraph)
     -}
     case getIndexAndText id model of
-        Just ( index, line ) ->
-            let
-                ( newEditor, cmd ) =
-                    Editor.sendLine (Editor.setCursor { line = index, column = 0 } model.editor)
-            in
-            ( { model | editor = newEditor, message = "Clicked: (" ++ id ++ ", " ++ String.fromInt (index + 1) ++ ")" }
-            , Cmd.batch [ cmd |> Cmd.map EditorMsg, View.Scroll.setViewportForElementInRenderedText id ]
-            )
+        Just indices ->
+            case List.head indices of
+                Nothing ->
+                    ( { model | message = "Clicked: (" ++ id ++ " (sync error [2])" }, Cmd.none )
+
+                Just index ->
+                    let
+                        ( newEditor, cmd ) =
+                            Editor.sendLine (Editor.setCursor { line = index, column = 0 } model.editor)
+                    in
+                    ( { model | editor = newEditor, message = "Clicked: (" ++ id ++ ", " ++ String.fromInt (index + 1) ++ ")" }
+                    , Cmd.batch [ cmd |> Cmd.map EditorMsg, View.Scroll.setViewportForElementInRenderedText id ]
+                    )
 
         Nothing ->
             ( { model | message = "Clicked: (" ++ id ++ " (sync error [2])" }, Cmd.none )
 
 
-getIndexAndText : String -> Model -> Maybe ( Int, String )
+getIndexAndText : String -> Model -> Maybe (List Int)
 getIndexAndText id model =
     case model.renderingData of
         MD data ->
             Sync.getText id data.sourceMap
-                |> Debug.log "SOURCE"
                 |> Maybe.map (shorten 5)
-                |> Debug.log "Short KEY"
-                |> Maybe.andThen (Editor.indexOf model.editor)
-                |> Debug.log "INDEX"
+                |> Maybe.map (Editor.indexOf model.editor)
 
         ML data ->
             Sync.getText id data.editRecord.sourceMap
                 |> Maybe.andThen leadingLine
-                |> Maybe.andThen (Editor.indexOf model.editor)
+                |> Maybe.map (Editor.indexOf model.editor)
 
 
 

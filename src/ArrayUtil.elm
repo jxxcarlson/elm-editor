@@ -70,7 +70,7 @@ fuzzyGetOne key list =
 
         predicates : List (( a, String ) -> Bool)
         predicates =
-            List.map makePredicate (Debug.log "KWORDS" (String.words key))
+            List.map makePredicate (String.words key)
     in
     loop { predicates = predicates, pairs = list } nextSearchState
 

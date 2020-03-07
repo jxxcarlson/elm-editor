@@ -128,7 +128,7 @@ fuzzyGetOne key dict_ =
             \( _, b ) -> String.contains a b
 
         predicates =
-            List.map makePredicate (String.words (Debug.log "KEY WORDS" key))
+            List.map makePredicate (String.words key)
     in
     loop { predicates = predicates, pairs = associationList } nextSearchState
 

@@ -38,6 +38,7 @@ code for an example.
 -}
 
 import Array exposing (Array)
+import ArraySearch
 import ArrayUtil
 import Cmd.Extra
 import ContextMenu exposing (ContextMenu)
@@ -68,9 +69,9 @@ getLineHeight (Editor data) =
 editor's array of lines is a string
 which matches the key
 -}
-indexOf : Editor -> String -> Maybe ( Int, String )
+indexOf : Editor -> String -> List Int
 indexOf (Editor data) key =
-    ArrayUtil.indexOf key data.lines
+    ArraySearch.filter (String.words key) data.lines
 
 
 {-| Place string in the editor's clipboard
