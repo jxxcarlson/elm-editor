@@ -29,26 +29,18 @@ import Set
 getId : String -> BiDict String String -> Maybe String
 getId text_ dict_ =
     let
-        text =
-            Debug.log "getId, text"
-                (clean (Debug.log "getId, text_" text_))
-
         idSet =
-            Debug.log "getId, idSet"
-                BiDict.getReverse
-                text_
-                dict_
+            BiDict.getReverse text_ dict_
     in
     case BiDict.getReverse text_ dict_ |> Set.isEmpty of
         False ->
             idSet
                 |> Set.toList
                 |> List.head
-                |> Debug.log "get, output (1)"
 
         True ->
-            fuzzyGetOne text dict_
-                |> Debug.log "get, output (2)"
+            fuzzyGetOne text_ dict_
+                |> List.head
 
 
 
@@ -111,59 +103,54 @@ fuzzyGet key dict_ =
         associationList =
             BiDict.toList dict_
 
-        makePredicate : String -> ( a, String ) -> Bool
-        makePredicate a =
+        makePredicate_ : String -> ( a, String ) -> Bool
+        makePredicate_ a =
             \( _, b_ ) -> String.contains a b_
 
         predicates : List (( b, String ) -> Bool)
         predicates =
-            List.map makePredicate (String.words key)
+            List.map makePredicate_ (String.words key)
     in
     filterMany predicates associationList
         |> List.map Tuple.second
         |> List.head
 
 
-fuzzyGetOne : String -> BiDict String String -> Maybe String
+fuzzyGetOne : String -> BiDict String String -> List String
 fuzzyGetOne key dict_ =
     let
         associationList =
             BiDict.toList dict_
-
-        makePredicate a =
-            \( _, b ) -> String.contains a b
-
-        predicates =
-            List.map makePredicate (String.words key)
     in
-    loop { predicates = predicates, pairs = associationList } nextSearchState
+    loop { keywords = String.words key, pairs = associationList } nextSearchState
+
+
+makePredicate : String -> ( a, String ) -> Bool
+makePredicate a =
+    \( _, b ) -> String.contains a b
 
 
 type alias SearchState =
-    { predicates : List (( String, String ) -> Bool), pairs : List ( String, String ) }
+    { keywords : List String, pairs : List ( String, String ) }
 
 
-nextSearchState : SearchState -> Step SearchState (Maybe String)
-nextSearchState { predicates, pairs } =
-    let
-        _ =
-            Debug.log "predicates, pairs" ( predicates, pairs )
-    in
-    case ( List.head predicates, List.length pairs ) of
+nextSearchState : SearchState -> Step SearchState (List String)
+nextSearchState { keywords, pairs } =
+    case ( List.head keywords, List.length pairs ) of
+        ( Nothing, _ ) ->
+            Done (List.map Tuple.first pairs)
+
         ( _, 0 ) ->
-            Done Nothing
+            Done []
 
         ( _, 1 ) ->
-            Done (List.head pairs |> Maybe.map Tuple.first)
+            Done (List.map Tuple.first pairs)
 
-        ( Just p, _ ) ->
+        ( Just key, _ ) ->
             Loop
-                { predicates = List.drop 1 predicates
-                , pairs = List.filter p pairs
+                { keywords = List.drop 1 keywords
+                , pairs = List.filter (makePredicate key) pairs
                 }
-
-        ( Nothing, _ ) ->
-            Done (List.head pairs |> Maybe.map Tuple.first)
 
 
 {-|
