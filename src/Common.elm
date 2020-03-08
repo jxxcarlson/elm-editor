@@ -34,7 +34,7 @@ module Common exposing
 
 import Array exposing (Array)
 import Cmd.Extra exposing (withNoCmd)
-import EditorModel exposing (EditorModel, Hover(..), Msg(..), Position, Snapshot)
+import EditorModel exposing (EMsg(..), EditorModel, Hover(..), Position, Snapshot)
 import History
 
 
@@ -398,8 +398,8 @@ stateToSnapshot model =
 
 recordHistoryWithCmd :
     EditorModel
-    -> ( EditorModel, Cmd Msg )
-    -> ( EditorModel, Cmd Msg )
+    -> ( EditorModel, Cmd EMsg )
+    -> ( EditorModel, Cmd EMsg )
 recordHistoryWithCmd oldModel ( newModel, cmd ) =
     ( { newModel
         | history =
@@ -415,7 +415,7 @@ recordHistoryWithCmd oldModel ( newModel, cmd ) =
     )
 
 
-recordHistory : EditorModel -> ( EditorModel, Cmd Msg )
+recordHistory : EditorModel -> ( EditorModel, Cmd EMsg )
 recordHistory model =
     model
         |> recordHistory_ model

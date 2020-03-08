@@ -8,7 +8,7 @@ import Cmd.Extra exposing (withCmd, withCmds, withNoCmd)
 import Common exposing (..)
 import ContextMenu exposing (ContextMenu)
 import Debounce exposing (Debounce)
-import EditorModel exposing (AutoLineBreak(..), EditMode(..), EditorModel, Hover(..), Msg(..), Position, Selection(..), Snapshot, VimMode(..))
+import EditorModel exposing (AutoLineBreak(..), EMsg(..), EditMode(..), EditorModel, Hover(..), Position, Selection(..), Snapshot, VimMode(..))
 import History
 import Search
 import Task exposing (Task)
@@ -20,7 +20,7 @@ import Update.Scroll
 import Update.Wrap
 
 
-update : Msg -> EditorModel -> ( EditorModel, Cmd Msg )
+update : EMsg -> EditorModel -> ( EditorModel, Cmd EMsg )
 update msg model =
     case msg of
         EditorNoOp ->
@@ -404,7 +404,7 @@ update msg model =
         ToggleSearchPanel ->
             -- TODO: FOCUS ON "editor-search-box"
             let
-                focusSearchBox : Cmd Msg
+                focusSearchBox : Cmd EMsg
                 focusSearchBox =
                     Task.attempt (\_ -> EditorNoOp) (Dom.focus "editor-search-box")
             in

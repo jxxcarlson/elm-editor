@@ -1,13 +1,13 @@
 module Keymap exposing (handle)
 
 import Dict exposing (Dict)
-import EditorModel exposing (Msg(..))
+import EditorModel exposing (EMsg(..))
 import Html exposing (Attribute)
 import Html.Events as HE
 import Json.Decode as JD exposing (Decoder)
 
 
-handle : Attribute Msg
+handle : Attribute EMsg
 handle =
     HE.custom "keydown" (JD.map transformMsg keydownDecoder)
 
@@ -38,7 +38,7 @@ type Modifier
     | ControlAndOption
 
 
-keydownDecoder : Decoder Msg
+keydownDecoder : Decoder EMsg
 keydownDecoder =
     JD.map3 Keydown
         characterDecoder
@@ -91,7 +91,7 @@ modifierFromFlags ctrl shift option =
             None
 
 
-keyToMsg : Keydown -> Decoder Msg
+keyToMsg : Keydown -> Decoder EMsg
 keyToMsg { char, key, modifier } =
     let
         {- DOC decode  keypresses -}
@@ -132,7 +132,7 @@ keyToMsg { char, key, modifier } =
 
 
 type alias Keymap =
-    Dict String Msg
+    Dict String EMsg
 
 
 keymaps :

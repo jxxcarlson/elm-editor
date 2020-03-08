@@ -1,13 +1,13 @@
 module Menu.View exposing (toItemGroups, viewContextMenu)
 
 import ContextMenu exposing (ContextMenu)
-import EditorModel exposing (Config, Context(..), EditorModel, Hover(..), Msg(..), Position, Selection(..))
+import EditorModel exposing (Config, Context(..), EMsg(..), EditorModel, Hover(..), Position, Selection(..))
 import Html as H exposing (Attribute, Html)
 import Menu.Config
 import Menu.Style
 
 
-viewContextMenu : Float -> EditorModel -> Html Msg
+viewContextMenu : Float -> EditorModel -> Html EMsg
 viewContextMenu width model =
     H.div
         []
@@ -30,7 +30,7 @@ viewContextMenu width model =
 -- MENU --
 
 
-toItemGroups : Context -> List (List ( ContextMenu.Item, Msg ))
+toItemGroups : Context -> List (List ( ContextMenu.Item, EMsg ))
 toItemGroups context =
     case context of
         Object ->

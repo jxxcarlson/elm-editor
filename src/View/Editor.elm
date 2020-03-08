@@ -2,7 +2,7 @@ module View.Editor exposing (viewDebug, viewEditor, viewHeader)
 
 import Array exposing (Array)
 import Common exposing (..)
-import EditorModel exposing (AutoLineBreak(..), Context(..), EditMode(..), EditorModel, Hover(..), Msg(..), Position, Selection(..), ViewMode(..), VimMode(..))
+import EditorModel exposing (AutoLineBreak(..), Context(..), EMsg(..), EditMode(..), EditorModel, Hover(..), Position, Selection(..), ViewMode(..), VimMode(..))
 import Html as H exposing (Attribute, Html)
 import Html.Attributes as HA
 import Html.Events as HE
@@ -11,7 +11,7 @@ import Json.Decode as JD exposing (Decoder)
 import Keymap
 
 
-statisticsDisplay : EditorModel -> Html Msg
+statisticsDisplay : EditorModel -> Html EMsg
 statisticsDisplay model =
     let
         w =
@@ -36,7 +36,7 @@ displayStyle =
     ]
 
 
-viewDebug : EditorModel -> Html Msg
+viewDebug : EditorModel -> Html EMsg
 viewDebug model =
     case model.debugOn of
         False ->
@@ -137,7 +137,7 @@ borderFontColor viewMode_ =
             HA.style "color" "#aaa"
 
 
-viewEditor : EditorModel -> Html Msg
+viewEditor : EditorModel -> Html EMsg
 viewEditor model =
     H.div
         [ HA.style "display" "flex"
@@ -204,7 +204,7 @@ onMultiplelick msg1 msg2 =
         )
 
 
-viewLineNumbers : EditorModel -> Html Msg
+viewLineNumbers : EditorModel -> Html EMsg
 viewLineNumbers model =
     H.div
         [ HA.style "width" "2.5em"
@@ -219,12 +219,12 @@ viewLineNumbers model =
         )
 
 
-viewLineNumber : ViewMode -> Int -> Html Msg
+viewLineNumber : ViewMode -> Int -> Html EMsg
 viewLineNumber viewMode_ n =
     H.span [ HA.style "padding-left" "6px", borderBackgroundColor viewMode_, borderFontColor viewMode_ ] [ H.text (String.fromInt n) ]
 
 
-viewContent : EditorModel -> Html Msg
+viewContent : EditorModel -> Html EMsg
 viewContent model =
     -- TODO: handle option mouseclick for LR sync
     H.div
@@ -241,7 +241,7 @@ viewContent model =
         [ viewLines model.viewMode model.lineHeight model.cursor model.hover model.selection model.lines ]
 
 
-viewLines : ViewMode -> Float -> Position -> Hover -> Selection -> Array String -> Html Msg
+viewLines : ViewMode -> Float -> Position -> Hover -> Selection -> Array String -> Html EMsg
 viewLines viewMode_ lineHeight position hover selection lines =
     H.div
         []
@@ -251,12 +251,12 @@ viewLines viewMode_ lineHeight position hover selection lines =
         )
 
 
-viewLine : ViewMode -> Float -> Position -> Hover -> Selection -> Array String -> Int -> String -> Html Msg
+viewLine : ViewMode -> Float -> Position -> Hover -> Selection -> Array String -> Int -> String -> Html EMsg
 viewLine viewMode_ lineHeight position hover selection lines line content =
     Html.Lazy.lazy8 viewLine_ viewMode_ lineHeight position hover selection lines line content
 
 
-viewLine_ : ViewMode -> Float -> Position -> Hover -> Selection -> Array String -> Int -> String -> Html Msg
+viewLine_ : ViewMode -> Float -> Position -> Hover -> Selection -> Array String -> Int -> String -> Html EMsg
 viewLine_ viewMode_ lineHeight position hover selection lines line content =
     H.div
         [ HA.style "position" "absolute"
@@ -281,14 +281,14 @@ viewLine_ viewMode_ lineHeight position hover selection lines line content =
         )
 
 
-viewChars : ViewMode -> Position -> Hover -> Selection -> Array String -> Int -> String -> List (Html Msg)
+viewChars : ViewMode -> Position -> Hover -> Selection -> Array String -> Int -> String -> List (Html EMsg)
 viewChars viewMode_ position hover selection lines line content =
     content
         |> String.toList
         |> List.indexedMap (viewChar viewMode_ position hover selection lines line)
 
 
-viewChar : ViewMode -> Position -> Hover -> Selection -> Array String -> Int -> Int -> Char -> Html Msg
+viewChar : ViewMode -> Position -> Hover -> Selection -> Array String -> Int -> Int -> Char -> Html EMsg
 viewChar viewMode_ position hover selection lines line column char =
     if position.line == line && position.column == column then
         viewCursor
@@ -375,7 +375,7 @@ stringFromPosition p =
     "(" ++ String.fromInt p.line ++ ", " ++ String.fromInt p.column ++ ")"
 
 
-viewCursor : Position -> String -> Html Msg
+viewCursor : Position -> String -> Html EMsg
 viewCursor position char =
     H.span
         [ HA.style "background-color" "orange"
@@ -384,7 +384,7 @@ viewCursor position char =
         [ H.text char ]
 
 
-viewSelectedChar : ViewMode -> Position -> String -> Html Msg
+viewSelectedChar : ViewMode -> Position -> String -> Html EMsg
 viewSelectedChar viewMode_ position char =
     H.span
         [ selectedColor viewMode_
@@ -410,7 +410,7 @@ highlightColorLight =
 -- TODO: background color
 
 
-onHover : Position -> Attribute Msg
+onHover : Position -> Attribute EMsg
 onHover position =
     HE.custom "mouseover" <|
         JD.succeed
@@ -471,7 +471,7 @@ nbsp =
 -- HEADER AND FOOTER
 
 
-viewFooter : EditorModel -> Html Msg
+viewFooter : EditorModel -> Html EMsg
 viewFooter model =
     H.div
         [ HA.style "display" "flex"
@@ -493,7 +493,7 @@ viewFooter model =
         ]
 
 
-viewHeader : EditorModel -> Html Msg
+viewHeader : EditorModel -> Html EMsg
 viewHeader model =
     H.div
         [ HA.style "display" "flex"

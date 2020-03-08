@@ -25,7 +25,7 @@ import Array exposing (Array)
 import ArrayUtil
 import Browser.Dom as Dom
 import Common
-import EditorModel exposing (EditorModel, Msg(..), Selection(..))
+import EditorModel exposing (EMsg(..), EditorModel, Selection(..))
 import Task exposing (Task)
 
 
@@ -65,12 +65,12 @@ deIndent model =
 -- CURSOR MOVES --
 
 
-firstLine : EditorModel -> ( EditorModel, Cmd Msg )
+firstLine : EditorModel -> ( EditorModel, Cmd EMsg )
 firstLine model =
     ( { model | cursor = { line = 0, column = 0 } }, scrollToTopForElement "__editor__" )
 
 
-goToLine : Int -> EditorModel -> ( EditorModel, Cmd Msg )
+goToLine : Int -> EditorModel -> ( EditorModel, Cmd EMsg )
 goToLine line model =
     let
         length =
@@ -83,7 +83,7 @@ goToLine line model =
     ( { model | cursor = { line = index, column = 0 } }, scrollToLine model.lineHeight (index - model.verticalScrollOffset) )
 
 
-lastLine : EditorModel -> ( EditorModel, Cmd Msg )
+lastLine : EditorModel -> ( EditorModel, Cmd EMsg )
 lastLine model =
     let
         lastLineIndex =
@@ -92,17 +92,17 @@ lastLine model =
     ( { model | cursor = { line = lastLineIndex, column = 0 } }, scrollToLine model.lineHeight lastLineIndex )
 
 
-moveToLineEnd : EditorModel -> ( EditorModel, Cmd Msg )
+moveToLineEnd : EditorModel -> ( EditorModel, Cmd EMsg )
 moveToLineEnd model =
     ( { model | cursor = { line = model.cursor.line, column = lineEnd model.cursor.line model + 1 } }, Cmd.none )
 
 
-moveToLineStart : EditorModel -> ( EditorModel, Cmd Msg )
+moveToLineStart : EditorModel -> ( EditorModel, Cmd EMsg )
 moveToLineStart model =
     ( { model | cursor = { line = model.cursor.line, column = 0 } }, Cmd.none )
 
 
-pageDown : EditorModel -> ( EditorModel, Cmd Msg )
+pageDown : EditorModel -> ( EditorModel, Cmd EMsg )
 pageDown model =
     let
         lpp =
@@ -123,7 +123,7 @@ pageDown model =
     ( { model | cursor = newCursor }, scrollToYCoordinate newY )
 
 
-pageUp : EditorModel -> ( EditorModel, Cmd Msg )
+pageUp : EditorModel -> ( EditorModel, Cmd EMsg )
 pageUp model =
     let
         lpp =
@@ -145,7 +145,7 @@ pageUp model =
 -- SELECTION --
 
 
-selectLine : EditorModel -> ( EditorModel, Cmd Msg )
+selectLine : EditorModel -> ( EditorModel, Cmd EMsg )
 selectLine model =
     let
         line =
@@ -188,12 +188,12 @@ lineEnd line model =
 -- SCROLLING --
 
 
-scrollToTopForElement : String -> Cmd Msg
+scrollToTopForElement : String -> Cmd EMsg
 scrollToTopForElement id =
     Task.attempt (\_ -> EditorNoOp) (Dom.setViewportOf id 0 0)
 
 
-scrollToLine : Float -> Int -> Cmd Msg
+scrollToLine : Float -> Int -> Cmd EMsg
 scrollToLine lineHeight n =
     let
         y =
@@ -202,7 +202,7 @@ scrollToLine lineHeight n =
     Task.attempt (\_ -> EditorNoOp) (Dom.setViewportOf "__editor__" 0 y)
 
 
-scrollToYCoordinate : Float -> Cmd Msg
+scrollToYCoordinate : Float -> Cmd EMsg
 scrollToYCoordinate y =
     Task.attempt (\_ -> EditorNoOp) (Dom.setViewportOf "__editor__" 0 y)
 

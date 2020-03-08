@@ -42,7 +42,7 @@ import ArraySearch
 import ArrayUtil
 import Cmd.Extra
 import ContextMenu exposing (ContextMenu)
-import EditorModel exposing (Config, Context(..), EditorModel, Msg(..))
+import EditorModel exposing (Config, Context(..), EMsg(..), EditorModel)
 import Html as H exposing (Html)
 import Menu.View exposing (viewContextMenu)
 import Update as U
@@ -132,7 +132,7 @@ getSelectedString (Editor model) =
 {-| Used by a host app to scroll the editor to scroll the
 editor display to the line where the cursor is.
 -}
-sendLine : Editor -> ( Editor, Cmd Msg )
+sendLine : Editor -> ( Editor, Cmd EMsg )
 sendLine (Editor model) =
     {- DOC sync RL: scroll line -}
     Update.Scroll.sendLine model
@@ -156,7 +156,7 @@ resize width height (Editor model) =
 
 {-| View function for the editor
 -}
-view : Editor -> Html Msg
+view : Editor -> Html EMsg
 view (Editor model) =
     H.div []
         [ View.Editor.viewHeader model
@@ -180,13 +180,13 @@ getContent editor =
 
 {-| Initialize the editor with a configuration
 -}
-init : Config -> ( Editor, Cmd Msg )
+init : Config -> ( Editor, Cmd EMsg )
 init config =
     let
         ( contextMenu, msg ) =
             ContextMenu.init
 
-        cmd : Cmd Msg
+        cmd : Cmd EMsg
         cmd =
             Cmd.map ContextMenuMsg msg
     in
@@ -205,7 +205,7 @@ initWithContent content config =
         ( contextMenu, msg ) =
             ContextMenu.init
 
-        cmd : Cmd Msg
+        cmd : Cmd EMsg
         cmd =
             Cmd.map ContextMenuMsg msg
     in
@@ -217,7 +217,7 @@ initWithContent content config =
 
 {-| Update the editor with a message
 -}
-update : Msg -> Editor -> ( Editor, Cmd Msg )
+update : EMsg -> Editor -> ( Editor, Cmd EMsg )
 update msg (Editor model) =
     let
         ( newModel, cmd ) =
@@ -229,7 +229,7 @@ update msg (Editor model) =
 {-| The messages to which the editor responds
 -}
 type alias EditorMsg =
-    Msg
+    EMsg
 
 
 {-| Load content into the editor
@@ -262,7 +262,7 @@ getContextMenu (Editor model) =
 
 {-| Messages to be handles by a host app in some default way
 -}
-syncMessages : List Msg
+syncMessages : List EMsg
 syncMessages =
     [ RemoveCharBefore
     , RemoveCharAfter

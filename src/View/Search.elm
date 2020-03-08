@@ -1,6 +1,6 @@
 module View.Search exposing (replacePanel, searchPanel)
 
-import EditorModel exposing (AutoLineBreak(..), Config, Context(..), EditorModel, Hover(..), Msg(..), Position, Selection(..))
+import EditorModel exposing (AutoLineBreak(..), Config, Context(..), EMsg(..), EditorModel, Hover(..), Position, Selection(..))
 import EditorStyle
 import Html as H exposing (Attribute, Html)
 import Html.Attributes as HA
@@ -81,7 +81,7 @@ openReplaceField =
         []
 
 
-numberOfHitsDisplay : EditorModel -> Html Msg
+numberOfHitsDisplay : EditorModel -> Html EMsg
 numberOfHitsDisplay model =
     let
         n =
@@ -137,7 +137,7 @@ setHtmlId id =
     HA.attribute "id" id
 
 
-showIf : Bool -> Html Msg -> Html Msg
+showIf : Bool -> Html EMsg -> Html EMsg
 showIf flag el =
     case flag of
         True ->

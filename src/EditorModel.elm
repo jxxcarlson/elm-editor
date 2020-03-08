@@ -2,11 +2,11 @@ module EditorModel exposing
     ( AutoLineBreak(..)
     , Config
     , Context(..)
+    , EMsg(..)
     , EditMode(..)
     , EditorModel
     , HelpState(..)
     , Hover(..)
-    , Msg(..)
     , Position
     , Selection(..)
     , Snapshot
@@ -170,7 +170,7 @@ type AutoLineBreak
     | AutoLineBreakOFF
 
 
-debounceConfig : Debounce.Config Msg
+debounceConfig : Debounce.Config EMsg
 debounceConfig =
     { strategy = Debounce.later 300
     , transform = DebounceMsg
@@ -181,7 +181,7 @@ debounceConfig =
 -- MSG
 
 
-type Msg
+type EMsg
     = EditorNoOp
       -- 68 msg below
     | ExitVimInsertMode

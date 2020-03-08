@@ -1,6 +1,6 @@
 module Update.File exposing (read, requestMarkdownFile, save)
 
-import EditorModel exposing (Msg(..))
+import EditorModel exposing (EMsg(..))
 import File exposing (File)
 import File.Download as Download
 import File.Select as Select
@@ -11,12 +11,12 @@ import Task
 -- FILE I/O
 
 
-read : File -> Cmd Msg
+read : File -> Cmd EMsg
 read file =
     Task.perform MarkdownLoaded (File.toString file)
 
 
-requestMarkdownFile : Cmd Msg
+requestMarkdownFile : Cmd EMsg
 requestMarkdownFile =
     Select.file [ "text/markdown" ] EditorRequestedFile
 

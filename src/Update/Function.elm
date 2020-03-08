@@ -17,7 +17,7 @@ import ArrayUtil
 import Common
 import Debounce exposing (Debounce)
 import Dict exposing (Dict)
-import EditorModel exposing (EditMode(..), EditorModel, HelpState(..), Msg(..), Position, Selection(..), ViewMode(..), VimMode(..))
+import EditorModel exposing (EMsg(..), EditMode(..), EditorModel, HelpState(..), Position, Selection(..), ViewMode(..), VimMode(..))
 import Task
 import Update.Line
 import Update.Vim
@@ -35,7 +35,7 @@ autoclose =
         ]
 
 
-copySelection : EditorModel -> ( EditorModel, Cmd Msg )
+copySelection : EditorModel -> ( EditorModel, Cmd EMsg )
 copySelection model =
     let
         ( debounce, debounceCmd ) =
@@ -101,7 +101,7 @@ replaceLines model strings =
             model
 
 
-deleteSelection : EditorModel -> ( EditorModel, Cmd Msg )
+deleteSelection : EditorModel -> ( EditorModel, Cmd EMsg )
 deleteSelection model =
     let
         ( debounce, debounceCmd ) =
@@ -297,7 +297,7 @@ insertSimple char ({ cursor, lines } as model) =
 -- DEBOUNCE
 
 
-unload : String -> Cmd Msg
+unload : String -> Cmd EMsg
 unload s =
     Task.perform Unload (Task.succeed s)
 

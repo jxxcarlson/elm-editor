@@ -11,13 +11,13 @@ module Update.Scroll exposing
 import Array
 import ArrayUtil
 import Browser.Dom as Dom
-import EditorModel exposing (EditorModel, Msg(..), Position, Selection(..))
+import EditorModel exposing (EMsg(..), EditorModel, Position, Selection(..))
 import RollingList
 import Search
 import Task exposing (Task)
 
 
-setEditorViewportForLine : Float -> Int -> Cmd Msg
+setEditorViewportForLine : Float -> Int -> Cmd EMsg
 setEditorViewportForLine lineHeight lineNumber =
     let
         y =
@@ -35,7 +35,7 @@ setEditorViewportForLine lineHeight lineNumber =
 
 {-| Search for str and scroll to first hit. Used internally.
 -}
-toString : String -> EditorModel -> ( EditorModel, Cmd Msg )
+toString : String -> EditorModel -> ( EditorModel, Cmd EMsg )
 toString str model =
     let
         searchResults =
@@ -60,14 +60,14 @@ toString str model =
             ( { model | searchResults = RollingList.fromList [], searchTerm = str, selection = NoSelection }, Cmd.none )
 
 
-jumpToHeightForSync : Maybe String -> Position -> Selection -> Float -> Cmd Msg
+jumpToHeightForSync : Maybe String -> Position -> Selection -> Float -> Cmd EMsg
 jumpToHeightForSync currentLine cursor selection y =
     Dom.setViewportOf "__editor__" 0 (y - 80)
         |> Task.andThen (\_ -> Dom.getViewportOf "__editor__")
         |> Task.attempt (\info -> GotViewportForSync currentLine selection info)
 
 
-jumpToBottom : EditorModel -> Cmd Msg
+jumpToBottom : EditorModel -> Cmd EMsg
 jumpToBottom model =
     case model.cursor.line == (Array.length model.lines - 1) of
         False ->
@@ -95,7 +95,7 @@ getElementWithViewPort vp id =
         |> Task.map (\el -> ( el, vp ))
 
 
-rollSearchSelectionForward : EditorModel -> ( EditorModel, Cmd Msg )
+rollSearchSelectionForward : EditorModel -> ( EditorModel, Cmd EMsg )
 rollSearchSelectionForward model =
     let
         searchResults_ =
@@ -129,7 +129,7 @@ rollSearchSelectionForward model =
             ( model, Cmd.none )
 
 
-rollSearchSelectionBackward : EditorModel -> ( EditorModel, Cmd Msg )
+rollSearchSelectionBackward : EditorModel -> ( EditorModel, Cmd EMsg )
 rollSearchSelectionBackward model =
     let
         searchResults_ =
@@ -163,7 +163,7 @@ rollSearchSelectionBackward model =
             ( model, Cmd.none )
 
 
-sendLine : EditorModel -> ( EditorModel, Cmd Msg )
+sendLine : EditorModel -> ( EditorModel, Cmd EMsg )
 sendLine model =
     {- DOC sync RL and LR: scroll line (2) -}
     let
