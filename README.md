@@ -9,6 +9,9 @@ There will be real documentation at some point.  For now,
 if you want to use this editor package the best way is to
 see how it is used in the demo app.
 
+The editor contains both "in-editor" features and hooks for 
+using it in a host app.
+
 ## Bugs and whatnot
 
 I appreciate feedback.  Please post issues, feature requests, comments
@@ -20,19 +23,20 @@ Run the demo and experiment with the editor:
 
 [Live here!](https://jxxcarlson.github.io/app/text-editor/index.html)
 
-The "landing page" explains many features of the editor.  Write 
- text in the editor (left-hand window) in 
+The "landing page" explains many features of the editor.  The 
+editor lives in the left-hand window of the demo app. You can write 
+ text there in either
 
 - a dialect of Markdown (Markdown/Math) that can
 handle equations written in LaTeX.
 
 - or MiniLaTeX, a subset of LaTeX
 
-This source text will be rendered on the fly to Html, as you will
+The source text will be rendered on the fly to Html, as you will
 see in the right-hand window.
 
 
-### Installation 
+## Installation 
 
 ```
 cd ./demo
