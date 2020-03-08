@@ -43,7 +43,7 @@ import ArrayUtil
 import Cmd.Extra
 import ContextMenu exposing (ContextMenu)
 import EditorModel exposing (Config, EditorModel)
-import EditorMsg exposing (Context(..), EMsg(..))
+import EditorMsg exposing (Context(..), EMsg(..), WrapOption)
 import Html as H exposing (Html)
 import Menu.View exposing (viewContextMenu)
 import Update as U
@@ -51,7 +51,6 @@ import Update.Scroll
 import View.Editor
 import View.Help
 import View.Search
-import Wrap exposing (WrapOption)
 
 
 {-| Opaque type for the editor

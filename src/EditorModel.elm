@@ -14,10 +14,9 @@ module EditorModel exposing
 import Array exposing (Array)
 import ContextMenu exposing (ContextMenu)
 import Debounce exposing (Debounce)
-import EditorMsg exposing (Context(..), EMsg(..), Hover(..), Position, Selection(..))
+import EditorMsg exposing (Context(..), EMsg(..), Hover(..), Position, Selection(..), WrapOption(..))
 import History exposing (History)
 import RollingList exposing (RollingList)
-import Wrap exposing (WrapOption(..))
 
 
 type alias EditorModel =

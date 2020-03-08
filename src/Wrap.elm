@@ -1,7 +1,8 @@
-module Wrap exposing (WrapOption(..), WrapParams, runFSM, stringArray)
+module Wrap exposing (WrapParams, runFSM, stringArray)
 
 import Array exposing (Array)
 import Dict exposing (Dict)
+import EditorMsg exposing (WrapOption(..))
 import Paragraph
 
 
@@ -31,11 +32,6 @@ type alias WrapParams =
     , optimalWidth : Int
     , stringWidth : String -> Int
     }
-
-
-type WrapOption
-    = DoWrap
-    | DontWrap
 
 
 

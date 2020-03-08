@@ -2,11 +2,11 @@ module Helper.Load exposing (config, loadDocument, loadDocumentByTitle)
 
 import Data
 import Editor
+import EditorMsg exposing (WrapOption(..))
 import Helper.Common
 import Markdown.Option exposing (MarkdownOption(..))
 import Render exposing (RenderingOption(..))
 import Types exposing (DocType(..), Model, Msg(..))
-import Wrap exposing (WrapOption(..))
 
 
 loadDocumentByTitle : String -> Model -> Model

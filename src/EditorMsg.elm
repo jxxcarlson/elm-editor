@@ -1,8 +1,8 @@
-module EditorMsg exposing (EMsg(..), Context(..), Hover(..), Position, Selection(..))
+module EditorMsg exposing (EMsg(..), Context(..), Hover(..), Position, Selection(..), WrapOption(..))
 
 {-|
 
-@docs EMsg, Context, Hover, Position, Selection
+@docs EMsg, Context, Hover, Position, Selection, WrapOption
 
 -}
 
@@ -43,6 +43,12 @@ type Selection
     | SelectingFrom Hover
     | SelectedChar Position
     | Selection Position Position
+
+
+{-| -}
+type WrapOption
+    = DoWrap
+    | DontWrap
 
 
 {-| Messages that the editor responds to
