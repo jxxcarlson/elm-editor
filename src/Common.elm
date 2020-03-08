@@ -34,7 +34,8 @@ module Common exposing
 
 import Array exposing (Array)
 import Cmd.Extra exposing (withNoCmd)
-import EditorModel exposing (EMsg(..), EditorModel, Hover(..), Position, Snapshot)
+import EditorModel exposing (EditorModel, Snapshot)
+import EditorMsg exposing (EMsg(..), Hover(..), Position)
 import History
 
 

@@ -7,7 +7,7 @@ import Cmd.Extra exposing (withCmd, withCmds)
 import ContextMenu exposing (Item(..))
 import Data
 import Editor exposing (Editor, EditorMsg)
-import EditorModel exposing (EMsg(..))
+import EditorMsg exposing (EMsg(..))
 import Element
     exposing
         ( Element

@@ -2,7 +2,8 @@ module Update.Wrap exposing (all, selection)
 
 import Action
 import Array
-import EditorModel exposing (EditorModel, Selection(..))
+import EditorModel exposing (EditorModel)
+import EditorMsg exposing (Selection(..))
 import Update.Function as Function
 import Wrap exposing (WrapParams)
 

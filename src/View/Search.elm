@@ -1,6 +1,7 @@
 module View.Search exposing (replacePanel, searchPanel)
 
-import EditorModel exposing (AutoLineBreak(..), Config, Context(..), EMsg(..), EditorModel, Hover(..), Position, Selection(..))
+import EditorModel exposing (AutoLineBreak(..), Config, EditorModel)
+import EditorMsg exposing (Context(..), EMsg(..), Hover(..), Position, Selection(..))
 import EditorStyle
 import Html as H exposing (Attribute, Html)
 import Html.Attributes as HA

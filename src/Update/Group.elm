@@ -1,7 +1,7 @@
 module Update.Group exposing (groupRange)
 
 import Array exposing (Array)
-import EditorModel exposing (Position)
+import EditorMsg exposing (Position)
 import Maybe.Extra
 
 

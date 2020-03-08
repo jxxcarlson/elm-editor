@@ -1,14 +1,9 @@
 module EditorModel exposing
     ( AutoLineBreak(..)
     , Config
-    , Context(..)
-    , EMsg(..)
     , EditMode(..)
     , EditorModel
     , HelpState(..)
-    , Hover(..)
-    , Position
-    , Selection(..)
     , Snapshot
     , ViewMode(..)
     , VimMode(..)
@@ -17,12 +12,10 @@ module EditorModel exposing
     )
 
 import Array exposing (Array)
-import Browser.Dom as Dom
 import ContextMenu exposing (ContextMenu)
 import Debounce exposing (Debounce)
-import File exposing (File)
+import EditorMsg exposing (Context(..), EMsg(..), Hover(..), Position, Selection(..))
 import History exposing (History)
-import Markdown.Render exposing (MarkdownMsg(..))
 import RollingList exposing (RollingList)
 import Wrap exposing (WrapOption(..))
 
@@ -66,11 +59,6 @@ type ViewMode
     | Dark
 
 
-type Context
-    = Object
-    | Background
-
-
 type HelpState
     = HelpOn
     | HelpOff
@@ -98,25 +86,6 @@ type alias Config =
     , verticalScrollOffset : Int
     , debugOn : Bool
     , wrapOption : WrapOption
-    }
-
-
-type Hover
-    = NoHover
-    | HoverLine Int
-    | HoverChar Position
-
-
-type Selection
-    = NoSelection
-    | SelectingFrom Hover
-    | SelectedChar Position
-    | Selection Position Position
-
-
-type alias Position =
-    { line : Int
-    , column : Int
     }
 
 
@@ -175,100 +144,3 @@ debounceConfig =
     { strategy = Debounce.later 300
     , transform = DebounceMsg
     }
-
-
-
--- MSG
-
-
-type EMsg
-    = EditorNoOp
-      -- 68 msg below
-    | ExitVimInsertMode
-    | MoveUp
-    | MoveDown
-    | MoveLeft
-    | MoveRight
-    | MoveToLineStart
-    | MoveToLineEnd
-    | PageUp
-    | PageDown
-    | FirstLine
-    | LastLine
-    | GoToLine
-      --
-    | NewLine
-    | InsertChar String
-    | Indent
-    | Deindent
-      --
-    | RemoveCharBefore
-    | RemoveCharAfter
-    | KillLine
-    | DeleteLine
-    | Cut
-    | Copy
-    | Paste
-    | WrapAll
-    | WrapSelection
-      --
-    | Hover Hover
-    | GoToHoveredPosition
-      --
-    | StartSelecting
-    | StopSelecting
-    | SelectLine
-    | SelectUp
-    | SelectDown
-    | SelectLeft
-    | SelectRight
-    | SelectGroup
-      --
-    | Undo
-    | Redo
-      --
-    | AcceptLineToGoTo String
-      -- Debouncer
-    | DebounceMsg Debounce.Msg
-    | Unload String
-      --
-    | Clear
-    | Test
-      --
-    | ContextMenuMsg (ContextMenu.Msg Context)
-    | Item Int
-    | ToggleAutoLineBreak
-      -- File
-    | EditorRequestFile
-    | EditorRequestedFile File
-    | MarkdownLoaded String
-    | EditorSaveFile
-      --
-    | SendLineForLRSync
-    | GotViewportForSync (Maybe String) Selection (Result Dom.Error Dom.Viewport)
-      --
-    | CopyPasteClipboard
-    | WriteToSystemClipBoard
-      -- Search
-    | DoSearch String
-    | ToggleSearchPanel
-    | ToggleReplacePanel
-    | OpenReplaceField
-    | RollSearchSelectionForward
-    | RollSearchSelectionBackward
-    | ReplaceCurrentSelection
-    | AcceptLineNumber String
-    | AcceptSearchText String
-    | AcceptReplacementText String
-    | GotViewport (Result Dom.Error Dom.Viewport)
-      --
-    | ToggleDarkMode
-    | ToggleHelp
-    | ToggleEditMode
-      --
-    | MarkdownMsg MarkdownMsg
-
-
-
---| GotViewport (Result Dom.Error Dom.Viewport)
---| SetViewPortForElement (Result Dom.Error ( Dom.Element, Dom.Viewport ))

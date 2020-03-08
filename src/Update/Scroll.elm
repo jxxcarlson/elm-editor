@@ -11,7 +11,8 @@ module Update.Scroll exposing
 import Array
 import ArrayUtil
 import Browser.Dom as Dom
-import EditorModel exposing (EMsg(..), EditorModel, Position, Selection(..))
+import EditorModel exposing (EditorModel)
+import EditorMsg exposing (EMsg(..), Position, Selection(..))
 import RollingList
 import Search
 import Task exposing (Task)

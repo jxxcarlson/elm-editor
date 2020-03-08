@@ -3,7 +3,8 @@ module Update.Vim exposing (process)
 import Action
 import Cmd.Extra exposing (withNoCmd)
 import Common
-import EditorModel exposing (EMsg(..), EditMode(..), EditorModel, VimMode(..))
+import EditorModel exposing (EditMode(..), EditorModel, VimMode(..))
+import EditorMsg exposing (EMsg(..))
 
 
 process : String -> EditorModel -> EditorModel

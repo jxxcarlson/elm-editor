@@ -8,7 +8,8 @@ import Cmd.Extra exposing (withCmd, withCmds, withNoCmd)
 import Common exposing (..)
 import ContextMenu exposing (ContextMenu)
 import Debounce exposing (Debounce)
-import EditorModel exposing (AutoLineBreak(..), EMsg(..), EditMode(..), EditorModel, Hover(..), Position, Selection(..), Snapshot, VimMode(..))
+import EditorModel exposing (AutoLineBreak(..), EditMode(..), EditorModel, Snapshot, VimMode(..))
+import EditorMsg exposing (EMsg(..), Hover(..), Position, Selection(..))
 import History
 import Search
 import Task exposing (Task)

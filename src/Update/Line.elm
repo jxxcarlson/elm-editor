@@ -2,7 +2,8 @@ module Update.Line exposing (break)
 
 import Array
 import ArrayUtil
-import EditorModel exposing (AutoLineBreak(..), EditorModel, Position)
+import EditorModel exposing (AutoLineBreak(..), EditorModel)
+import EditorMsg exposing (Position)
 
 
 break : EditorModel -> EditorModel

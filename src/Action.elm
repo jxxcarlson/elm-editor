@@ -25,7 +25,8 @@ import Array exposing (Array)
 import ArrayUtil
 import Browser.Dom as Dom
 import Common
-import EditorModel exposing (EMsg(..), EditorModel, Selection(..))
+import EditorModel exposing (EditorModel)
+import EditorMsg exposing (EMsg(..), Selection(..))
 import Task exposing (Task)
 
 

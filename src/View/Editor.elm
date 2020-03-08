@@ -2,7 +2,8 @@ module View.Editor exposing (viewDebug, viewEditor, viewHeader)
 
 import Array exposing (Array)
 import Common exposing (..)
-import EditorModel exposing (AutoLineBreak(..), Context(..), EMsg(..), EditMode(..), EditorModel, Hover(..), Position, Selection(..), ViewMode(..), VimMode(..))
+import EditorModel exposing (AutoLineBreak(..), EditMode(..), EditorModel, ViewMode(..), VimMode(..))
+import EditorMsg exposing (Context(..), EMsg(..), Hover(..), Position, Selection(..))
 import Html as H exposing (Attribute, Html)
 import Html.Attributes as HA
 import Html.Events as HE

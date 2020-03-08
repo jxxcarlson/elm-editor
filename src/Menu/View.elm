@@ -1,7 +1,8 @@
 module Menu.View exposing (toItemGroups, viewContextMenu)
 
 import ContextMenu exposing (ContextMenu)
-import EditorModel exposing (Config, Context(..), EMsg(..), EditorModel, Hover(..), Position, Selection(..))
+import EditorModel exposing (Config, EditorModel)
+import EditorMsg exposing (Context(..), EMsg(..), Hover(..), Position, Selection(..))
 import Html as H exposing (Attribute, Html)
 import Menu.Config
 import Menu.Style

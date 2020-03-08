@@ -42,7 +42,8 @@ import ArraySearch
 import ArrayUtil
 import Cmd.Extra
 import ContextMenu exposing (ContextMenu)
-import EditorModel exposing (Config, Context(..), EMsg(..), EditorModel)
+import EditorModel exposing (Config, EditorModel)
+import EditorMsg exposing (Context(..), EMsg(..))
 import Html as H exposing (Html)
 import Menu.View exposing (viewContextMenu)
 import Update as U

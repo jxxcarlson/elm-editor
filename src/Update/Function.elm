@@ -17,7 +17,8 @@ import ArrayUtil
 import Common
 import Debounce exposing (Debounce)
 import Dict exposing (Dict)
-import EditorModel exposing (EMsg(..), EditMode(..), EditorModel, HelpState(..), Position, Selection(..), ViewMode(..), VimMode(..))
+import EditorModel exposing (EditMode(..), EditorModel, HelpState(..), ViewMode(..), VimMode(..))
+import EditorMsg exposing (EMsg(..), Position, Selection(..))
 import Task
 import Update.Line
 import Update.Vim

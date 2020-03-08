@@ -5,9 +5,9 @@ import Array exposing (Array)
 import ArrayUtil
 import EditorModel exposing (Position, Selection(..))
 import Expect exposing (Expectation)
-import Function as UF
 import Fuzz exposing (Fuzzer, int, list, string)
 import Test exposing (..)
+import Update.Function as UF
 
 
 ex1 =
