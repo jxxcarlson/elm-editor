@@ -1,4 +1,10 @@
-module EditorMsg exposing (Context(..), EMsg(..), Hover(..), Position, Selection(..))
+module EditorMsg exposing (EMsg(..), Context(..), Hover(..), Position, Selection(..))
+
+{-|
+
+@docs EMsg, Context, Hover, Position, Selection
+
+-}
 
 import Browser.Dom as Dom
 import ContextMenu exposing (ContextMenu)
@@ -7,23 +13,31 @@ import File exposing (File)
 import Markdown.Render exposing (MarkdownMsg(..))
 
 
+{-| Cursor position
+-}
 type alias Position =
     { line : Int
     , column : Int
     }
 
 
+{-| For the context menu
+-}
 type Context
     = Object
     | Background
 
 
+{-| Mouuse hover states
+-}
 type Hover
     = NoHover
     | HoverLine Int
     | HoverChar Position
 
 
+{-| Selected text
+-}
 type Selection
     = NoSelection
     | SelectingFrom Hover
@@ -31,6 +45,8 @@ type Selection
     | Selection Position Position
 
 
+{-| Messages that the editor responds to
+-}
 type EMsg
     = EditorNoOp
       -- 68 msg below
