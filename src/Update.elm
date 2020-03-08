@@ -8,8 +8,8 @@ import Cmd.Extra exposing (withCmd, withCmds, withNoCmd)
 import Common exposing (..)
 import ContextMenu exposing (ContextMenu)
 import Debounce exposing (Debounce)
+import EditorModel exposing (AutoLineBreak(..), EditMode(..), EditorModel, Hover(..), Msg(..), Position, Selection(..), Snapshot, VimMode(..))
 import History
-import Model exposing (AutoLineBreak(..), EditMode(..), Hover(..), Model, Msg(..), Position, Selection(..), Snapshot, VimMode(..))
 import Search
 import Task exposing (Task)
 import Update.File
@@ -20,7 +20,7 @@ import Update.Scroll
 import Update.Wrap
 
 
-update : Msg -> Model -> ( Model, Cmd Msg )
+update : Msg -> EditorModel -> ( EditorModel, Cmd Msg )
 update msg model =
     case msg of
         EditorNoOp ->
@@ -37,7 +37,7 @@ update msg model =
             let
                 ( debounce, cmd ) =
                     Debounce.update
-                        Model.debounceConfig
+                        EditorModel.debounceConfig
                         (Debounce.takeLast Function.unload)
                         msg_
                         model.debounce
@@ -74,7 +74,7 @@ update msg model =
         InsertChar char ->
             let
                 ( debounce, debounceCmd ) =
-                    Debounce.push Model.debounceConfig char model.debounce
+                    Debounce.push EditorModel.debounceConfig char model.debounce
             in
             Function.insertChar model.editMode char { model | debounce = debounce }
                 |> withCmd debounceCmd

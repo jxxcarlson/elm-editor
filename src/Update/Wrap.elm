@@ -2,12 +2,12 @@ module Update.Wrap exposing (all, selection)
 
 import Action
 import Array
-import Model exposing (Model, Selection(..))
+import EditorModel exposing (EditorModel, Selection(..))
 import Update.Function as Function
 import Wrap exposing (WrapParams)
 
 
-all : Model -> Model
+all : EditorModel -> EditorModel
 all model =
     let
         params =
@@ -19,7 +19,7 @@ all model =
     { model | lines = lines }
 
 
-selection : Model -> Model
+selection : EditorModel -> EditorModel
 selection model =
     case model.selection of
         Selection p1 p2 ->
@@ -53,14 +53,14 @@ selection model =
             model
 
 
-maxWrapWidth : Model -> Int
+maxWrapWidth : EditorModel -> Int
 maxWrapWidth model =
     charactersPerLine model.width model.fontSize
         - 3
         |> truncate
 
 
-optimumWrapWidth : Model -> Int
+optimumWrapWidth : EditorModel -> Int
 optimumWrapWidth model =
     charactersPerLine model.width model.fontSize
         - 6

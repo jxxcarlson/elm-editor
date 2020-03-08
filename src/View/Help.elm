@@ -2,6 +2,7 @@ module View.Help exposing (data, view)
 
 import Array exposing (Array)
 import Common exposing (..)
+import EditorModel exposing (EditorModel, HelpState(..))
 import Html exposing (Attribute, Html)
 import Html.Attributes as HA
 import Html.Events as HE
@@ -10,7 +11,6 @@ import Json.Decode as JD exposing (Decoder)
 import Keymap
 import Markdown.Option exposing (..)
 import Markdown.Render exposing (MarkdownMsg(..))
-import Model exposing (HelpState(..), Model)
 
 
 
@@ -144,7 +144,7 @@ h, j, k, l
 """
 
 
-view : Model -> Html MarkdownMsg
+view : EditorModel -> Html MarkdownMsg
 view model =
     case model.helpState of
         HelpOff ->

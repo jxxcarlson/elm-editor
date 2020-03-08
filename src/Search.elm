@@ -2,13 +2,13 @@ module Search exposing (do, hits)
 
 import Array exposing (Array)
 import ArrayUtil exposing (Position)
-import Model exposing (Model, Selection(..))
+import EditorModel exposing (EditorModel, Selection(..))
 import RollingList
 
 
 {-| Search for str and scroll to first hit. Used internally.
 -}
-do : String -> Model -> Model
+do : String -> EditorModel -> EditorModel
 do str model =
     let
         searchResults =

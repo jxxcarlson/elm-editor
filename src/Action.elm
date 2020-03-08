@@ -25,7 +25,7 @@ import Array exposing (Array)
 import ArrayUtil
 import Browser.Dom as Dom
 import Common
-import Model exposing (Model, Msg(..), Selection(..))
+import EditorModel exposing (EditorModel, Msg(..), Selection(..))
 import Task exposing (Task)
 
 
@@ -33,7 +33,7 @@ import Task exposing (Task)
 -- INDENT
 
 
-indent : Model -> Model
+indent : EditorModel -> EditorModel
 indent model =
     let
         newLines =
@@ -47,7 +47,7 @@ indent model =
     { model | lines = newLines }
 
 
-deIndent : Model -> Model
+deIndent : EditorModel -> EditorModel
 deIndent model =
     let
         newLines =
@@ -65,12 +65,12 @@ deIndent model =
 -- CURSOR MOVES --
 
 
-firstLine : Model -> ( Model, Cmd Msg )
+firstLine : EditorModel -> ( EditorModel, Cmd Msg )
 firstLine model =
     ( { model | cursor = { line = 0, column = 0 } }, scrollToTopForElement "__editor__" )
 
 
-goToLine : Int -> Model -> ( Model, Cmd Msg )
+goToLine : Int -> EditorModel -> ( EditorModel, Cmd Msg )
 goToLine line model =
     let
         length =
@@ -83,7 +83,7 @@ goToLine line model =
     ( { model | cursor = { line = index, column = 0 } }, scrollToLine model.lineHeight (index - model.verticalScrollOffset) )
 
 
-lastLine : Model -> ( Model, Cmd Msg )
+lastLine : EditorModel -> ( EditorModel, Cmd Msg )
 lastLine model =
     let
         lastLineIndex =
@@ -92,17 +92,17 @@ lastLine model =
     ( { model | cursor = { line = lastLineIndex, column = 0 } }, scrollToLine model.lineHeight lastLineIndex )
 
 
-moveToLineEnd : Model -> ( Model, Cmd Msg )
+moveToLineEnd : EditorModel -> ( EditorModel, Cmd Msg )
 moveToLineEnd model =
     ( { model | cursor = { line = model.cursor.line, column = lineEnd model.cursor.line model + 1 } }, Cmd.none )
 
 
-moveToLineStart : Model -> ( Model, Cmd Msg )
+moveToLineStart : EditorModel -> ( EditorModel, Cmd Msg )
 moveToLineStart model =
     ( { model | cursor = { line = model.cursor.line, column = 0 } }, Cmd.none )
 
 
-pageDown : Model -> ( Model, Cmd Msg )
+pageDown : EditorModel -> ( EditorModel, Cmd Msg )
 pageDown model =
     let
         lpp =
@@ -123,7 +123,7 @@ pageDown model =
     ( { model | cursor = newCursor }, scrollToYCoordinate newY )
 
 
-pageUp : Model -> ( Model, Cmd Msg )
+pageUp : EditorModel -> ( EditorModel, Cmd Msg )
 pageUp model =
     let
         lpp =
@@ -145,7 +145,7 @@ pageUp model =
 -- SELECTION --
 
 
-selectLine : Model -> ( Model, Cmd Msg )
+selectLine : EditorModel -> ( EditorModel, Cmd Msg )
 selectLine model =
     let
         line =
@@ -176,7 +176,7 @@ deleteSelection selection array =
             ( array, Array.fromList [ "" ] )
 
 
-lineEnd : Int -> Model -> Int
+lineEnd : Int -> EditorModel -> Int
 lineEnd line model =
     Array.get line model.lines
         |> Maybe.map String.length
@@ -212,7 +212,7 @@ yValueOfLine lineHeight n =
     toFloat n * lineHeight
 
 
-linesPerPage : Model -> Int
+linesPerPage : EditorModel -> Int
 linesPerPage model =
     floor (model.height / model.lineHeight)
 
@@ -221,27 +221,27 @@ linesPerPage model =
 --- CURSOR ACTIONS
 
 
-cursorRight : Model -> Model
+cursorRight : EditorModel -> EditorModel
 cursorRight model =
     { model | cursor = Common.moveRight model.cursor model.lines }
 
 
-cursorLeft : Model -> Model
+cursorLeft : EditorModel -> EditorModel
 cursorLeft model =
     { model | cursor = Common.moveLeft model.cursor model.lines }
 
 
-cursorUp : Model -> Model
+cursorUp : EditorModel -> EditorModel
 cursorUp model =
     { model | cursor = Common.moveUp model.cursor model.lines }
 
 
-cursorDown : Model -> Model
+cursorDown : EditorModel -> EditorModel
 cursorDown model =
     { model | cursor = Common.moveDown model.cursor model.lines }
 
 
-selectUp : Model -> Model
+selectUp : EditorModel -> EditorModel
 selectUp model =
     let
         extendSelection a_ b =
@@ -258,7 +258,7 @@ selectUp model =
     { model | selection = newSelection }
 
 
-selectDown : Model -> Model
+selectDown : EditorModel -> EditorModel
 selectDown model =
     let
         extendSelection a b_ =
@@ -275,7 +275,7 @@ selectDown model =
     { model | selection = newSelection }
 
 
-selectLeft : Model -> Model
+selectLeft : EditorModel -> EditorModel
 selectLeft model =
     let
         extendSelection a_ b =
@@ -292,7 +292,7 @@ selectLeft model =
     { model | selection = newSelection }
 
 
-selectRight : Model -> Model
+selectRight : EditorModel -> EditorModel
 selectRight model =
     let
         extendSelection a b_ =

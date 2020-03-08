@@ -1,9 +1,9 @@
 module View.Search exposing (replacePanel, searchPanel)
 
+import EditorModel exposing (AutoLineBreak(..), Config, Context(..), EditorModel, Hover(..), Msg(..), Position, Selection(..))
 import EditorStyle
 import Html as H exposing (Attribute, Html)
 import Html.Attributes as HA
-import Model exposing (AutoLineBreak(..), Config, Context(..), Hover(..), Model, Msg(..), Position, Selection(..))
 import RollingList
 import Widget
 
@@ -81,7 +81,7 @@ openReplaceField =
         []
 
 
-numberOfHitsDisplay : Model -> Html Msg
+numberOfHitsDisplay : EditorModel -> Html Msg
 numberOfHitsDisplay model =
     let
         n =

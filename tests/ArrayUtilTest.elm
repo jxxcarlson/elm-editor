@@ -3,9 +3,9 @@ module ArrayUtilTest exposing (suite)
 import Action
 import Array exposing (Array)
 import ArrayUtil
+import EditorModel exposing (Position, Selection(..))
 import Expect exposing (Expectation)
 import Fuzz exposing (Fuzzer, int, list, string)
-import Model exposing (Position, Selection(..))
 import Test exposing (..)
 
 

@@ -1,7 +1,7 @@
 {
     "type": "application",
     "source-directories": [
-        "src"
+        "src", "../src"
     ],
     "elm-version": "0.19.1",
     "dependencies": {
@@ -23,7 +23,6 @@
             "jinjor/elm-contextmenu": "2.0.0",
             "jinjor/elm-debounce": "3.0.0",
             "jinjor/elm-diff": "1.0.6",
-            "jxxcarlson/elm-editor": "2.0.0",
             "jxxcarlson/elm-markdown": "9.2.2",
             "jxxcarlson/htree": "2.0.1",
             "jxxcarlson/meenylatex": "11.0.0",

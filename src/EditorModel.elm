@@ -1,11 +1,11 @@
-module Model exposing
+module EditorModel exposing
     ( AutoLineBreak(..)
     , Config
     , Context(..)
     , EditMode(..)
+    , EditorModel
     , HelpState(..)
     , Hover(..)
-    , Model
     , Msg(..)
     , Position
     , Selection(..)
@@ -27,7 +27,7 @@ import RollingList exposing (RollingList)
 import Wrap exposing (WrapOption(..))
 
 
-type alias Model =
+type alias EditorModel =
     { lines : Array String
     , cursor : Position
     , hover : Hover
@@ -120,7 +120,7 @@ type alias Position =
     }
 
 
-init : ( Config, ContextMenu Context ) -> Model
+init : ( Config, ContextMenu Context ) -> EditorModel
 init ( config, contextMenu ) =
     { lines = Array.fromList [ "" ]
     , cursor = Position 0 0

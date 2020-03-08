@@ -11,7 +11,7 @@ module Update.Scroll exposing
 import Array
 import ArrayUtil
 import Browser.Dom as Dom
-import Model exposing (Model, Msg(..), Position, Selection(..))
+import EditorModel exposing (EditorModel, Msg(..), Position, Selection(..))
 import RollingList
 import Search
 import Task exposing (Task)
@@ -35,7 +35,7 @@ setEditorViewportForLine lineHeight lineNumber =
 
 {-| Search for str and scroll to first hit. Used internally.
 -}
-toString : String -> Model -> ( Model, Cmd Msg )
+toString : String -> EditorModel -> ( EditorModel, Cmd Msg )
 toString str model =
     let
         searchResults =
@@ -67,7 +67,7 @@ jumpToHeightForSync currentLine cursor selection y =
         |> Task.attempt (\info -> GotViewportForSync currentLine selection info)
 
 
-jumpToBottom : Model -> Cmd Msg
+jumpToBottom : EditorModel -> Cmd Msg
 jumpToBottom model =
     case model.cursor.line == (Array.length model.lines - 1) of
         False ->
@@ -95,7 +95,7 @@ getElementWithViewPort vp id =
         |> Task.map (\el -> ( el, vp ))
 
 
-rollSearchSelectionForward : Model -> ( Model, Cmd Msg )
+rollSearchSelectionForward : EditorModel -> ( EditorModel, Cmd Msg )
 rollSearchSelectionForward model =
     let
         searchResults_ =
@@ -129,7 +129,7 @@ rollSearchSelectionForward model =
             ( model, Cmd.none )
 
 
-rollSearchSelectionBackward : Model -> ( Model, Cmd Msg )
+rollSearchSelectionBackward : EditorModel -> ( EditorModel, Cmd Msg )
 rollSearchSelectionBackward model =
     let
         searchResults_ =
@@ -163,7 +163,7 @@ rollSearchSelectionBackward model =
             ( model, Cmd.none )
 
 
-sendLine : Model -> ( Model, Cmd Msg )
+sendLine : EditorModel -> ( EditorModel, Cmd Msg )
 sendLine model =
     {- DOC sync RL and LR: scroll line (2) -}
     let

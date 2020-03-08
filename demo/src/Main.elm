@@ -7,6 +7,7 @@ import Cmd.Extra exposing (withCmd, withCmds)
 import ContextMenu exposing (Item(..))
 import Data
 import Editor exposing (Editor, EditorMsg)
+import EditorModel exposing (Msg(..))
 import Element
     exposing
         ( Element
@@ -38,7 +39,6 @@ import Json.Encode
 import Markdown.Option exposing (..)
 import Markdown.Render exposing (MarkdownMsg(..))
 import MiniLatex.Edit as MLE
-import Model exposing (Msg(..))
 import Outside
 import Render exposing (MDData, MLData, RenderingData(..), RenderingOption(..))
 import Render.Types exposing (RenderMsg(..))

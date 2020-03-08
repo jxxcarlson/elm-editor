@@ -1,9 +1,9 @@
 module Update.File exposing (read, requestMarkdownFile, save)
 
+import EditorModel exposing (Msg(..))
 import File exposing (File)
 import File.Download as Download
 import File.Select as Select
-import Model exposing (Msg(..))
 import Task
 
 

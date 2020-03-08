@@ -1,10 +1,10 @@
 module Keymap exposing (handle)
 
 import Dict exposing (Dict)
+import EditorModel exposing (Msg(..))
 import Html exposing (Attribute)
 import Html.Events as HE
 import Json.Decode as JD exposing (Decoder)
-import Model exposing (Msg(..))
 
 
 handle : Attribute Msg

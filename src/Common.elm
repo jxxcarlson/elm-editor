@@ -34,8 +34,8 @@ module Common exposing
 
 import Array exposing (Array)
 import Cmd.Extra exposing (withNoCmd)
+import EditorModel exposing (EditorModel, Hover(..), Msg(..), Position, Snapshot)
 import History
-import Model exposing (Hover(..), Model, Msg(..), Position, Snapshot)
 
 
 hoversToPositions : Array String -> Hover -> Hover -> Maybe ( Position, Position )
@@ -103,7 +103,7 @@ comparePositions from to =
         GT
 
 
-removeCharBefore : Model -> Model
+removeCharBefore : EditorModel -> EditorModel
 removeCharBefore ({ cursor, lines } as model) =
     if isStartOfDocument cursor then
         model
@@ -152,7 +152,7 @@ removeCharBefore ({ cursor, lines } as model) =
         }
 
 
-removeCharAfter : Model -> Model
+removeCharAfter : EditorModel -> EditorModel
 removeCharAfter ({ cursor, lines } as model) =
     if isEndOfDocument lines cursor then
         model
@@ -361,7 +361,7 @@ lineContent lines lineNum =
         |> Maybe.withDefault ""
 
 
-sanitizeHover : Model -> Model
+sanitizeHover : EditorModel -> EditorModel
 sanitizeHover model =
     { model
         | hover =
@@ -391,15 +391,15 @@ sanitizeHover model =
 -- HISTORY
 
 
-stateToSnapshot : Model -> Snapshot
+stateToSnapshot : EditorModel -> Snapshot
 stateToSnapshot model =
     { cursor = model.cursor, selection = model.selection, lines = model.lines }
 
 
 recordHistoryWithCmd :
-    Model
-    -> ( Model, Cmd Msg )
-    -> ( Model, Cmd Msg )
+    EditorModel
+    -> ( EditorModel, Cmd Msg )
+    -> ( EditorModel, Cmd Msg )
 recordHistoryWithCmd oldModel ( newModel, cmd ) =
     ( { newModel
         | history =
@@ -415,14 +415,14 @@ recordHistoryWithCmd oldModel ( newModel, cmd ) =
     )
 
 
-recordHistory : Model -> ( Model, Cmd Msg )
+recordHistory : EditorModel -> ( EditorModel, Cmd Msg )
 recordHistory model =
     model
         |> recordHistory_ model
         |> withNoCmd
 
 
-recordHistory_ : Model -> Model -> Model
+recordHistory_ : EditorModel -> EditorModel -> EditorModel
 recordHistory_ oldModel newModel =
     { newModel
         | history =

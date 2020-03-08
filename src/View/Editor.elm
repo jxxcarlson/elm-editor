@@ -2,16 +2,16 @@ module View.Editor exposing (viewDebug, viewEditor, viewHeader)
 
 import Array exposing (Array)
 import Common exposing (..)
+import EditorModel exposing (AutoLineBreak(..), Context(..), EditMode(..), EditorModel, Hover(..), Msg(..), Position, Selection(..), ViewMode(..), VimMode(..))
 import Html as H exposing (Attribute, Html)
 import Html.Attributes as HA
 import Html.Events as HE
 import Html.Lazy
 import Json.Decode as JD exposing (Decoder)
 import Keymap
-import Model exposing (AutoLineBreak(..), Context(..), EditMode(..), Hover(..), Model, Msg(..), Position, Selection(..), ViewMode(..), VimMode(..))
 
 
-statisticsDisplay : Model -> Html Msg
+statisticsDisplay : EditorModel -> Html Msg
 statisticsDisplay model =
     let
         w =
@@ -36,7 +36,7 @@ displayStyle =
     ]
 
 
-viewDebug : Model -> Html Msg
+viewDebug : EditorModel -> Html Msg
 viewDebug model =
     case model.debugOn of
         False ->
@@ -137,7 +137,7 @@ borderFontColor viewMode_ =
             HA.style "color" "#aaa"
 
 
-viewEditor : Model -> Html Msg
+viewEditor : EditorModel -> Html Msg
 viewEditor model =
     H.div
         [ HA.style "display" "flex"
@@ -162,7 +162,7 @@ viewEditor model =
         ]
 
 
-editorHeight : Model -> Float
+editorHeight : EditorModel -> Float
 editorHeight model =
     let
         defaultHeight =
@@ -204,7 +204,7 @@ onMultiplelick msg1 msg2 =
         )
 
 
-viewLineNumbers : Model -> Html Msg
+viewLineNumbers : EditorModel -> Html Msg
 viewLineNumbers model =
     H.div
         [ HA.style "width" "2.5em"
@@ -224,7 +224,7 @@ viewLineNumber viewMode_ n =
     H.span [ HA.style "padding-left" "6px", borderBackgroundColor viewMode_, borderFontColor viewMode_ ] [ H.text (String.fromInt n) ]
 
 
-viewContent : Model -> Html Msg
+viewContent : EditorModel -> Html Msg
 viewContent model =
     -- TODO: handle option mouseclick for LR sync
     H.div
@@ -471,7 +471,7 @@ nbsp =
 -- HEADER AND FOOTER
 
 
-viewFooter : Model -> Html Msg
+viewFooter : EditorModel -> Html Msg
 viewFooter model =
     H.div
         [ HA.style "display" "flex"
@@ -493,7 +493,7 @@ viewFooter model =
         ]
 
 
-viewHeader : Model -> Html Msg
+viewHeader : EditorModel -> Html Msg
 viewHeader model =
     H.div
         [ HA.style "display" "flex"
@@ -551,7 +551,7 @@ textFieldFontColor model =
             HA.style "color" "#eee"
 
 
-autoLinBreakTitle : Model -> String
+autoLinBreakTitle : EditorModel -> String
 autoLinBreakTitle model =
     case model.autoLineBreak of
         AutoLineBreakON ->

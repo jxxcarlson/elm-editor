@@ -42,9 +42,9 @@ import ArraySearch
 import ArrayUtil
 import Cmd.Extra
 import ContextMenu exposing (ContextMenu)
+import EditorModel exposing (Config, Context(..), EditorModel, Msg(..))
 import Html as H exposing (Html)
 import Menu.View exposing (viewContextMenu)
-import Model exposing (Config, Context(..), Model, Msg(..))
 import Update as U
 import Update.Scroll
 import View.Editor
@@ -56,7 +56,7 @@ import Wrap exposing (WrapOption)
 {-| Opaque type for the editor
 -}
 type Editor
-    = Editor Model
+    = Editor EditorModel
 
 
 {-| -}
@@ -191,7 +191,7 @@ init config =
             Cmd.map ContextMenuMsg msg
     in
     ( config, contextMenu )
-        |> Model.init
+        |> EditorModel.init
         |> Editor
         |> Cmd.Extra.withCmd cmd
 
@@ -210,7 +210,7 @@ initWithContent content config =
             Cmd.map ContextMenuMsg msg
     in
     ( config, contextMenu )
-        |> Model.init
+        |> EditorModel.init
         |> (\m -> { m | lines = content |> String.lines |> Array.fromList })
         |> Editor
 

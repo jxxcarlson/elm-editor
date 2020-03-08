@@ -2,10 +2,10 @@ module Update.Line exposing (break)
 
 import Array
 import ArrayUtil
-import Model exposing (AutoLineBreak(..), Model, Position)
+import EditorModel exposing (AutoLineBreak(..), EditorModel, Position)
 
 
-break : Model -> Model
+break : EditorModel -> EditorModel
 break model =
     case model.autoLineBreak of
         AutoLineBreakOFF ->
@@ -69,7 +69,7 @@ break model =
 -- LINE BREAKING
 
 
-optimumWrapWidth : Model -> Int
+optimumWrapWidth : EditorModel -> Int
 optimumWrapWidth model =
     charactersPerLine model.width model.fontSize
         - 6
@@ -81,17 +81,17 @@ charactersPerLine screenWidth fontSize =
     (1.55 * screenWidth) / fontSize
 
 
-putCursorAt : Position -> Model -> Model
+putCursorAt : Position -> EditorModel -> EditorModel
 putCursorAt position model =
     { model | cursor = position }
 
 
-replaceLineAt : Int -> String -> Model -> Model
+replaceLineAt : Int -> String -> EditorModel -> EditorModel
 replaceLineAt k str model =
     { model | lines = Array.set k str model.lines }
 
 
-insertLineAfter : Int -> String -> Model -> Model
+insertLineAfter : Int -> String -> EditorModel -> EditorModel
 insertLineAfter k str model =
     { model | lines = ArrayUtil.insertLineAfter k str model.lines }
 

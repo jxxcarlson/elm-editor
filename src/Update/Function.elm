@@ -17,7 +17,7 @@ import ArrayUtil
 import Common
 import Debounce exposing (Debounce)
 import Dict exposing (Dict)
-import Model exposing (EditMode(..), HelpState(..), Model, Msg(..), Position, Selection(..), ViewMode(..), VimMode(..))
+import EditorModel exposing (EditMode(..), EditorModel, HelpState(..), Msg(..), Position, Selection(..), ViewMode(..), VimMode(..))
 import Task
 import Update.Line
 import Update.Vim
@@ -35,11 +35,11 @@ autoclose =
         ]
 
 
-copySelection : Model -> ( Model, Cmd Msg )
+copySelection : EditorModel -> ( EditorModel, Cmd Msg )
 copySelection model =
     let
         ( debounce, debounceCmd ) =
-            Debounce.push Model.debounceConfig "RCB" model.debounce
+            Debounce.push EditorModel.debounceConfig "RCB" model.debounce
     in
     case model.selection of
         (Selection beginSel endSel) as sel ->
@@ -61,7 +61,7 @@ copySelection model =
             ( model, Cmd.none )
 
 
-pasteSelection : Model -> Model
+pasteSelection : EditorModel -> EditorModel
 pasteSelection model =
     -- TODO: This needs work! (a hack for now)
     let
@@ -80,7 +80,7 @@ pasteSelection model =
     }
 
 
-replaceLines : Model -> Array String -> Model
+replaceLines : EditorModel -> Array String -> EditorModel
 replaceLines model strings =
     let
         n =
@@ -101,11 +101,11 @@ replaceLines model strings =
             model
 
 
-deleteSelection : Model -> ( Model, Cmd Msg )
+deleteSelection : EditorModel -> ( EditorModel, Cmd Msg )
 deleteSelection model =
     let
         ( debounce, debounceCmd ) =
-            Debounce.push Model.debounceConfig "RCB" model.debounce
+            Debounce.push EditorModel.debounceConfig "RCB" model.debounce
     in
     case model.selection of
         NoSelection ->
@@ -150,7 +150,7 @@ deleteSelection model =
 -- MORE STUFF
 
 
-newLine : Model -> Model
+newLine : EditorModel -> EditorModel
 newLine ({ cursor, lines } as model) =
     let
         { line, column } =
@@ -205,7 +205,7 @@ newLine ({ cursor, lines } as model) =
     }
 
 
-insertChar : EditMode -> String -> Model -> Model
+insertChar : EditMode -> String -> EditorModel -> EditorModel
 insertChar editMode char model =
     case editMode of
         StandardEditor ->
@@ -220,7 +220,7 @@ insertChar editMode char model =
             Update.Vim.process char model
 
 
-insertDispatch : String -> Model -> Model
+insertDispatch : String -> EditorModel -> EditorModel
 insertDispatch str model =
     case ( model.selection, Dict.get str autoclose ) of
         ( selection, Just closing ) ->
@@ -230,7 +230,7 @@ insertDispatch str model =
             insertSimple str model
 
 
-insertWithMatching : Selection -> String -> String -> Model -> Model
+insertWithMatching : Selection -> String -> String -> EditorModel -> EditorModel
 insertWithMatching selection closing str model =
     -- TODO: working on this
     let
@@ -254,7 +254,7 @@ insertWithMatching selection closing str model =
     { model | lines = newLines, cursor = newCursor }
 
 
-insertSimple : String -> Model -> Model
+insertSimple : String -> EditorModel -> EditorModel
 insertSimple char ({ cursor, lines } as model) =
     let
         { line, column } =
@@ -306,7 +306,7 @@ unload s =
 --
 
 
-toggleViewMode : Model -> Model
+toggleViewMode : EditorModel -> EditorModel
 toggleViewMode model =
     case model.viewMode of
         Light ->
@@ -316,7 +316,7 @@ toggleViewMode model =
             { model | viewMode = Light }
 
 
-toggleHelpState : Model -> Model
+toggleHelpState : EditorModel -> EditorModel
 toggleHelpState model =
     case model.helpState of
         HelpOff ->
@@ -326,7 +326,7 @@ toggleHelpState model =
             { model | helpState = HelpOff }
 
 
-toggleEditMode : Model -> Model
+toggleEditMode : EditorModel -> EditorModel
 toggleEditMode model =
     case model.editMode of
         StandardEditor ->

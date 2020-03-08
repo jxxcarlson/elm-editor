@@ -3,10 +3,10 @@ module UpdateFunctionTest exposing (ex1, stringFromArray, suite)
 import Action
 import Array exposing (Array)
 import ArrayUtil
+import EditorModel exposing (Position, Selection(..))
 import Expect exposing (Expectation)
 import Function as UF
 import Fuzz exposing (Fuzzer, int, list, string)
-import Model exposing (Position, Selection(..))
 import Test exposing (..)
 
 
