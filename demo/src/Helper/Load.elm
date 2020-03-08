@@ -65,7 +65,7 @@ loadDocument title source docType model =
                     Render.load ( 0, 0 ) (model.counter + 1) OMiniLatex source
 
                 fileName =
-                    title ++ ".latex"
+                    title ++ ".tex"
             in
             { model
                 | renderingData = renderingData

@@ -22,7 +22,7 @@ a pure Elm text editor coupled to compilers
 for Markdown+Math and MiniLaTeX to produce
 an interactive editing environment for
 these markup languages.  Files with extention
-`.md` and `.latex` can be opened and saved,
+`.md` and `.tex` can be opened and saved,
 MiniLaTeX documents can also be exported
 to standard LaTeX.
 
@@ -1064,18 +1064,23 @@ aboutMiniLaTeX2 =
 
 % EXAMPLE 1
 
-\\begin{comment}
-This multi-line comment
-should also not
-be visible in the
-rendered text.
-\\end{comment}
+
+% This multi-line comment
+% should also not
+% be visible in the
+% rendered text.
+
 
 \\begin{mathmacro}
 \\newcommand{\\bt}[1]{\\bf{#1}}
 \\newcommand{\\mca}[0]{\\mathcal{A}}
 \\end{mathmacro}
 
+\\begin{textmacro}
+\\newcommand{\\boss}{Phineas Fogg}
+\\newcommand{\\hello}[1]{Hello #1!}
+\\newcommand{\\reverseconcat}[3]{#3#2#1}
+\\end{textmacro}
 
 \\tableofcontents
 

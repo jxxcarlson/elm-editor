@@ -25,7 +25,7 @@ read file =
 
 requestFile : Cmd Msg
 requestFile =
-    Select.file [ "text/markdown", "application/x-latex" ] RequestedFile
+    Select.file [ "text/markdown", "text/x-tex" ] RequestedFile
 
 
 saveFile : Model -> Cmd msg
@@ -35,7 +35,7 @@ saveFile model =
             Download.string fileName "text/markdown" (Editor.getContent model.editor)
 
         ( MiniLaTeXDoc, Just fileName ) ->
-            Download.string fileName "application/x-latex" (Editor.getContent model.editor)
+            Download.string fileName "text/x-tex" (Editor.getContent model.editor)
 
         ( _, _ ) ->
             Cmd.none
@@ -52,7 +52,7 @@ exportFile model =
                 contentForExport =
                     Editor.getContent model.editor |> MiniLatex.Export.toLaTeX
             in
-            Download.string fileName "application/x-latex" contentForExport
+            Download.string fileName "text/x-tex" contentForExport
 
         ( _, _ ) ->
             Cmd.none
