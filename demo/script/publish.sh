@@ -1,5 +1,5 @@
 
-TARGET=/Users/carlson/dev/github_pages/app/text-editor
+TARGET=/Users/jxxcarlson/dev/github_pages/app/text-editor
 DIST=public
 SOURCE=src
 
