@@ -24,7 +24,7 @@
         "folkertdev/elm-paragraph": "1.0.0 <= v < 2.0.0",
         "jinjor/elm-contextmenu": "2.0.0 <= v < 3.0.0",
         "jinjor/elm-debounce": "3.0.0 <= v < 4.0.0",
-        "jxxcarlson/elm-markdown": "9.1.0 <= v < 10.0.0",
+        "jxxcarlson/elm-markdown": "9.2.5 <= v < 10.0.0",
         "lovasoa/elm-rolling-list": "1.1.4 <= v < 2.0.0",
         "zwilias/elm-rosetree": "1.5.0 <= v < 2.0.0"
     },

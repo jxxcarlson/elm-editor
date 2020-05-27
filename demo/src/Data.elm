@@ -12,7 +12,6 @@ module Data exposing
 about =
     """
 
-
 *NOTE: this app is designed for computers, not phones.*
 
 # About this app
@@ -82,6 +81,26 @@ Google Chrome
 
 **An Extra.** Use `ctrl-shift-D` to toggle dark mode.
 .
+## Markdown Extras
+
+There are other Markdown extras in addition
+to mathematical notation.  One is the
+ability to use named unicode characters:
+
+>> &forall; A &sup; B
+&forall; C &sup; D
+
+Here is how it is done:
+
+````
+>> &forall; A &sup; B
+&forall; C &sup; D
+````
+
+The symbol `>>` creates an element like
+the quotation block, except that whitespace
+is respected.
+
 
 ## Plans
 

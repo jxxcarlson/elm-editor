@@ -77,6 +77,8 @@ p {white-space: normal;}
 .mm-block-0 {
  }
 
+
+
 .mm-block-1 {
   margin-left: 16px;
 }
@@ -131,11 +133,30 @@ p {white-space: normal;}
 }
 .mm-poetry {
 	margin-left: 24px;
+	padding-left: 24px;
 	margin-top: 18px;
 	margin-right: 36px;
 	margin-bottom: 18px;
-	white-space: nowrap;
+	white-space: pre;
+	}
+
 }
+
+ .mm-poetry > line { white-space : pre; }
+
+
+
+.mm-poetry p p span {
+  margin : 0;
+  white-space: pre;
+  }
+
+p > p {
+  margin : 0;
+  }
+
+
+
 .mm-closed-block {
 	margin-bottom; 12px;
 	width: inherit;
