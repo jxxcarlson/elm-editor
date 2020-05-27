@@ -84,17 +84,21 @@ Google Chrome
 ## Markdown Extras
 
 There are other Markdown extras in addition
-to mathematical notation.  One is the
+to mathematical notation between dollar signs
+as in LaTeX.  One is the
 ability to use named unicode characters:
 
->> &forall; A &sup; B
-&forall; C &sup; D
+>> proof : &forall; (b : &bbB;) &to; &tilde; &tilde; b &equiv; b
+proof tt = refl
+proof ff = refl
+
+>> A &sub; B &and; B &sub; C &rArr; A &sub; C
 
 Here is how it is done:
 
 ````
->> &forall; A &sup; B
-&forall; C &sup; D
+>> proof : &forall; (b : &bbB;) &to; ...
+proof tt = refl ...
 ````
 
 The symbol `>>` creates an element like
