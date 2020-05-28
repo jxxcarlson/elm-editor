@@ -1,4 +1,4 @@
-module Types exposing (DocType(..), DocumentStatus(..), Model, Msg(..))
+module Types exposing (DocType(..), DocumentStatus(..), Model, Msg(..), PopupStatus(..))
 
 import Browser.Dom as Dom
 import Editor exposing (Editor)
@@ -27,7 +27,13 @@ type alias Model =
     , selectedId_ : String
     , message : String
     , tickCount : Int
+    , popupStatus : PopupStatus
     }
+
+
+type PopupStatus
+    = PopupClosed
+    | PopupOpen
 
 
 type DocumentStatus
@@ -62,3 +68,4 @@ type Msg
     | LogErr String
     | RenderMsg RenderMsg
     | Tick Time.Posix
+    | ManagePopup PopupStatus

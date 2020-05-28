@@ -44,7 +44,8 @@ import Render exposing (MDData, MLData, RenderingData(..), RenderingOption(..))
 import Render.Types exposing (RenderMsg(..))
 import Task exposing (Task)
 import Time
-import Types exposing (DocType(..), DocumentStatus(..), Model, Msg(..))
+import Types exposing (DocType(..), DocumentStatus(..), Model, Msg(..), PopupStatus(..))
+import View.Popup as Popup
 import View.Scroll
 import View.Style as Style
 import View.Widget
@@ -79,6 +80,7 @@ init flags =
     , selectedId_ = ""
     , message = ""
     , tickCount = 0
+    , popupStatus = PopupClosed
     }
         |> Cmd.Extra.withCmds
             [ Dom.focus "editor" |> Task.attempt (always NoOp)
@@ -273,6 +275,9 @@ update msg model =
         Tick _ ->
             ( { model | tickCount = model.tickCount + 1 }, saveFileToLocalStorage model )
 
+        ManagePopup status ->
+            ( { model | popupStatus = status }, Cmd.none )
+
 
 
 -- HELPER
@@ -334,7 +339,8 @@ view model =
 mainColumn model =
     column [ centerX, centerY ]
         [ column [ Background.color <| gray 55 ]
-            [ viewEditorAndRenderedText model
+            [ Element.el [ Element.inFront (Popup.view model) ]
+                (viewEditorAndRenderedText model)
             , viewFooter model model.width 40
 
             -- , viewFooter2 model model.width 40
@@ -363,7 +369,8 @@ viewFooter model width_ height_ =
         , Element.moveUp 19
         , spacing 12
         ]
-        [ View.Widget.documentTypeButton model
+        [ View.Widget.openPopupButton model
+        , View.Widget.documentTypeButton model
         , View.Widget.newDocumentButton model
         , View.Widget.openFileButton model
         , View.Widget.saveFileButton model

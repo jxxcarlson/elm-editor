@@ -1,0 +1,42 @@
+module View.Popup exposing (view)
+
+import Element
+    exposing
+        ( Element
+        , alignRight
+        , centerX
+        , centerY
+        , column
+        , el
+        , height
+        , paddingXY
+        , px
+        , rgb255
+        , row
+        , spacing
+        , text
+        , width
+        )
+import Element.Background as Background
+import Element.Border as Border
+import Element.Font as Font
+import Types exposing (Model, Msg(..), PopupStatus(..))
+import View.Widget as Widget
+
+
+view : Model -> Element Msg
+view model =
+    case model.popupStatus of
+        PopupClosed ->
+            Element.none
+
+        PopupOpen ->
+            column
+                [ width (px 300)
+                , height (px 500)
+                , paddingXY 30 30
+                , Background.color (Element.rgba 1.0 0.75 0.75 0.8)
+                ]
+                [ text "Files"
+                , Widget.closePopupButton model
+                ]

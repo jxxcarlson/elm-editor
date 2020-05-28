@@ -1,10 +1,12 @@
 module View.Widget exposing
     ( button
+    , closePopupButton
     , documentTypeButton
     , exportFileButton
     , loadDocumentButton
     , newDocumentButton
     , openFileButton
+    , openPopupButton
     , saveFileButton
     , textField
     )
@@ -23,8 +25,21 @@ import Element.Input as Input
 import Html exposing (Attribute, Html)
 import Html.Attributes as Attribute
 import Html.Events as HE
-import Types exposing (DocType(..), Msg(..))
+import Types exposing (DocType(..), Msg(..), PopupStatus(..))
 import View.Style as Style
+
+
+closePopupButton model =
+    button 90 "Close" (ManagePopup PopupClosed) []
+
+
+openPopupButton model =
+    case model.popupStatus of
+        PopupOpen ->
+            button 90 "Close" (ManagePopup PopupClosed) []
+
+        PopupClosed ->
+            button 90 "Popup" (ManagePopup PopupOpen) []
 
 
 openFileButton model =
