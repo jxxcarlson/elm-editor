@@ -333,16 +333,17 @@ view model =
 
 mainColumn model =
     column [ centerX, centerY ]
-        [ column []
+        [ column [ Background.color <| gray 55 ]
             [ viewEditorAndRenderedText model
             , viewFooter model model.width 40
-            , viewFooter2 model model.width 40
+
+            -- , viewFooter2 model model.width 40
             ]
         ]
 
 
 viewEditorAndRenderedText model =
-    row []
+    row [ Background.color <| gray 255 ]
         [ viewEditor model
         , viewRenderedText
             model

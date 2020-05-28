@@ -81,7 +81,7 @@ loadDocument title source docType model =
 
 config flags =
     { width = Helper.Common.windowWidth flags.width
-    , height = Helper.Common.windowHeight (flags.height - 40)
+    , height = Helper.Common.windowHeight (flags.height - 10)
     , fontSize = 16
     , verticalScrollOffset = 3
     , debugOn = False
