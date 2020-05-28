@@ -27,6 +27,7 @@ type alias GenericOutsideData =
 type InfoForElm
     = GotClipboard String
     | GotFileList (List String)
+    | GotFileContents String
 
 
 type InfoForOutside
@@ -35,6 +36,7 @@ type InfoForOutside
     | Highlight ( Maybe String, String )
     | WriteFile ( String, String )
     | AskForFileList
+    | AskForFile String
 
 
 getInfo : (InfoForElm -> msg) -> (String -> msg) -> Sub msg
@@ -58,6 +60,18 @@ getInfo tagger onError =
                         Err _ ->
                             onError <| "Error getting file list"
 
+                "GotFileContents" ->
+                    let
+                        _ =
+                            Debug.log "GotFileContents"
+                    in
+                    case D.decodeValue D.string outsideInfo.data of
+                        Ok fileContents ->
+                            tagger <| GotFileContents fileContents
+
+                        Err _ ->
+                            onError <| "Error getting file contents"
+
                 _ ->
                     onError <| "Unexpected info from outside"
         )
@@ -80,6 +94,9 @@ sendInfo info =
 
         AskForFileList ->
             infoForOutside { tag = "AskForFileList", data = E.null }
+
+        AskForFile fileName ->
+            infoForOutside { tag = "AskForFile", data = E.string fileName }
 
 
 encodeSelectedIdData : ( Maybe String, String ) -> E.Value

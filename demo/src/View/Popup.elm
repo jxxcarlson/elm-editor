@@ -22,6 +22,7 @@ import Element
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
+import Outside
 import Types exposing (Model, Msg(..), PopupStatus(..))
 import View.Widget as Widget
 
@@ -52,5 +53,5 @@ view model =
 
 
 viewFileName : String -> Element Msg
-viewFileName file =
-    el [ Font.size 14 ] (text file)
+viewFileName fileName =
+    Widget.plainButton 120 fileName (SendRequestForFile fileName) []

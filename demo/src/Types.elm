@@ -22,6 +22,7 @@ type alias Model =
     , docTitle : String
     , docType : DocType
     , fileName : Maybe String
+    , fileContents : String
     , fileList : List String
     , documentStatus : DocumentStatus
     , selectedId : ( Int, Int )
@@ -70,3 +71,4 @@ type Msg
     | RenderMsg RenderMsg
     | Tick Time.Posix
     | ManagePopup PopupStatus
+    | SendRequestForFile String

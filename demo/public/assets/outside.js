@@ -29,6 +29,14 @@ app.ports.infoForOutside.subscribe(msg => {
 
            break;
 
+        case "AskForFile":
+            var fileName = JSON.stringify(msg.data)
+            console.log("AskForFile", fileName)
+            var fileContents = getFileFromLocalStorage(fileName)
+            app.ports.infoForElm.send({tag: "GotFileContents", data: fileContents})
+
+           break;
+
         case "WriteToClipboard":
             console.log("!JS!  WriteToClipboard", JSON.stringify(msg.data))
 
@@ -44,8 +52,8 @@ app.ports.infoForOutside.subscribe(msg => {
           case "WriteFile":
               console.log("!JS! WriteFile") ;
 
-               var fileName = JSON.stringify(msg.data.fileName)
-               var fileContents = JSON.stringify(msg.data.fileContents)
+               var fileName = msg.data.fileName
+               var fileContents = msg.data.fileContents
 
                localStorage.setItem(fileName, fileContents);
 
@@ -84,6 +92,12 @@ app.ports.infoForOutside.subscribe(msg => {
           }
       }
       return fileList
+    }
+
+    function getFileFromLocalStorage(fileName) {
+        var fileName_ = ('file:' + fileName).replace(/\"/g, "")
+        console.log("fileName_", fileName_)
+        return localStorage.getItem('\"' + fileName_ + '\"');
     }
 
     function updateClipboard(newClip) {

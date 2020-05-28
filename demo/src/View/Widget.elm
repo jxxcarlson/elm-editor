@@ -7,6 +7,7 @@ module View.Widget exposing
     , newDocumentButton
     , openFileButton
     , openPopupButton
+    , plainButton
     , saveFileButton
     , textField
     )
@@ -107,6 +108,21 @@ altButton width str msg attr =
         ([ paddingXY 8 8
          , Background.color (Element.rgb255 90 90 100)
          , Font.color (Element.rgb255 230 230 230)
+         ]
+            ++ attr
+        )
+        { onPress = Just msg
+        , label = el attr (text str)
+        }
+
+
+plainButton width str msg attr =
+    Input.button
+        ([ paddingXY 8 8
+
+         -- , Background.color (Element.rgb255 90 90 100)
+         , Font.color (Element.rgb255 30 30 30)
+         , Font.size 14
          ]
             ++ attr
         )
