@@ -35,6 +35,7 @@ import Helper.Load
 import Helper.Sync
 import Html exposing (Attribute, Html)
 import Html.Attributes as Attribute
+import Json.Decode
 import Json.Encode
 import Markdown.Option exposing (..)
 import Markdown.Render exposing (MarkdownMsg(..))
@@ -75,6 +76,7 @@ init flags =
     , docTitle = "about"
     , docType = MarkdownDoc
     , fileName = Just "about.md"
+    , fileList = []
     , documentStatus = DocumentDirty
     , selectedId = ( 0, 0 )
     , selectedId_ = ""
@@ -253,6 +255,9 @@ update msg model =
                 Outside.GotClipboard clipboard ->
                     pasteToEditorAndClipboard model clipboard
 
+                Outside.GotFileList fileList ->
+                    ( { model | fileList = fileList }, Cmd.none )
+
         LogErr _ ->
             ( model, Cmd.none )
 
@@ -276,7 +281,16 @@ update msg model =
             ( { model | tickCount = model.tickCount + 1 }, saveFileToLocalStorage model )
 
         ManagePopup status ->
-            ( { model | popupStatus = status }, Cmd.none )
+            let
+                cmd =
+                    case status of
+                        PopupOpen ->
+                            Helper.File.getListOfFilesInLocalStorage
+
+                        PopupClosed ->
+                            Cmd.none
+            in
+            ( { model | popupStatus = status }, cmd )
 
 
 

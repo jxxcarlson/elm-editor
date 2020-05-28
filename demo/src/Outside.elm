@@ -1,6 +1,7 @@
 port module Outside exposing
     ( InfoForElm(..)
     , InfoForOutside(..)
+    , decodeFileList
     , getInfo
     , sendInfo
     )
@@ -25,6 +26,7 @@ type alias GenericOutsideData =
 
 type InfoForElm
     = GotClipboard String
+    | GotFileList (List String)
 
 
 type InfoForOutside
@@ -32,6 +34,7 @@ type InfoForOutside
     | WriteToClipBoard String
     | Highlight ( Maybe String, String )
     | WriteFile ( String, String )
+    | AskForFileList
 
 
 getInfo : (InfoForElm -> msg) -> (String -> msg) -> Sub msg
@@ -46,6 +49,14 @@ getInfo tagger onError =
 
                         Err e ->
                             onError <| ""
+
+                "GotFileList" ->
+                    case D.decodeValue decodeFileList outsideInfo.data of
+                        Ok fileList ->
+                            tagger <| GotFileList fileList
+
+                        Err _ ->
+                            onError <| "Error getting file list"
 
                 _ ->
                     onError <| "Unexpected info from outside"
@@ -67,6 +78,9 @@ sendInfo info =
         WriteFile ( fileName, fileContents ) ->
             infoForOutside { tag = "WriteFile", data = encodeFile ( fileName, fileContents ) }
 
+        AskForFileList ->
+            infoForOutside { tag = "AskForFileList", data = E.null }
+
 
 encodeSelectedIdData : ( Maybe String, String ) -> E.Value
 encodeSelectedIdData ( maybeLastId, id ) =
@@ -86,6 +100,11 @@ encodeFile ( fileName, fileContents ) =
 
 
 -- DECODERS --
+
+
+decodeFileList : D.Decoder (List String)
+decodeFileList =
+    D.list D.string
 
 
 clipboardDecoder : D.Decoder String

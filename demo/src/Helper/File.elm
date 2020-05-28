@@ -1,6 +1,7 @@
 module Helper.File exposing
     ( exportFile
     , fileExtension
+    , getListOfFilesInLocalStorage
     , read
     , requestFile
     , saveFile
@@ -54,10 +55,15 @@ saveFileToLocalStorage : Model -> Cmd msg
 saveFileToLocalStorage model =
     case model.fileName of
         Just fileName ->
-            Outside.sendInfo (Outside.WriteFile ( fileName, Editor.getContent model.editor ))
+            Outside.sendInfo (Outside.WriteFile ( "file:" ++ fileName, Editor.getContent model.editor ))
 
         Nothing ->
             Cmd.none
+
+
+getListOfFilesInLocalStorage : Cmd msg
+getListOfFilesInLocalStorage =
+    Outside.sendInfo Outside.AskForFileList
 
 
 exportFile : Model -> Cmd msg

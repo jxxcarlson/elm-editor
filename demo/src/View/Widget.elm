@@ -21,6 +21,7 @@ import Element
         , width
         )
 import Element.Background as Background
+import Element.Font as Font
 import Element.Input as Input
 import Html exposing (Attribute, Html)
 import Html.Attributes as Attribute
@@ -30,7 +31,7 @@ import View.Style as Style
 
 
 closePopupButton model =
-    button 90 "Close" (ManagePopup PopupClosed) []
+    altButton 90 "Close" (ManagePopup PopupClosed) [ Font.size 14 ]
 
 
 openPopupButton model =
@@ -93,6 +94,19 @@ button width str msg attr =
     Input.button
         ([ paddingXY 8 8
          , Background.color (Element.rgb255 90 90 100)
+         ]
+            ++ attr
+        )
+        { onPress = Just msg
+        , label = el attr (text str)
+        }
+
+
+altButton width str msg attr =
+    Input.button
+        ([ paddingXY 8 8
+         , Background.color (Element.rgb255 90 90 100)
+         , Font.color (Element.rgb255 230 230 230)
          ]
             ++ attr
         )

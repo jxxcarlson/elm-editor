@@ -3,6 +3,7 @@ module View.Popup exposing (view)
 import Element
     exposing
         ( Element
+        , alignBottom
         , alignRight
         , centerX
         , centerY
@@ -13,6 +14,7 @@ import Element
         , px
         , rgb255
         , row
+        , scrollbarY
         , spacing
         , text
         , width
@@ -36,7 +38,19 @@ view model =
                 , height (px 500)
                 , paddingXY 30 30
                 , Background.color (Element.rgba 1.0 0.75 0.75 0.8)
+                , spacing 16
                 ]
                 [ text "Files"
-                , Widget.closePopupButton model
+                , column
+                    [ spacing 8
+                    , height (px 400)
+                    , scrollbarY
+                    ]
+                    (List.map viewFileName model.fileList)
+                , el [ alignBottom ] (Widget.closePopupButton model)
                 ]
+
+
+viewFileName : String -> Element Msg
+viewFileName file =
+    el [ Font.size 14 ] (text file)
