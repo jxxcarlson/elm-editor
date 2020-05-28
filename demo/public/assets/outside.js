@@ -32,6 +32,13 @@ app.ports.infoForOutside.subscribe(msg => {
 
              break;
 
+          case "WriteFile":
+           console.log("!JS! WriteFile") ;
+           var fileName = JSON.stringify(msg.data.fileName)
+           var fileContents = JSON.stringify(msg.data.fileContents)
+
+           localStorage.setItem(fileName, fileContents);
+
          case "Highlight":
 
            console.log("!JS! Highlight", msg.data)

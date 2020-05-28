@@ -43,7 +43,8 @@ import Outside
 import Render exposing (MDData, MLData, RenderingData(..), RenderingOption(..))
 import Render.Types exposing (RenderMsg(..))
 import Task exposing (Task)
-import Types exposing (DocType(..), Model, Msg(..))
+import Time
+import Types exposing (DocType(..), DocumentStatus(..), Model, Msg(..))
 import View.Scroll
 import View.Style as Style
 import View.Widget
@@ -73,9 +74,11 @@ init flags =
     , docTitle = "about"
     , docType = MarkdownDoc
     , fileName = Just "about.md"
+    , documentStatus = DocumentDirty
     , selectedId = ( 0, 0 )
     , selectedId_ = ""
     , message = ""
+    , tickCount = 0
     }
         |> Cmd.Extra.withCmds
             [ Dom.focus "editor" |> Task.attempt (always NoOp)
@@ -92,6 +95,7 @@ subscriptions model =
             |> Sub.map EditorMsg
         , Outside.getInfo Outside LogErr
         , Browser.Events.onResize WindowSize
+        , Time.every 1000 Tick
         ]
 
 
@@ -266,9 +270,22 @@ update msg model =
                         IDClicked id ->
                             Helper.Sync.onId id model
 
+        Tick _ ->
+            ( { model | tickCount = model.tickCount + 1 }, saveFileToLocalStorage model )
+
 
 
 -- HELPER
+
+
+saveFileToLocalStorage : Model -> Cmd Msg
+saveFileToLocalStorage model =
+    case modBy 15 model.tickCount == 14 of
+        True ->
+            Helper.File.saveFileToLocalStorage model
+
+        False ->
+            Cmd.none
 
 
 pasteToEditorAndClipboard : Model -> String -> ( Model, Cmd msg )

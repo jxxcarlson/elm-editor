@@ -1,10 +1,19 @@
-module Helper.File exposing (exportFile, fileExtension, read, requestFile, saveFile, titleFromFileName)
+module Helper.File exposing
+    ( exportFile
+    , fileExtension
+    , read
+    , requestFile
+    , saveFile
+    , saveFileToLocalStorage
+    , titleFromFileName
+    )
 
 import Editor
 import File exposing (File)
 import File.Download as Download
 import File.Select as Select
 import MiniLatex.Export
+import Outside
 import Task exposing (Task)
 import Types exposing (DocType(..), Model, Msg(..))
 
@@ -38,6 +47,16 @@ saveFile model =
             Download.string fileName "text/x-tex" (Editor.getContent model.editor)
 
         ( _, _ ) ->
+            Cmd.none
+
+
+saveFileToLocalStorage : Model -> Cmd msg
+saveFileToLocalStorage model =
+    case model.fileName of
+        Just fileName ->
+            Outside.sendInfo (Outside.WriteFile ( fileName, Editor.getContent model.editor ))
+
+        Nothing ->
             Cmd.none
 
 

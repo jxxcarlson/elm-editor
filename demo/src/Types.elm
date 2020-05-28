@@ -1,4 +1,4 @@
-module Types exposing (DocType(..), Model, Msg(..))
+module Types exposing (DocType(..), DocumentStatus(..), Model, Msg(..))
 
 import Browser.Dom as Dom
 import Editor exposing (Editor)
@@ -6,6 +6,7 @@ import File exposing (File)
 import Outside
 import Render exposing (RenderingData)
 import Render.Types exposing (RenderMsg)
+import Time
 
 
 
@@ -21,10 +22,17 @@ type alias Model =
     , docTitle : String
     , docType : DocType
     , fileName : Maybe String
+    , documentStatus : DocumentStatus
     , selectedId : ( Int, Int )
     , selectedId_ : String
     , message : String
+    , tickCount : Int
     }
+
+
+type DocumentStatus
+    = DocumentDirty
+    | DocumentSaved
 
 
 type DocType
@@ -53,3 +61,4 @@ type Msg
     | Outside Outside.InfoForElm
     | LogErr String
     | RenderMsg RenderMsg
+    | Tick Time.Posix

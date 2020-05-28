@@ -31,6 +31,7 @@ type InfoForOutside
     = AskForClipBoard E.Value
     | WriteToClipBoard String
     | Highlight ( Maybe String, String )
+    | WriteFile ( String, String )
 
 
 getInfo : (InfoForElm -> msg) -> (String -> msg) -> Sub msg
@@ -63,12 +64,23 @@ sendInfo info =
         Highlight idPair ->
             infoForOutside { tag = "Highlight", data = encodeSelectedIdData idPair }
 
+        WriteFile ( fileName, fileContents ) ->
+            infoForOutside { tag = "WriteFile", data = encodeFile ( fileName, fileContents ) }
+
 
 encodeSelectedIdData : ( Maybe String, String ) -> E.Value
 encodeSelectedIdData ( maybeLastId, id ) =
     E.object
         [ ( "lastId", E.string (maybeLastId |> Maybe.withDefault "nonexistent") )
         , ( "id", E.string id )
+        ]
+
+
+encodeFile : ( String, String ) -> E.Value
+encodeFile ( fileName, fileContents ) =
+    E.object
+        [ ( "fileName", E.string fileName )
+        , ( "fileContents", E.string fileContents )
         ]
 
 
