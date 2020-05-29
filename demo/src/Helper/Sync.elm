@@ -13,7 +13,7 @@ import Render
         )
 import Sync
 import Tree.Diff
-import Types exposing (DocType(..), Model, Msg(..))
+import Types exposing (DocType(..), DocumentStatus(..), Model, Msg(..))
 import View.Scroll
 
 
@@ -21,7 +21,7 @@ sync : Editor -> Cmd EditorMsg -> Model -> ( Model, Cmd Msg )
 sync newEditor cmd model =
     model
         |> updateRenderingData (Editor.getLines newEditor)
-        |> (\m -> { m | editor = newEditor })
+        |> (\m -> { m | editor = newEditor, documentStatus = DocumentDirty })
         |> withCmd (Cmd.map EditorMsg cmd)
 
 

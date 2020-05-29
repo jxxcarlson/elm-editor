@@ -71,3 +71,4 @@ type Msg
     | Tick Time.Posix
     | ManagePopup PopupStatus
     | SendRequestForFile String
+    | DeleteFileFromLocalStorage String

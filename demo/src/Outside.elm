@@ -37,6 +37,7 @@ type InfoForOutside
     | WriteFile ( String, String )
     | AskForFileList
     | AskForFile String
+    | DeleteFileFromLocalStorage String
 
 
 getInfo : (InfoForElm -> msg) -> (String -> msg) -> Sub msg
@@ -97,6 +98,9 @@ sendInfo info =
 
         AskForFile fileName ->
             infoForOutside { tag = "AskForFile", data = E.string fileName }
+
+        DeleteFileFromLocalStorage fileName ->
+            infoForOutside { tag = "DeleteFileFromLocalStorage", data = E.string fileName }
 
 
 encodeSelectedIdData : ( Maybe String, String ) -> E.Value

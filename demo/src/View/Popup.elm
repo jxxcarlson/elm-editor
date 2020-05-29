@@ -36,7 +36,7 @@ view model =
 
         PopupOpen ->
             column
-                [ width (px 400)
+                [ width (px 500)
                 , height (px <| round <| Helper.Common.windowHeight model.height + 28)
                 , paddingXY 30 30
                 , Background.color (Element.rgba 1.0 0.75 0.75 0.8)
@@ -48,7 +48,7 @@ view model =
                     , height (px 400)
                     , scrollbarY
                     ]
-                    (List.map viewFileName model.fileList)
+                    (List.map viewFileName (List.sort model.fileList))
 
                 -- , el [ alignBottom ] (Widget.closePopupButton model)
                 ]
@@ -56,4 +56,10 @@ view model =
 
 viewFileName : String -> Element Msg
 viewFileName fileName =
-    Widget.plainButton 120 fileName (SendRequestForFile fileName) []
+    row []
+        [ Widget.plainButton 200 fileName (SendRequestForFile fileName) []
+        , Widget.plainButton 55
+            "delete"
+            (DeleteFileFromLocalStorage fileName)
+            [ Background.color (Element.rgba 0.7 0.7 1.0 0.9) ]
+        ]

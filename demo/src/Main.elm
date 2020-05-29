@@ -45,7 +45,14 @@ import Render exposing (MDData, MLData, RenderingData(..), RenderingOption(..))
 import Render.Types exposing (RenderMsg(..))
 import Task exposing (Task)
 import Time
-import Types exposing (DocType(..), DocumentStatus(..), Model, Msg(..), PopupStatus(..))
+import Types
+    exposing
+        ( DocType(..)
+        , DocumentStatus(..)
+        , Model
+        , Msg(..)
+        , PopupStatus(..)
+        )
 import View.Popup as Popup
 import View.Scroll
 import View.Style as Style
@@ -291,7 +298,7 @@ update msg model =
                             Helper.Sync.onId id model
 
         Tick _ ->
-            ( { model | tickCount = model.tickCount + 1 }, saveFileToLocalStorage model )
+            saveFileToLocalStorage model
 
         ManagePopup status ->
             let
@@ -312,19 +319,36 @@ update msg model =
             , Outside.sendInfo (Outside.AskForFile fileName)
             )
 
+        DeleteFileFromLocalStorage fileName ->
+            ( model, Outside.sendInfo (Outside.DeleteFileFromLocalStorage fileName) )
+
 
 
 -- HELPER
 
 
-saveFileToLocalStorage : Model -> Cmd Msg
+saveFileToLocalStorage : Model -> ( Model, Cmd Msg )
 saveFileToLocalStorage model =
     case modBy 15 model.tickCount == 14 of
         True ->
-            Helper.File.saveFileToLocalStorage model
+            case model.documentStatus of
+                DocumentDirty ->
+                    ( { model
+                        | tickCount = model.tickCount + 1
+                        , documentStatus = DocumentSaved
+                      }
+                    , Helper.File.saveFileToLocalStorage model
+                    )
+
+                DocumentSaved ->
+                    ( { model | tickCount = model.tickCount + 1 }
+                    , Cmd.none
+                    )
 
         False ->
-            Cmd.none
+            ( { model | tickCount = model.tickCount + 1 }
+            , Cmd.none
+            )
 
 
 pasteToEditorAndClipboard : Model -> String -> ( Model, Cmd msg )

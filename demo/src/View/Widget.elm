@@ -18,6 +18,7 @@ import Element
         , alignRight
         , el
         , paddingXY
+        , px
         , text
         , width
         )
@@ -116,13 +117,14 @@ altButton width str msg attr =
         }
 
 
-plainButton width str msg attr =
+plainButton width_ str msg attr =
     Input.button
         ([ paddingXY 8 0
 
          -- , Background.color (Element.rgb255 90 90 100)
          , Font.color (Element.rgb255 30 30 30)
          , Font.size 14
+         , width (px width_)
          ]
             ++ attr
         )

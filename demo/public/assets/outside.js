@@ -37,6 +37,15 @@ app.ports.infoForOutside.subscribe(msg => {
 
            break;
 
+        case "DeleteFileFromLocalStorage":
+
+            console.log("DeleteFileFromLocalStorage: " + msg.data)
+            localStorage.removeItem("file:" + msg.data);
+            var fileList = filesInLocalStorage()
+            app.ports.infoForElm.send({tag: "GotFileList", data:  fileList})
+
+           break;
+
         case "WriteToClipboard":
             console.log("!JS!  WriteToClipboard", JSON.stringify(msg.data))
 
