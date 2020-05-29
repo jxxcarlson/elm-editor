@@ -41,7 +41,7 @@ openPopupButton model =
             button 90 "Close" (ManagePopup PopupClosed) []
 
         PopupClosed ->
-            button 90 "Popup" (ManagePopup PopupOpen) []
+            button 90 "Files" (ManagePopup PopupOpen) []
 
 
 openFileButton model =
