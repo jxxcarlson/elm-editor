@@ -118,7 +118,7 @@ altButton width str msg attr =
 
 plainButton width str msg attr =
     Input.button
-        ([ paddingXY 8 8
+        ([ paddingXY 8 0
 
          -- , Background.color (Element.rgb255 90 90 100)
          , Font.color (Element.rgb255 30 30 30)

@@ -22,7 +22,6 @@ type alias Model =
     , docTitle : String
     , docType : DocType
     , fileName : Maybe String
-    , fileContents : String
     , fileList : List String
     , documentStatus : DocumentStatus
     , selectedId : ( Int, Int )

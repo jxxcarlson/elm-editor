@@ -22,6 +22,7 @@ import Element
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
+import Helper.Common
 import Outside
 import Types exposing (Model, Msg(..), PopupStatus(..))
 import View.Widget as Widget
@@ -35,8 +36,8 @@ view model =
 
         PopupOpen ->
             column
-                [ width (px 300)
-                , height (px 500)
+                [ width (px 400)
+                , height (px <| round <| Helper.Common.windowHeight model.height + 28)
                 , paddingXY 30 30
                 , Background.color (Element.rgba 1.0 0.75 0.75 0.8)
                 , spacing 16
@@ -48,7 +49,8 @@ view model =
                     , scrollbarY
                     ]
                     (List.map viewFileName model.fileList)
-                , el [ alignBottom ] (Widget.closePopupButton model)
+
+                -- , el [ alignBottom ] (Widget.closePopupButton model)
                 ]
 
 

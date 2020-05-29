@@ -1,5 +1,6 @@
 module Helper.File exposing
-    ( exportFile
+    ( docType
+    , exportFile
     , fileExtension
     , getListOfFilesInLocalStorage
     , read
@@ -91,3 +92,19 @@ titleFromFileName fileName =
         |> List.drop 1
         |> List.reverse
         |> String.join "."
+
+
+docType : String -> DocType
+docType fileName =
+    case fileExtension fileName of
+        "md" ->
+            MarkdownDoc
+
+        "tex" ->
+            MiniLaTeXDoc
+
+        "latex" ->
+            MiniLaTeXDoc
+
+        _ ->
+            MarkdownDoc

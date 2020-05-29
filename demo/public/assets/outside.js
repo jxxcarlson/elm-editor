@@ -87,7 +87,7 @@ app.ports.infoForOutside.subscribe(msg => {
     function filesInLocalStorage() {
       var fileList = []
       for (var key in localStorage){
-        if (key.indexOf("file:") == 1)  {
+        if (key.indexOf("file:") == 0)  {
              fileList.push(key.replace("file:", "").replace(/\"/g, ""))
           }
       }
@@ -97,7 +97,7 @@ app.ports.infoForOutside.subscribe(msg => {
     function getFileFromLocalStorage(fileName) {
         var fileName_ = ('file:' + fileName).replace(/\"/g, "")
         console.log("fileName_", fileName_)
-        return localStorage.getItem('\"' + fileName_ + '\"');
+        return localStorage.getItem(fileName_);
     }
 
     function updateClipboard(newClip) {

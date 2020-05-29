@@ -76,7 +76,6 @@ init flags =
     , docTitle = "about"
     , docType = MarkdownDoc
     , fileName = Just "about.md"
-    , fileContents = Data.about
     , fileList = []
     , documentStatus = DocumentDirty
     , selectedId = ( 0, 0 )
@@ -263,8 +262,14 @@ update msg model =
                     let
                         fileName =
                             model.fileName |> Maybe.withDefault "FOO"
+
+                        title =
+                            Helper.File.titleFromFileName fileName
+
+                        docType =
+                            Helper.File.docType fileName
                     in
-                    ( Helper.Load.loadDocument fileName fileContents MarkdownDoc model, Cmd.none )
+                    ( Helper.Load.loadDocument title fileContents docType model, Cmd.none )
 
         LogErr _ ->
             ( model, Cmd.none )
@@ -303,7 +308,6 @@ update msg model =
         SendRequestForFile fileName ->
             ( { model
                 | fileName = Just fileName
-                , fileContents = "Loading file ..."
               }
             , Outside.sendInfo (Outside.AskForFile fileName)
             )
