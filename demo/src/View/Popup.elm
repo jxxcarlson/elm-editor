@@ -5,6 +5,7 @@ import Element
         ( Element
         , alignBottom
         , alignRight
+        , alignTop
         , centerX
         , centerY
         , column
@@ -42,15 +43,13 @@ view model =
                 , Background.color (Element.rgba 1.0 0.75 0.75 0.8)
                 , spacing 16
                 ]
-                [ text "Files"
+                [ row [ width (px 450) ] [ text "Files", el [ alignRight ] (Widget.closePopupButton model) ]
                 , column
                     [ spacing 8
                     , height (px 400)
                     , scrollbarY
                     ]
                     (List.map viewFileName (List.sort model.fileList))
-
-                -- , el [ alignBottom ] (Widget.closePopupButton model)
                 ]
 
 

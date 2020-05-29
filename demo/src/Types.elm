@@ -72,3 +72,4 @@ type Msg
     | ManagePopup PopupStatus
     | SendRequestForFile String
     | DeleteFileFromLocalStorage String
+    | SaveFileToLocalStorage

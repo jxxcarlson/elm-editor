@@ -9,6 +9,7 @@ module View.Widget exposing
     , openPopupButton
     , plainButton
     , saveFileButton
+    , saveFileToLocalStorageButton
     , textField
     )
 
@@ -17,6 +18,8 @@ import Element
         ( Element
         , alignRight
         , el
+        , height
+        , padding
         , paddingXY
         , px
         , text
@@ -28,12 +31,31 @@ import Element.Input as Input
 import Html exposing (Attribute, Html)
 import Html.Attributes as Attribute
 import Html.Events as HE
-import Types exposing (DocType(..), Msg(..), PopupStatus(..))
+import Types exposing (DocType(..), DocumentStatus(..), Model, Msg(..), PopupStatus(..))
 import View.Style as Style
 
 
+saveFileToLocalStorageButton model =
+    case model.documentStatus of
+        DocumentDirty ->
+            plainButton 20
+                ""
+                SaveFileToLocalStorage
+                [ height (px 20)
+                , Background.color (Element.rgb 0.55 0 0)
+                ]
+
+        DocumentSaved ->
+            plainButton 20
+                ""
+                SaveFileToLocalStorage
+                [ height (px 20)
+                , Background.color (Element.rgb 0.0 0.7 0)
+                ]
+
+
 closePopupButton model =
-    altButton 90 "Close" (ManagePopup PopupClosed) [ Font.size 14 ]
+    altButton 20 "X" (ManagePopup PopupClosed) [ Font.size 14 ]
 
 
 openPopupButton model =
@@ -107,8 +129,7 @@ button width str msg attr =
 altButton width str msg attr =
     Input.button
         ([ paddingXY 8 8
-         , Background.color (Element.rgb255 90 90 100)
-         , Font.color (Element.rgb255 230 230 230)
+         , Font.color (Element.rgb255 30 30 30)
          ]
             ++ attr
         )
@@ -120,8 +141,6 @@ altButton width str msg attr =
 plainButton width_ str msg attr =
     Input.button
         ([ paddingXY 8 0
-
-         -- , Background.color (Element.rgb255 90 90 100)
          , Font.color (Element.rgb255 30 30 30)
          , Font.size 14
          , width (px width_)

@@ -84,7 +84,7 @@ init flags =
     , docType = MarkdownDoc
     , fileName = Just "about.md"
     , fileList = []
-    , documentStatus = DocumentDirty
+    , documentStatus = DocumentSaved
     , selectedId = ( 0, 0 )
     , selectedId_ = ""
     , message = ""
@@ -322,28 +322,36 @@ update msg model =
         DeleteFileFromLocalStorage fileName ->
             ( model, Outside.sendInfo (Outside.DeleteFileFromLocalStorage fileName) )
 
+        SaveFileToLocalStorage ->
+            saveFileToLocalStorage_ model
+
 
 
 -- HELPER
+
+
+saveFileToLocalStorage_ : Model -> ( Model, Cmd Msg )
+saveFileToLocalStorage_ model =
+    case model.documentStatus of
+        DocumentDirty ->
+            ( { model
+                | tickCount = model.tickCount + 1
+                , documentStatus = DocumentSaved
+              }
+            , Helper.File.saveFileToLocalStorage model
+            )
+
+        DocumentSaved ->
+            ( { model | tickCount = model.tickCount + 1 }
+            , Cmd.none
+            )
 
 
 saveFileToLocalStorage : Model -> ( Model, Cmd Msg )
 saveFileToLocalStorage model =
     case modBy 15 model.tickCount == 14 of
         True ->
-            case model.documentStatus of
-                DocumentDirty ->
-                    ( { model
-                        | tickCount = model.tickCount + 1
-                        , documentStatus = DocumentSaved
-                      }
-                    , Helper.File.saveFileToLocalStorage model
-                    )
-
-                DocumentSaved ->
-                    ( { model | tickCount = model.tickCount + 1 }
-                    , Cmd.none
-                    )
+            saveFileToLocalStorage_ model
 
         False ->
             ( { model | tickCount = model.tickCount + 1 }
@@ -428,6 +436,7 @@ viewFooter model width_ height_ =
         , spacing 12
         ]
         [ View.Widget.openPopupButton model
+        , View.Widget.saveFileToLocalStorageButton model
         , View.Widget.documentTypeButton model
         , View.Widget.newDocumentButton model
         , View.Widget.openFileButton model
