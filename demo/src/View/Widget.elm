@@ -1,8 +1,11 @@
 module View.Widget exposing
     ( button
+    , cancelChangeFileNameButton
+    , changeFileNameButton
     , closePopupButton
     , documentTypeButton
     , exportFileButton
+    , inputFileName
     , loadDocumentButton
     , newDocumentButton
     , openFileButton
@@ -28,11 +31,49 @@ import Element
 import Element.Background as Background
 import Element.Font as Font
 import Element.Input as Input
+import Helper.File
 import Html exposing (Attribute, Html)
 import Html.Attributes as Attribute
 import Html.Events as HE
 import Types exposing (DocType(..), DocumentStatus(..), Model, Msg(..), PopupStatus(..))
 import View.Style as Style
+
+
+inputFileName model =
+    textField 180
+        model.newFileName
+        InputFileName
+        []
+        [ Attribute.style "height" "30px", Attribute.style "font-size" "14px" ]
+        |> Element.html
+
+
+cancelChangeFileNameButton =
+    button 90 "Cancel" CancelChangeFileName []
+
+
+changeFileNameButton model =
+    case
+        ( Helper.File.fileExtension model.newFileName
+        , String.length (Helper.File.titleFromFileName model.newFileName) > 0
+        )
+    of
+        ( "md", True ) ->
+            changeFileNameButton_ model
+
+        ( "tex", True ) ->
+            changeFileNameButton_ model
+
+        ( _, _ ) ->
+            doNotChangeFileNameButton
+
+
+changeFileNameButton_ model =
+    button 90 "Change file name" ChangeFileName []
+
+
+doNotChangeFileNameButton =
+    button 90 "Change file name" NoOp [ Font.color (Element.rgb 0.7 0.7 0.7) ]
 
 
 saveFileToLocalStorageButton model =

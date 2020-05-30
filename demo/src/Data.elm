@@ -11,16 +11,17 @@ module Data exposing
 
 about =
     """
+# A Pure Elm Text Editor
 
 *NOTE: this app is designed for computers, not phones. Best to use it on Chrome for now.  External copy/paste only work on it at the moment.*
 
-# About this app
+## About this app
 
 What you see here is a demonstration of
 a pure Elm text editor coupled to compilers
 for Markdown+Math and MiniLaTeX to produce
 an interactive editing environment for
-these markup languages.  Files with extention
+these markup languages.  Files with extension
 `.md` and `.tex` can be opened and saved,
 MiniLaTeX documents can also be exported
 to standard LaTeX.
@@ -81,6 +82,21 @@ Google Chrome
 
 **An Extra.** Use `ctrl-shift-D` to toggle dark mode.
 .
+## Files
+
+The buttons in the footer provide operations for creating
+new files  as well opening,
+saving, exporting and renaming them. File format (Markdown or MiniLaTeX)
+is determined by the red button.  Press it to toggle
+between Markdown and MiniLaTeX.
+
+Files that have been edited are saved to local storage every
+15 seconds.  If a file needs to be saved, the little square
+square to the right of the **Files** button is red. You may
+click on it to immediately save the file to local storage.
+To list the files in local storage, press the **Files** button.
+
+
 ## Markdown Extras
 
 There are other Markdown extras in addition
@@ -139,6 +155,11 @@ This editor supersedes
 [the previous version](https://package.elm-lang.org/packages/jxxcarlson/elm-text-editor/latest/).
 
 
+"""
+
+
+onTheHorizon =
+    """
 ## On the Horizon
 
 Some of the features below are not pure editor
@@ -170,7 +191,6 @@ have not yet been implemented.
 - Vim mode.  This will take a while to implement. A scaffold
 has been constructed and a few commands
 added: `h` `j` `k` `l` as well as `i` and `ESC` .
-
 
 """
 

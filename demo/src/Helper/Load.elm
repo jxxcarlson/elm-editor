@@ -51,6 +51,7 @@ loadDocument title source docType model =
             { model
                 | renderingData = renderingData
                 , fileName = Just fileName
+                , newFileName = fileName
                 , counter = model.counter + 1
                 , editor =
                     Editor.initWithContent source
@@ -70,6 +71,7 @@ loadDocument title source docType model =
             { model
                 | renderingData = renderingData
                 , fileName = Just fileName
+                , newFileName = fileName
                 , counter = model.counter + 2
                 , editor =
                     Editor.initWithContent source

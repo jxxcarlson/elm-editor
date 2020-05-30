@@ -47,7 +47,8 @@ import Task exposing (Task)
 import Time
 import Types
     exposing
-        ( DocType(..)
+        ( ChangingFileNameState(..)
+        , DocType(..)
         , DocumentStatus(..)
         , Model
         , Msg(..)
@@ -83,6 +84,8 @@ init flags =
     , docTitle = "about"
     , docType = MarkdownDoc
     , fileName = Just "about.md"
+    , newFileName = "about.md"
+    , changingFileNameState = FileNameOK
     , fileList = []
     , documentStatus = DocumentSaved
     , selectedId = ( 0, 0 )
@@ -184,7 +187,12 @@ update msg model =
 
         Load title ->
             Helper.Load.loadDocumentByTitle title model
-                |> withCmd (Cmd.batch [ View.Scroll.toEditorTop, View.Scroll.toRenderedTextTop ])
+                |> withCmd
+                    (Cmd.batch
+                        [ View.Scroll.toEditorTop
+                        , View.Scroll.toRenderedTextTop
+                        ]
+                    )
 
         ToggleDocType ->
             let
@@ -196,7 +204,12 @@ update msg model =
                         MiniLaTeXDoc ->
                             MarkdownDoc
             in
-            ( { model | docType = newDocType }, Cmd.none )
+            ( { model
+                | docType = newDocType
+                , fileName = Maybe.map (Helper.File.updateDocType newDocType) model.fileName
+              }
+            , Cmd.none
+            )
 
         NewDocument ->
             case model.docType of
@@ -242,7 +255,11 @@ update msg model =
                     in
                     Helper.Load.loadDocument (Helper.File.titleFromFileName fileName) source docType model
                         |> (\m -> { m | docType = docType })
-                        |> withCmds [ View.Scroll.toRenderedTextTop, View.Scroll.toEditorTop ]
+                        |> withCmds
+                            [ View.Scroll.toRenderedTextTop
+                            , View.Scroll.toEditorTop
+                            , Helper.File.saveFileToLocalStorage_ fileName source
+                            ]
 
         SaveFile ->
             ( model, Helper.File.saveFile model )
@@ -324,6 +341,26 @@ update msg model =
 
         SaveFileToLocalStorage ->
             saveFileToLocalStorage_ model
+
+        InputFileName str ->
+            ( { model | newFileName = str, changingFileNameState = ChangingFileName }, Cmd.none )
+
+        ChangeFileName ->
+            ( { model
+                | fileName = Just model.newFileName
+                , docType = Helper.File.docType model.newFileName
+                , changingFileNameState = FileNameOK
+              }
+            , Helper.File.saveFileToLocalStorage_ model.newFileName (Editor.getContent model.editor)
+            )
+
+        CancelChangeFileName ->
+            case model.fileName of
+                Nothing ->
+                    ( model, Cmd.none )
+
+                Just fileName ->
+                    ( { model | newFileName = fileName, changingFileNameState = FileNameOK }, Cmd.none )
 
 
 
@@ -442,24 +479,12 @@ viewFooter model width_ height_ =
         , View.Widget.openFileButton model
         , View.Widget.saveFileButton model
         , View.Widget.exportFileButton model
-        , displayFilename model
+
+        -- , displayFilename model
+        , View.Widget.changeFileNameButton model
+        , showIf (model.changingFileNameState == ChangingFileName) View.Widget.cancelChangeFileNameButton
+        , el [ Element.paddingEach { top = 10, bottom = 0, left = 0, right = 0 } ] (View.Widget.inputFileName model)
         , el [ alignRight, width (px 100) ] (text model.message)
-        ]
-
-
-viewFooter2 model width_ height_ =
-    row
-        [ width (pxFloat (2 * Helper.Common.windowWidth width_ - 40))
-        , height (pxFloat height_)
-        , Background.color (Element.rgb255 80 80 90)
-        , Font.color (gray 240)
-        , Font.size 14
-        , paddingXY 10 0
-        , Element.moveUp 19
-        , spacing 36
-        ]
-        [ markdownDocumentLoader model
-        , latexDocumentLoader model
         ]
 
 
@@ -475,25 +500,6 @@ displayFilename model =
                     "File: " ++ fn
     in
     el [] (text message)
-
-
-markdownDocumentLoader model =
-    row [ spacing 12 ]
-        [ el [] (text "Markdown Docs: ")
-        , View.Widget.loadDocumentButton model 50 "about" "About"
-        , View.Widget.loadDocumentButton model 50 "markdownExample" "M1"
-        , View.Widget.loadDocumentButton model 50 "mathExample" "M2"
-        , View.Widget.loadDocumentButton model 50 "astro" "M3"
-        ]
-
-
-latexDocumentLoader model =
-    row [ spacing 12 ]
-        [ el [] (text "MiniLaTeX Docs: ")
-        , View.Widget.loadDocumentButton model 50 "aboutMiniLaTeX" "About"
-        , View.Widget.loadDocumentButton model 50 "aboutMiniLaTeX2" "L1"
-        , View.Widget.loadDocumentButton model 50 "miniLaTeXExample" "L2"
-        ]
 
 
 viewEditor model =

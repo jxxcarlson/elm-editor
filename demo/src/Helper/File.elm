@@ -7,7 +7,9 @@ module Helper.File exposing
     , requestFile
     , saveFile
     , saveFileToLocalStorage
+    , saveFileToLocalStorage_
     , titleFromFileName
+    , updateDocType
     )
 
 import Editor
@@ -24,9 +26,29 @@ import Types exposing (DocType(..), Model, Msg(..))
 -- FILE I/O
 
 
+updateDocType : DocType -> String -> String
+updateDocType docType_ fileName =
+    case docType_ of
+        MiniLaTeXDoc ->
+            titleFromFileName fileName ++ ".tex"
+
+        MarkdownDoc ->
+            titleFromFileName fileName ++ ".md"
+
+
+titleFromFileName : String -> String
+titleFromFileName fileName =
+    fileName
+        |> String.split "."
+        |> List.reverse
+        |> List.drop 1
+        |> List.reverse
+        |> String.join "."
+
+
 fileExtension : String -> String
 fileExtension str =
-    str |> String.split "." |> List.reverse |> List.head |> Maybe.withDefault "md"
+    str |> String.split "." |> List.reverse |> List.head |> Maybe.withDefault "txt"
 
 
 read : File -> Cmd Msg
@@ -56,10 +78,15 @@ saveFileToLocalStorage : Model -> Cmd msg
 saveFileToLocalStorage model =
     case model.fileName of
         Just fileName ->
-            Outside.sendInfo (Outside.WriteFile ( "file:" ++ fileName, Editor.getContent model.editor ))
+            saveFileToLocalStorage_ fileName (Editor.getContent model.editor)
 
         Nothing ->
             Cmd.none
+
+
+saveFileToLocalStorage_ : String -> String -> Cmd msg
+saveFileToLocalStorage_ fileName fileContent =
+    Outside.sendInfo (Outside.WriteFile ( "file:" ++ fileName, fileContent ))
 
 
 getListOfFilesInLocalStorage : Cmd msg
@@ -82,16 +109,6 @@ exportFile model =
 
         ( _, _ ) ->
             Cmd.none
-
-
-titleFromFileName : String -> String
-titleFromFileName fileName =
-    fileName
-        |> String.split "."
-        |> List.reverse
-        |> List.drop 1
-        |> List.reverse
-        |> String.join "."
 
 
 docType : String -> DocType

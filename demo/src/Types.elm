@@ -1,4 +1,11 @@
-module Types exposing (DocType(..), DocumentStatus(..), Model, Msg(..), PopupStatus(..))
+module Types exposing
+    ( ChangingFileNameState(..)
+    , DocType(..)
+    , DocumentStatus(..)
+    , Model
+    , Msg(..)
+    , PopupStatus(..)
+    )
 
 import Browser.Dom as Dom
 import Editor exposing (Editor)
@@ -22,6 +29,8 @@ type alias Model =
     , docTitle : String
     , docType : DocType
     , fileName : Maybe String
+    , newFileName : String
+    , changingFileNameState : ChangingFileNameState
     , fileList : List String
     , documentStatus : DocumentStatus
     , selectedId : ( Int, Int )
@@ -30,6 +39,11 @@ type alias Model =
     , tickCount : Int
     , popupStatus : PopupStatus
     }
+
+
+type ChangingFileNameState
+    = ChangingFileName
+    | FileNameOK
 
 
 type PopupStatus
@@ -73,3 +87,6 @@ type Msg
     | SendRequestForFile String
     | DeleteFileFromLocalStorage String
     | SaveFileToLocalStorage
+    | InputFileName String
+    | ChangeFileName
+    | CancelChangeFileName
