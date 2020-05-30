@@ -1,5 +1,6 @@
 module Document exposing
-    ( Document
+    ( Author
+    , Document
     , Manifest
     , Uuid
     , docTypeOfString
@@ -8,6 +9,15 @@ module Document exposing
 
 import Time
 import Types exposing (DocType(..))
+
+
+type alias Author =
+    { name : String
+    , id : Uuid
+    , email : String
+    , timeCreated : Time.Posix
+    , timeUpdated : Time.Posix
+    }
 
 
 type alias Document =

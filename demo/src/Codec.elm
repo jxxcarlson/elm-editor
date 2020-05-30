@@ -1,15 +1,38 @@
 module Codec exposing
-    ( documentDecoder
+    ( authorDecoder
+    , authorEncoder
+    , documentDecoder
     , documentEncoder
     , manifestDecoder
     , manifestEncoder
     )
 
-import Document exposing (Document, Manifest)
+import Document exposing (Author, Document, Manifest)
 import Json.Decode as D exposing (Decoder, bool, int, list, nullable, string)
 import Json.Decode.Pipeline as JP exposing (required)
 import Json.Encode as Encode
 import Time
+
+
+authorDecoder : Decoder Author
+authorDecoder =
+    D.succeed Document
+        |> required "name" string
+        |> required "id" string
+        |> required "email" string
+        |> required "timeCreated" (int |> D.map Time.millisToPosix)
+        |> required "timeUpdated" (int |> D.map Time.millisToPosix)
+
+
+authorEncoder : Author -> Encode.Value
+authorEncoder author =
+    Encode.object
+        [ ( "name", Encode.string author.name )
+        , ( "id", Encode.string author.id )
+        , ( "email", Encode.string author.email )
+        , ( "timeCreated", Encode.int (Time.posixToMillis author.timeCreated) )
+        , ( "timeUpdated", Encode.int (Time.posixToMillis author.timeUpdated) )
+        ]
 
 
 documentDecoder : Decoder Document
