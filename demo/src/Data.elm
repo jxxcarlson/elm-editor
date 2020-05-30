@@ -12,7 +12,7 @@ module Data exposing
 about =
     """
 
-*NOTE: this app is designed for computers, not phones.*
+*NOTE: this app is designed for computers, not phones. Best to use it on Chrome for now.  External copy/paste only work on it at the moment.*
 
 # About this app
 
@@ -105,6 +105,15 @@ The symbol `>>` creates an element like
 the quotation block, except that whitespace
 is respected.
 
+## SVG
+
+You can also add SVG figures:
+
+@svg
+<svg width="100" height="100">
+  <circle cx="50" cy="50" r="40" stroke="blue" stroke-width="3" fill="cyan" />
+</svg>
+
 
 ## Plans
 
@@ -126,7 +135,8 @@ learned a great deal from the work
 
 ## Note
 
-This editor supersedes [the previous version](https://package.elm-lang.org/packages/jxxcarlson/elm-text-editor/latest/).
+This editor supersedes
+[the previous version](https://package.elm-lang.org/packages/jxxcarlson/elm-text-editor/latest/).
 
 
 ## On the Horizon

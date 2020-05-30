@@ -62,10 +62,6 @@ getInfo tagger onError =
                             onError <| "Error getting file list"
 
                 "GotFileContents" ->
-                    let
-                        _ =
-                            Debug.log "GotFileContents"
-                    in
                     case D.decodeValue D.string outsideInfo.data of
                         Ok fileContents ->
                             tagger <| GotFileContents fileContents
