@@ -25,7 +25,7 @@
             "jinjor/elm-debounce": "3.0.0",
             "jinjor/elm-diff": "1.0.6",
             "jxxcarlson/elm-editor": "3.1.2",
-            "jxxcarlson/elm-markdown": "9.2.7",
+            "jxxcarlson/elm-markdown": "9.2.9",
             "jxxcarlson/htree": "2.0.1",
             "jxxcarlson/meenylatex": "11.0.0",
             "lovasoa/elm-rolling-list": "1.1.4",
@@ -34,14 +34,18 @@
             "zwilias/elm-rosetree": "1.5.0"
         },
         "indirect": {
+            "Garados007/elm-svg-parser": "1.0.0",
             "NoRedInk/elm-string-conversions": "1.0.1",
+            "andre-dietrich/parser-combinators": "3.2.0",
             "elm/bytes": "1.0.8",
             "elm/http": "2.0.0",
             "elm/random": "1.0.0",
+            "elm/svg": "1.0.1",
             "elm/url": "1.0.0",
             "elm/virtual-dom": "1.0.2",
             "elm-community/dict-extra": "2.4.0",
             "erlandsona/assoc-set": "1.1.0",
+            "pilatch/flip": "1.0.0",
             "pzp1997/assoc-list": "1.0.0",
             "skyqrose/assoc-list-extra": "1.0.0",
             "zwilias/elm-html-string": "2.0.2"
