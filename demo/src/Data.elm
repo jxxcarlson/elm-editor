@@ -30,9 +30,9 @@ The app has two
 windows.  On the left is the editor
 itself.  On the right is the content of
 the editor suitably rendered. This
-document is written in  [Markdown+Math](
-https://package.elm-lang.org/packages/jxxca
-rlson/elm-markdown/latest/), a flavor of
+document is written in
+[Markdown+Math](https://package.elm-lang.org/packages/jxxcarlson/elm-markdown/latest/),
+a flavor of
 Markdown that can handle mathematical
 notation. Like this:
 

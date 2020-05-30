@@ -362,6 +362,9 @@ update msg model =
                 Just fileName ->
                     ( { model | newFileName = fileName, changingFileNameState = FileNameOK }, Cmd.none )
 
+        About ->
+            ( Helper.Load.loadDocumentByTitle "about" model, Cmd.none )
+
 
 
 -- HELPER
@@ -484,6 +487,7 @@ viewFooter model width_ height_ =
         , View.Widget.changeFileNameButton model
         , showIf (model.changingFileNameState == ChangingFileName) View.Widget.cancelChangeFileNameButton
         , el [ Element.paddingEach { top = 10, bottom = 0, left = 0, right = 0 } ] (View.Widget.inputFileName model)
+        , View.Widget.aboutButton
         , el [ alignRight, width (px 100) ] (text model.message)
         ]
 

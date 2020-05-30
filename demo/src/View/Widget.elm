@@ -1,5 +1,6 @@
 module View.Widget exposing
-    ( button
+    ( aboutButton
+    , button
     , cancelChangeFileNameButton
     , changeFileNameButton
     , closePopupButton
@@ -46,6 +47,10 @@ inputFileName model =
         []
         [ Attribute.style "height" "30px", Attribute.style "font-size" "14px" ]
         |> Element.html
+
+
+aboutButton =
+    button 50 "About" About []
 
 
 cancelChangeFileNameButton =

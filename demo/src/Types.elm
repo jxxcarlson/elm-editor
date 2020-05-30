@@ -90,3 +90,4 @@ type Msg
     | InputFileName String
     | ChangeFileName
     | CancelChangeFileName
+    | About
