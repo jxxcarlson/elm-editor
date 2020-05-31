@@ -4,6 +4,7 @@ import Data
 import Editor
 import EditorMsg exposing (WrapOption(..))
 import Helper.Common
+import List.Extra
 import Markdown.Option exposing (MarkdownOption(..))
 import Render exposing (RenderingOption(..))
 import Types exposing (DocType(..), Model, Msg(..))
@@ -39,7 +40,21 @@ loadDocumentByTitle docTitle model =
 
 
 loadDocument : String -> String -> DocType -> Model -> Model
-loadDocument title source docType model =
+loadDocument title source_ docType model =
+    let
+        lines =
+            String.lines source_
+
+        source =
+            List.drop 1 lines |> String.join "\n"
+
+        uuid =
+            List.head lines
+                |> Maybe.withDefault ""
+                |> String.split ": "
+                |> List.Extra.getAt 1
+                |> Maybe.withDefault model.uuid
+    in
     case docType of
         MarkdownDoc ->
             let
@@ -59,7 +74,7 @@ loadDocument title source docType model =
                         (config { width = model.width, height = model.height, wrapOption = DontWrap })
                 , docTitle = title
                 , docType = MarkdownDoc
-                , document = { fileName = fileName, id = model.uuid, content = source }
+                , document = { fileName = fileName, id = uuid, content = source }
             }
                 |> UuidHelper.newUuid
 
@@ -81,7 +96,7 @@ loadDocument title source docType model =
                         (config { width = model.width, height = model.height, wrapOption = DontWrap })
                 , docTitle = title
                 , docType = MiniLaTeXDoc
-                , document = { fileName = fileName, id = model.uuid, content = source }
+                , document = { fileName = fileName, id = uuid, content = source }
             }
                 |> UuidHelper.newUuid
 
