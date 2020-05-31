@@ -1,6 +1,5 @@
 module Types exposing
-    ( BasicDocument
-    , ChangingFileNameState(..)
+    ( ChangingFileNameState(..)
     , DocType(..)
     , DocumentStatus(..)
     , Model
@@ -10,6 +9,7 @@ module Types exposing
     )
 
 import Browser.Dom as Dom
+import Document exposing (BasicDocument)
 import Editor exposing (Editor)
 import File exposing (File)
 import Http
@@ -46,13 +46,6 @@ type alias Model =
     , document : BasicDocument
     , randomSeed : Random.Seed
     , uuid : String
-    }
-
-
-type alias BasicDocument =
-    { fileName : String
-    , id : String
-    , content : String
     }
 
 

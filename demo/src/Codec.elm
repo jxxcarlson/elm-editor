@@ -3,7 +3,6 @@ module Codec exposing
     , basicDocumentEncoder
     )
 
-import Document exposing (Author, Document, Manifest)
 import Json.Decode as D exposing (Decoder, bool, int, list, nullable, string)
 import Json.Decode.Pipeline as JP exposing (required)
 import Json.Encode as Encode

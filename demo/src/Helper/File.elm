@@ -12,6 +12,7 @@ module Helper.File exposing
     , updateDocType
     )
 
+import Document exposing (BasicDocument)
 import Editor
 import File exposing (File)
 import File.Download as Download
@@ -63,30 +64,29 @@ requestFile =
 
 saveFile : Model -> Cmd msg
 saveFile model =
-    case ( model.docType, model.fileName ) of
-        ( MarkdownDoc, Just fileName ) ->
-            Download.string fileName "text/markdown" (Editor.getContent model.editor)
+    let
+        content =
+            "uuid: " ++ model.document.id ++ "\n" ++ model.document.content
 
-        ( MiniLaTeXDoc, Just fileName ) ->
-            Download.string fileName "text/x-tex" (Editor.getContent model.editor)
+        fileName =
+            model.document.fileName
+    in
+    case model.docType of
+        MarkdownDoc ->
+            Download.string fileName "text/markdown" content
 
-        ( _, _ ) ->
-            Cmd.none
+        MiniLaTeXDoc ->
+            Download.string fileName "text/x-tex" content
 
 
 saveFileToLocalStorage : Model -> Cmd msg
 saveFileToLocalStorage model =
-    case model.fileName of
-        Just fileName ->
-            saveFileToLocalStorage_ fileName (Editor.getContent model.editor)
-
-        Nothing ->
-            Cmd.none
+    saveFileToLocalStorage_ model.document
 
 
-saveFileToLocalStorage_ : String -> String -> Cmd msg
-saveFileToLocalStorage_ fileName fileContent =
-    Outside.sendInfo (Outside.WriteFile ( "file:" ++ fileName, fileContent ))
+saveFileToLocalStorage_ : BasicDocument -> Cmd msg
+saveFileToLocalStorage_ document =
+    Outside.sendInfo (Outside.WriteFile document)
 
 
 getListOfFilesInLocalStorage : Cmd msg

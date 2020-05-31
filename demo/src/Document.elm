@@ -1,5 +1,8 @@
-module Document exposing (..)
+module Document exposing (BasicDocument)
 
 
-foo =
-    1
+type alias BasicDocument =
+    { fileName : String
+    , id : String
+    , content : String
+    }

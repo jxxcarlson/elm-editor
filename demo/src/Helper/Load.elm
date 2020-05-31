@@ -7,6 +7,7 @@ import Helper.Common
 import Markdown.Option exposing (MarkdownOption(..))
 import Render exposing (RenderingOption(..))
 import Types exposing (DocType(..), Model, Msg(..))
+import UuidHelper
 
 
 loadDocumentByTitle : String -> Model -> Model
@@ -58,7 +59,9 @@ loadDocument title source docType model =
                         (config { width = model.width, height = model.height, wrapOption = DontWrap })
                 , docTitle = title
                 , docType = MarkdownDoc
+                , document = { fileName = fileName, id = model.uuid, content = source }
             }
+                |> UuidHelper.newUuid
 
         MiniLaTeXDoc ->
             let
@@ -78,7 +81,9 @@ loadDocument title source docType model =
                         (config { width = model.width, height = model.height, wrapOption = DontWrap })
                 , docTitle = title
                 , docType = MiniLaTeXDoc
+                , document = { fileName = fileName, id = model.uuid, content = source }
             }
+                |> UuidHelper.newUuid
 
 
 config flags =

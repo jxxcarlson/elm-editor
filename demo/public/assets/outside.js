@@ -62,9 +62,11 @@ app.ports.infoForOutside.subscribe(msg => {
               console.log("!JS! WriteFile") ;
 
                var fileName = msg.data.fileName
-               var fileContents = msg.data.fileContents
+               var document = msg.data
 
-               localStorage.setItem(fileName, fileContents);
+               console.log("WriteFile, fileName", fileName)
+
+               localStorage.setItem(fileName, document);
 
                break;
 

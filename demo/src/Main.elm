@@ -268,14 +268,20 @@ update msg model =
 
                                 _ ->
                                     MarkdownDoc
+
+                        newModel =
+                            Helper.Load.loadDocument (Helper.File.titleFromFileName fileName) source docType model
+                                |> (\m -> { m | docType = docType })
+                                |> Helper.Sync.syncModel2
+
+                        newDocument =
+                            newModel.document
                     in
-                    Helper.Load.loadDocument (Helper.File.titleFromFileName fileName) source docType model
-                        |> (\m -> { m | docType = docType })
-                        |> Helper.Sync.syncModel2
+                    newModel
                         |> withCmds
                             [ View.Scroll.toRenderedTextTop
                             , View.Scroll.toEditorTop
-                            , Helper.File.saveFileToLocalStorage_ fileName source
+                            , Helper.File.saveFileToLocalStorage_ newDocument
                             ]
 
         SaveFile ->
@@ -366,12 +372,20 @@ update msg model =
             ( { model | newFileName = str, changingFileNameState = ChangingFileName }, Cmd.none )
 
         ChangeFileName ->
+            let
+                oldDocument =
+                    model.document
+
+                newDocument =
+                    { oldDocument | fileName = model.newFileName }
+            in
             ( { model
                 | fileName = Just model.newFileName
                 , docType = Helper.File.docType model.newFileName
                 , changingFileNameState = FileNameOK
+                , document = newDocument
               }
-            , Helper.File.saveFileToLocalStorage_ model.newFileName (Editor.getContent model.editor)
+            , Helper.File.saveFileToLocalStorage_ newDocument
             )
 
         CancelChangeFileName ->
@@ -502,8 +516,8 @@ viewFooter model width_ height_ =
         , Element.moveUp 19
         , spacing 12
         ]
-        [ View.Widget.openAuthorPopupButton model
-        , View.Widget.openFileListPopupButton model
+        [ -- View.Widget.openAuthorPopupButton model
+          View.Widget.openFileListPopupButton model
         , View.Widget.saveFileToLocalStorageButton model
         , View.Widget.documentTypeButton model
         , View.Widget.newDocumentButton model
