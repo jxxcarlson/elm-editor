@@ -266,6 +266,9 @@ update msg model =
                                 "latex" ->
                                     MiniLaTeXDoc
 
+                                "tex" ->
+                                    MiniLaTeXDoc
+
                                 _ ->
                                     MarkdownDoc
 
