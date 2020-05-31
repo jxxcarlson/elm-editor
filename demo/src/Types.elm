@@ -43,7 +43,7 @@ type alias Model =
     , popupStatus : PopupStatus
     , authorName : String
     , randomSeed : Random.Seed
-    , randomAtmosphericInt : Maybe Int
+    , uuid : String
     }
 
 

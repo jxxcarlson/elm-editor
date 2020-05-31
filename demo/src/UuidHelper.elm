@@ -3,6 +3,7 @@ module UuidHelper exposing (getRandomNumber, handleResponseFromRandomDotOrg)
 import Http
 import Random
 import Types exposing (Model, Msg(..))
+import UUID
 
 
 getRandomNumber : Cmd Msg
@@ -40,13 +41,19 @@ handleResponseFromRandomDotOrg model result =
 
                 Just rn ->
                     let
-                        newRandomSeed =
-                            Random.initialSeed rn
+                        ( uuidString, seed ) =
+                            generate (Random.initialSeed rn)
                     in
                     { model
-                        | randomAtmosphericInt = Just rn
-                        , randomSeed = newRandomSeed
+                        | uuid = uuidString
+                        , randomSeed = seed
                     }
 
         Err _ ->
             model
+
+
+generate : Random.Seed -> ( String, Random.Seed )
+generate randomSeed =
+    Random.step UUID.generator randomSeed
+        |> (\( u, s ) -> ( UUID.toString u, s ))

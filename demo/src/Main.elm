@@ -64,11 +64,6 @@ import View.Style as Style
 import View.Widget
 
 
-
---newUUID, newSeed ) =
---                           Random.step UUID.generator model.randomSeed
-
-
 type alias Flags =
     { width : Float, height : Float }
 
@@ -104,7 +99,7 @@ init flags =
     , popupStatus = PopupClosed
     , authorName = ""
     , randomSeed = Random.initialSeed 1727485
-    , randomAtmosphericInt = Nothing
+    , uuid = ""
     }
         |> Cmd.Extra.withCmds
             [ Dom.focus "editor" |> Task.attempt (always NoOp)
