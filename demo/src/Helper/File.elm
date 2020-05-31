@@ -66,7 +66,7 @@ saveFile : Model -> Cmd msg
 saveFile model =
     let
         content =
-            "uuid: " ++ model.document.id ++ "\n" ++ model.document.content
+            "uuid: " ++ model.document.id ++ "\n\n" ++ model.document.content
 
         fileName =
             model.document.fileName

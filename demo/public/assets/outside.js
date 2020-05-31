@@ -2,16 +2,11 @@
 
 app.ports.infoForOutside.subscribe(msg => {
 
-    console.log("!JS! app.ports.infoForOutside")
-
     switch(msg.tag) {
 
         case "AskForClipBoard":
-            console.log("!JS!  AskForClipBoard")
-
             navigator.clipboard.readText()
               .then(text => {
-                console.log('!JS! Clipboard (outside):', text);
                 app.ports.infoForElm.send({tag: "GotClipboard", data:  text})
               })
               .catch(err => {
@@ -23,31 +18,26 @@ app.ports.infoForOutside.subscribe(msg => {
         case "AskForFileList":
            var fileList = filesInLocalStorage()
 
-           console.log("Will send file list", fileList)
-
            app.ports.infoForElm.send({tag: "GotFileList", data:  fileList})
 
            break;
 
         case "AskForFile":
-            var fileName = JSON.stringify(msg.data)
-            console.log("AskForFile", fileName)
-            var fileContents = getFileFromLocalStorage(fileName)
-            app.ports.infoForElm.send({tag: "GotFileContents", data: fileContents})
+            var fileName = msg.data
+            var file = getFileFromLocalStorage(fileName)
+            app.ports.infoForElm.send({tag: "GotFile", data: file})
 
            break;
 
         case "DeleteFileFromLocalStorage":
 
-            console.log("DeleteFileFromLocalStorage: " + msg.data)
-            localStorage.removeItem("file:" + msg.data);
+            localStorage.removeItem(msg.data);
             var fileList = filesInLocalStorage()
             app.ports.infoForElm.send({tag: "GotFileList", data:  fileList})
 
            break;
 
         case "WriteToClipboard":
-            console.log("!JS!  WriteToClipboard", JSON.stringify(msg.data))
 
             navigator.permissions.query({name: "clipboard-write"}).then(result => {
               if (result.state == "granted" || result.state == "prompt") {
@@ -59,23 +49,15 @@ app.ports.infoForOutside.subscribe(msg => {
              break;
 
           case "WriteFile":
-              console.log("!JS! WriteFile") ;
-
                var fileName = msg.data.fileName
                var document = msg.data
-
-               console.log("WriteFile, fileName", fileName)
-
-               localStorage.setItem(fileName, document);
-
+               localStorage.setItem(fileName, JSON.stringify(document));
                break;
 
          case "Highlight":
 
-           console.log("!JS! Highlight", msg.data)
            var id = "#".concat(msg.data.id)
            var lastId = msg.data.lastId
-           console.log("!JS! Highlight (id, lastId)", id, lastId)
 
            var element = document.querySelector(id)
            if (element != null) {
@@ -98,22 +80,19 @@ app.ports.infoForOutside.subscribe(msg => {
     function filesInLocalStorage() {
       var fileList = []
       for (var key in localStorage){
-        if (key.indexOf("file:") == 0)  {
-             fileList.push(key.replace("file:", "").replace(/\"/g, ""))
-          }
+        if (key.indexOf(".md") > 1 ||key.indexOf(".tex") > 1 ) {
+             fileList.push(key)
+           }
       }
       return fileList
     }
 
     function getFileFromLocalStorage(fileName) {
-        var fileName_ = ('file:' + fileName).replace(/\"/g, "")
-        console.log("fileName_", fileName_)
-        return localStorage.getItem(fileName_);
+        return JSON.parse(localStorage.getItem(fileName))
     }
 
     function updateClipboard(newClip) {
       navigator.clipboard.writeText(newClip).then(function() {
-        console.log("!JS! Wrote to system clipboard");
       }, function() {
         console.log ("!JS! Clipboard write failed");
       });

@@ -1,6 +1,8 @@
 port module Outside exposing
     ( InfoForElm(..)
     , InfoForOutside(..)
+    , basicDocumentDecoder
+    , basicDocumentEncoder
     , decodeFileList
     , getInfo
     , sendInfo
@@ -29,7 +31,7 @@ type alias GenericOutsideData =
 type InfoForElm
     = GotClipboard String
     | GotFileList (List String)
-    | GotFileContents String
+    | GotFile BasicDocument
 
 
 type InfoForOutside
@@ -63,13 +65,13 @@ getInfo tagger onError =
                         Err _ ->
                             onError <| "Error getting file list"
 
-                "GotFileContents" ->
-                    case D.decodeValue D.string outsideInfo.data of
-                        Ok fileContents ->
-                            tagger <| GotFileContents fileContents
+                "GotFile" ->
+                    case D.decodeValue basicDocumentDecoder outsideInfo.data of
+                        Ok file ->
+                            tagger <| GotFile file
 
                         Err _ ->
-                            onError <| "Error getting file contents"
+                            onError <| "Error decoding file from value"
 
                 _ ->
                     onError <| "Unexpected info from outside"
@@ -138,6 +140,20 @@ basicDocumentDecoder =
         |> required "fileName" string
         |> required "id" string
         |> required "content" string
+
+
+
+{-
+   > doc = { fileName = "foo.md", id = "12.45", content = "whatever"}
+   { content = "whatever", fileName = "foo.md", id = "12.45" }
+       : { content : String, fileName : String, id : String }
+
+   > val = basicDocumentEncoder doc
+   <internals> : E.Value
+
+   > doc2 = D.decodeValue basicDocumentDecoder val
+   Ok { content = "whatever", fileName = "foo.md", id = "12.45" }
+-}
 
 
 basicDocumentEncoder : BasicDocument -> Encode.Value

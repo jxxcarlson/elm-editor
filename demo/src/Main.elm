@@ -123,7 +123,7 @@ subscriptions model =
             |> Sub.map EditorMsg
         , Outside.getInfo Outside LogErr
         , Browser.Events.onResize WindowSize
-        , Time.every 1000 Tick
+        , Time.every 10000 Tick
         ]
 
 
@@ -228,12 +228,12 @@ update msg model =
         NewDocument ->
             case model.docType of
                 MarkdownDoc ->
-                    Helper.Load.loadDocument "newFile" "" MarkdownDoc model
+                    Helper.Load.loadDocument_ "newFile" "" MarkdownDoc model
                         |> Helper.Sync.syncModel2
                         |> withCmd (Cmd.batch [ View.Scroll.toEditorTop, View.Scroll.toRenderedTextTop ])
 
                 MiniLaTeXDoc ->
-                    Helper.Load.loadDocument "newFile" "" MiniLaTeXDoc model
+                    Helper.Load.loadDocument_ "newFile" "" MiniLaTeXDoc model
                         |> Helper.Sync.syncModel2
                         |> withCmd (Cmd.batch [ View.Scroll.toEditorTop, View.Scroll.toRenderedTextTop ])
 
@@ -270,7 +270,7 @@ update msg model =
                                     MarkdownDoc
 
                         newModel =
-                            Helper.Load.loadDocument (Helper.File.titleFromFileName fileName) source docType model
+                            Helper.Load.loadDocument_ (Helper.File.titleFromFileName fileName) source docType model
                                 |> (\m -> { m | docType = docType })
                                 |> Helper.Sync.syncModel2
 
@@ -305,18 +305,8 @@ update msg model =
                 Outside.GotFileList fileList ->
                     ( { model | fileList = fileList }, Cmd.none )
 
-                Outside.GotFileContents fileContents ->
-                    let
-                        fileName =
-                            model.fileName |> Maybe.withDefault "FOO"
-
-                        title =
-                            Helper.File.titleFromFileName fileName
-
-                        docType =
-                            Helper.File.docType fileName
-                    in
-                    ( Helper.Load.loadDocument title fileContents docType model, Cmd.none )
+                Outside.GotFile file ->
+                    ( Helper.Load.loadDocument file model, Cmd.none )
 
         LogErr _ ->
             ( model, Cmd.none )
