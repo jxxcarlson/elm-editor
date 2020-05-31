@@ -12,7 +12,7 @@ port module Outside exposing
 At the moment, there is just one: external copy-paste.
 -}
 
-import Document exposing (BasicDocument)
+import Document exposing (BasicDocument, MiniFileRecord)
 import Json.Decode as D exposing (Decoder, bool, int, list, nullable, string)
 import Json.Decode.Pipeline as JP exposing (required)
 import Json.Encode as Encode
@@ -30,7 +30,7 @@ type alias GenericOutsideData =
 
 type InfoForElm
     = GotClipboard String
-    | GotFileList (List String)
+    | GotFileList (List MiniFileRecord)
     | GotFile BasicDocument
 
 
@@ -123,9 +123,9 @@ encodeFile ( fileName, fileContents ) =
 -- DECODERS --
 
 
-decodeFileList : D.Decoder (List String)
+decodeFileList : D.Decoder (List MiniFileRecord)
 decodeFileList =
-    D.list D.string
+    D.list decodeMiniFileRecord
 
 
 clipboardDecoder : D.Decoder String
@@ -140,6 +140,13 @@ basicDocumentDecoder =
         |> required "fileName" string
         |> required "id" string
         |> required "content" string
+
+
+decodeMiniFileRecord : Decoder MiniFileRecord
+decodeMiniFileRecord =
+    D.succeed MiniFileRecord
+        |> required "id" string
+        |> required "fileName" string
 
 
 

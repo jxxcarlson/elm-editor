@@ -9,7 +9,7 @@ module Types exposing
     )
 
 import Browser.Dom as Dom
-import Document exposing (BasicDocument)
+import Document exposing (BasicDocument, MiniFileRecord)
 import Editor exposing (Editor)
 import File exposing (File)
 import Http
@@ -35,7 +35,7 @@ type alias Model =
     , fileName : Maybe String
     , newFileName : String
     , changingFileNameState : ChangingFileNameState
-    , fileList : List String
+    , fileList : List MiniFileRecord
     , documentStatus : DocumentStatus
     , selectedId : ( Int, Int )
     , selectedId_ : String

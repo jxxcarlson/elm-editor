@@ -49,9 +49,9 @@ app.ports.infoForOutside.subscribe(msg => {
              break;
 
           case "WriteFile":
-               var fileName = msg.data.fileName
+               var key = msg.data.id
                var document = msg.data
-               localStorage.setItem(fileName, JSON.stringify(document));
+               localStorage.setItem(key, JSON.stringify(document));
                break;
 
          case "Highlight":
@@ -80,8 +80,10 @@ app.ports.infoForOutside.subscribe(msg => {
     function filesInLocalStorage() {
       var fileList = []
       for (var key in localStorage){
-        if (key.indexOf(".md") > 1 ||key.indexOf(".tex") > 1 ) {
-             fileList.push(key)
+
+        if (key.length == 36 ) {
+             var file = JSON.parse(localStorage.getItem(key))
+             fileList.push({id : key, fileName : file.fileName})
            }
       }
       return fileList

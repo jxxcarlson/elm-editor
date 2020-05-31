@@ -1,5 +1,6 @@
 module View.FileListPopup exposing (view)
 
+import Document exposing (MiniFileRecord)
 import Element
     exposing
         ( Element
@@ -41,19 +42,19 @@ view model =
                     , height (px 400)
                     , scrollbarY
                     ]
-                    (List.map viewFileName (List.sort model.fileList))
+                    (List.map viewFileName (List.sortBy .fileName model.fileList))
                 ]
 
         PopupOpen _ ->
             Element.none
 
 
-viewFileName : String -> Element Msg
-viewFileName fileName =
+viewFileName : MiniFileRecord -> Element Msg
+viewFileName record =
     row []
-        [ Widget.plainButton 200 fileName (SendRequestForFile fileName) []
+        [ Widget.plainButton 200 record.fileName (SendRequestForFile record.id) []
         , Widget.plainButton 55
             "delete"
-            (DeleteFileFromLocalStorage fileName)
+            (DeleteFileFromLocalStorage record.id)
             [ Background.color (Element.rgba 0.7 0.7 1.0 0.9) ]
         ]
