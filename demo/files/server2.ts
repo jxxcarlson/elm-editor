@@ -1,5 +1,7 @@
 import { Application, Router } from 'https://deno.land/x/oak/mod.ts'
 
+import {quantum_md, test_tex} from './documents.ts'
+
 interface Document {
   fileName: string
   content: string
@@ -25,11 +27,11 @@ let documentList: Array<DocumentRecord> = [
  let documents: Array<Document> = [
    {
      fileName: 'quantum.md',
-     content: 'QM is good!'
+     content: quantum_md
    },
    {
      fileName: 'test.tex',
-     content: '$a^ + b^2 = c^2'
+     content: test_tex
    }
   ]
 
