@@ -5,12 +5,15 @@ module Types exposing
     , Model
     , Msg(..)
     , PopupStatus(..)
+    , PopupWindow(..)
     )
 
 import Browser.Dom as Dom
 import Editor exposing (Editor)
 import File exposing (File)
+import Http
 import Outside
+import Random
 import Render exposing (RenderingData)
 import Render.Types exposing (RenderMsg)
 import Time
@@ -38,6 +41,9 @@ type alias Model =
     , message : String
     , tickCount : Int
     , popupStatus : PopupStatus
+    , authorName : String
+    , randomSeed : Random.Seed
+    , randomAtmosphericInt : Maybe Int
     }
 
 
@@ -48,7 +54,13 @@ type ChangingFileNameState
 
 type PopupStatus
     = PopupClosed
-    | PopupOpen
+    | PopupOpen PopupWindow
+
+
+type PopupWindow
+    = FilePopup
+    | FileListPopup
+    | AuthorPopup
 
 
 type DocumentStatus
@@ -91,3 +103,5 @@ type Msg
     | ChangeFileName
     | CancelChangeFileName
     | About
+    | InputAuthorname String
+    | GotAtmosphericRandomNumber (Result Http.Error String)

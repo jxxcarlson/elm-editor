@@ -1,19 +1,14 @@
-module View.Popup exposing (view)
+module View.FileListPopup exposing (view)
 
 import Element
     exposing
         ( Element
-        , alignBottom
         , alignRight
-        , alignTop
-        , centerX
-        , centerY
         , column
         , el
         , height
         , paddingXY
         , px
-        , rgb255
         , row
         , scrollbarY
         , spacing
@@ -21,11 +16,8 @@ import Element
         , width
         )
 import Element.Background as Background
-import Element.Border as Border
-import Element.Font as Font
 import Helper.Common
-import Outside
-import Types exposing (Model, Msg(..), PopupStatus(..))
+import Types exposing (Model, Msg(..), PopupStatus(..), PopupWindow(..))
 import View.Widget as Widget
 
 
@@ -35,7 +27,7 @@ view model =
         PopupClosed ->
             Element.none
 
-        PopupOpen ->
+        PopupOpen FileListPopup ->
             column
                 [ width (px 500)
                 , height (px <| round <| Helper.Common.windowHeight model.height + 28)
@@ -51,6 +43,9 @@ view model =
                     ]
                     (List.map viewFileName (List.sort model.fileList))
                 ]
+
+        PopupOpen _ ->
+            Element.none
 
 
 viewFileName : String -> Element Msg

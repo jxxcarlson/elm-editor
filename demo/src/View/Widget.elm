@@ -9,8 +9,9 @@ module View.Widget exposing
     , inputFileName
     , loadDocumentButton
     , newDocumentButton
+    , openAuthorPopupButton
     , openFileButton
-    , openPopupButton
+    , openFileListPopupButton
     , plainButton
     , saveFileButton
     , saveFileToLocalStorageButton
@@ -36,7 +37,15 @@ import Helper.File
 import Html exposing (Attribute, Html)
 import Html.Attributes as Attribute
 import Html.Events as HE
-import Types exposing (DocType(..), DocumentStatus(..), Model, Msg(..), PopupStatus(..))
+import Types
+    exposing
+        ( DocType(..)
+        , DocumentStatus(..)
+        , Model
+        , Msg(..)
+        , PopupStatus(..)
+        , PopupWindow(..)
+        )
 import View.Style as Style
 
 
@@ -104,13 +113,28 @@ closePopupButton model =
     altButton 20 "X" (ManagePopup PopupClosed) [ Font.size 14 ]
 
 
-openPopupButton model =
+openAuthorPopupButton model =
     case model.popupStatus of
-        PopupOpen ->
+        PopupOpen AuthorPopup ->
+            button 90 "Close" (ManagePopup PopupClosed) []
+
+        PopupOpen _ ->
             button 90 "Close" (ManagePopup PopupClosed) []
 
         PopupClosed ->
-            button 90 "Files" (ManagePopup PopupOpen) []
+            button 90 "Author" (ManagePopup (PopupOpen AuthorPopup)) []
+
+
+openFileListPopupButton model =
+    case model.popupStatus of
+        PopupOpen FileListPopup ->
+            button 90 "Close" (ManagePopup PopupClosed) []
+
+        PopupOpen _ ->
+            button 90 "Close" (ManagePopup PopupClosed) []
+
+        PopupClosed ->
+            button 90 "Files" (ManagePopup (PopupOpen FileListPopup)) []
 
 
 openFileButton model =

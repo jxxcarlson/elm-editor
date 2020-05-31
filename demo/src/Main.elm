@@ -3,7 +3,7 @@ module Main exposing (main)
 import Browser
 import Browser.Dom as Dom
 import Browser.Events
-import Cmd.Extra exposing (withCmd, withCmds)
+import Cmd.Extra exposing (withCmd, withCmds, withNoCmd)
 import ContextMenu exposing (Item(..))
 import Data
 import Editor exposing (Editor, EditorMsg)
@@ -35,12 +35,12 @@ import Helper.Load
 import Helper.Sync
 import Html exposing (Attribute, Html)
 import Html.Attributes as Attribute
-import Json.Decode
 import Json.Encode
 import Markdown.Option exposing (..)
 import Markdown.Render exposing (MarkdownMsg(..))
 import MiniLatex.Edit as MLE
 import Outside
+import Random
 import Render exposing (MDData, MLData, RenderingData(..), RenderingOption(..))
 import Render.Types exposing (RenderMsg(..))
 import Task exposing (Task)
@@ -53,11 +53,20 @@ import Types
         , Model
         , Msg(..)
         , PopupStatus(..)
+        , PopupWindow(..)
         )
-import View.Popup as Popup
+import UUID
+import UuidHelper
+import View.AuthorPopup as AuthorPopup
+import View.FileListPopup as FileListPopup
 import View.Scroll
 import View.Style as Style
 import View.Widget
+
+
+
+--newUUID, newSeed ) =
+--                           Random.step UUID.generator model.randomSeed
 
 
 type alias Flags =
@@ -93,11 +102,15 @@ init flags =
     , message = ""
     , tickCount = 0
     , popupStatus = PopupClosed
+    , authorName = ""
+    , randomSeed = Random.initialSeed 1727485
+    , randomAtmosphericInt = Nothing
     }
         |> Cmd.Extra.withCmds
             [ Dom.focus "editor" |> Task.attempt (always NoOp)
             , View.Scroll.toEditorTop
             , View.Scroll.toRenderedTextTop
+            , UuidHelper.getRandomNumber
             ]
 
 
@@ -321,8 +334,11 @@ update msg model =
             let
                 cmd =
                     case status of
-                        PopupOpen ->
+                        PopupOpen FileListPopup ->
                             Helper.File.getListOfFilesInLocalStorage
+
+                        PopupOpen _ ->
+                            Cmd.none
 
                         PopupClosed ->
                             Cmd.none
@@ -364,6 +380,13 @@ update msg model =
 
         About ->
             ( Helper.Load.loadDocumentByTitle "about" model, Cmd.none )
+
+        InputAuthorname str ->
+            { model | authorName = str } |> withNoCmd
+
+        GotAtmosphericRandomNumber result ->
+            UuidHelper.handleResponseFromRandomDotOrg model result
+                |> withNoCmd
 
 
 
@@ -445,7 +468,7 @@ view model =
 mainColumn model =
     column [ centerX, centerY ]
         [ column [ Background.color <| gray 55 ]
-            [ Element.el [ Element.inFront (Popup.view model) ]
+            [ Element.el [ Element.inFront (FileListPopup.view model), Element.inFront (AuthorPopup.view model) ]
                 (viewEditorAndRenderedText model)
             , viewFooter model model.width 40
 
@@ -475,7 +498,8 @@ viewFooter model width_ height_ =
         , Element.moveUp 19
         , spacing 12
         ]
-        [ View.Widget.openPopupButton model
+        [ View.Widget.openAuthorPopupButton model
+        , View.Widget.openFileListPopupButton model
         , View.Widget.saveFileToLocalStorageButton model
         , View.Widget.documentTypeButton model
         , View.Widget.newDocumentButton model
