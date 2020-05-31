@@ -40,6 +40,8 @@ documentDecoder =
     D.succeed Document
         |> required "title" string
         |> required "subtitle" string
+        |> required "fileName" string
+        |> required "url" string
         |> required "id" string
         |> required "isPublic" bool
         |> required "tags" (list string)
@@ -76,6 +78,8 @@ documentEncoder doc =
     Encode.object
         [ ( "title", Encode.string doc.title )
         , ( "subtitle", Encode.string doc.subtitle )
+        , ( "fileName", Encode.string doc.fileName )
+        , ( "url", Encode.string doc.url )
         , ( "id", Encode.string doc.id )
         , ( "isPublic", Encode.bool doc.isPublic )
         , ( "tags", Encode.list Encode.string doc.tags )

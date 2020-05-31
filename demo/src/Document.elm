@@ -23,6 +23,8 @@ type alias Author =
 type alias Document =
     { title : String
     , subtitle : String
+    , fileName : String
+    , url : String
     , id : Uuid
     , isPublic : Bool
     , tags : List String
