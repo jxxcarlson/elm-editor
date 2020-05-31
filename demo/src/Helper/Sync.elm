@@ -1,4 +1,10 @@
-module Helper.Sync exposing (onId, sync, syncAndHighlightRenderedText, syncModel)
+module Helper.Sync exposing
+    ( onId
+    , sync
+    , syncAndHighlightRenderedText
+    , syncModel
+    , syncModel2
+    )
 
 import Array exposing (Array)
 import Cmd.Extra exposing (withCmd)
@@ -13,7 +19,7 @@ import Render
         )
 import Sync
 import Tree.Diff
-import Types exposing (DocType(..), DocumentStatus(..), Model, Msg(..))
+import Types exposing (BasicDocument, DocType(..), DocumentStatus(..), Model, Msg(..))
 import View.Scroll
 
 
@@ -21,6 +27,7 @@ sync : Editor -> Cmd EditorMsg -> Model -> ( Model, Cmd Msg )
 sync newEditor cmd model =
     model
         |> updateRenderingData (Editor.getLines newEditor)
+        |> updateDocument newEditor
         |> (\m -> { m | editor = newEditor, documentStatus = DocumentDirty })
         |> withCmd (Cmd.map EditorMsg cmd)
 
@@ -29,7 +36,25 @@ syncModel : Editor -> Model -> Model
 syncModel newEditor model =
     model
         |> updateRenderingData (Editor.getLines newEditor)
+        |> updateDocument newEditor
         |> (\m -> { m | editor = newEditor })
+
+
+syncModel2 : Model -> Model
+syncModel2 model =
+    model
+        |> updateRenderingData (Editor.getLines model.editor)
+        |> updateDocument model.editor
+
+
+updateDocument : Editor -> Model -> Model
+updateDocument editor model =
+    { model | document = updateDocument_ editor model.document }
+
+
+updateDocument_ : Editor -> BasicDocument -> BasicDocument
+updateDocument_ editor document =
+    { document | content = Editor.getContent editor }
 
 
 syncAndHighlightRenderedText : String -> Cmd Msg -> Model -> ( Model, Cmd Msg )

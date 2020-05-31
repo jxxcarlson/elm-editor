@@ -80,7 +80,11 @@ main =
 
 init : Flags -> ( Model, Cmd Msg )
 init flags =
-    { editor = Editor.initWithContent Data.about (Helper.Load.config flags)
+    let
+        newEditor =
+            Editor.initWithContent Data.about (Helper.Load.config flags)
+    in
+    { editor = newEditor
     , renderingData = load 0 ( 0, 0 ) (OMarkdown ExtendedMath) Data.about
     , counter = 1
     , width = flags.width
@@ -98,9 +102,11 @@ init flags =
     , tickCount = 0
     , popupStatus = PopupClosed
     , authorName = ""
+    , document = { fileName = "untitled", id = "1234", content = "---" }
     , randomSeed = Random.initialSeed 1727485
     , uuid = ""
     }
+        |> Helper.Sync.syncModel newEditor
         |> Cmd.Extra.withCmds
             [ Dom.focus "editor" |> Task.attempt (always NoOp)
             , View.Scroll.toEditorTop
@@ -263,6 +269,7 @@ update msg model =
                     in
                     Helper.Load.loadDocument (Helper.File.titleFromFileName fileName) source docType model
                         |> (\m -> { m | docType = docType })
+                        |> Helper.Sync.syncModel2
                         |> withCmds
                             [ View.Scroll.toRenderedTextTop
                             , View.Scroll.toEditorTop

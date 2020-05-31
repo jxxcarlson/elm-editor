@@ -1,5 +1,6 @@
 module Types exposing
-    ( ChangingFileNameState(..)
+    ( BasicDocument
+    , ChangingFileNameState(..)
     , DocType(..)
     , DocumentStatus(..)
     , Model
@@ -42,8 +43,16 @@ type alias Model =
     , tickCount : Int
     , popupStatus : PopupStatus
     , authorName : String
+    , document : BasicDocument
     , randomSeed : Random.Seed
     , uuid : String
+    }
+
+
+type alias BasicDocument =
+    { fileName : String
+    , id : String
+    , content : String
     }
 
 
