@@ -16,6 +16,7 @@ import Element
         , width
         )
 import Element.Background as Background
+import Element.Font as Font
 import Helper.Common
 import Types exposing (Model, Msg(..), PopupStatus(..), PopupWindow(..))
 import View.Widget as Widget
@@ -38,6 +39,7 @@ view model =
                 ]
                 [ titleLine model
                 , authorNameInput model
+                , el [ Font.size 14 ] (text model.uuid)
                 ]
 
         PopupOpen _ ->
@@ -45,7 +47,7 @@ view model =
 
 
 titleLine model =
-    row [ width (px 450) ] [ text "Name", el [ alignRight ] (Widget.closePopupButton model) ]
+    row [ width (px 450) ] [ text "Author", el [ alignRight ] (Widget.closePopupButton model) ]
 
 
 authorInput msg text label =
@@ -58,4 +60,4 @@ authorInput msg text label =
 
 
 authorNameInput model =
-    authorInput InputAuthorname model.authorName "Author"
+    authorInput InputAuthorname model.authorName "Name"
