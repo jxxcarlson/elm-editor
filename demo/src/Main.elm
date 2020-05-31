@@ -229,10 +229,12 @@ update msg model =
             case model.docType of
                 MarkdownDoc ->
                     Helper.Load.loadDocument "newFile" "" MarkdownDoc model
+                        |> Helper.Sync.syncModel2
                         |> withCmd (Cmd.batch [ View.Scroll.toEditorTop, View.Scroll.toRenderedTextTop ])
 
                 MiniLaTeXDoc ->
                     Helper.Load.loadDocument "newFile" "" MiniLaTeXDoc model
+                        |> Helper.Sync.syncModel2
                         |> withCmd (Cmd.batch [ View.Scroll.toEditorTop, View.Scroll.toRenderedTextTop ])
 
         SetViewPortForElement result ->

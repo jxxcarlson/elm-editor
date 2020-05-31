@@ -20,6 +20,7 @@ import Render
 import Sync
 import Tree.Diff
 import Types exposing (BasicDocument, DocType(..), DocumentStatus(..), Model, Msg(..))
+import UuidHelper
 import View.Scroll
 
 
@@ -49,7 +50,18 @@ syncModel2 model =
 
 updateDocument : Editor -> Model -> Model
 updateDocument editor model =
-    { model | document = updateDocument_ editor model.document }
+    case model.document.id == "1234" || model.document.id == "" of
+        False ->
+            { model | document = updateDocument_ editor model.document }
+
+        True ->
+            { model | document = updateDocumentWithUuid_ model.uuid editor model.document }
+                |> UuidHelper.newUuid
+
+
+updateDocumentWithUuid_ : String -> Editor -> BasicDocument -> BasicDocument
+updateDocumentWithUuid_ uuid editor document =
+    { document | content = Editor.getContent editor, id = uuid }
 
 
 updateDocument_ : Editor -> BasicDocument -> BasicDocument

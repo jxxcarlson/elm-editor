@@ -1,4 +1,8 @@
-module UuidHelper exposing (getRandomNumber, handleResponseFromRandomDotOrg)
+module UuidHelper exposing
+    ( getRandomNumber
+    , handleResponseFromRandomDotOrg
+    , newUuid
+    )
 
 import Http
 import Random
@@ -57,3 +61,12 @@ generate : Random.Seed -> ( String, Random.Seed )
 generate randomSeed =
     Random.step UUID.generator randomSeed
         |> (\( u, s ) -> ( UUID.toString u, s ))
+
+
+newUuid : Model -> Model
+newUuid model =
+    let
+        ( uuid, seed ) =
+            generate model.randomSeed
+    in
+    { model | uuid = uuid, randomSeed = seed }
