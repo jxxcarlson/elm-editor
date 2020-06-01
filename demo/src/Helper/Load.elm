@@ -6,7 +6,7 @@ module Helper.Load exposing
     )
 
 import Data
-import Document exposing (BasicDocument)
+import Document exposing (Document)
 import Editor
 import EditorMsg exposing (WrapOption(..))
 import Helper.Common
@@ -46,7 +46,7 @@ loadDocumentByTitle docTitle model =
             model
 
 
-loadDocument : BasicDocument -> Model -> Model
+loadDocument : Document -> Model -> Model
 loadDocument document model =
     let
         docType =

@@ -9,7 +9,7 @@ module Types exposing
     )
 
 import Browser.Dom as Dom
-import Document exposing (BasicDocument, MiniFileRecord)
+import Document exposing (Document, MiniFileRecord)
 import Editor exposing (Editor)
 import File exposing (File)
 import Http
@@ -43,7 +43,7 @@ type alias Model =
     , tickCount : Int
     , popupStatus : PopupStatus
     , authorName : String
-    , document : BasicDocument
+    , document : Document
     , randomSeed : Random.Seed
     , uuid : String
     }
@@ -107,3 +107,5 @@ type Msg
     | About
     | InputAuthorname String
     | GotAtmosphericRandomNumber (Result Http.Error String)
+    | GotDocument (Result Http.Error Document)
+    | AskForRemoteDocument String

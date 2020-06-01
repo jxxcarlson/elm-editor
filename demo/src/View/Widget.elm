@@ -5,6 +5,7 @@ module View.Widget exposing
     , changeFileNameButton
     , closePopupButton
     , documentTypeButton
+    , example1Button
     , exportFileButton
     , inputFileName
     , loadDocumentButton
@@ -56,6 +57,10 @@ inputFileName model =
         []
         [ Attribute.style "height" "30px", Attribute.style "font-size" "14px" ]
         |> Element.html
+
+
+example1Button =
+    button 60 "Example 1" (AskForRemoteDocument "quantum.md") []
 
 
 aboutButton =

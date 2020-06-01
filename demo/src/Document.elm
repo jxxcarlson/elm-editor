@@ -1,7 +1,7 @@
-module Document exposing (BasicDocument, MiniFileRecord)
+module Document exposing (Document, MiniFileRecord)
 
 
-type alias BasicDocument =
+type alias Document =
     { fileName : String
     , id : String
     , content : String

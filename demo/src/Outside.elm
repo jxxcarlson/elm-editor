@@ -1,9 +1,9 @@
 port module Outside exposing
     ( InfoForElm(..)
     , InfoForOutside(..)
-    , basicDocumentDecoder
     , basicDocumentEncoder
     , decodeFileList
+    , documentDecoder
     , getInfo
     , sendInfo
     )
@@ -12,7 +12,7 @@ port module Outside exposing
 At the moment, there is just one: external copy-paste.
 -}
 
-import Document exposing (BasicDocument, MiniFileRecord)
+import Document exposing (Document, MiniFileRecord)
 import Json.Decode as D exposing (Decoder, bool, int, list, nullable, string)
 import Json.Decode.Pipeline as JP exposing (required)
 import Json.Encode as Encode
@@ -31,14 +31,14 @@ type alias GenericOutsideData =
 type InfoForElm
     = GotClipboard String
     | GotFileList (List MiniFileRecord)
-    | GotFile BasicDocument
+    | GotFile Document
 
 
 type InfoForOutside
     = AskForClipBoard Encode.Value
     | WriteToClipBoard String
     | Highlight ( Maybe String, String )
-    | WriteFile BasicDocument
+    | WriteFile Document
     | AskForFileList
     | AskForFile String
     | DeleteFileFromLocalStorage String
@@ -66,7 +66,7 @@ getInfo tagger onError =
                             onError <| "Error getting file list"
 
                 "GotFile" ->
-                    case D.decodeValue basicDocumentDecoder outsideInfo.data of
+                    case D.decodeValue documentDecoder outsideInfo.data of
                         Ok file ->
                             tagger <| GotFile file
 
@@ -134,9 +134,9 @@ clipboardDecoder =
     D.string
 
 
-basicDocumentDecoder : Decoder BasicDocument
-basicDocumentDecoder =
-    D.succeed BasicDocument
+documentDecoder : Decoder Document
+documentDecoder =
+    D.succeed Document
         |> required "fileName" string
         |> required "id" string
         |> required "content" string
@@ -163,7 +163,7 @@ decodeMiniFileRecord =
 -}
 
 
-basicDocumentEncoder : BasicDocument -> Encode.Value
+basicDocumentEncoder : Document -> Encode.Value
 basicDocumentEncoder doc =
     Encode.object
         [ ( "fileName", Encode.string doc.fileName )

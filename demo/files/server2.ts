@@ -4,6 +4,7 @@ import {quantum_md, test_tex} from './documents.ts'
 
 interface Document {
   fileName: string
+  id: string
   content: string
 }
 
@@ -27,10 +28,12 @@ let documentList: Array<DocumentRecord> = [
  let documents: Array<Document> = [
    {
      fileName: 'quantum.md',
+     id: '143d1170-f8ce-47b3-904d-e84191d3d717',
      content: quantum_md
    },
    {
      fileName: 'test.tex',
+     id: '7a7e54a9-70d9-4263-ba02-cb685e1fdaf8',
      content: test_tex
    }
   ]
@@ -58,8 +61,10 @@ export const getDocuments = ({ response }: { response: any }) => {
     response: any
   }) => {
     const document = documents.filter((document) => document.fileName === params.fileName)
+    console.log("file requested:", params.fileName)
     if (document.length) {
       response.status = 200
+      response.headers.set('Access-Control-Allow-Origin', '*')
       response.body = document[0]
       return
     }

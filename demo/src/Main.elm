@@ -399,6 +399,21 @@ update msg model =
             UuidHelper.handleResponseFromRandomDotOrg model result
                 |> withNoCmd
 
+        GotDocument result ->
+            let
+                _ =
+                    Debug.log "GotDocument" result
+            in
+            case result of
+                Ok document ->
+                    Helper.Load.loadDocument document model |> withNoCmd
+
+                Err _ ->
+                    model |> withNoCmd
+
+        AskForRemoteDocument fileName ->
+            model |> withCmd (Helper.File.getDocument fileName)
+
 
 
 -- HELPER
@@ -524,6 +539,7 @@ viewFooter model width_ height_ =
         , el [ Element.paddingEach { top = 10, bottom = 0, left = 0, right = 0 } ] (View.Widget.inputFileName model)
         , View.Widget.aboutButton
         , el [ alignRight, width (px 100) ] (text model.message)
+        , View.Widget.example1Button
         ]
 
 

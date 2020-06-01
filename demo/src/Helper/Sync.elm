@@ -8,7 +8,7 @@ module Helper.Sync exposing
 
 import Array exposing (Array)
 import Cmd.Extra exposing (withCmd)
-import Document exposing (BasicDocument)
+import Document exposing (Document)
 import Editor exposing (Editor, EditorMsg)
 import Markdown.Option exposing (MarkdownOption(..))
 import Markdown.Parse
@@ -60,12 +60,12 @@ updateDocument editor model =
                 |> UuidHelper.newUuid
 
 
-updateDocumentWithUuid_ : String -> Editor -> BasicDocument -> BasicDocument
+updateDocumentWithUuid_ : String -> Editor -> Document -> Document
 updateDocumentWithUuid_ uuid editor document =
     { document | content = Editor.getContent editor, id = uuid }
 
 
-updateDocument_ : Editor -> BasicDocument -> BasicDocument
+updateDocument_ : Editor -> Document -> Document
 updateDocument_ editor document =
     { document | content = Editor.getContent editor }
 
