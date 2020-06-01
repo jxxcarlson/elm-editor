@@ -1,0 +1,56 @@
+module View.RemoteFileListPopup exposing (view)
+
+import Document exposing (MiniFileRecord)
+import Element
+    exposing
+        ( Element
+        , alignRight
+        , column
+        , el
+        , height
+        , paddingXY
+        , px
+        , row
+        , scrollbarY
+        , spacing
+        , text
+        , width
+        )
+import Element.Background as Background
+import Helper.Common
+import Types exposing (Model, Msg(..), PopupStatus(..), PopupWindow(..))
+import View.Widget as Widget
+
+
+view : Model -> Element Msg
+view model =
+    case model.popupStatus of
+        PopupClosed ->
+            Element.none
+
+        PopupOpen RemoteFileListPopup ->
+            column
+                [ width (px 500)
+                , height (px <| round <| Helper.Common.windowHeight model.height + 28)
+                , paddingXY 30 30
+                , Background.color (Element.rgba 1.0 0.75 0.75 0.8)
+                , spacing 16
+                ]
+                [ row [ width (px 450) ] [ text "Remote Files", el [ alignRight ] (Widget.closePopupButton model) ]
+                , column
+                    [ spacing 8
+                    , height (px 400)
+                    , scrollbarY
+                    ]
+                    (List.map viewFileName (List.sortBy .fileName model.fileList))
+                ]
+
+        PopupOpen _ ->
+            Element.none
+
+
+viewFileName : MiniFileRecord -> Element Msg
+viewFileName record =
+    row []
+        [ Widget.plainButton 200 record.fileName (AskForRemoteDocument record.fileName) []
+        ]

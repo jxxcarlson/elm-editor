@@ -1,5 +1,6 @@
 module View.Widget exposing
     ( aboutButton
+    , askForRemoteDocumentsButton
     , button
     , cancelChangeFileNameButton
     , changeFileNameButton
@@ -13,6 +14,7 @@ module View.Widget exposing
     , openAuthorPopupButton
     , openFileButton
     , openFileListPopupButton
+    , openRemoteFileListPopupButton
     , plainButton
     , saveFileButton
     , saveFileToLocalStorageButton
@@ -61,6 +63,10 @@ inputFileName model =
 
 example1Button =
     button 60 "Example 1" (AskForRemoteDocument "quantum.md") []
+
+
+askForRemoteDocumentsButton =
+    button 60 "Remote Files" AskForRemoteDocuments []
 
 
 aboutButton =
@@ -140,6 +146,18 @@ openFileListPopupButton model =
 
         PopupClosed ->
             button 90 "Files" (ManagePopup (PopupOpen FileListPopup)) []
+
+
+openRemoteFileListPopupButton model =
+    case model.popupStatus of
+        PopupOpen RemoteFileListPopup ->
+            button 90 "Close" (ManagePopup PopupClosed) []
+
+        PopupOpen _ ->
+            button 90 "Close" (ManagePopup PopupClosed) []
+
+        PopupClosed ->
+            button 120 "Remote Files" (ManagePopup (PopupOpen RemoteFileListPopup)) []
 
 
 openFileButton model =

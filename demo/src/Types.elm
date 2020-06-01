@@ -62,6 +62,7 @@ type PopupStatus
 type PopupWindow
     = FilePopup
     | FileListPopup
+    | RemoteFileListPopup
     | AuthorPopup
 
 
@@ -107,5 +108,7 @@ type Msg
     | About
     | InputAuthorname String
     | GotAtmosphericRandomNumber (Result Http.Error String)
-    | GotDocument (Result Http.Error Document)
     | AskForRemoteDocument String
+    | GotDocument (Result Http.Error Document)
+    | AskForRemoteDocuments
+    | GotDocuments (Result Http.Error (List MiniFileRecord))

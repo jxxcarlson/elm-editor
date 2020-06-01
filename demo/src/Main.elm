@@ -59,6 +59,7 @@ import UUID
 import UuidHelper
 import View.AuthorPopup as AuthorPopup
 import View.FileListPopup as FileListPopup
+import View.RemoteFileListPopup as RemoteFileListPopup
 import View.Scroll
 import View.Style as Style
 import View.Widget
@@ -340,6 +341,9 @@ update msg model =
                         PopupOpen FileListPopup ->
                             Helper.File.getListOfFilesInLocalStorage
 
+                        PopupOpen RemoteFileListPopup ->
+                            Helper.File.getDocumentList
+
                         PopupOpen _ ->
                             Cmd.none
 
@@ -399,20 +403,27 @@ update msg model =
             UuidHelper.handleResponseFromRandomDotOrg model result
                 |> withNoCmd
 
+        AskForRemoteDocument fileName ->
+            model |> withCmd (Helper.File.getDocument fileName)
+
         GotDocument result ->
-            let
-                _ =
-                    Debug.log "GotDocument" result
-            in
             case result of
                 Ok document ->
                     Helper.Load.loadDocument document model |> withNoCmd
 
                 Err _ ->
-                    model |> withNoCmd
+                    { model | message = "Error getting remote document" } |> withNoCmd
 
-        AskForRemoteDocument fileName ->
-            model |> withCmd (Helper.File.getDocument fileName)
+        AskForRemoteDocuments ->
+            model |> withCmd Helper.File.getDocumentList
+
+        GotDocuments result ->
+            case result of
+                Ok documents ->
+                    { model | fileList = documents } |> withNoCmd
+
+                Err _ ->
+                    { model | message = "Error getting remote documents" } |> withNoCmd
 
 
 
@@ -494,11 +505,9 @@ view model =
 mainColumn model =
     column [ centerX, centerY ]
         [ column [ Background.color <| gray 55 ]
-            [ Element.el [ Element.inFront (FileListPopup.view model), Element.inFront (AuthorPopup.view model) ]
+            [ Element.el [ Element.inFront (FileListPopup.view model), Element.inFront (RemoteFileListPopup.view model) ]
                 (viewEditorAndRenderedText model)
             , viewFooter model model.width 40
-
-            -- , viewFooter2 model model.width 40
             ]
         ]
 
@@ -526,6 +535,7 @@ viewFooter model width_ height_ =
         ]
         [ -- View.Widget.openAuthorPopupButton model
           View.Widget.openFileListPopupButton model
+        , View.Widget.openRemoteFileListPopupButton model
         , View.Widget.saveFileToLocalStorageButton model
         , View.Widget.documentTypeButton model
         , View.Widget.newDocumentButton model
@@ -537,9 +547,8 @@ viewFooter model width_ height_ =
         , View.Widget.changeFileNameButton model
         , showIf (model.changingFileNameState == ChangingFileName) View.Widget.cancelChangeFileNameButton
         , el [ Element.paddingEach { top = 10, bottom = 0, left = 0, right = 0 } ] (View.Widget.inputFileName model)
-        , View.Widget.aboutButton
         , el [ alignRight, width (px 100) ] (text model.message)
-        , View.Widget.example1Button
+        , View.Widget.aboutButton
         ]
 
 

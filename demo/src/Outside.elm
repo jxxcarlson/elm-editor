@@ -2,8 +2,8 @@ port module Outside exposing
     ( InfoForElm(..)
     , InfoForOutside(..)
     , basicDocumentEncoder
-    , decodeFileList
     , documentDecoder
+    , documentListDecoder
     , getInfo
     , sendInfo
     )
@@ -58,7 +58,7 @@ getInfo tagger onError =
                             onError <| ""
 
                 "GotFileList" ->
-                    case D.decodeValue decodeFileList outsideInfo.data of
+                    case D.decodeValue documentListDecoder outsideInfo.data of
                         Ok fileList ->
                             tagger <| GotFileList fileList
 
@@ -123,8 +123,8 @@ encodeFile ( fileName, fileContents ) =
 -- DECODERS --
 
 
-decodeFileList : D.Decoder (List MiniFileRecord)
-decodeFileList =
+documentListDecoder : D.Decoder (List MiniFileRecord)
+documentListDecoder =
     D.list decodeMiniFileRecord
 
 

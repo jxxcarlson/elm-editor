@@ -3,6 +3,7 @@ module Helper.File exposing
     , exportFile
     , fileExtension
     , getDocument
+    , getDocumentList
     , getListOfFilesInLocalStorage
     , read
     , requestFile
@@ -28,8 +29,16 @@ import Types exposing (DocType(..), Model, Msg(..))
 getDocument : String -> Cmd Msg
 getDocument fileName =
     Http.get
-        { url = Debug.log "URL" <| "http://localhost:4000/document/" ++ fileName
+        { url = "http://localhost:4000/document/" ++ fileName
         , expect = Http.expectJson GotDocument Outside.documentDecoder
+        }
+
+
+getDocumentList : Cmd Msg
+getDocumentList =
+    Http.get
+        { url = "http://localhost:4000/documents"
+        , expect = Http.expectJson GotDocuments Outside.documentListDecoder
         }
 
 
