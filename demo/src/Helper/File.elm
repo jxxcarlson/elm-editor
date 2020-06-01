@@ -14,6 +14,7 @@ module Helper.File exposing
     , updateDocType
     )
 
+import Config
 import Document exposing (Document)
 import Editor
 import File exposing (File)
@@ -29,7 +30,7 @@ import Types exposing (DocType(..), Model, Msg(..))
 getDocument : String -> Cmd Msg
 getDocument fileName =
     Http.get
-        { url = "http://localhost:4000/document/" ++ fileName
+        { url = Config.serverUrl ++ "/document/" ++ fileName
         , expect = Http.expectJson GotDocument Outside.documentDecoder
         }
 
@@ -37,7 +38,7 @@ getDocument fileName =
 getDocumentList : Cmd Msg
 getDocumentList =
     Http.get
-        { url = "http://localhost:4000/documents"
+        { url = Config.serverUrl ++ "/documents"
         , expect = Http.expectJson GotDocuments Outside.documentListDecoder
         }
 
