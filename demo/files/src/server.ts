@@ -3,14 +3,15 @@
 
 import { Application, Router } from "https://deno.land/x/oak/mod.ts";
 import {Document, DocumentRecord, ExtendedDocument, documentOfExtendedDocument} from "./document.ts";
-import {documents } from "./documents.ts";
+import {documents ,getDocumentsFromDisk} from "./documents.ts";
 import {getDocuments} from "./handlers/getDocuments.ts"
 import {getDocument} from "./handlers/getDocument.ts"
 import {addDocument} from "./handlers/addDocument.ts"
 import {updateDocument} from "./handlers/updateDocument.ts"
 import {options} from "./handlers/options.ts"
+import {fetchData} from "./db.ts"
 
-
+getDocumentsFromDisk();
 // WEB SERVER
 
 const env = Deno.env.toObject();
@@ -33,5 +34,7 @@ app.use(router.routes());
 app.use(router.allowedMethods());
 
 console.log(`Listening on port ${PORT}...`);
+
+
 
 await app.listen(`${HOST}:${PORT}`);

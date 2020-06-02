@@ -38,7 +38,6 @@ export const updateDocument = async ({
 
   if (token == "abracadabra") {
     const sourceDoc: Document = { id: id, fileName: fileName, content: content };
-    console.log("CONTENT", sourceDoc.content)
     if (isNotPresent(sourceDoc, documents)) {
       documents.push(sourceDoc);
       persistData(documents)
