@@ -7,6 +7,7 @@ import {documents } from "./documents.ts";
 import {getDocuments} from "./handlers/getDocuments.ts"
 import {getDocument} from "./handlers/getDocument.ts"
 import {addDocument} from "./handlers/addDocument.ts"
+import {updateDocument} from "./handlers/updateDocument.ts"
 import {options} from "./handlers/options.ts"
 
 // WEB SERVER
@@ -21,8 +22,8 @@ router
   .get("/api/documents", getDocuments)
   .get("/api/document/:fileName", getDocument)
   .post("/api/documents", addDocument)
-  .options("/api/documents", options);
-   .put('/api/:fileName', updateDocument)
+  .options("/api/documents", options)
+  .put('/api/:fileName', updateDocument);
 // .delete('/dogs/:name', removeDog)
 
 const app = new Application();
