@@ -1,12 +1,27 @@
-import {Document, DocumentRecord} from "../document.ts";
 
-// Get the current list of documents
-export const getDocuments = (documents : Array<Document>, { response }: { response: any }) => {
-  console.log("file list requested");
+//import {Document, DocumentRecord, ExtendedDocument, documentOfExtendedDocument} from "./document.ts";
+import {documents } from "../documents.ts";
+
+// Get a document by file name
+export const getDocument = ({
+  params,
+  response,
+}: {
+  params: {
+    fileName: string;
+  };
+  response: any;
+}) => {
   response.headers.set("Access-Control-Allow-Origin", "*");
-  response.body = documents.map(documentRecordOf);
-};
+  const document = documents.filter((document) =>
+    document.fileName === params.fileName
+  );
+  if (document.length) {
+    response.status = 200;
+    response.body = document[0];
+    return;
+  }
 
-function documentRecordOf(doc: Document) {
-  return { fileName: doc.fileName, id: doc.id };
-}
+  response.status = 400;
+  response.body = { msg: `Cannot find document ${params.fileName}` };
+};

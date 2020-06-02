@@ -1,29 +1,17 @@
 // https://dev.to/kryz/write-a-small-api-using-deno-1cl0
 
 import { Application, Router } from "https://deno.land/x/oak/mod.ts";
-import {Document, DocumentRecord, ExtendedDocument
-    , documentRecordOf, documentOfExtendedDocument} from "./document.ts";
-import { quantum_md, test_tex } from "./data.ts";
+import {Document, DocumentRecord, ExtendedDocument, documentOfExtendedDocument} from "./document.ts";
+import { documents } from "./documents.ts";
+import {getDocuments} from "./handlers/getDocuments.ts"
+import {getDocument} from "./handlers/getDocument.ts"
 
-let documents: Array<Document> = [
-  {
-    fileName: "quantum.md",
-    id: "143d1170-f8ce-47b3-904d-e84191d3d717",
-    content: quantum_md,
-  },
-  {
-    fileName: "test.tex",
-    id: "7a7e54a9-70d9-4263-ba02-cb685e1fdaf8",
-    content: test_tex,
-  },
-];
-
-// Get the current list of documents
-export const getDocuments = ({ response }: { response: any }) => {
-  console.log("file list requested");
-  response.headers.set("Access-Control-Allow-Origin", "*");
-  response.body = documents.map(documentRecordOf);
-};
+// // Get the current list of documents
+// export const getDocuments = ({ response }: { response: any }) => {
+//   console.log("file list requested");
+//   response.headers.set("Access-Control-Allow-Origin", "*");
+//   response.body = documents.map(documentRecordOf);
+// };
 
 
 // WEB SERVER
@@ -34,29 +22,6 @@ const HOST = env.HOST || "localhost";
 
 const router = new Router();
 
-// Get a document by file name
-export const getDocument = ({
-  params,
-  response,
-}: {
-  params: {
-    fileName: string;
-  };
-  response: any;
-}) => {
-  response.headers.set("Access-Control-Allow-Origin", "*");
-  const document = documents.filter((document) =>
-    document.fileName === params.fileName
-  );
-  if (document.length) {
-    response.status = 200;
-    response.body = document[0];
-    return;
-  }
-
-  response.status = 400;
-  response.body = { msg: `Cannot find document ${params.fileName}` };
-};
 
 const hasSameFileName = (a: Document, b: Document) => a.fileName == b.fileName;
 

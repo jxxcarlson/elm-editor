@@ -21,10 +21,6 @@ export interface DocumentRecord {
 }
 
 
-export function documentRecordOf(doc: Document) {
-  return { fileName: doc.fileName, id: doc.id };
-}
-
 
 export function documentOfExtendedDocument(doc: ExtendedDocument) {
   return { fileName: doc.fileName, id: doc.id, content: doc.content };
