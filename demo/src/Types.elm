@@ -112,3 +112,4 @@ type Msg
     | GotDocument (Result Http.Error Document)
     | AskForRemoteDocuments
     | GotDocuments (Result Http.Error (List MiniFileRecord))
+    | Message (Result Http.Error String)

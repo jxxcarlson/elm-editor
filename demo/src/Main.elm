@@ -4,6 +4,7 @@ import Browser
 import Browser.Dom as Dom
 import Browser.Events
 import Cmd.Extra exposing (withCmd, withCmds, withNoCmd)
+import Config
 import ContextMenu exposing (Item(..))
 import Data
 import Editor exposing (Editor, EditorMsg)
@@ -124,7 +125,7 @@ subscriptions model =
             |> Sub.map EditorMsg
         , Outside.getInfo Outside LogErr
         , Browser.Events.onResize WindowSize
-        , Time.every 10000 Tick
+        , Time.every Config.tickInterval Tick
         ]
 
 
@@ -425,6 +426,14 @@ update msg model =
                 Err _ ->
                     { model | message = "Error getting remote documents" } |> withNoCmd
 
+        Message result ->
+            case result of
+                Ok str ->
+                    { model | message = str } |> withNoCmd
+
+                Err _ ->
+                    { model | message = "Unknown error" } |> withNoCmd
+
 
 
 -- HELPER
@@ -438,7 +447,10 @@ saveFileToLocalStorage_ model =
                 | tickCount = model.tickCount + 1
                 , documentStatus = DocumentSaved
               }
-            , Helper.File.saveFileToLocalStorage model
+            , Cmd.batch
+                [ Helper.File.saveFileToLocalStorage model
+                , Helper.File.postDocument model.document
+                ]
             )
 
         DocumentSaved ->

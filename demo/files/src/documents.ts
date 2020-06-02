@@ -1,4 +1,3 @@
-
 export const test_tex = `
 uuid: 7a7e54a9-70d9-4263-ba02-cb685e1fdaf8
 
@@ -63,7 +62,7 @@ $ \\frac{1}{1 + \\frac{2}{3}} $
 \\end{itemize}
 
 
-`
+`;
 
 export const quantum_md = `
 uuid: 143d1170-f8ce-47b3-904d-e84191d3d717
@@ -180,4 +179,4 @@ $t = 1, 2, 4,16$.
 
 ![xx::center](http://noteimages.s3.amazonaws.com/jim_images/propagator-t=16-e5ae.png)
 
-`
+`;

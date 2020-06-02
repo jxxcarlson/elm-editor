@@ -1,1 +1,1 @@
-deno run --allow-net --allow-env server2.ts
+deno run --allow-net --allow-env server.ts

@@ -5,6 +5,7 @@ module Helper.File exposing
     , getDocument
     , getDocumentList
     , getListOfFilesInLocalStorage
+    , postDocument
     , read
     , requestFile
     , saveFile
@@ -25,6 +26,31 @@ import MiniLatex.Export
 import Outside
 import Task exposing (Task)
 import Types exposing (DocType(..), Model, Msg(..))
+
+
+postDocument : Document -> Cmd Msg
+postDocument document =
+    Http.request
+        { method = "POST"
+        , url = Config.serverUrl ++ "/documents"
+        , headers =
+            [ Http.header "Accept" "*/*"
+            , Http.header "foo" "bar"
+            ]
+        , body = Http.jsonBody (Outside.extendedDocumentEncoder Config.token document)
+        , expect = Http.expectJson Message Outside.messageDecoder
+        , timeout = Nothing
+        , tracker = Nothing
+        }
+
+
+postDocument1 : Document -> Cmd Msg
+postDocument1 document =
+    Http.post
+        { url = Config.serverUrl ++ "/documents"
+        , body = Http.jsonBody (Outside.extendedDocumentEncoder Config.token document)
+        , expect = Http.expectJson Message Outside.messageDecoder
+        }
 
 
 getDocument : String -> Cmd Msg

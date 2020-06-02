@@ -1,10 +1,12 @@
 port module Outside exposing
     ( InfoForElm(..)
     , InfoForOutside(..)
-    , basicDocumentEncoder
     , documentDecoder
+    , documentEncoder
     , documentListDecoder
+    , extendedDocumentEncoder
     , getInfo
+    , messageDecoder
     , sendInfo
     )
 
@@ -91,7 +93,7 @@ sendInfo info =
             infoForOutside { tag = "Highlight", data = encodeSelectedIdData idPair }
 
         WriteFile document ->
-            infoForOutside { tag = "WriteFile", data = basicDocumentEncoder document }
+            infoForOutside { tag = "WriteFile", data = documentEncoder document }
 
         AskForFileList ->
             infoForOutside { tag = "AskForFileList", data = Encode.null }
@@ -149,6 +151,18 @@ decodeMiniFileRecord =
         |> required "fileName" string
 
 
+type alias MessageContainer =
+    { msg : String }
+
+
+messageDecoder : Decoder String
+messageDecoder =
+    (D.succeed MessageContainer
+        |> required "msg" string
+    )
+        |> D.map .msg
+
+
 
 {-
    > doc = { fileName = "foo.md", id = "12.45", content = "whatever"}
@@ -163,10 +177,20 @@ decodeMiniFileRecord =
 -}
 
 
-basicDocumentEncoder : Document -> Encode.Value
-basicDocumentEncoder doc =
+documentEncoder : Document -> Encode.Value
+documentEncoder doc =
     Encode.object
         [ ( "fileName", Encode.string doc.fileName )
         , ( "id", Encode.string doc.id )
         , ( "content", Encode.string doc.content )
+        ]
+
+
+extendedDocumentEncoder : String -> Document -> Encode.Value
+extendedDocumentEncoder token doc =
+    Encode.object
+        [ ( "fileName", Encode.string doc.fileName )
+        , ( "id", Encode.string doc.id )
+        , ( "content", Encode.string doc.content )
+        , ( "token", Encode.string token )
         ]
