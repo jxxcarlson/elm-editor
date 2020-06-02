@@ -2,6 +2,14 @@ import {Document} from "./document.ts";
 import {quantum_md, test_tex} from "./data.ts"
 import {fetchData} from "./db.ts"
 
+export const getDocumentsFromDisk = async (): Promise<Document[]> => {
+  const documents = await fetchData();
+
+  return documents;
+}
+
+// export var documents = getDocumentsFromDisk();
+
 export var documents = [
 
   {
