@@ -44,7 +44,7 @@ export const updateDocument = async ({
       response.body = { msg: "Added: " + sourceDoc.fileName};
       response.status = 200;
     } else {
-      documents.map((d:Document) => updateDoc(sourceDoc, d))
+      documents.forEach((d:Document) => updateDoc(sourceDoc, d))
       console.log("updated document");
       response.body = { msg: "Updated: " + sourceDoc.fileName };
       response.status = 200;
