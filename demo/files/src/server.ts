@@ -1,7 +1,8 @@
 // https://dev.to/kryz/write-a-small-api-using-deno-1cl0
 
 import { Application, Router } from "https://deno.land/x/oak/mod.ts";
-import {Document, DocumentRecord, ExtendedDocument} from "./document.ts";
+import {Document, DocumentRecord, ExtendedDocument
+    , documentRecordOf, documentOfExtendedDocument} from "./document.ts";
 import { quantum_md, test_tex } from "./data.ts";
 
 let documents: Array<Document> = [
@@ -24,14 +25,7 @@ export const getDocuments = ({ response }: { response: any }) => {
   response.body = documents.map(documentRecordOf);
 };
 
-function documentRecordOf(doc: Document) {
-  return { fileName: doc.fileName, id: doc.id };
-}
 
-
-function documentOfExtendedDocument(doc: ExtendedDocument) {
-  return { fileName: doc.fileName, id: doc.id, content: doc.content };
-}
 // WEB SERVER
 
 const env = Deno.env.toObject();
