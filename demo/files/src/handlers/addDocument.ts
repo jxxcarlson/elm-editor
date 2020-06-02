@@ -24,7 +24,7 @@ export const addDocument = async ({
   response.headers.append("Access-Control-Allow-Methods", "POST, OPTIONS");
   response.headers.append(
     "Access-Control-Allow-Headers",
-    "X-Requested-With, Content-Type, Accept, Origin, Authorization",
+    "X-Requested-With, Content-Type, Accept, Origin",
   );
 
   if (token == "abracadabra") {
