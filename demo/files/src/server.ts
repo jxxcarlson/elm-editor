@@ -11,7 +11,7 @@ import {updateDocument} from "./handlers/updateDocument.ts"
 import {options} from "./handlers/options.ts"
 import {fetchData} from "./db.ts"
 
-getDocumentsFromDisk();
+
 // WEB SERVER
 
 const env = Deno.env.toObject();
@@ -38,3 +38,4 @@ console.log(`Listening on port ${PORT}...`);
 
 
 await app.listen(`${HOST}:${PORT}`);
+// await documents = getDocumentsFromDisk();
