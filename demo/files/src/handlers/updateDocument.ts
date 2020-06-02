@@ -1,5 +1,6 @@
 import {Document} from "../document.ts";
 import {documents } from "../documents.ts";
+import {persistData} from  "../db.ts"
 
 const hasSameId = (a: Document, b: Document) => a.id == b.id;
 
@@ -40,11 +41,13 @@ export const updateDocument = async ({
     console.log("CONTENT", sourceDoc.content)
     if (isNotPresent(sourceDoc, documents)) {
       documents.push(sourceDoc);
+      persistData(documents)
       console.log("pushing document: " + sourceDoc.fileName);
       response.body = { msg: "Added: " + sourceDoc.fileName};
       response.status = 200;
     } else {
       documents.forEach((d:Document) => updateDoc(sourceDoc, d))
+      persistData(documents)
       console.log("updated document");
       response.body = { msg: "Updated: " + sourceDoc.fileName };
       response.status = 200;
