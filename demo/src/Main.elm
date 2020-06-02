@@ -287,6 +287,7 @@ update msg model =
                             [ View.Scroll.toRenderedTextTop
                             , View.Scroll.toEditorTop
                             , Helper.File.saveFileToLocalStorage_ newDocument
+                            , Helper.File.updateRemoteDocument newDocument
                             ]
 
         SaveFile ->
@@ -311,7 +312,8 @@ update msg model =
                     ( { model | fileList = fileList }, Cmd.none )
 
                 Outside.GotFile file ->
-                    ( Helper.Load.loadDocument file model, Cmd.none )
+                    Helper.Load.loadDocument file model
+                        |> (\m -> m |> withCmd (Helper.File.updateRemoteDocument m.document))
 
         LogErr _ ->
             ( model, Cmd.none )
@@ -410,7 +412,8 @@ update msg model =
         GotDocument result ->
             case result of
                 Ok document ->
-                    Helper.Load.loadDocument document model |> withNoCmd
+                    Helper.Load.loadDocument document model
+                        |> withNoCmd
 
                 Err _ ->
                     { model | message = "Error getting remote document" } |> withNoCmd
