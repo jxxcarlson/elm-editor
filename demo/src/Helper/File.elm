@@ -1,11 +1,11 @@
 module Helper.File exposing
-    ( docType
+    ( createRemoteDocument
+    , docType
     , exportFile
     , fileExtension
     , getDocument
     , getDocumentList
     , getListOfFilesInLocalStorage
-    , postDocument
     , read
     , requestFile
     , saveFile
@@ -28,12 +28,25 @@ import Task exposing (Task)
 import Types exposing (DocType(..), Model, Msg(..))
 
 
-postDocument : Document -> Cmd Msg
-postDocument document =
+createRemoteDocument : Document -> Cmd Msg
+createRemoteDocument document =
     Http.post
         { url = Config.serverUrl ++ "/documents"
         , body = Http.jsonBody (Outside.extendedDocumentEncoder Config.token document)
         , expect = Http.expectJson Message Outside.messageDecoder
+        }
+
+
+updateRemoteDocument : Document -> Cmd Msg
+updateRemoteDocument document =
+    Http.request
+        { method = "PUT"
+        , headers = []
+        , url = Config.serverUrl ++ "/documents"
+        , body = Http.jsonBody (Outside.extendedDocumentEncoder Config.token document)
+        , expect = Http.expectJson Message Outside.messageDecoder
+        , timeout = Nothing
+        , tracker = Nothing
         }
 
 

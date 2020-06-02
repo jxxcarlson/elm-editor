@@ -449,7 +449,7 @@ saveFileToLocalStorage_ model =
               }
             , Cmd.batch
                 [ Helper.File.saveFileToLocalStorage model
-                , Helper.File.postDocument model.document
+                , Helper.File.createRemoteDocument model.document
                 ]
             )
 
