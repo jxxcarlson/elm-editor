@@ -10,6 +10,7 @@ import {addDocument} from "./handlers/addDocument.ts"
 import {updateDocument} from "./handlers/updateDocument.ts"
 import {options} from "./handlers/options.ts"
 
+
 // WEB SERVER
 
 const env = Deno.env.toObject();

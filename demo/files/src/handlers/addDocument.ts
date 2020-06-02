@@ -1,6 +1,6 @@
 import {Document} from "../document.ts";
-import {documents } from "../documents.ts";
-
+import {documents} from "../documents.ts";
+import {persistData} from  "../db.ts"
 
 const hasSameFileName = (a: Document, b: Document) => a.fileName == b.fileName;
 
@@ -33,6 +33,7 @@ export const addDocument = async ({
     const doc_ = { id: id, fileName: fileName, content: content };
     if (isNotPresent(doc_, documents)) {
       documents.push(doc_);
+      persistData(documents)
       console.log("pushing document: " + doc_.fileName);
       response.body = { msg: "OK" };
       response.status = 200;
