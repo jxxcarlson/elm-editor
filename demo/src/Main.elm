@@ -345,7 +345,7 @@ update msg model =
                             Helper.File.getListOfFilesInLocalStorage
 
                         PopupOpen RemoteFileListPopup ->
-                            Helper.File.getDocumentList
+                            Helper.File.getRemoteDocumentList
 
                         PopupOpen _ ->
                             Cmd.none
@@ -419,7 +419,7 @@ update msg model =
                     { model | message = "Error getting remote document" } |> withNoCmd
 
         AskForRemoteDocuments ->
-            model |> withCmd Helper.File.getDocumentList
+            model |> withCmd Helper.File.getRemoteDocumentList
 
         GotDocuments result ->
             case result of

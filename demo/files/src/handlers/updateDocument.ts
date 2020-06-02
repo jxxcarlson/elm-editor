@@ -25,7 +25,6 @@ export const updateDocument = async ({
   request: any;
   response: any;
 }) => {
-  console.log("processing PUT request");
   const {
     value : {token, fileName, id, content},
   } = await request.body();
@@ -41,13 +40,13 @@ export const updateDocument = async ({
     if (isNotPresent(sourceDoc, documents)) {
       documents.push(sourceDoc);
       persistData(documents)
-      console.log("pushing document: " + sourceDoc.fileName);
+      console.log("added: " + sourceDoc.fileName);
       response.body = { msg: "Added: " + sourceDoc.fileName};
       response.status = 200;
     } else {
       documents.forEach((d:Document) => updateDoc(sourceDoc, d))
       persistData(documents)
-      console.log("updated document");
+      console.log("updated: " + sourceDoc.fileName);
       response.body = { msg: "Updated: " + sourceDoc.fileName };
       response.status = 200;
     }

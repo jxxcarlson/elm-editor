@@ -4,8 +4,8 @@ module Helper.File exposing
     , exportFile
     , fileExtension
     , getDocument
-    , getDocumentList
     , getListOfFilesInLocalStorage
+    , getRemoteDocumentList
     , read
     , requestFile
     , saveFile
@@ -59,8 +59,8 @@ getDocument fileName =
         }
 
 
-getDocumentList : Cmd Msg
-getDocumentList =
+getRemoteDocumentList : Cmd Msg
+getRemoteDocumentList =
     Http.get
         { url = Config.serverUrl ++ "/documents"
         , expect = Http.expectJson GotDocuments Outside.documentListDecoder

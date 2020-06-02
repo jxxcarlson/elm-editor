@@ -139,10 +139,10 @@ openAuthorPopupButton model =
 openFileListPopupButton model =
     case model.popupStatus of
         PopupOpen FileListPopup ->
-            button 90 "Close" (ManagePopup PopupClosed) []
+            button 90 "Close" (ManagePopup PopupClosed) [ Background.color Style.redColor ]
 
         PopupOpen _ ->
-            button 90 "Close" (ManagePopup PopupClosed) []
+            button 90 "Files" (ManagePopup (PopupOpen FileListPopup)) []
 
         PopupClosed ->
             button 90 "Files" (ManagePopup (PopupOpen FileListPopup)) []
@@ -151,10 +151,10 @@ openFileListPopupButton model =
 openRemoteFileListPopupButton model =
     case model.popupStatus of
         PopupOpen RemoteFileListPopup ->
-            button 90 "Close" (ManagePopup PopupClosed) []
+            button 90 "Close" (ManagePopup PopupClosed) [ Background.color Style.redColor ]
 
         PopupOpen _ ->
-            button 90 "Close" (ManagePopup PopupClosed) []
+            button 90 "Remote Files" (ManagePopup (PopupOpen RemoteFileListPopup)) []
 
         PopupClosed ->
             button 120 "Remote Files" (ManagePopup (PopupOpen RemoteFileListPopup)) []
