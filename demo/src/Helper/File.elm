@@ -28,23 +28,6 @@ import Task exposing (Task)
 import Types exposing (DocType(..), Model, Msg(..))
 
 
-postDocument1 : Document -> Cmd Msg
-postDocument1 document =
-    Http.request
-        { method = "POST"
-        , url = Config.serverUrl ++ "/documents"
-        , headers =
-            [ Http.header "Accept" "*/*"
-
-            --, Http.header "foo" "bar"
-            ]
-        , body = Http.jsonBody (Outside.extendedDocumentEncoder Config.token document)
-        , expect = Http.expectJson Message Outside.messageDecoder
-        , timeout = Nothing
-        , tracker = Nothing
-        }
-
-
 postDocument : Document -> Cmd Msg
 postDocument document =
     Http.post
