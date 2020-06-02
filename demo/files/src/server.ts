@@ -22,7 +22,7 @@ router
   .get("/api/document/:fileName", getDocument)
   .post("/api/documents", addDocument)
   .options("/api/documents", options);
-// .put('/dogs/:name', updateDog)
+   .put('/api/:fileName', updateDocument)
 // .delete('/dogs/:name', removeDog)
 
 const app = new Application();
