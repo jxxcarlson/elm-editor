@@ -3,10 +3,14 @@ import {documents } from "../documents.ts";
 
 const hasSameId = (a: Document, b: Document) => a.id == b.id;
 
+const isNotPresent = (d: Document, docs: Array<Document>) =>
+  docs.filter((doc) => hasSameId(doc, d)).length == 0;
+
+
 export const updateDoc = (sourceDoc: Document, targetDoc: Document) =>
   {
-   if (hasSameId(sourceDoc, targetDoc) == true)  {
-       sourceDoc
+   if (sourceDoc.id == targetDoc.id)  {
+        sourceDoc
      } else {
         targetDoc
      }
@@ -32,11 +36,19 @@ export const updateDocument = async ({
   );
 
   if (token == "abracadabra") {
-    const sourceDoc = { id: id, fileName: fileName, content: content };
-      documents.map((d) => updateDoc(sourceDoc, d))
-      console.log("updated: " + sourceDoc.fileName);
-      response.body = { msg: "OK" };
+    const sourceDoc: Document = { id: id, fileName: fileName, content: content };
+    console.log("CONTENT", sourceDoc.content)
+    if (isNotPresent(sourceDoc, documents)) {
+      documents.push(sourceDoc);
+      console.log("pushing document: " + sourceDoc.fileName);
+      response.body = { msg: "Added: " + sourceDoc.fileName};
       response.status = 200;
+    } else {
+      documents.map((d:Document) => updateDoc(sourceDoc, d))
+      console.log("updated document");
+      response.body = { msg: "Updated: " + sourceDoc.fileName };
+      response.status = 200;
+    }
   } else {
     response.body = { msg: "Token does not match" };
     response.status = 400;

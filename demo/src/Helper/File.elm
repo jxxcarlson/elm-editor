@@ -13,6 +13,7 @@ module Helper.File exposing
     , saveFileToLocalStorage_
     , titleFromFileName
     , updateDocType
+    , updateRemoteDocument
     )
 
 import Config
