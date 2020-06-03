@@ -10,6 +10,9 @@ import {addDocument} from "./handlers/addDocument.ts"
 import {updateDocument} from "./handlers/updateDocument.ts"
 import {options} from "./handlers/options.ts"
 import {fetchData} from "./db.ts"
+//
+import { login, guest, auth } from "./handlers/login.ts";
+import { authMiddleware } from "./auth/middleware.ts"
 
 
 // WEB SERVER
@@ -25,7 +28,12 @@ router
   .get("/api/document/:fileName", getDocument)
   .post("/api/documents", addDocument)
   .options("/api/documents", options)
-  .put('/api/:fileName', updateDocument);
+  // .options("/api/login", options)
+  .put('/api/:fileName', updateDocument)
+  .post('/api/login', login)
+  .get('/api/guest', guest)
+  .get('/api/auth', authMiddleware,  auth) // Registering authMiddleware for /auth endpoint only
+;
 // .delete('/dogs/:name', removeDog)
 
 const app = new Application();
