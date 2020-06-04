@@ -11,7 +11,7 @@ const isNotPresent = (d: Document, docs: Array<Document>) =>
 
 
 // Add a new document
-export const addDocument = async ({
+export const createDocument = async ({
   request,
   response,
 }: {

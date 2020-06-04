@@ -6,7 +6,7 @@ import {Document, DocumentRecord, ExtendedDocument, documentOfExtendedDocument} 
 import {documents ,getDocumentsFromDisk} from "./documents.ts";
 import {getDocuments} from "./handlers/getDocuments.ts"
 import {getDocument} from "./handlers/getDocument.ts"
-import {addDocument} from "./handlers/addDocument.ts"
+import {createDocument} from "./handlers/createDocument.ts"
 import {updateDocument} from "./handlers/updateDocument.ts"
 import {options} from "./handlers/options.ts"
 import {fetchData} from "./db.ts"
@@ -26,7 +26,7 @@ const router = new Router();
 router
   .get("/api/documents", getDocuments)
   .get("/api/document/:fileName", getDocument)
-  .post("/api/documents", addDocument)
+  .post("/api/documents", createDocument)
   .options("/api/documents", options)
   // .options("/api/login", options)
   .put('/api/:fileName', updateDocument)
