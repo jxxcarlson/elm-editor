@@ -25,7 +25,7 @@ const router = new Router();
 
 router
   .get("/api/documents", getDocuments)
-  .get("/api/document/:id", getDocument)
+  .get("/api/document/:fileName", getDocument)
   .post("/api/documents", createDocument)
   .options("/api/documents", options)
   // .options("/api/login", options)

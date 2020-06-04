@@ -3,9 +3,13 @@ import {Document, DocumentRecord} from './document.ts'
 import {FILE_STORE_PATH} from './config.ts'
 import {manifest} from "./manifest.ts";
 
+export const fetchDocumentByFileName = async (fileName: String): Promise<Document> => {
+  const docRec = manifest.filter(r => r.fileName == fileName)[0]
+  return fetchDocument_(docRec)
+}
 
 
-export const fetchDocument = async (id: String): Promise<Document> => {
+export const fetchDocumentById = async (id: String): Promise<Document> => {
   const docRec = manifest.filter(r => r.id == id)[0]
   return fetchDocument_(docRec)
 }

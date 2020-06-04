@@ -1,7 +1,7 @@
 
 //import {Document, DocumentRecord, ExtendedDocument, documentOfExtendedDocument} from "./document.ts";
 import {manifest} from "../manifest.ts";
-import {fetchDocument} from "../file.ts";
+import {fetchDocumentByFileName} from "../file.ts";
 
 // Get a document by file name
 export const  getDocument = async ({
@@ -9,12 +9,12 @@ export const  getDocument = async ({
   response,
 }: {
   params: {
-    id: string;
+    fileName: string;
   };
   response: any;
 }) => {
   response.headers.set("Access-Control-Allow-Origin", "*");
-  response.body = await fetchDocument(params.id)
+  response.body = await fetchDocumentByFileName(params.fileName)
 
   response.status = 200;
   return;

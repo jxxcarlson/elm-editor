@@ -1,8 +1,7 @@
 .idea/
-**/elm-stuff
-**/Main.js
-**/*.min.js
-demo/src/index.html
-**/node_modules/
-
-demo/files/db.json
+demo/elm-stuff/
+demo/node_modules/
+demo/public/Main.js
+demo/public/Main.min.js
+demo/files/data
+elm-stuff/
