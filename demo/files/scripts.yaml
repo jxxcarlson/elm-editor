@@ -1,5 +1,18 @@
 scripts:
-  start: deno run --allow-net --allow-env --allow-write --allow-read src/server.ts
+  start:
+    cmd: src/server.ts
+    allow:
+      - net
+      - env
+      - write
+      - read
+  s2:
+    cmd: src2/server.ts
+    allow:
+      - net
+      - env
+      - write
+      - read
   ssh: ssh root@161.35.125.40
   upload: scp -r ./src root@161.35.125.40:/root/docserver
   upone: scp $1 root@161.35.125.40:/root/docserver
