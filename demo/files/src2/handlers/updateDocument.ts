@@ -1,19 +1,20 @@
-import {Document} from "../document.ts";
-import {documents } from "../documents.ts";
-import {persistData} from  "../db.ts"
+import {DocumentRecord, Document} from "../document.ts";
+import {manifest, writeManifest} from "../manifest.ts";
+import {writeDocument} from "../file.ts"
 
-const hasSameId = (a: Document, b: Document) => a.id == b.id;
+const hasSameFileName = (a: DocumentRecord, b: DocumentRecord) => a.fileName == b.fileName;
 
-const isNotPresent = (d: Document, docs: Array<Document>) =>
-  docs.filter((doc) => hasSameId(doc, d)).length == 0;
+const hasSameId = (a: DocumentRecord, b: DocumentRecord) => a.id == b.id;
 
+const isNotPresent = (d: DocumentRecord, manifest_: Array<DocumentRecord>) =>
+  manifest_.filter((r) => hasSameId(r, d)).length == 0;
 
-export const updateDoc = (sourceDoc: Document, targetDoc: Document) =>
+export const updateDocRecord = (sourceDocRecord: DocumentRecord, targetDocRecord: DocumentRecord) =>
   {
-   if (sourceDoc.id == targetDoc.id)  {
-        sourceDoc
+   if (sourceDocRecord.id == targetDocRecord.id)  {
+        sourceDocRecord
      } else {
-        targetDoc
+        targetDocRecord
      }
    }
 
@@ -37,15 +38,19 @@ export const updateDocument = async ({
 
   if (token == "abracadabra") {
     const sourceDoc: Document = { id: id, fileName: fileName, content: content };
-    if (isNotPresent(sourceDoc, documents)) {
-      documents.push(sourceDoc);
-      persistData(documents)
+    console.log("SOURCE", sourceDoc)
+    const sourceDocRecord: DocumentRecord = { id: id, fileName: fileName };
+    if (isNotPresent(sourceDocRecord, manifest)) {
+      manifest.push(sourceDocRecord);
+      writeManifest(manifest)
+      writeDocument(sourceDoc)
       console.log("added: " + sourceDoc.fileName);
       response.body = { msg: "Added: " + sourceDoc.fileName};
       response.status = 200;
     } else {
-      documents.forEach((d:Document) => updateDoc(sourceDoc, d))
-      persistData(documents)
+      manifest.forEach((d:DocumentRecord) => updateDocRecord(sourceDocRecord, d))
+      writeManifest(manifest)
+      writeDocument(sourceDoc)
       console.log("updated: " + sourceDoc.fileName);
       response.body = { msg: "Updated: " + sourceDoc.fileName };
       response.status = 200;
