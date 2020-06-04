@@ -25,7 +25,7 @@ const router = new Router();
 
 router
   .get("/api/documents", getDocuments)
-  .get("/api/document/:fileName", getDocument)
+  .get("/api/document/:id", getDocument)
   .post("/api/documents", addDocument)
   .options("/api/documents", options)
   // .options("/api/login", options)
@@ -43,7 +43,4 @@ app.use(router.allowedMethods());
 
 console.log(`Listening on port ${PORT}...`);
 
-
-
 await app.listen(`${HOST}:${PORT}`);
-//await documents = getDocumentsFromDisk();

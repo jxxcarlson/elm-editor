@@ -1,27 +1,21 @@
 
 //import {Document, DocumentRecord, ExtendedDocument, documentOfExtendedDocument} from "./document.ts";
-import {documents } from "../documents.ts";
+import {manifest} from "../manifest.ts";
+import {fetchDocument} from "../file.ts";
 
 // Get a document by file name
-export const getDocument = ({
+export const  getDocument = async ({
   params,
   response,
 }: {
   params: {
-    fileName: string;
+    id: string;
   };
   response: any;
 }) => {
   response.headers.set("Access-Control-Allow-Origin", "*");
-  const document = documents.filter((document) =>
-    document.fileName === params.fileName
-  );
-  if (document.length) {
-    response.status = 200;
-    response.body = document[0];
-    return;
-  }
+  response.body = await fetchDocument(params.id)
 
-  response.status = 400;
-  response.body = { msg: `Cannot find document ${params.fileName}` };
+  response.status = 200;
+  return;
 };

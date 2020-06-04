@@ -14,10 +14,10 @@ scripts:
       - write
       - read
   test:
-    cmd: src2/manifest.ts
+    cmd: src2/file.ts
     allow:
       - read
-      - write  
+      - write
   ssh: ssh root@161.35.125.40
   upload: scp -r ./src root@161.35.125.40:/root/docserver
   upone: scp $1 root@161.35.125.40:/root/docserver
