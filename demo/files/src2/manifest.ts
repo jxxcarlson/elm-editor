@@ -13,14 +13,11 @@ export const fetchManifest = async (): Promise<DocumentRecord[]> => {
 
 export const writeManifest = async (data: Array<DocumentRecord>): Promise<void> => {
   const encoder = new TextEncoder();
-  await Deno.writeFile(MANIFESTB, encoder.encode(safeDump(data)));
+  await Deno.writeFile(MANIFEST, encoder.encode(safeDump(data)));
 };
 
 export const manifest = await fetchManifest();
 
 console.log("manifest", manifest)
 
-writeManifest(manifest)
-
-
-//
+// writeManifest(manifest)

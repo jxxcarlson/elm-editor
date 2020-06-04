@@ -1,13 +1,13 @@
-import {Document} from "../document.ts";
-import {documents} from "../documents.ts";
-import {persistData} from  "../db.ts"
+import {DocumentRecord, Document} from "../document.ts";
+import {manifest, writeManifest} from "../manifest.ts";
+import {writeDocument} from "../file.ts"
 
-const hasSameFileName = (a: Document, b: Document) => a.fileName == b.fileName;
+const hasSameFileName = (a: DocumentRecord, b: DocumentRecord) => a.fileName == b.fileName;
 
-const hasSameId = (a: Document, b: Document) => a.id == b.id;
+const hasSameId = (a: DocumentRecord, b: DocumentRecord) => a.id == b.id;
 
-const isNotPresent = (d: Document, docs: Array<Document>) =>
-  docs.filter((doc) => hasSameId(doc, d)).length == 0;
+const isNotPresent = (d: DocumentRecord, manifest_: Array<DocumentRecord>) =>
+  manifest_.filter((r) => hasSameId(r, d)).length == 0;
 
 
 // Add a new document
@@ -30,13 +30,20 @@ export const addDocument = async ({
   );
 
   if (token == "abracadabra") {
+
     const doc_ = { id: id, fileName: fileName, content: content };
-    if (isNotPresent(doc_, documents)) {
-      documents.push(doc_);
-      persistData(documents)
+    const docRecord_ = { id: id, fileName: fileName }
+
+    if (isNotPresent(docRecord_, manifest)) {
+
+      manifest.push(doc_);
+      writeManifest(manifest)
+      writeDocument(doc_)
+
       console.log("pushing document: " + doc_.fileName);
       response.body = { msg: "OK" };
       response.status = 200;
+
     } else {
       console.log("duplicate document");
       response.body = { msg: "file already exists" };

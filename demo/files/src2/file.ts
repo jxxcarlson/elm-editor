@@ -23,7 +23,7 @@ const fetchDocument_ = async (docRec: DocumentRecord): Promise<Document> => {
   return doc;
 };
 
-const writeDocument = async (doc: Document): Promise<void> => {
+export const writeDocument = async (doc: Document): Promise<void> => {
   const encoder = new TextEncoder();
   await Deno.writeFile(FILE_STORE_PATH + "/" + doc.fileName, encoder.encode(doc.content));
 };
