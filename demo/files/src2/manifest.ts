@@ -16,13 +16,6 @@ export const writeManifest = async (data: Array<DocumentRecord>): Promise<void> 
   await Deno.writeFile(MANIFESTB, encoder.encode(safeDump(data)));
 };
 
-//
-// export const getDocumentsFromDisk = async (): Promise<Document[]> => {
-//   const documents = await fetchData();
-//
-//   return documents;
-// }
-
 export const manifest = await fetchManifest();
 
 console.log("manifest", manifest)

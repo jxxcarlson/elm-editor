@@ -13,6 +13,11 @@ scripts:
       - env
       - write
       - read
+  test:
+    cmd: src2/manifest.ts
+    allow:
+      - read
+      - write  
   ssh: ssh root@161.35.125.40
   upload: scp -r ./src root@161.35.125.40:/root/docserver
   upone: scp $1 root@161.35.125.40:/root/docserver
