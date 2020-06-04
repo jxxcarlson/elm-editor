@@ -38,7 +38,6 @@ export const updateDocument = async ({
 
   if (token == "abracadabra") {
     const sourceDoc: Document = { id: id, fileName: fileName, content: content };
-    console.log("SOURCE", sourceDoc)
     const sourceDocRecord: DocumentRecord = { id: id, fileName: fileName };
     if (isNotPresent(sourceDocRecord, manifest)) {
       manifest.push(sourceDocRecord);

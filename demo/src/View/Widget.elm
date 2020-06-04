@@ -66,7 +66,7 @@ example1Button =
 
 
 askForRemoteDocumentsButton =
-    button 60 "Remote Files" AskForRemoteDocuments []
+    button 60 "Files" AskForRemoteDocuments []
 
 
 aboutButton =
@@ -154,10 +154,10 @@ openRemoteFileListPopupButton model =
             button 90 "Close" (ManagePopup PopupClosed) [ Background.color Style.redColor ]
 
         PopupOpen _ ->
-            button 90 "Remote Files" (ManagePopup (PopupOpen RemoteFileListPopup)) []
+            button 90 "Files" (ManagePopup (PopupOpen RemoteFileListPopup)) []
 
         PopupClosed ->
-            button 120 "Remote Files" (ManagePopup (PopupOpen RemoteFileListPopup)) []
+            button 120 "Files" (ManagePopup (PopupOpen RemoteFileListPopup)) []
 
 
 openFileButton model =

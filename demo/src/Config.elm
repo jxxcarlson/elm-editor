@@ -10,9 +10,9 @@ serverUrl =
 
 
 
---
 --serverUrl =
 --    "http://161.35.125.40:80/api"
+--
 
 
 token =
