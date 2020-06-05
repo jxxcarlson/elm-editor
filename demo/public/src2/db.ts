@@ -1,4 +1,3 @@
-import { DB_PATH } from "./config.ts";
 import { Document } from "./document.ts";
 
 export const fetchData = async (): Promise<Document[]> => {
