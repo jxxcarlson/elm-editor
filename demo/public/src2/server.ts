@@ -3,7 +3,6 @@
 
 import { Application, Router } from "https://deno.land/x/oak/mod.ts";
 import {Document, DocumentRecord, ExtendedDocument, documentOfExtendedDocument} from "./document.ts";
-import {documents ,getDocumentsFromDisk} from "./documents.ts";
 import {getDocuments} from "./handlers/getDocuments.ts"
 import {getDocument} from "./handlers/getDocument.ts"
 import {createDocument} from "./handlers/createDocument.ts"
