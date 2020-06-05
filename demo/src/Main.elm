@@ -532,8 +532,16 @@ load counter selectedId renderingOption str =
 
 view : Model -> Html Msg
 view model =
-    Element.layout [ Background.color <| gray 55 ]
+    Element.layoutWith { options = [ Element.focusStyle myFocusStyle ] }
+        [ Background.color <| gray 55 ]
         (mainColumn model)
+
+
+myFocusStyle =
+    { borderColor = Nothing
+    , backgroundColor = Nothing
+    , shadow = Nothing
+    }
 
 
 mainColumn model =

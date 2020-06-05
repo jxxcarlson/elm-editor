@@ -51,6 +51,7 @@ import Types
         , PopupWindow(..)
         )
 import View.Style as Style
+import Widget.Button as Button exposing (Size(..))
 
 
 inputFileName model =
@@ -69,18 +70,18 @@ example1Button =
 toggleFileLocationButton model =
     case model.fileLocation of
         LocalFiles ->
-            button 60 "Local" (ToggleFileLocation RemoteFiles) []
+            button_ 60 "Local" (ToggleFileLocation RemoteFiles)
 
         RemoteFiles ->
-            button 60 "Remote" (ToggleFileLocation LocalFiles) []
+            button_ 60 "Remote" (ToggleFileLocation LocalFiles)
 
 
 aboutButton =
-    button 50 "About" About []
+    button_ 50 "About" About
 
 
 cancelChangeFileNameButton =
-    button 90 "Cancel" CancelChangeFileName []
+    button_ 90 "Cancel" CancelChangeFileName
 
 
 changeFileNameButton model =
@@ -100,11 +101,15 @@ changeFileNameButton model =
 
 
 changeFileNameButton_ model =
-    button 90 "Change file name" ChangeFileName []
+    button_ 140 "Change file name" ChangeFileName
 
 
 doNotChangeFileNameButton =
-    button 90 "Change file name" NoOp [ Font.color (Element.rgb 0.7 0.7 0.7) ]
+    button_ 140 "Change file name" NoOp
+
+
+
+-- [ Font.color (Element.rgb 0.7 0.7 0.7) ]
 
 
 saveFileToLocalStorageButton model =
@@ -133,45 +138,49 @@ closePopupButton model =
 openAuthorPopupButton model =
     case model.popupStatus of
         PopupOpen AuthorPopup ->
-            button 90 "Close" (ManagePopup PopupClosed) []
+            button_ 90 "Close" (ManagePopup PopupClosed)
 
         PopupOpen _ ->
-            button 90 "Close" (ManagePopup PopupClosed) []
+            button_ 90 "Close" (ManagePopup PopupClosed)
 
         PopupClosed ->
-            button 90 "Author" (ManagePopup (PopupOpen AuthorPopup)) []
+            button_ 90 "Author" (ManagePopup (PopupOpen AuthorPopup))
 
 
 openFileListPopupButton model =
     case model.popupStatus of
         PopupOpen FileListPopup ->
-            button 90 "Close" (ManagePopup PopupClosed) [ Background.color Style.redColor ]
+            button 100 "Close" (ManagePopup PopupClosed) [ Background.color Style.redColor ]
 
         PopupOpen _ ->
-            button 90 "Files" (ManagePopup (PopupOpen FileListPopup)) []
+            button_ 100 "Files" (ManagePopup (PopupOpen FileListPopup))
 
         PopupClosed ->
-            button 90 "Files" (ManagePopup (PopupOpen FileListPopup)) []
+            button_ 100 "Files" (ManagePopup (PopupOpen FileListPopup))
 
 
 openRemoteFileListPopupButton model =
     case model.popupStatus of
         PopupOpen RemoteFileListPopup ->
-            button 90 "Close" (ManagePopup PopupClosed) [ Background.color Style.redColor ]
+            Button.make (ManagePopup PopupClosed) "Close"
+                |> Button.withWidth (Bounded 120)
+                |> Button.withSelected False
+                |> Button.withBackgroundColor Style.redColor
+                |> Button.toElement
 
         PopupOpen _ ->
-            button 90 "Files" (ManagePopup (PopupOpen RemoteFileListPopup)) []
+            button 120 "Files" (ManagePopup (PopupOpen RemoteFileListPopup)) []
 
         PopupClosed ->
             button 120 "Files" (ManagePopup (PopupOpen RemoteFileListPopup)) []
 
 
 openFileButton model =
-    button 90 "Open" RequestFile []
+    button_ 90 "Open" RequestFile
 
 
 saveFileButton model =
-    button 90 "Save" SaveFile []
+    button_ 90 "Save" SaveFile
 
 
 exportFileButton model =
@@ -180,11 +189,11 @@ exportFileButton model =
             Element.none
 
         MiniLaTeXDoc ->
-            button 90 "Export" ExportFile []
+            button_ 90 "Export" ExportFile
 
 
 newDocumentButton model =
-    button 90 "New" NewDocument []
+    button_ 90 "New" NewDocument
 
 
 documentTypeButton model =
@@ -211,6 +220,13 @@ loadDocumentButton model width docTitle buttonLabel =
                     Style.grayColor
     in
     button width buttonLabel (Load docTitle) [ Background.color bgColor ]
+
+
+button_ width str msg =
+    Button.make msg str
+        |> Button.withWidth (Bounded width)
+        |> Button.withSelected False
+        |> Button.toElement
 
 
 button width str msg attr =

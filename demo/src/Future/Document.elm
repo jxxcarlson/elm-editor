@@ -14,6 +14,7 @@ import Types exposing (DocType(..))
 type alias Author =
     { name : String
     , id : Uuid
+    , passwordHash : String
     , email : String
     , timeCreated : Time.Posix
     , timeUpdated : Time.Posix
