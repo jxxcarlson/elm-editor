@@ -5,14 +5,12 @@ tickInterval =
     1000
 
 
-serverUrl =
+localServerUrl =
     "http://localhost:4000/api"
 
 
-
---serverUrl =
---    "http://161.35.125.40:80/api"
---
+remoteServerUrl =
+    "http://161.35.125.40:80/api"
 
 
 token =

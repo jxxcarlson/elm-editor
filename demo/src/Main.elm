@@ -51,6 +51,7 @@ import Types
         ( ChangingFileNameState(..)
         , DocType(..)
         , DocumentStatus(..)
+        , FileLocation(..)
         , Model
         , Msg(..)
         , PopupStatus(..)
@@ -97,6 +98,7 @@ init flags =
     , newFileName = "about.md"
     , changingFileNameState = FileNameOK
     , fileList = []
+    , fileLocation = LocalFiles
     , documentStatus = DocumentSaved
     , selectedId = ( 0, 0 )
     , selectedId_ = ""
@@ -107,6 +109,7 @@ init flags =
     , document = { fileName = "untitled", id = "1234", content = "---" }
     , randomSeed = Random.initialSeed 1727485
     , uuid = ""
+    , fileStorageUrl = Config.localServerUrl
     }
         |> Helper.Sync.syncModel newEditor
         |> Cmd.Extra.withCmds
@@ -287,7 +290,7 @@ update msg model =
                             [ View.Scroll.toRenderedTextTop
                             , View.Scroll.toEditorTop
                             , Helper.File.saveFileToLocalStorage_ newDocument
-                            , Helper.File.updateRemoteDocument newDocument
+                            , Helper.File.updateRemoteDocument model.fileStorageUrl newDocument
                             ]
 
         SaveFile ->
@@ -313,7 +316,7 @@ update msg model =
 
                 Outside.GotFile file ->
                     Helper.Load.loadDocument file model
-                        |> (\m -> m |> withCmd (Helper.File.updateRemoteDocument m.document))
+                        |> (\m -> m |> withCmd (Helper.File.updateRemoteDocument m.fileStorageUrl m.document))
 
         LogErr _ ->
             ( model, Cmd.none )
@@ -345,7 +348,7 @@ update msg model =
                             Helper.File.getListOfFilesInLocalStorage
 
                         PopupOpen RemoteFileListPopup ->
-                            Helper.File.getRemoteDocumentList
+                            Helper.File.getRemoteDocumentList model.fileStorageUrl
 
                         PopupOpen _ ->
                             Cmd.none
@@ -407,7 +410,7 @@ update msg model =
                 |> withNoCmd
 
         AskForRemoteDocument fileName ->
-            model |> withCmd (Helper.File.getDocument fileName)
+            model |> withCmd (Helper.File.getDocument model.fileStorageUrl fileName)
 
         GotDocument result ->
             case result of
@@ -419,7 +422,7 @@ update msg model =
                     { model | message = "Error getting remote document" } |> withNoCmd
 
         AskForRemoteDocuments ->
-            model |> withCmd Helper.File.getRemoteDocumentList
+            model |> withCmd (Helper.File.getRemoteDocumentList model.fileStorageUrl)
 
         GotDocuments result ->
             case result of
@@ -437,6 +440,22 @@ update msg model =
                 Err _ ->
                     { model | message = "Unknown error" } |> withNoCmd
 
+        ToggleFileLocation fileLocation ->
+            let
+                fileStorageUrl =
+                    case fileLocation of
+                        LocalFiles ->
+                            Config.localServerUrl
+
+                        RemoteFiles ->
+                            Config.remoteServerUrl
+            in
+            { model
+                | fileLocation = fileLocation
+                , fileStorageUrl = fileStorageUrl
+            }
+                |> withNoCmd
+
 
 
 -- HELPER
@@ -452,7 +471,7 @@ saveFileToLocalStorage_ model =
               }
             , Cmd.batch
                 [ Helper.File.saveFileToLocalStorage model
-                , Helper.File.updateRemoteDocument model.document
+                , Helper.File.updateRemoteDocument model.fileStorageUrl model.document
                 ]
             )
 
@@ -549,8 +568,8 @@ viewFooter model width_ height_ =
         , spacing 12
         ]
         [ -- View.Widget.openAuthorPopupButton model
-          --  View.Widget.openFileListPopupButton model
           View.Widget.openRemoteFileListPopupButton model
+        , View.Widget.toggleFileLocationButton model
         , View.Widget.saveFileToLocalStorageButton model
         , View.Widget.documentTypeButton model
         , View.Widget.newDocumentButton model

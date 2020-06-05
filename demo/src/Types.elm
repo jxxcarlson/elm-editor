@@ -2,6 +2,7 @@ module Types exposing
     ( ChangingFileNameState(..)
     , DocType(..)
     , DocumentStatus(..)
+    , FileLocation(..)
     , Model
     , Msg(..)
     , PopupStatus(..)
@@ -25,11 +26,21 @@ import Time
 
 
 type alias Model =
-    { editor : Editor
-    , renderingData : RenderingData
+    { -- system
+      tickCount : Int
     , counter : Int
     , width : Float
     , height : Float
+    , editor : Editor
+    , message : String
+    , randomSeed : Random.Seed
+
+    -- UI
+    , popupStatus : PopupStatus
+    , fileLocation : FileLocation
+
+    -- document
+    , renderingData : RenderingData
     , docTitle : String
     , docType : DocType
     , fileName : Maybe String
@@ -39,14 +50,16 @@ type alias Model =
     , documentStatus : DocumentStatus
     , selectedId : ( Int, Int )
     , selectedId_ : String
-    , message : String
-    , tickCount : Int
-    , popupStatus : PopupStatus
     , authorName : String
     , document : Document
-    , randomSeed : Random.Seed
     , uuid : String
+    , fileStorageUrl : String
     }
+
+
+type FileLocation
+    = LocalFiles
+    | RemoteFiles
 
 
 type ChangingFileNameState
@@ -82,35 +95,42 @@ type DocType
 
 type Msg
     = NoOp
-    | EditorMsg Editor.EditorMsg
-    | WindowSize Int Int
-    | Load String
-    | ToggleDocType
-    | NewDocument
-    | SetViewPortForElement (Result Dom.Error ( Dom.Element, Dom.Viewport ))
-    | RequestFile
-    | RequestedFile File
-    | DocumentLoaded String
-    | SaveFile
-    | ExportFile
-    | SyncLR
-    | Outside Outside.InfoForElm
-    | LogErr String
-    | RenderMsg RenderMsg
+      -- System
     | Tick Time.Posix
+    | WindowSize Int Int
+    | GotAtmosphericRandomNumber (Result Http.Error String)
+      -- UI
     | ManagePopup PopupStatus
-    | SendRequestForFile String
-    | DeleteFileFromLocalStorage String
-    | SaveFileToLocalStorage
-    | InputFileName String
-    | ChangeFileName
-    | CancelChangeFileName
     | About
     | InputAuthorname String
-    | GotAtmosphericRandomNumber (Result Http.Error String)
-      -- Document storage
-    | AskForRemoteDocument String
-    | GotDocument (Result Http.Error Document)
+    | ToggleFileLocation FileLocation
+      -- Document
+    | InputFileName String
+    | Load String
+    | DocumentLoaded String
+    | ToggleDocType
+    | NewDocument
+    | ChangeFileName
+    | CancelChangeFileName
+      -- External Files
+    | RequestFile
+    | SendRequestForFile String
+    | RequestedFile File
+    | SaveFile
+    | ExportFile
+      -- Editor
+    | EditorMsg Editor.EditorMsg
+    | SyncLR
+    | SetViewPortForElement (Result Dom.Error ( Dom.Element, Dom.Viewport ))
+    | LogErr String
+    | RenderMsg RenderMsg
+      -- Local storage
+    | Outside Outside.InfoForElm
+    | DeleteFileFromLocalStorage String
+    | SaveFileToLocalStorage
+      -- File storage
     | AskForRemoteDocuments
     | GotDocuments (Result Http.Error (List MiniFileRecord))
+    | AskForRemoteDocument String
+    | GotDocument (Result Http.Error Document)
     | Message (Result Http.Error String)

@@ -19,3 +19,7 @@ scripts:
           - read
       - open -a /Applications/Google\ Chrome.app/  http://0.0.0.0:4507/index.html
   ls: ls ../data | sort
+  uploadserver: scp -r ./public/src2 root@161.35.125.40:/root/docserver
+  uploaddocs: scp -r ./public/data root@161.35.125.40:/root/docserver
+  ssh: ssh root@161.35.125.40
+

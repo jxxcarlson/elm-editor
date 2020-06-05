@@ -29,21 +29,21 @@ import Task exposing (Task)
 import Types exposing (DocType(..), Model, Msg(..))
 
 
-createRemoteDocument : Document -> Cmd Msg
-createRemoteDocument document =
+createRemoteDocument : String -> Document -> Cmd Msg
+createRemoteDocument serverUrl document =
     Http.post
-        { url = Config.serverUrl ++ "/documents"
+        { url = serverUrl ++ "/documents"
         , body = Http.jsonBody (Outside.extendedDocumentEncoder Config.token document)
         , expect = Http.expectJson Message Outside.messageDecoder
         }
 
 
-updateRemoteDocument : Document -> Cmd Msg
-updateRemoteDocument document =
+updateRemoteDocument : String -> Document -> Cmd Msg
+updateRemoteDocument serverUrl document =
     Http.request
         { method = "PUT"
         , headers = []
-        , url = Config.serverUrl ++ "/documents"
+        , url = serverUrl ++ "/documents"
         , body = Http.jsonBody (Outside.extendedDocumentEncoder Config.token document)
         , expect = Http.expectJson Message Outside.messageDecoder
         , timeout = Nothing
@@ -51,18 +51,18 @@ updateRemoteDocument document =
         }
 
 
-getDocument : String -> Cmd Msg
-getDocument fileName =
+getDocument : String -> String -> Cmd Msg
+getDocument serverUrl fileName =
     Http.get
-        { url = Config.serverUrl ++ "/document/" ++ fileName
+        { url = serverUrl ++ "/document/" ++ fileName
         , expect = Http.expectJson GotDocument Outside.documentDecoder
         }
 
 
-getRemoteDocumentList : Cmd Msg
-getRemoteDocumentList =
+getRemoteDocumentList : String -> Cmd Msg
+getRemoteDocumentList serverUrl =
     Http.get
-        { url = Config.serverUrl ++ "/documents"
+        { url = serverUrl ++ "/documents"
         , expect = Http.expectJson GotDocuments Outside.documentListDecoder
         }
 

@@ -1,6 +1,5 @@
 module View.Widget exposing
     ( aboutButton
-    , askForRemoteDocumentsButton
     , button
     , cancelChangeFileNameButton
     , changeFileNameButton
@@ -19,6 +18,7 @@ module View.Widget exposing
     , saveFileButton
     , saveFileToLocalStorageButton
     , textField
+    , toggleFileLocationButton
     )
 
 import Element
@@ -44,6 +44,7 @@ import Types
     exposing
         ( DocType(..)
         , DocumentStatus(..)
+        , FileLocation(..)
         , Model
         , Msg(..)
         , PopupStatus(..)
@@ -65,8 +66,13 @@ example1Button =
     button 60 "Example 1" (AskForRemoteDocument "quantum.md") []
 
 
-askForRemoteDocumentsButton =
-    button 60 "Files" AskForRemoteDocuments []
+toggleFileLocationButton model =
+    case model.fileLocation of
+        LocalFiles ->
+            button 60 "Local" (ToggleFileLocation RemoteFiles) []
+
+        RemoteFiles ->
+            button 60 "Remote" (ToggleFileLocation LocalFiles) []
 
 
 aboutButton =
