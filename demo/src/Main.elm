@@ -549,7 +549,7 @@ viewFooter model width_ height_ =
         , spacing 12
         ]
         [ -- View.Widget.openAuthorPopupButton model
-          -- View.Widget.openFileListPopupButton model
+          --  View.Widget.openFileListPopupButton model
           View.Widget.openRemoteFileListPopupButton model
         , View.Widget.saveFileToLocalStorageButton model
         , View.Widget.documentTypeButton model

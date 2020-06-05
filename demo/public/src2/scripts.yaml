@@ -1,0 +1,10 @@
+scripts:
+  app:
+    pll:
+      - file_server ..
+      - cmd: ./server.ts
+        allow:
+          - net
+          - env
+          - write
+          - read

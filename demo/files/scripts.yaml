@@ -25,3 +25,4 @@ scripts:
   upload: scp -r ./data root@161.35.125.40:/root/docserver
   upone: scp scripts.yaml root@161.35.125.40:/root/docserver
   cloc: cloc --by-file src2
+  bundle: deno bundle src2/server.ts >serverBundle.js

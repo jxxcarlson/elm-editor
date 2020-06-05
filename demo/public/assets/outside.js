@@ -1,6 +1,9 @@
-// OUTSIDE
+import { fetchManifest, writeManifest } from './bundles/manifest.js';
+import { foobar } from './bundles/simple.js'
 
 app.ports.infoForOutside.subscribe(msg => {
+
+    console.log("OUTSIDE")
 
     switch(msg.tag) {
 
@@ -17,6 +20,9 @@ app.ports.infoForOutside.subscribe(msg => {
 
         case "AskForFileList":
            var fileList = filesInLocalStorage()
+
+           console.log("AskForFileList")
+           console.log("FETCH MANIFEST", fetchManifest())
 
            app.ports.infoForElm.send({tag: "GotFileList", data:  fileList})
 
@@ -101,5 +107,3 @@ app.ports.infoForOutside.subscribe(msg => {
     }
 
 })
-
-
