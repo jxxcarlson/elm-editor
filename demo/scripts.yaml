@@ -22,4 +22,11 @@ scripts:
   uploadserver: scp -r ./public/src2 root@161.35.125.40:/root/docserver
   uploaddocs: scp -r ./public/data root@161.35.125.40:/root/docserver
   ssh: ssh root@161.35.125.40
-
+  edit:
+    pll:
+      - file_server /Users/jxxcarlson/dev/elm/projects/elm-editor/demo/public
+      - open -a /Applications/Google\ Chrome.app/  http://0.0.0.0:4507/index.html
+  editor:
+    pll:
+      - edit
+      - server

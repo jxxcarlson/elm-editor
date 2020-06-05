@@ -1,13 +1,13 @@
+env:
+  SERVER_ROOT: /Users/jxxcarlson/dev/elm/projects/elm-editor/demo/public
 scripts:
   app:
     pll:
-      - file_server ..
-      - cmd: ./server.ts
-        allow:
-          - net
-          - env
-          - write
-          - read
+      - server
+      - edit
+  edit:
+    pll:
+      - file_server SERVER_ROOT
       - open -a /Applications/Google\ Chrome.app/  http://0.0.0.0:4507/index.html
   server:
     cmd: ./server.ts
@@ -21,3 +21,4 @@ scripts:
   upone: scp scripts.yaml root@161.35.125.40:/root/docserver
   cloc: cloc --by-file src2
   bundle: deno bundle src2/server.ts >serverBundle.js
+  installServer: deno install -f --allow-read --allow-write --allow-net --allow-env /Users/jxxcarlson/dev/elm/projects/elm-editor/demo/public/src2/server.ts
