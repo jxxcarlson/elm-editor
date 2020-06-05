@@ -8,3 +8,11 @@ scripts:
           - env
           - write
           - read
+      - open -a /Applications/Google\ Chrome.app/  http://0.0.0.0:4507/index.html
+  server:
+    cmd: ./server.ts
+    allow:
+      - net
+      - env
+      - write
+      - read

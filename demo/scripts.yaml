@@ -3,14 +3,19 @@ scripts:
   reactor:
     - elm reactor
     - open -a /Applications/Firefox.app/  http://localhost:8000/public/index.html
-  live: elm-live --proxy-prefix=/api --proxy-host=http://localhost:4000 -p 8001 -d public/ src/Main.elm -- --output public/Main.js
+  live:
+    pll:
+      - elm-live --proxy-prefix=/api --proxy-host=http://localhost:4000 -p 8001 -d public/ src/Main.elm -- --output public/Main.js
+      - open -a /Applications/Google\ Chrome.app/  http://localhost:8001
   publish: sh script/publish.sh
   app:
     pll:
-      - echo "foo"
-      - cmd: ./public/src2/server.ts
+      - file_server ..
+      - cmd: ./server.ts
         allow:
           - net
           - env
           - write
           - read
+      - open -a /Applications/Google\ Chrome.app/  http://0.0.0.0:4507/index.html
+  ls: ls ../data | sort

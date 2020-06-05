@@ -108,6 +108,7 @@ type Msg
     | About
     | InputAuthorname String
     | GotAtmosphericRandomNumber (Result Http.Error String)
+      -- Document storage
     | AskForRemoteDocument String
     | GotDocument (Result Http.Error Document)
     | AskForRemoteDocuments
