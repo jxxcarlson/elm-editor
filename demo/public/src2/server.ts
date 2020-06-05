@@ -9,7 +9,6 @@ import {getDocument} from "./handlers/getDocument.ts"
 import {createDocument} from "./handlers/createDocument.ts"
 import {updateDocument} from "./handlers/updateDocument.ts"
 import {options} from "./handlers/options.ts"
-import {fetchData} from "./db.ts"
 //
 import { login, guest, auth } from "./handlers/login.ts";
 import { authMiddleware } from "./auth/middleware.ts"
