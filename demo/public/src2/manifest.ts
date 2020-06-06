@@ -18,7 +18,7 @@ export const writeManifest = async (data: Array<DocumentRecord>): Promise<void> 
   await Deno.writeFile(MANIFEST, encoder.encode(safeDump(data)));
 };
 
-export const manifest = await fetchManifest();
+export var manifest = await fetchManifest();
 
 // console.log("manifest", manifest)
 

@@ -64,6 +64,19 @@ getDocumentList serverUrl =
         }
 
 
+updateDocumentList : String -> Document -> Cmd Msg
+updateDocumentList serverUrl document =
+    Http.request
+        { method = "PUT"
+        , headers = []
+        , url = serverUrl ++ "/documents"
+        , body = Http.jsonBody (Outside.encodeMiniFileRecord document)
+        , expect = Http.expectJson Message Outside.messageDecoder
+        , timeout = Nothing
+        , tracker = Nothing
+        }
+
+
 
 -- FILE I/O
 

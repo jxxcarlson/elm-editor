@@ -4,6 +4,7 @@ port module Outside exposing
     , documentDecoder
     , documentEncoder
     , documentListDecoder
+    , encodeMiniFileRecord
     , extendedDocumentEncoder
     , getInfo
     , messageDecoder
@@ -149,6 +150,14 @@ decodeMiniFileRecord =
     D.succeed MiniFileRecord
         |> required "id" string
         |> required "fileName" string
+
+
+encodeMiniFileRecord : Document -> Encode.Value
+encodeMiniFileRecord document =
+    Encode.object
+        [ ( "fileName", Encode.string document.fileName )
+        , ( "id", Encode.string document.id )
+        ]
 
 
 type alias MessageContainer =
