@@ -11,6 +11,8 @@ import {options} from "./handlers/options.ts"
 //
 import { login, guest, auth } from "./handlers/login.ts";
 import { authMiddleware } from "./auth/middleware.ts"
+//
+import { FILE_STORE_PATH, MANIFEST } from "./config.ts"
 
 
 // WEB SERVER
@@ -40,5 +42,7 @@ app.use(router.routes());
 app.use(router.allowedMethods());
 
 console.log(`Listening on port ${PORT}...`);
+console.log(`Files stored in ${FILE_STORE_PATH}`);
+console.log(`Manifest: ${MANIFEST}`);
 
 await app.listen(`${HOST}:${PORT}`);

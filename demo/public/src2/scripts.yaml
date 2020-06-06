@@ -16,6 +16,7 @@ scripts:
       - env
       - write
       - read
+  server?: ps aux | grep deno | grep server #| grep -v grep
   ssh: ssh root@161.35.125.40
   upload: scp -r ./data root@161.35.125.40:/root/docserver
   upone: scp scripts.yaml root@161.35.125.40:/root/docserver

@@ -18,7 +18,7 @@ import Element
         )
 import Element.Background as Background
 import Helper.Common
-import Types exposing (Model, Msg(..), PopupStatus(..), PopupWindow(..))
+import Types exposing (FileLocation(..), Model, Msg(..), PopupStatus(..), PopupWindow(..))
 import View.Widget as Widget
 
 
@@ -28,7 +28,16 @@ view model =
         PopupClosed ->
             Element.none
 
-        PopupOpen FileListPopup ->
+        PopupOpen RemoteFileListPopup ->
+            let
+                title =
+                    case model.fileLocation of
+                        LocalFiles ->
+                            "Local Files"
+
+                        RemoteFiles ->
+                            "Remote Files"
+            in
             column
                 [ width (px 500)
                 , height (px <| round <| Helper.Common.windowHeight model.height + 28)
@@ -36,7 +45,7 @@ view model =
                 , Background.color (Element.rgba 1.0 0.75 0.75 0.8)
                 , spacing 16
                 ]
-                [ row [ width (px 450) ] [ text "Files", el [ alignRight ] (Widget.closePopupButton model) ]
+                [ row [ width (px 450) ] [ text title, el [ alignRight ] (Widget.closePopupButton model) ]
                 , column
                     [ spacing 8
                     , height (px 400)
@@ -52,9 +61,5 @@ view model =
 viewFileName : MiniFileRecord -> Element Msg
 viewFileName record =
     row []
-        [ Widget.plainButton 200 record.fileName (SendRequestForFile record.id) []
-        , Widget.plainButton 55
-            "delete"
-            (DeleteFileFromLocalStorage record.id)
-            [ Background.color (Element.rgba 0.7 0.7 1.0 0.9) ]
+        [ Widget.plainButton 200 record.fileName (AskForRemoteDocument record.fileName) []
         ]

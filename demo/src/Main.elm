@@ -60,8 +60,8 @@ import Types
 import UUID
 import UuidHelper
 import View.AuthorPopup as AuthorPopup
-import View.FileListPopup as FileListPopup
-import View.RemoteFileListPopup as RemoteFileListPopup
+import View.FileListPopup as RemoteFileListPopup
+import View.FilesInLocalStoragePopup as FileListPopup
 import View.Scroll
 import View.Style as Style
 import View.Widget
@@ -231,17 +231,36 @@ update msg model =
             )
 
         NewDocument ->
-            case model.docType of
-                MarkdownDoc ->
-                    Helper.Load.loadDocument_ "newFile" "" MarkdownDoc model
-                        |> Helper.Sync.syncModel2
-                        |> withCmd (Cmd.batch [ View.Scroll.toEditorTop, View.Scroll.toRenderedTextTop ])
+            let
+                newModel =
+                    case model.docType of
+                        MarkdownDoc ->
+                            Helper.Load.loadDocument_ "newFile" "" MarkdownDoc model
 
-                MiniLaTeXDoc ->
-                    Helper.Load.loadDocument_ "newFile" "" MiniLaTeXDoc model
-                        |> Helper.Sync.syncModel2
-                        |> withCmd (Cmd.batch [ View.Scroll.toEditorTop, View.Scroll.toRenderedTextTop ])
+                        MiniLaTeXDoc ->
+                            Helper.Load.loadDocument_ "newFile" "" MiniLaTeXDoc model
 
+                doc =
+                    newModel.document
+            in
+            newModel
+                |> Helper.Sync.syncModel2
+                |> withCmd
+                    (Cmd.batch
+                        [ View.Scroll.toEditorTop
+                        , View.Scroll.toRenderedTextTop
+                        , Helper.File.createDocument model.fileStorageUrl doc
+                        ]
+                    )
+
+        --
+        --|> Helper.Sync.syncModel2
+        --|> withCmd
+        --    (Cmd.batch
+        --        [ View.Scroll.toEditorTop
+        --        , View.Scroll.toRenderedTextTop
+        --        ]
+        --    )
         SetViewPortForElement result ->
             case result of
                 Ok ( element, viewport ) ->
@@ -289,8 +308,7 @@ update msg model =
                         |> withCmds
                             [ View.Scroll.toRenderedTextTop
                             , View.Scroll.toEditorTop
-                            , Helper.File.saveFileToLocalStorage_ newDocument
-                            , Helper.File.updateRemoteDocument model.fileStorageUrl newDocument
+                            , Helper.File.updateDocument model.fileStorageUrl newDocument
                             ]
 
         SaveFile ->
@@ -316,7 +334,7 @@ update msg model =
 
                 Outside.GotFile file ->
                     Helper.Load.loadDocument file model
-                        |> (\m -> m |> withCmd (Helper.File.updateRemoteDocument m.fileStorageUrl m.document))
+                        |> (\m -> m |> withCmd (Helper.File.updateDocument m.fileStorageUrl m.document))
 
         LogErr _ ->
             ( model, Cmd.none )
@@ -345,10 +363,11 @@ update msg model =
                 cmd =
                     case status of
                         PopupOpen FileListPopup ->
-                            Helper.File.getListOfFilesInLocalStorage
+                            -- TODO: needs to be eliminated
+                            Helper.File.getDocumentList model.fileStorageUrl
 
                         PopupOpen RemoteFileListPopup ->
-                            Helper.File.getRemoteDocumentList model.fileStorageUrl
+                            Helper.File.getDocumentList model.fileStorageUrl
 
                         PopupOpen _ ->
                             Cmd.none
@@ -358,18 +377,22 @@ update msg model =
             in
             ( { model | popupStatus = status }, cmd )
 
+        -- LOCAL STORAGE
         SendRequestForFile fileName ->
-            ( { model
+            { model
                 | fileName = Just fileName
-              }
-            , Outside.sendInfo (Outside.AskForFile fileName)
-            )
+            }
+                --, Outside.sendInfo (Outside.AskForFile fileName)
+                |> withNoCmd
 
         DeleteFileFromLocalStorage fileName ->
-            ( model, Outside.sendInfo (Outside.DeleteFileFromLocalStorage fileName) )
+            model
+                -- Outside.sendInfo (Outside.DeleteFileFromLocalStorage fileName)
+                |> withNoCmd
 
         SaveFileToLocalStorage ->
-            saveFileToLocalStorage_ model
+            -- saveFileToLocalStorage_ model
+            model |> withNoCmd
 
         InputFileName str ->
             ( { model | newFileName = str, changingFileNameState = ChangingFileName }, Cmd.none )
@@ -388,7 +411,7 @@ update msg model =
                 , changingFileNameState = FileNameOK
                 , document = newDocument
               }
-            , Helper.File.saveFileToLocalStorage_ newDocument
+            , Helper.File.updateDocument model.fileStorageUrl newDocument
             )
 
         CancelChangeFileName ->
@@ -422,7 +445,7 @@ update msg model =
                     { model | message = "Error getting remote document" } |> withNoCmd
 
         AskForRemoteDocuments ->
-            model |> withCmd (Helper.File.getRemoteDocumentList model.fileStorageUrl)
+            model |> withCmd (Helper.File.getDocumentList model.fileStorageUrl)
 
         GotDocuments result ->
             case result of
@@ -470,8 +493,7 @@ saveFileToLocalStorage_ model =
                 , documentStatus = DocumentSaved
               }
             , Cmd.batch
-                [ Helper.File.saveFileToLocalStorage model
-                , Helper.File.updateRemoteDocument model.fileStorageUrl model.document
+                [ Helper.File.updateDocument model.fileStorageUrl model.document
                 ]
             )
 

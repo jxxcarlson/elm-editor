@@ -1,19 +1,16 @@
 module Helper.File exposing
-    ( createRemoteDocument
+    ( createDocument
     , docType
     , exportFile
     , fileExtension
     , getDocument
-    , getListOfFilesInLocalStorage
-    , getRemoteDocumentList
+    , getDocumentList
     , read
     , requestFile
     , saveFile
-    , saveFileToLocalStorage
-    , saveFileToLocalStorage_
     , titleFromFileName
     , updateDocType
-    , updateRemoteDocument
+    , updateDocument
     )
 
 import Config
@@ -29,8 +26,8 @@ import Task exposing (Task)
 import Types exposing (DocType(..), Model, Msg(..))
 
 
-createRemoteDocument : String -> Document -> Cmd Msg
-createRemoteDocument serverUrl document =
+createDocument : String -> Document -> Cmd Msg
+createDocument serverUrl document =
     Http.post
         { url = serverUrl ++ "/documents"
         , body = Http.jsonBody (Outside.extendedDocumentEncoder Config.token document)
@@ -38,8 +35,8 @@ createRemoteDocument serverUrl document =
         }
 
 
-updateRemoteDocument : String -> Document -> Cmd Msg
-updateRemoteDocument serverUrl document =
+updateDocument : String -> Document -> Cmd Msg
+updateDocument serverUrl document =
     Http.request
         { method = "PUT"
         , headers = []
@@ -59,8 +56,8 @@ getDocument serverUrl fileName =
         }
 
 
-getRemoteDocumentList : String -> Cmd Msg
-getRemoteDocumentList serverUrl =
+getDocumentList : String -> Cmd Msg
+getDocumentList serverUrl =
     Http.get
         { url = serverUrl ++ "/documents"
         , expect = Http.expectJson GotDocuments Outside.documentListDecoder
@@ -121,21 +118,6 @@ saveFile model =
 
         MiniLaTeXDoc ->
             Download.string fileName "text/x-tex" content
-
-
-saveFileToLocalStorage : Model -> Cmd msg
-saveFileToLocalStorage model =
-    saveFileToLocalStorage_ model.document
-
-
-saveFileToLocalStorage_ : Document -> Cmd msg
-saveFileToLocalStorage_ document =
-    Outside.sendInfo (Outside.WriteFile document)
-
-
-getListOfFilesInLocalStorage : Cmd msg
-getListOfFilesInLocalStorage =
-    Outside.sendInfo Outside.AskForFileList
 
 
 exportFile : Model -> Cmd msg

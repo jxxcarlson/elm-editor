@@ -1,4 +1,4 @@
-module View.RemoteFileListPopup exposing (view)
+module View.FilesInLocalStoragePopup exposing (view)
 
 import Document exposing (MiniFileRecord)
 import Element
@@ -28,7 +28,7 @@ view model =
         PopupClosed ->
             Element.none
 
-        PopupOpen RemoteFileListPopup ->
+        PopupOpen FileListPopup ->
             column
                 [ width (px 500)
                 , height (px <| round <| Helper.Common.windowHeight model.height + 28)
@@ -36,7 +36,7 @@ view model =
                 , Background.color (Element.rgba 1.0 0.75 0.75 0.8)
                 , spacing 16
                 ]
-                [ row [ width (px 450) ] [ text "Remote Files", el [ alignRight ] (Widget.closePopupButton model) ]
+                [ row [ width (px 450) ] [ text "Files", el [ alignRight ] (Widget.closePopupButton model) ]
                 , column
                     [ spacing 8
                     , height (px 400)
@@ -52,5 +52,9 @@ view model =
 viewFileName : MiniFileRecord -> Element Msg
 viewFileName record =
     row []
-        [ Widget.plainButton 200 record.fileName (AskForRemoteDocument record.fileName) []
+        [ Widget.plainButton 200 record.fileName (SendRequestForFile record.id) []
+        , Widget.plainButton 55
+            "delete"
+            (DeleteFileFromLocalStorage record.id)
+            [ Background.color (Element.rgba 0.7 0.7 1.0 0.9) ]
         ]
