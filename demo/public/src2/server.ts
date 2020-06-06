@@ -6,7 +6,7 @@ import {Document, DocumentRecord, ExtendedDocument, documentOfExtendedDocument} 
 import {getDocuments} from "./handlers/getDocuments.ts"
 import {getDocument} from "./handlers/getDocument.ts"
 import {createDocument} from "./handlers/createDocument.ts"
-import {updateDocument} from "./handlers/updateDocument.ts"
+import {updateDocument} from "./manifest.ts"
 import {options} from "./handlers/options.ts"
 //
 import { login, guest, auth } from "./handlers/login.ts";

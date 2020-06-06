@@ -54,7 +54,7 @@ const changeDoc = (s: DocumentRecord, t : DocumentRecord) =>
 
 
 // Add a new document
-export const updateDocument = async ({
+const updateDocument = async ({
   request,
   response,
 }: {
