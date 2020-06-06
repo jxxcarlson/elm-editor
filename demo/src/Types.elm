@@ -127,7 +127,7 @@ type Msg
       -- Local storage
     | Outside Outside.InfoForElm
     | DeleteFileFromLocalStorage String
-    | SaveFileToLocalStorage
+    | SaveFileToStorage
       -- File storage
     | AskForRemoteDocuments
     | GotDocuments (Result Http.Error (List MiniFileRecord))

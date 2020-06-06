@@ -1,4 +1,4 @@
-module View.FilesInLocalStoragePopup exposing (view)
+module View.LocalStoragePopup exposing (view)
 
 import Document exposing (MiniFileRecord)
 import Element

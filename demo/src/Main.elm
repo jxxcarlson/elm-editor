@@ -61,7 +61,7 @@ import UUID
 import UuidHelper
 import View.AuthorPopup as AuthorPopup
 import View.FileListPopup as RemoteFileListPopup
-import View.FilesInLocalStoragePopup as FileListPopup
+import View.LocalStoragePopup as FileListPopup
 import View.Scroll
 import View.Style as Style
 import View.Widget
@@ -390,9 +390,9 @@ update msg model =
                 -- Outside.sendInfo (Outside.DeleteFileFromLocalStorage fileName)
                 |> withNoCmd
 
-        SaveFileToLocalStorage ->
-            -- saveFileToLocalStorage_ model
-            model |> withNoCmd
+        SaveFileToStorage ->
+            { model | documentStatus = DocumentSaved }
+                |> withCmd (Helper.File.updateDocument model.fileStorageUrl model.document)
 
         InputFileName str ->
             ( { model | newFileName = str, changingFileNameState = ChangingFileName }, Cmd.none )
@@ -600,7 +600,7 @@ viewFooter model width_ height_ =
         [ -- View.Widget.openAuthorPopupButton model
           View.Widget.openRemoteFileListPopupButton model
         , View.Widget.toggleFileLocationButton model
-        , View.Widget.saveFileToLocalStorageButton model
+        , View.Widget.saveFileToStorageButton model
         , View.Widget.documentTypeButton model
         , View.Widget.newDocumentButton model
         , View.Widget.openFileButton model
@@ -609,8 +609,8 @@ viewFooter model width_ height_ =
 
         -- , displayFilename model
         , View.Widget.changeFileNameButton model
-        , showIf (model.changingFileNameState == ChangingFileName) View.Widget.cancelChangeFileNameButton
         , el [ Element.paddingEach { top = 10, bottom = 0, left = 0, right = 0 } ] (View.Widget.inputFileName model)
+        , showIf (model.changingFileNameState == ChangingFileName) View.Widget.cancelChangeFileNameButton
         , el [ alignRight, width (px 100) ] (text model.message)
         , View.Widget.aboutButton
         ]

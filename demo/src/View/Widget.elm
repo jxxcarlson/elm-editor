@@ -16,7 +16,7 @@ module View.Widget exposing
     , openRemoteFileListPopupButton
     , plainButton
     , saveFileButton
-    , saveFileToLocalStorageButton
+    , saveFileToStorageButton
     , textField
     , toggleFileLocationButton
     )
@@ -81,7 +81,7 @@ aboutButton =
 
 
 cancelChangeFileNameButton =
-    button_ 90 "Cancel" CancelChangeFileName
+    button_ 70 "Cancel" CancelChangeFileName
 
 
 changeFileNameButton model =
@@ -101,23 +101,23 @@ changeFileNameButton model =
 
 
 changeFileNameButton_ model =
-    button_ 140 "Change file name" ChangeFileName
+    button_ 70 "Change" ChangeFileName
 
 
 doNotChangeFileNameButton =
-    button_ 140 "Change file name" NoOp
+    button_ 70 "Change" NoOp
 
 
 
 -- [ Font.color (Element.rgb 0.7 0.7 0.7) ]
 
 
-saveFileToLocalStorageButton model =
+saveFileToStorageButton model =
     case model.documentStatus of
         DocumentDirty ->
             plainButton 20
                 ""
-                SaveFileToLocalStorage
+                SaveFileToStorage
                 [ height (px 20)
                 , Background.color (Element.rgb 0.55 0 0)
                 ]
@@ -125,7 +125,7 @@ saveFileToLocalStorageButton model =
         DocumentSaved ->
             plainButton 20
                 ""
-                SaveFileToLocalStorage
+                SaveFileToStorage
                 [ height (px 20)
                 , Background.color (Element.rgb 0.0 0.7 0)
                 ]
@@ -176,11 +176,11 @@ openRemoteFileListPopupButton model =
 
 
 openFileButton model =
-    button_ 90 "Open" RequestFile
+    button_ 50 "Open" RequestFile
 
 
 saveFileButton model =
-    button_ 90 "Save" SaveFile
+    button_ 50 "Save" SaveFile
 
 
 exportFileButton model =
@@ -193,7 +193,7 @@ exportFileButton model =
 
 
 newDocumentButton model =
-    button_ 90 "New" NewDocument
+    button_ 50 "New" NewDocument
 
 
 documentTypeButton model =
