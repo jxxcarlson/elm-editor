@@ -112,6 +112,7 @@ type Msg
     | NewDocument
     | ChangeFileName
     | CancelChangeFileName
+    | SoftDelete MiniFileRecord
       -- External Files
     | RequestFile
     | SendRequestForFile String
@@ -131,6 +132,6 @@ type Msg
       -- File storage
     | AskForRemoteDocuments
     | GotDocuments (Result Http.Error (List MiniFileRecord))
-    | AskForRemoteDocument String
+    | AskForDocument String
     | GotDocument (Result Http.Error Document)
     | Message (Result Http.Error String)

@@ -152,11 +152,11 @@ decodeMiniFileRecord =
         |> required "fileName" string
 
 
-encodeMiniFileRecord : Document -> Encode.Value
-encodeMiniFileRecord document =
+encodeMiniFileRecord : MiniFileRecord -> Encode.Value
+encodeMiniFileRecord record =
     Encode.object
-        [ ( "fileName", Encode.string document.fileName )
-        , ( "id", Encode.string document.id )
+        [ ( "fileName", Encode.string record.fileName )
+        , ( "id", Encode.string record.id )
         ]
 
 

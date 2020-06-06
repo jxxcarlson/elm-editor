@@ -1,4 +1,4 @@
-module Document exposing (Document, MiniFileRecord)
+module Document exposing (Document, MiniFileRecord, miniFileRecord)
 
 
 type alias ExtendedDocument =
@@ -20,3 +20,8 @@ type alias MiniFileRecord =
     { id : String
     , fileName : String
     }
+
+
+miniFileRecord : Document -> MiniFileRecord
+miniFileRecord doc =
+    { id = doc.id, fileName = doc.fileName }

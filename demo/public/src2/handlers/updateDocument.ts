@@ -48,7 +48,7 @@ const changeDoc = (s: DocumentRecord, t : DocumentRecord) =>
 // console.log("REC", changeDoc(changed, original))
 // console.log("REC2", changeDoc(changed, another))
 //
-// const newManifest = manifest.map((d:DocumentRecord) => changeDoc(changed, d))
+const newManifest = manifest.map((d:DocumentRecord) => changeDoc(changed, d))
 // console.log("M2", newManifest)
 // // manifest = newManifest
 
@@ -71,7 +71,6 @@ const updateDocument = async ({
     "X-Requested-With, Content-Type, Accept, Origin",
   );
 
-  if (token == "abracadabra") {
     const sourceDoc: Document = { id: id, fileName: fileName, content: content };
     const sourceDocRecord: DocumentRecord = { id: id, fileName: fileName };
     if (isNotPresent(sourceDocRecord, manifest)) {
@@ -89,8 +88,5 @@ const updateDocument = async ({
       response.body = { msg: "Updated: " + sourceDoc.fileName };
       response.status = 200;
     }
-  } else {
-    response.body = { msg: "Token does not match" };
-    response.status = 400;
-  }
+  
 };

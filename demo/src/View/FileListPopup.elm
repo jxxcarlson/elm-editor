@@ -51,15 +51,26 @@ view model =
                     , height (px 400)
                     , scrollbarY
                     ]
-                    (List.map viewFileName (List.sortBy .fileName model.fileList))
+                    (model.fileList |> prepareFileList |> List.map viewFileName)
                 ]
 
         PopupOpen _ ->
             Element.none
 
 
+prepareFileList : List MiniFileRecord -> List MiniFileRecord
+prepareFileList fileList =
+    fileList
+        |> List.filter (\r -> not (String.contains "deleted" r.fileName))
+        |> List.sortBy .fileName
+
+
 viewFileName : MiniFileRecord -> Element Msg
 viewFileName record =
     row []
-        [ Widget.plainButton 200 record.fileName (AskForRemoteDocument record.fileName) []
+        [ Widget.plainButton 200 record.fileName (AskForDocument record.fileName) []
+        , Widget.plainButton 55
+            "delete"
+            (SoftDelete record)
+            [ Background.color (Element.rgba 0.7 0.7 1.0 0.9) ]
         ]

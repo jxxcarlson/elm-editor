@@ -64,7 +64,7 @@ inputFileName model =
 
 
 example1Button =
-    button 60 "Example 1" (AskForRemoteDocument "quantum.md") []
+    button 60 "Example 1" (AskForDocument "quantum.md") []
 
 
 toggleFileLocationButton model =

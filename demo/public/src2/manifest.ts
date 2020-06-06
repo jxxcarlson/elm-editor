@@ -50,9 +50,9 @@ export const updateDocument = async ({
     "X-Requested-With, Content-Type, Accept, Origin",
   );
 
-  if (token == "abracadabra") {
     const sourceDoc: Document = { id: id, fileName: fileName, content: content };
     const sourceDocRecord: DocumentRecord = { id: id, fileName: fileName };
+
     if (isNotPresent(sourceDocRecord, manifest)) {
       manifest.push(sourceDocRecord);
       writeManifest(manifest)
@@ -68,8 +68,5 @@ export const updateDocument = async ({
       response.body = { msg: "Updated: " + sourceDoc.fileName };
       response.status = 200;
     }
-  } else {
-    response.body = { msg: "Token does not match" };
-    response.status = 400;
-  }
+  
 };

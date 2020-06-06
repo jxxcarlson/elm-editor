@@ -7,6 +7,7 @@ import Cmd.Extra exposing (withCmd, withCmds, withNoCmd)
 import Config
 import ContextMenu exposing (Item(..))
 import Data
+import Document
 import Editor exposing (Editor, EditorMsg)
 import EditorMsg exposing (EMsg(..))
 import Element
@@ -410,9 +411,20 @@ update msg model =
                 , docType = Helper.File.docType model.newFileName
                 , changingFileNameState = FileNameOK
                 , document = newDocument
+                , fileList = Helper.File.updateFileList (Document.miniFileRecord newDocument) model.fileList
               }
             , Helper.File.updateDocument model.fileStorageUrl newDocument
             )
+
+        SoftDelete record ->
+            let
+                newRecord =
+                    { record | fileName = Helper.File.addPostfix "deleted" record.fileName }
+            in
+            { model
+                | fileList = Helper.File.updateFileList newRecord model.fileList
+            }
+                |> withCmd (Helper.File.updateDocumentList model.fileStorageUrl newRecord)
 
         CancelChangeFileName ->
             case model.fileName of
@@ -432,7 +444,7 @@ update msg model =
             UuidHelper.handleResponseFromRandomDotOrg model result
                 |> withNoCmd
 
-        AskForRemoteDocument fileName ->
+        AskForDocument fileName ->
             model |> withCmd (Helper.File.getDocument model.fileStorageUrl fileName)
 
         GotDocument result ->
@@ -611,8 +623,8 @@ viewFooter model width_ height_ =
         , View.Widget.changeFileNameButton model
         , el [ Element.paddingEach { top = 10, bottom = 0, left = 0, right = 0 } ] (View.Widget.inputFileName model)
         , showIf (model.changingFileNameState == ChangingFileName) View.Widget.cancelChangeFileNameButton
-        , el [ alignRight, width (px 100) ] (text model.message)
-        , View.Widget.aboutButton
+        , el [ width (px 100) ] (text model.message)
+        , el [ alignRight ] View.Widget.aboutButton
         ]
 
 

@@ -1,29 +1,98 @@
 module Helper.File exposing
-    ( createDocument
+    ( addPostfix
+    , createDocument
     , docType
     , exportFile
     , fileExtension
     , getDocument
     , getDocumentList
     , read
+    , removePostfix
     , requestFile
     , saveFile
     , titleFromFileName
     , updateDocType
     , updateDocument
+    , updateDocumentList
+    , updateFileList
     )
 
 import Config
-import Document exposing (Document)
+import Document exposing (Document, MiniFileRecord)
 import Editor
 import File exposing (File)
 import File.Download as Download
 import File.Select as Select
 import Http
+import List.Extra
 import MiniLatex.Export
 import Outside
 import Task exposing (Task)
 import Types exposing (DocType(..), Model, Msg(..))
+
+
+addPostfix : String -> String -> String
+addPostfix postfix fileName =
+    let
+        parts =
+            String.split "." fileName
+
+        n =
+            List.length parts
+
+        extension =
+            List.drop (n - 1) parts
+
+        initialParts =
+            List.take (n - 1) parts
+
+        newParts =
+            initialParts ++ [ postfix ] ++ extension
+    in
+    String.join "." newParts
+
+
+removePostfix : String -> String -> String
+removePostfix postfix fileName =
+    let
+        parts =
+            String.split "." fileName
+
+        n =
+            List.length parts
+
+        extension =
+            List.drop (n - 1) parts
+
+        postfix_ =
+            List.Extra.getAt (n - 2) parts |> Maybe.withDefault "@%!"
+
+        initialParts =
+            List.take (n - 2) parts
+
+        newParts =
+            initialParts ++ extension
+    in
+    case postfix == postfix_ of
+        True ->
+            String.join "." newParts
+
+        False ->
+            fileName
+
+
+updateFileList : MiniFileRecord -> List MiniFileRecord -> List MiniFileRecord
+updateFileList rec fileList =
+    let
+        mapper r =
+            case r.id == rec.id of
+                False ->
+                    r
+
+                True ->
+                    rec
+    in
+    List.map mapper fileList
 
 
 createDocument : String -> Document -> Cmd Msg
@@ -64,13 +133,13 @@ getDocumentList serverUrl =
         }
 
 
-updateDocumentList : String -> Document -> Cmd Msg
-updateDocumentList serverUrl document =
+updateDocumentList : String -> MiniFileRecord -> Cmd Msg
+updateDocumentList serverUrl record =
     Http.request
         { method = "PUT"
         , headers = []
         , url = serverUrl ++ "/documents"
-        , body = Http.jsonBody (Outside.encodeMiniFileRecord document)
+        , body = Http.jsonBody (Outside.encodeMiniFileRecord record)
         , expect = Http.expectJson Message Outside.messageDecoder
         , timeout = Nothing
         , tracker = Nothing
