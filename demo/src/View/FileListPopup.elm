@@ -30,13 +30,22 @@ view model =
 
         PopupOpen RemoteFileListPopup ->
             let
+                filesToDisplay =
+                    model.fileList |> prepareFileList
+
+                n =
+                    List.length filesToDisplay |> String.fromInt
+
                 title =
                     case model.fileLocation of
                         LocalFiles ->
-                            "Local Files"
+                            "Local Files (" ++ n ++ ")"
 
                         RemoteFiles ->
-                            "Remote Files"
+                            "Remote Files (" ++ n ++ ")"
+
+                currentRecord =
+                    Document.miniFileRecord model.document
             in
             column
                 [ width (px 500)
@@ -51,7 +60,7 @@ view model =
                     , height (px 400)
                     , scrollbarY
                     ]
-                    (model.fileList |> prepareFileList |> List.map viewFileName)
+                    (filesToDisplay |> List.map (viewFileName currentRecord))
                 ]
 
         PopupOpen _ ->
@@ -65,12 +74,26 @@ prepareFileList fileList =
         |> List.sortBy .fileName
 
 
-viewFileName : MiniFileRecord -> Element Msg
-viewFileName record =
-    row []
-        [ Widget.plainButton 200 record.fileName (AskForDocument record.fileName) []
-        , Widget.plainButton 55
-            "delete"
-            (SoftDelete record)
-            [ Background.color (Element.rgba 0.7 0.7 1.0 0.9) ]
+viewFileName : MiniFileRecord -> MiniFileRecord -> Element Msg
+viewFileName currentRecord record =
+    let
+        bgColor =
+            case currentRecord.id == record.id of
+                True ->
+                    Background.color (Element.rgba 0.7 0.7 1.0 0.5)
+
+                False ->
+                    Background.color (Element.rgba 0 0 0 0)
+    in
+    row [ spacing 8 ]
+        [ Widget.plainButton 200
+            record.fileName
+            (AskForDocument record.fileName)
+            [ bgColor, Element.padding 2 ]
+        , el [ Element.padding 2, Background.color (Element.rgba 0.7 0.3 0.3 0.5) ]
+            (Widget.plainButton 55
+                "delete"
+                (SoftDelete record)
+                []
+            )
         ]

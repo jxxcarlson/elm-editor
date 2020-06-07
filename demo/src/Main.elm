@@ -363,29 +363,30 @@ update msg model =
                 |> saveFileToStorage
 
         ManagePopup status ->
-            let
-                cmd =
-                    case status of
-                        PopupOpen LocalStoragePopup ->
-                            -- TODO: needs to be eliminated
-                            Helper.File.getDocumentList model.fileStorageUrl
+            case status of
+                PopupOpen LocalStoragePopup ->
+                    -- TODO: needs to be eliminated
+                    { model | popupStatus = status }
+                        |> withCmd (Helper.File.getDocumentList model.fileStorageUrl)
 
-                        PopupOpen FilePopup ->
-                            Cmd.none
+                PopupOpen FilePopup ->
+                    { model | popupStatus = status } |> withNoCmd
 
-                        PopupOpen NewFilePopup ->
-                            Cmd.none
+                PopupOpen NewFilePopup ->
+                    { model | popupStatus = status } |> withNoCmd
 
-                        PopupOpen RemoteFileListPopup ->
-                            Helper.File.getDocumentList model.fileStorageUrl
+                PopupOpen RemoteFileListPopup ->
+                    { model | popupStatus = status, documentStatus = DocumentSaved }
+                        |> withCmds
+                            [ Helper.File.getDocumentList model.fileStorageUrl
+                            , Helper.File.updateDocument model.fileStorageUrl model.document
+                            ]
 
-                        PopupOpen _ ->
-                            Cmd.none
+                PopupOpen _ ->
+                    { model | popupStatus = status } |> withNoCmd
 
-                        PopupClosed ->
-                            Cmd.none
-            in
-            ( { model | popupStatus = status }, cmd )
+                PopupClosed ->
+                    { model | popupStatus = status } |> withNoCmd
 
         -- LOCAL STORAGE
         SendRequestForFile fileName ->
