@@ -99,7 +99,6 @@ init flags =
     , docType = MarkdownDoc
     , fileName = Just "about.md"
     , fileName_ = ""
-    , newFileName = ""
     , changingFileNameState = FileNameOK
     , fileList = []
     , fileLocation = LocalFiles

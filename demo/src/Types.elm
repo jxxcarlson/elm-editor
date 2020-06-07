@@ -45,7 +45,6 @@ type alias Model =
     , docType : DocType
     , fileName : Maybe String
     , fileName_ : String
-    , newFileName : String
     , changingFileNameState : ChangingFileNameState
     , fileList : List MiniFileRecord
     , documentStatus : DocumentStatus

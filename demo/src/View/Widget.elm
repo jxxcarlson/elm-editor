@@ -5,11 +5,9 @@ module View.Widget exposing
     , changeFileNameButton
     , closePopupButton
     , documentTypeButton
-    , example1Button
     , exportFileButton
     , exportLaTeXFileButton
     , importFileButton
-    , inputFileName
     , loadDocumentButton
     , newDocumentButton
     , openAuthorPopupButton
@@ -53,19 +51,6 @@ import Types
         )
 import View.Style as Style
 import Widget.Button as Button exposing (Size(..))
-
-
-inputFileName model =
-    textField 180
-        model.newFileName
-        InputFileName
-        []
-        [ Attribute.style "height" "30px", Attribute.style "font-size" "14px" ]
-        |> Element.html
-
-
-example1Button =
-    button 60 "Example 1" (AskForDocument "quantum.md") []
 
 
 toggleFileLocationButton model =
@@ -146,19 +131,6 @@ openAuthorPopupButton model =
 
         PopupClosed ->
             button_ 90 "Author" (ManagePopup (PopupOpen AuthorPopup))
-
-
-
---openFileListPopupButton model =
---    case model.popupStatus of
---        PopupOpen FileListPopup ->
---            button 100 "Close" (ManagePopup PopupClosed) [ Background.color Style.redColor ]
---
---        PopupOpen _ ->
---            button_ 100 "Files" (ManagePopup (PopupOpen FileListPopup))
---
---        PopupClosed ->
---            button_ 100 "Files" (ManagePopup (PopupOpen FileListPopup))
 
 
 openFileListPopupButton model =
