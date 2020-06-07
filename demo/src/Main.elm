@@ -7,7 +7,7 @@ import Cmd.Extra exposing (withCmd, withCmds, withNoCmd)
 import Config
 import ContextMenu exposing (Item(..))
 import Data
-import Document
+import Document exposing (DocType(..))
 import Editor exposing (Editor, EditorMsg)
 import EditorMsg exposing (EMsg(..))
 import Element
@@ -50,7 +50,6 @@ import Time
 import Types
     exposing
         ( ChangingFileNameState(..)
-        , DocType(..)
         , DocumentStatus(..)
         , FileLocation(..)
         , Model
@@ -62,7 +61,9 @@ import UUID
 import UuidHelper
 import View.AuthorPopup as AuthorPopup
 import View.FileListPopup as RemoteFileListPopup
+import View.FilePopup as FilePopup
 import View.LocalStoragePopup as FileListPopup
+import View.NewFilePopup as NewFilePopup
 import View.Scroll
 import View.Style as Style
 import View.Widget
@@ -91,12 +92,14 @@ init flags =
     { editor = newEditor
     , renderingData = load 0 ( 0, 0 ) (OMarkdown ExtendedMath) Data.about
     , counter = 1
+    , messageLife = 0
     , width = flags.width
     , height = flags.height
     , docTitle = "about"
     , docType = MarkdownDoc
     , fileName = Just "about.md"
-    , newFileName = "about.md"
+    , fileName_ = ""
+    , newFileName = ""
     , changingFileNameState = FileNameOK
     , fileList = []
     , fileLocation = LocalFiles
@@ -231,20 +234,20 @@ update msg model =
             , Cmd.none
             )
 
-        NewDocument ->
+        CreateDocument ->
             let
                 newModel =
                     case model.docType of
                         MarkdownDoc ->
-                            Helper.Load.loadDocument_ "newFile" "" MarkdownDoc model
+                            Helper.Load.loadDocument_ model.fileName_ "" MarkdownDoc model
 
                         MiniLaTeXDoc ->
-                            Helper.Load.loadDocument_ "newFile" "" MiniLaTeXDoc model
+                            Helper.Load.loadDocument_ model.fileName_ "" MiniLaTeXDoc model
 
                 doc =
                     newModel.document
             in
-            newModel
+            { newModel | popupStatus = PopupClosed }
                 |> Helper.Sync.syncModel2
                 |> withCmd
                     (Cmd.batch
@@ -265,10 +268,14 @@ update msg model =
         SetViewPortForElement result ->
             case result of
                 Ok ( element, viewport ) ->
-                    ( { model | message = "synced" }, View.Scroll.setViewPortForSelectedLineInRenderedText element viewport )
+                    model
+                        |> postMessage "synced"
+                        |> withCmd (View.Scroll.setViewPortForSelectedLineInRenderedText element viewport)
 
                 Err _ ->
-                    ( { model | message = "sync error" }, Cmd.none )
+                    model
+                        |> postMessage "sync error"
+                        |> withNoCmd
 
         RequestFile ->
             ( model, Helper.File.requestFile )
@@ -357,7 +364,9 @@ update msg model =
                             Helper.Sync.onId id model
 
         Tick _ ->
-            saveFileToLocalStorage model
+            model
+                |> updateMessageLife
+                |> saveFileToStorage
 
         ManagePopup status ->
             let
@@ -366,6 +375,12 @@ update msg model =
                         PopupOpen FileListPopup ->
                             -- TODO: needs to be eliminated
                             Helper.File.getDocumentList model.fileStorageUrl
+
+                        PopupOpen FilePopup ->
+                            Cmd.none
+
+                        PopupOpen NewFilePopup ->
+                            Cmd.none
 
                         PopupOpen RemoteFileListPopup ->
                             Helper.File.getDocumentList model.fileStorageUrl
@@ -396,20 +411,21 @@ update msg model =
                 |> withCmd (Helper.File.updateDocument model.fileStorageUrl model.document)
 
         InputFileName str ->
-            ( { model | newFileName = str, changingFileNameState = ChangingFileName }, Cmd.none )
+            ( { model | fileName_ = str, changingFileNameState = ChangingFileName }, Cmd.none )
 
-        ChangeFileName ->
+        ChangeFileName fileName ->
             let
                 oldDocument =
                     model.document
 
                 newDocument =
-                    { oldDocument | fileName = model.newFileName }
+                    { oldDocument | fileName = fileName }
             in
             ( { model
-                | fileName = Just model.newFileName
-                , docType = Helper.File.docType model.newFileName
+                | fileName = Just model.fileName_
+                , docType = Helper.File.docType model.fileName_
                 , changingFileNameState = FileNameOK
+                , popupStatus = PopupClosed
                 , document = newDocument
                 , fileList = Helper.File.updateFileList (Document.miniFileRecord newDocument) model.fileList
               }
@@ -432,7 +448,7 @@ update msg model =
                     ( model, Cmd.none )
 
                 Just fileName ->
-                    ( { model | newFileName = fileName, changingFileNameState = FileNameOK }, Cmd.none )
+                    ( { model | fileName_ = fileName, changingFileNameState = FileNameOK }, Cmd.none )
 
         About ->
             ( Helper.Load.loadDocumentByTitle "about" model, Cmd.none )
@@ -445,7 +461,7 @@ update msg model =
                 |> withNoCmd
 
         AskForDocument fileName ->
-            model |> withCmd (Helper.File.getDocument model.fileStorageUrl fileName)
+            { model | popupStatus = PopupClosed } |> withCmd (Helper.File.getDocument model.fileStorageUrl fileName)
 
         GotDocument result ->
             case result of
@@ -454,7 +470,9 @@ update msg model =
                         |> withNoCmd
 
                 Err _ ->
-                    { model | message = "Error getting remote document" } |> withNoCmd
+                    model
+                        |> postMessage "Error getting remote document"
+                        |> withNoCmd
 
         AskForRemoteDocuments ->
             model |> withCmd (Helper.File.getDocumentList model.fileStorageUrl)
@@ -465,15 +483,21 @@ update msg model =
                     { model | fileList = documents } |> withNoCmd
 
                 Err _ ->
-                    { model | message = "Error getting remote documents" } |> withNoCmd
+                    model
+                        |> postMessage "Error getting remote documents"
+                        |> withNoCmd
 
         Message result ->
             case result of
                 Ok str ->
-                    { model | message = str } |> withNoCmd
+                    model
+                        |> postMessage str
+                        |> withNoCmd
 
                 Err _ ->
-                    { model | message = "Unknown error" } |> withNoCmd
+                    model
+                        |> postMessage "Unknown error"
+                        |> withNoCmd
 
         ToggleFileLocation fileLocation ->
             let
@@ -496,8 +520,23 @@ update msg model =
 -- HELPER
 
 
-saveFileToLocalStorage_ : Model -> ( Model, Cmd Msg )
-saveFileToLocalStorage_ model =
+postMessage : String -> Model -> Model
+postMessage msg model =
+    { model | message = msg, messageLife = Config.messageLifeTime }
+
+
+updateMessageLife : Model -> Model
+updateMessageLife model =
+    case model.messageLife > 0 of
+        True ->
+            { model | messageLife = model.messageLife - 1 }
+
+        False ->
+            model
+
+
+saveFileToStorage_ : Model -> ( Model, Cmd Msg )
+saveFileToStorage_ model =
     case model.documentStatus of
         DocumentDirty ->
             ( { model
@@ -515,11 +554,11 @@ saveFileToLocalStorage_ model =
             )
 
 
-saveFileToLocalStorage : Model -> ( Model, Cmd Msg )
-saveFileToLocalStorage model =
+saveFileToStorage : Model -> ( Model, Cmd Msg )
+saveFileToStorage model =
     case modBy 15 model.tickCount == 14 of
         True ->
-            saveFileToLocalStorage_ model
+            saveFileToStorage_ model
 
         False ->
             ( { model | tickCount = model.tickCount + 1 }
@@ -581,7 +620,12 @@ myFocusStyle =
 mainColumn model =
     column [ centerX, centerY ]
         [ column [ Background.color <| gray 55 ]
-            [ Element.el [ Element.inFront (FileListPopup.view model), Element.inFront (RemoteFileListPopup.view model) ]
+            [ Element.el
+                [ Element.inFront (FileListPopup.view model)
+                , Element.inFront (FilePopup.view model)
+                , Element.inFront (RemoteFileListPopup.view model)
+                , Element.inFront (NewFilePopup.view model)
+                ]
                 (viewEditorAndRenderedText model)
             , viewFooter model model.width 40
             ]
@@ -614,18 +658,29 @@ viewFooter model width_ height_ =
         , View.Widget.toggleFileLocationButton model
         , View.Widget.saveFileToStorageButton model
         , View.Widget.documentTypeButton model
-        , View.Widget.newDocumentButton model
-        , View.Widget.openFileButton model
-        , View.Widget.saveFileButton model
+        , View.Widget.openNewFilePopupButton model
+        , View.Widget.openFilePopupButton model
+        , View.Widget.importFileButton model
         , View.Widget.exportFileButton model
-
-        -- , displayFilename model
-        , View.Widget.changeFileNameButton model
-        , el [ Element.paddingEach { top = 10, bottom = 0, left = 0, right = 0 } ] (View.Widget.inputFileName model)
-        , showIf (model.changingFileNameState == ChangingFileName) View.Widget.cancelChangeFileNameButton
-        , el [ width (px 100) ] (text model.message)
-        , el [ alignRight ] View.Widget.aboutButton
+        , View.Widget.exportLaTeXFileButton model
+        , displayFilename model
+        , row [ alignRight, spacing 12 ]
+            [ displayMessage model
+            , View.Widget.aboutButton
+            ]
         ]
+
+
+displayMessage model =
+    showIf (model.messageLife > 0)
+        (el
+            [ width (px 250)
+            , paddingXY 8 8
+            , Background.color Style.whiteColor
+            , Font.color Style.blackColor
+            ]
+            (text model.message)
+        )
 
 
 displayFilename : Model -> Element Msg
@@ -637,7 +692,7 @@ displayFilename model =
                     "No file"
 
                 Just fn ->
-                    "File: " ++ fn
+                    fn
     in
     el [] (text message)
 

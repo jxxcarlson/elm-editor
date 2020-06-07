@@ -8,7 +8,7 @@ module Helper.Sync exposing
 
 import Array exposing (Array)
 import Cmd.Extra exposing (withCmd)
-import Document exposing (Document)
+import Document exposing (DocType(..), Document)
 import Editor exposing (Editor, EditorMsg)
 import Markdown.Option exposing (MarkdownOption(..))
 import Markdown.Parse
@@ -20,7 +20,7 @@ import Render
         )
 import Sync
 import Tree.Diff
-import Types exposing (DocType(..), DocumentStatus(..), Model, Msg(..))
+import Types exposing (DocumentStatus(..), Model, Msg(..))
 import UuidHelper
 import View.Scroll
 

@@ -18,7 +18,7 @@ module Helper.File exposing
     )
 
 import Config
-import Document exposing (Document, MiniFileRecord)
+import Document exposing (DocType(..), Document, MiniFileRecord)
 import Editor
 import File exposing (File)
 import File.Download as Download
@@ -28,7 +28,7 @@ import List.Extra
 import MiniLatex.Export
 import Outside
 import Task exposing (Task)
-import Types exposing (DocType(..), Model, Msg(..))
+import Types exposing (Model, Msg(..))
 
 
 addPostfix : String -> String -> String

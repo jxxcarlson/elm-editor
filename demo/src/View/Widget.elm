@@ -7,20 +7,23 @@ module View.Widget exposing
     , documentTypeButton
     , example1Button
     , exportFileButton
+    , exportLaTeXFileButton
+    , importFileButton
     , inputFileName
     , loadDocumentButton
     , newDocumentButton
     , openAuthorPopupButton
-    , openFileButton
     , openFileListPopupButton
+    , openFilePopupButton
+    , openNewFilePopupButton
     , openRemoteFileListPopupButton
     , plainButton
-    , saveFileButton
     , saveFileToStorageButton
     , textField
     , toggleFileLocationButton
     )
 
+import Document exposing (DocType(..))
 import Element
     exposing
         ( Element
@@ -42,8 +45,7 @@ import Html.Attributes as Attribute
 import Html.Events as HE
 import Types
     exposing
-        ( DocType(..)
-        , DocumentStatus(..)
+        ( DocumentStatus(..)
         , FileLocation(..)
         , Model
         , Msg(..)
@@ -84,28 +86,28 @@ cancelChangeFileNameButton =
     button_ 70 "Cancel" CancelChangeFileName
 
 
-changeFileNameButton model =
+changeFileNameButton fileName =
     case
-        ( Helper.File.fileExtension model.newFileName
-        , String.length (Helper.File.titleFromFileName model.newFileName) > 0
+        ( Helper.File.fileExtension fileName
+        , String.length (Helper.File.titleFromFileName fileName) > 0
         )
     of
         ( "md", True ) ->
-            changeFileNameButton_ model
+            changeFileNameButton_ fileName
 
         ( "tex", True ) ->
-            changeFileNameButton_ model
+            changeFileNameButton_ fileName
 
         ( _, _ ) ->
             doNotChangeFileNameButton
 
 
-changeFileNameButton_ model =
-    button_ 70 "Change" ChangeFileName
+changeFileNameButton_ fileName =
+    button_ 70 "Change" (ChangeFileName fileName)
 
 
 doNotChangeFileNameButton =
-    button_ 70 "Change" NoOp
+    button_ 70 "Change" (ManagePopup PopupClosed)
 
 
 
@@ -175,25 +177,57 @@ openRemoteFileListPopupButton model =
             button 120 "Files" (ManagePopup (PopupOpen RemoteFileListPopup)) []
 
 
-openFileButton model =
-    button_ 50 "Open" RequestFile
+openFilePopupButton model =
+    case model.popupStatus of
+        PopupOpen FilePopup ->
+            Button.make (ManagePopup PopupClosed) "Close"
+                |> Button.withWidth (Bounded 100)
+                |> Button.withSelected False
+                |> Button.withBackgroundColor Style.redColor
+                |> Button.toElement
+
+        PopupOpen _ ->
+            button 100 "File info" (ManagePopup (PopupOpen FilePopup)) []
+
+        PopupClosed ->
+            button 100 "File info" (ManagePopup (PopupOpen FilePopup)) []
 
 
-saveFileButton model =
-    button_ 50 "Save" SaveFile
+openNewFilePopupButton model =
+    case model.popupStatus of
+        PopupOpen NewFilePopup ->
+            Button.make (ManagePopup PopupClosed) "Cancel"
+                |> Button.withWidth (Bounded 90)
+                |> Button.withSelected False
+                |> Button.withBackgroundColor Style.redColor
+                |> Button.toElement
+
+        PopupOpen _ ->
+            button 90 "New" (ManagePopup (PopupOpen NewFilePopup)) []
+
+        PopupClosed ->
+            button 90 "New" (ManagePopup (PopupOpen NewFilePopup)) []
+
+
+importFileButton model =
+    button_ 60 "Import" RequestFile
 
 
 exportFileButton model =
+    button_ 60 "Export" SaveFile
+
+
+exportLaTeXFileButton model =
     case model.docType of
         MarkdownDoc ->
             Element.none
 
         MiniLaTeXDoc ->
-            button_ 90 "Export" ExportFile
+            button_ 120 "LaTeX Export" ExportFile
 
 
 newDocumentButton model =
-    button_ 50 "New" NewDocument
+    button_ 70 "Create" CreateDocument
 
 
 documentTypeButton model =

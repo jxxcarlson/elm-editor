@@ -6,7 +6,7 @@ module Helper.Load exposing
     )
 
 import Data
-import Document exposing (Document)
+import Document exposing (DocType(..), Document)
 import Editor
 import EditorMsg exposing (WrapOption(..))
 import Helper.Common
@@ -14,7 +14,7 @@ import Helper.File
 import List.Extra
 import Markdown.Option exposing (MarkdownOption(..))
 import Render exposing (RenderingOption(..))
-import Types exposing (DocType(..), Model, Msg(..))
+import Types exposing (Model, Msg(..))
 import UuidHelper
 
 
@@ -63,7 +63,7 @@ loadDocument document model =
     { model
         | renderingData = Render.load ( 0, 0 ) model.counter renderingOption document.content
         , fileName = Just document.fileName
-        , newFileName = document.fileName
+        , fileName_ = document.fileName
         , counter = model.counter + 1
         , editor =
             Editor.initWithContent document.content
@@ -83,12 +83,8 @@ loadDocument_ title source_ docType model =
         source =
             List.drop 1 lines |> String.join "\n"
 
-        uuid =
-            List.head lines
-                |> Maybe.withDefault ""
-                |> String.split ": "
-                |> List.Extra.getAt 1
-                |> Maybe.withDefault model.uuid
+        newDocument =
+            Document.new { fileName = title, content = source, id = model.uuid, docType = docType }
     in
     case docType of
         MarkdownDoc ->
@@ -102,14 +98,14 @@ loadDocument_ title source_ docType model =
             { model
                 | renderingData = renderingData
                 , fileName = Just fileName
-                , newFileName = fileName
+                , fileName_ = fileName
                 , counter = model.counter + 1
                 , editor =
                     Editor.initWithContent source
                         (config { width = model.width, height = model.height, wrapOption = DontWrap })
                 , docTitle = title
                 , docType = MarkdownDoc
-                , document = { fileName = fileName, id = uuid, content = source }
+                , document = newDocument
             }
                 |> UuidHelper.newUuid
 
@@ -124,14 +120,14 @@ loadDocument_ title source_ docType model =
             { model
                 | renderingData = renderingData
                 , fileName = Just fileName
-                , newFileName = fileName
+                , fileName_ = fileName
                 , counter = model.counter + 2
                 , editor =
                     Editor.initWithContent source
                         (config { width = model.width, height = model.height, wrapOption = DontWrap })
                 , docTitle = title
                 , docType = MiniLaTeXDoc
-                , document = { fileName = fileName, id = uuid, content = source }
+                , document = newDocument
             }
                 |> UuidHelper.newUuid
 

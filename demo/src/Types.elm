@@ -1,6 +1,5 @@
 module Types exposing
     ( ChangingFileNameState(..)
-    , DocType(..)
     , DocumentStatus(..)
     , FileLocation(..)
     , Model
@@ -10,7 +9,7 @@ module Types exposing
     )
 
 import Browser.Dom as Dom
-import Document exposing (Document, MiniFileRecord)
+import Document exposing (DocType(..), Document, MiniFileRecord)
 import Editor exposing (Editor)
 import File exposing (File)
 import Http
@@ -29,6 +28,7 @@ type alias Model =
     { -- system
       tickCount : Int
     , counter : Int
+    , messageLife : Int
     , width : Float
     , height : Float
     , editor : Editor
@@ -44,6 +44,7 @@ type alias Model =
     , docTitle : String
     , docType : DocType
     , fileName : Maybe String
+    , fileName_ : String
     , newFileName : String
     , changingFileNameState : ChangingFileNameState
     , fileList : List MiniFileRecord
@@ -74,6 +75,7 @@ type PopupStatus
 
 type PopupWindow
     = FilePopup
+    | NewFilePopup
     | FileListPopup
     | RemoteFileListPopup
     | AuthorPopup
@@ -82,11 +84,6 @@ type PopupWindow
 type DocumentStatus
     = DocumentDirty
     | DocumentSaved
-
-
-type DocType
-    = MarkdownDoc
-    | MiniLaTeXDoc
 
 
 
@@ -109,8 +106,8 @@ type Msg
     | Load String
     | DocumentLoaded String
     | ToggleDocType
-    | NewDocument
-    | ChangeFileName
+    | CreateDocument
+    | ChangeFileName String
     | CancelChangeFileName
     | SoftDelete MiniFileRecord
       -- External Files

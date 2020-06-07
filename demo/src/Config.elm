@@ -5,6 +5,10 @@ tickInterval =
     1000
 
 
+messageLifeTime =
+    8
+
+
 localServerUrl =
     "http://localhost:4000/api"
 
