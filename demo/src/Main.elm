@@ -97,7 +97,7 @@ init flags =
     , height = flags.height
     , docTitle = "about"
     , docType = MarkdownDoc
-    , fileName = Just "about.md"
+    , fileName = "about.md"
     , fileName_ = ""
     , changingFileNameState = FileNameOK
     , fileList = []
@@ -228,7 +228,7 @@ update msg model =
             in
             ( { model
                 | docType = newDocType
-                , fileName = Maybe.map (Helper.File.updateDocType newDocType) model.fileName
+                , fileName = Helper.File.updateDocType newDocType model.fileName
               }
             , Cmd.none
             )
@@ -280,43 +280,38 @@ update msg model =
             ( model, Helper.File.requestFile )
 
         RequestedFile file ->
-            ( { model | fileName = Just (File.name file) }, Helper.File.read file )
+            ( { model | fileName = File.name file }, Helper.File.read file )
 
         DocumentLoaded source ->
-            case model.fileName of
-                Nothing ->
-                    ( model, Cmd.none )
+            let
+                docType =
+                    case Helper.File.fileExtension model.fileName of
+                        "md" ->
+                            MarkdownDoc
 
-                Just fileName ->
-                    let
-                        docType =
-                            case Helper.File.fileExtension fileName of
-                                "md" ->
-                                    MarkdownDoc
+                        "latex" ->
+                            MiniLaTeXDoc
 
-                                "latex" ->
-                                    MiniLaTeXDoc
+                        "tex" ->
+                            MiniLaTeXDoc
 
-                                "tex" ->
-                                    MiniLaTeXDoc
+                        _ ->
+                            MarkdownDoc
 
-                                _ ->
-                                    MarkdownDoc
+                newModel =
+                    Helper.Load.loadDocument_ (Helper.File.titleFromFileName model.fileName) source docType model
+                        |> (\m -> { m | docType = docType })
+                        |> Helper.Sync.syncModel2
 
-                        newModel =
-                            Helper.Load.loadDocument_ (Helper.File.titleFromFileName fileName) source docType model
-                                |> (\m -> { m | docType = docType })
-                                |> Helper.Sync.syncModel2
-
-                        newDocument =
-                            newModel.document
-                    in
-                    newModel
-                        |> withCmds
-                            [ View.Scroll.toRenderedTextTop
-                            , View.Scroll.toEditorTop
-                            , Helper.File.updateDocument model.fileStorageUrl newDocument
-                            ]
+                newDocument =
+                    newModel.document
+            in
+            newModel
+                |> withCmds
+                    [ View.Scroll.toRenderedTextTop
+                    , View.Scroll.toEditorTop
+                    , Helper.File.updateDocument model.fileStorageUrl newDocument
+                    ]
 
         SaveFile ->
             ( model, Helper.File.saveFile model )
@@ -395,7 +390,7 @@ update msg model =
         -- LOCAL STORAGE
         SendRequestForFile fileName ->
             { model
-                | fileName = Just fileName
+                | fileName = fileName
             }
                 --, Outside.sendInfo (Outside.AskForFile fileName)
                 |> withNoCmd
@@ -421,7 +416,7 @@ update msg model =
                     { oldDocument | fileName = fileName }
             in
             ( { model
-                | fileName = Just model.fileName_
+                | fileName = model.fileName_
                 , docType = Helper.File.docType model.fileName_
                 , changingFileNameState = FileNameOK
                 , popupStatus = PopupClosed
@@ -442,12 +437,7 @@ update msg model =
                 |> withCmd (Helper.File.updateDocumentList model.fileStorageUrl newRecord)
 
         CancelChangeFileName ->
-            case model.fileName of
-                Nothing ->
-                    ( model, Cmd.none )
-
-                Just fileName ->
-                    ( { model | fileName_ = fileName, changingFileNameState = FileNameOK }, Cmd.none )
+            ( { model | fileName_ = model.fileName, changingFileNameState = FileNameOK }, Cmd.none )
 
         About ->
             ( Helper.Load.loadDocumentByTitle "about" model, Cmd.none )
@@ -684,16 +674,7 @@ displayMessage model =
 
 displayFilename : Model -> Element Msg
 displayFilename model =
-    let
-        message =
-            case model.fileName of
-                Nothing ->
-                    "No file"
-
-                Just fn ->
-                    fn
-    in
-    el [] (text message)
+    el [] (text model.fileName)
 
 
 viewEditor model =

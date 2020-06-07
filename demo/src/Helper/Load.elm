@@ -62,7 +62,7 @@ loadDocument document model =
     in
     { model
         | renderingData = Render.load ( 0, 0 ) model.counter renderingOption document.content
-        , fileName = Just document.fileName
+        , fileName = document.fileName
         , fileName_ = document.fileName
         , counter = model.counter + 1
         , editor =
@@ -97,7 +97,7 @@ loadDocument_ title source_ docType model =
             in
             { model
                 | renderingData = renderingData
-                , fileName = Just fileName
+                , fileName = fileName
                 , fileName_ = fileName
                 , counter = model.counter + 1
                 , editor =
@@ -119,7 +119,7 @@ loadDocument_ title source_ docType model =
             in
             { model
                 | renderingData = renderingData
-                , fileName = Just fileName
+                , fileName = fileName
                 , fileName_ = fileName
                 , counter = model.counter + 2
                 , editor =

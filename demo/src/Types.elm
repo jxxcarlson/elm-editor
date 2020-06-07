@@ -43,7 +43,7 @@ type alias Model =
     , renderingData : RenderingData
     , docTitle : String
     , docType : DocType
-    , fileName : Maybe String
+    , fileName : String
     , fileName_ : String
     , changingFileNameState : ChangingFileNameState
     , fileList : List MiniFileRecord

@@ -204,19 +204,16 @@ saveFile model =
 
 exportFile : Model -> Cmd msg
 exportFile model =
-    case ( model.docType, model.fileName ) of
-        ( MarkdownDoc, Just fileName ) ->
+    case model.docType of
+        MarkdownDoc ->
             Cmd.none
 
-        ( MiniLaTeXDoc, Just fileName ) ->
+        MiniLaTeXDoc ->
             let
                 contentForExport =
                     Editor.getContent model.editor |> MiniLatex.Export.toLaTeX
             in
-            Download.string fileName "text/x-tex" contentForExport
-
-        ( _, _ ) ->
-            Cmd.none
+            Download.string model.fileName "text/x-tex" contentForExport
 
 
 docType : String -> DocType
