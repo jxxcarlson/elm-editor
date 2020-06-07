@@ -16,7 +16,6 @@ module View.Widget exposing
     , openFileListPopupButton
     , openFilePopupButton
     , openNewFilePopupButton
-    , openRemoteFileListPopupButton
     , plainButton
     , saveFileToStorageButton
     , textField
@@ -149,19 +148,20 @@ openAuthorPopupButton model =
             button_ 90 "Author" (ManagePopup (PopupOpen AuthorPopup))
 
 
+
+--openFileListPopupButton model =
+--    case model.popupStatus of
+--        PopupOpen FileListPopup ->
+--            button 100 "Close" (ManagePopup PopupClosed) [ Background.color Style.redColor ]
+--
+--        PopupOpen _ ->
+--            button_ 100 "Files" (ManagePopup (PopupOpen FileListPopup))
+--
+--        PopupClosed ->
+--            button_ 100 "Files" (ManagePopup (PopupOpen FileListPopup))
+
+
 openFileListPopupButton model =
-    case model.popupStatus of
-        PopupOpen FileListPopup ->
-            button 100 "Close" (ManagePopup PopupClosed) [ Background.color Style.redColor ]
-
-        PopupOpen _ ->
-            button_ 100 "Files" (ManagePopup (PopupOpen FileListPopup))
-
-        PopupClosed ->
-            button_ 100 "Files" (ManagePopup (PopupOpen FileListPopup))
-
-
-openRemoteFileListPopupButton model =
     case model.popupStatus of
         PopupOpen RemoteFileListPopup ->
             Button.make (ManagePopup PopupClosed) "Close"

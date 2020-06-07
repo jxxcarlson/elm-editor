@@ -372,7 +372,7 @@ update msg model =
             let
                 cmd =
                     case status of
-                        PopupOpen FileListPopup ->
+                        PopupOpen LocalStoragePopup ->
                             -- TODO: needs to be eliminated
                             Helper.File.getDocumentList model.fileStorageUrl
 
@@ -654,7 +654,7 @@ viewFooter model width_ height_ =
         , spacing 12
         ]
         [ -- View.Widget.openAuthorPopupButton model
-          View.Widget.openRemoteFileListPopupButton model
+          View.Widget.openFileListPopupButton model
         , View.Widget.toggleFileLocationButton model
         , View.Widget.saveFileToStorageButton model
         , View.Widget.documentTypeButton model

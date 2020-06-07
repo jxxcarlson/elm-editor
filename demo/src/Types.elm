@@ -76,7 +76,7 @@ type PopupStatus
 type PopupWindow
     = FilePopup
     | NewFilePopup
-    | FileListPopup
+    | LocalStoragePopup
     | RemoteFileListPopup
     | AuthorPopup
 

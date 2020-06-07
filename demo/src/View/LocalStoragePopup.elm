@@ -28,7 +28,7 @@ view model =
         PopupClosed ->
             Element.none
 
-        PopupOpen FileListPopup ->
+        PopupOpen LocalStoragePopup ->
             column
                 [ width (px 500)
                 , height (px <| round <| Helper.Common.windowHeight model.height + 28)
