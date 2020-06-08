@@ -43,6 +43,7 @@ view model =
                 , emailInput model
                 , passwordInput model
                 , passwordAgainInput model
+                , Widget.createAuthorButton
                 ]
 
         PopupOpen _ ->
@@ -57,7 +58,7 @@ authorInput msg text label =
     TextField.make msg text label
         |> TextField.withHeight 30
         |> TextField.withWidth 150
-        |> TextField.withLabelWidth 70
+        |> TextField.withLabelWidth 90
         |> TextField.withLabelPosition LabelAbove
         |> TextField.toElement
 

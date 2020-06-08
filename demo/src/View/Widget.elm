@@ -4,6 +4,7 @@ module View.Widget exposing
     , cancelChangeFileNameButton
     , changeFileNameButton
     , closePopupButton
+    , createAuthorButton
     , documentTypeButton
     , exportFileButton
     , exportLaTeXFileButton
@@ -51,6 +52,18 @@ import Types
         )
 import View.Style as Style
 import Widget.Button as Button exposing (Size(..))
+
+
+
+-- AUTHOR
+
+
+createAuthorButton =
+    button_ 70 "Create" CreateAuthor
+
+
+
+-- DOCUMENT
 
 
 toggleFileLocationButton model =

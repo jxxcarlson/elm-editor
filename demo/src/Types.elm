@@ -28,12 +28,14 @@ type alias Model =
     { -- system
       tickCount : Int
     , counter : Int
+    , currentTime : Time.Posix
+    , uuid : String
+    , randomSeed : Random.Seed
     , messageLife : Int
     , width : Float
     , height : Float
     , editor : Editor
     , message : String
-    , randomSeed : Random.Seed
 
     -- UI
     , popupStatus : PopupStatus
@@ -51,7 +53,6 @@ type alias Model =
     , selectedId : ( Int, Int )
     , selectedId_ : String
     , document : Document
-    , uuid : String
     , fileStorageUrl : String
 
     -- User
@@ -142,3 +143,4 @@ type Msg
     | InputPassword String
     | InputPasswordAgain String
     | InputEmail String
+    | CreateAuthor

@@ -31,6 +31,7 @@ import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
 import File exposing (File)
+import Helper.Author
 import Helper.Common
 import Helper.File
 import Helper.Load
@@ -57,7 +58,6 @@ import Types
         , PopupStatus(..)
         , PopupWindow(..)
         )
-import UUID
 import UuidHelper
 import View.AuthorPopup as AuthorPopup
 import View.FileListPopup as RemoteFileListPopup
@@ -92,6 +92,7 @@ init flags =
     { editor = newEditor
     , renderingData = load 0 ( 0, 0 ) (OMarkdown ExtendedMath) Data.about
     , counter = 1
+    , currentTime = Time.millisToPosix 0
     , messageLife = 0
     , width = flags.width
     , height = flags.height
@@ -363,8 +364,8 @@ update msg model =
                         IDClicked id ->
                             Helper.Sync.onId id model
 
-        Tick _ ->
-            model
+        Tick t ->
+            { model | currentTime = t }
                 |> updateMessageLife
                 |> saveFileToStorage
 
@@ -522,6 +523,23 @@ update msg model =
 
         InputPasswordAgain str ->
             { model | passwordAgain = str } |> withNoCmd
+
+        CreateAuthor ->
+            let
+                ( uuid, seed ) =
+                    UuidHelper.generate model.randomSeed
+
+                newAuthor =
+                    Helper.Author.createAuthor model.currentTime
+                        uuid
+                        model.password
+                        model.authorName
+                        model.userName
+                        model.email
+            in
+            { model | randomSeed = seed }
+                |> postMessage ("Created: " ++ model.userName)
+                |> withNoCmd
 
 
 

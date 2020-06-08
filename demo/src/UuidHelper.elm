@@ -1,5 +1,6 @@
 module UuidHelper exposing
-    ( getRandomNumber
+    ( generate
+    , getRandomNumber
     , handleResponseFromRandomDotOrg
     , newUuid
     )
