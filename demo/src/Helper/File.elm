@@ -17,6 +17,7 @@ module Helper.File exposing
     , updateFileList
     )
 
+import Codec.Document
 import Config
 import Document exposing (DocType(..), Document, MiniFileRecord)
 import Editor
@@ -26,81 +27,16 @@ import File.Select as Select
 import Http
 import List.Extra
 import MiniLatex.Export
-import Outside
 import Task exposing (Task)
 import Types exposing (Model, Msg(..))
-
-
-addPostfix : String -> String -> String
-addPostfix postfix fileName =
-    let
-        parts =
-            String.split "." fileName
-
-        n =
-            List.length parts
-
-        extension =
-            List.drop (n - 1) parts
-
-        initialParts =
-            List.take (n - 1) parts
-
-        newParts =
-            initialParts ++ [ postfix ] ++ extension
-    in
-    String.join "." newParts
-
-
-removePostfix : String -> String -> String
-removePostfix postfix fileName =
-    let
-        parts =
-            String.split "." fileName
-
-        n =
-            List.length parts
-
-        extension =
-            List.drop (n - 1) parts
-
-        postfix_ =
-            List.Extra.getAt (n - 2) parts |> Maybe.withDefault "@%!"
-
-        initialParts =
-            List.take (n - 2) parts
-
-        newParts =
-            initialParts ++ extension
-    in
-    case postfix == postfix_ of
-        True ->
-            String.join "." newParts
-
-        False ->
-            fileName
-
-
-updateFileList : MiniFileRecord -> List MiniFileRecord -> List MiniFileRecord
-updateFileList rec fileList =
-    let
-        mapper r =
-            case r.id == rec.id of
-                False ->
-                    r
-
-                True ->
-                    rec
-    in
-    List.map mapper fileList
 
 
 createDocument : String -> Document -> Cmd Msg
 createDocument serverUrl document =
     Http.post
         { url = serverUrl ++ "/documents"
-        , body = Http.jsonBody (Outside.extendedDocumentEncoder Config.token document)
-        , expect = Http.expectJson Message Outside.messageDecoder
+        , body = Http.jsonBody (Codec.Document.extendedDocumentEncoder Config.token document)
+        , expect = Http.expectJson Message Codec.Document.messageDecoder
         }
 
 
@@ -110,8 +46,8 @@ updateDocument serverUrl document =
         { method = "PUT"
         , headers = []
         , url = serverUrl ++ "/documents"
-        , body = Http.jsonBody (Outside.extendedDocumentEncoder Config.token document)
-        , expect = Http.expectJson Message Outside.messageDecoder
+        , body = Http.jsonBody (Codec.Document.extendedDocumentEncoder Config.token document)
+        , expect = Http.expectJson Message Codec.Document.messageDecoder
         , timeout = Nothing
         , tracker = Nothing
         }
@@ -121,7 +57,7 @@ getDocument : String -> String -> Cmd Msg
 getDocument serverUrl fileName =
     Http.get
         { url = serverUrl ++ "/document/" ++ fileName
-        , expect = Http.expectJson GotDocument Outside.documentDecoder
+        , expect = Http.expectJson GotDocument Codec.Document.documentDecoder
         }
 
 
@@ -129,7 +65,7 @@ getDocumentList : String -> Cmd Msg
 getDocumentList serverUrl =
     Http.get
         { url = serverUrl ++ "/documents"
-        , expect = Http.expectJson GotDocuments Outside.documentListDecoder
+        , expect = Http.expectJson GotDocuments Codec.Document.documentListDecoder
         }
 
 
@@ -139,8 +75,8 @@ updateDocumentList serverUrl record =
         { method = "PUT"
         , headers = []
         , url = serverUrl ++ "/documents"
-        , body = Http.jsonBody (Outside.encodeMiniFileRecord record)
-        , expect = Http.expectJson Message Outside.messageDecoder
+        , body = Http.jsonBody (Codec.Document.encodeMiniFileRecord record)
+        , expect = Http.expectJson Message Codec.Document.messageDecoder
         , timeout = Nothing
         , tracker = Nothing
         }
@@ -216,6 +152,10 @@ exportFile model =
             Download.string model.fileName "text/x-tex" contentForExport
 
 
+
+-- HELPERS
+
+
 docType : String -> DocType
 docType fileName =
     case fileExtension fileName of
@@ -230,3 +170,67 @@ docType fileName =
 
         _ ->
             MarkdownDoc
+
+
+addPostfix : String -> String -> String
+addPostfix postfix fileName =
+    let
+        parts =
+            String.split "." fileName
+
+        n =
+            List.length parts
+
+        extension =
+            List.drop (n - 1) parts
+
+        initialParts =
+            List.take (n - 1) parts
+
+        newParts =
+            initialParts ++ [ postfix ] ++ extension
+    in
+    String.join "." newParts
+
+
+removePostfix : String -> String -> String
+removePostfix postfix fileName =
+    let
+        parts =
+            String.split "." fileName
+
+        n =
+            List.length parts
+
+        extension =
+            List.drop (n - 1) parts
+
+        postfix_ =
+            List.Extra.getAt (n - 2) parts |> Maybe.withDefault "@%!"
+
+        initialParts =
+            List.take (n - 2) parts
+
+        newParts =
+            initialParts ++ extension
+    in
+    case postfix == postfix_ of
+        True ->
+            String.join "." newParts
+
+        False ->
+            fileName
+
+
+updateFileList : MiniFileRecord -> List MiniFileRecord -> List MiniFileRecord
+updateFileList rec fileList =
+    let
+        mapper r =
+            case r.id == rec.id of
+                False ->
+                    r
+
+                True ->
+                    rec
+    in
+    List.map mapper fileList

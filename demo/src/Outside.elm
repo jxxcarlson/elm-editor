@@ -1,13 +1,7 @@
 port module Outside exposing
     ( InfoForElm(..)
     , InfoForOutside(..)
-    , documentDecoder
-    , documentEncoder
-    , documentListDecoder
-    , encodeMiniFileRecord
-    , extendedDocumentEncoder
     , getInfo
-    , messageDecoder
     , sendInfo
     )
 
@@ -15,6 +9,7 @@ port module Outside exposing
 At the moment, there is just one: external copy-paste.
 -}
 
+import Codec.Document
 import Document exposing (Document, MiniFileRecord)
 import Json.Decode as D exposing (Decoder, bool, int, list, nullable, string)
 import Json.Decode.Pipeline as JP exposing (required)
@@ -61,7 +56,7 @@ getInfo tagger onError =
                             onError <| ""
 
                 "GotFileList" ->
-                    case D.decodeValue documentListDecoder outsideInfo.data of
+                    case D.decodeValue Codec.Document.documentListDecoder outsideInfo.data of
                         Ok fileList ->
                             tagger <| GotFileList fileList
 
@@ -69,7 +64,7 @@ getInfo tagger onError =
                             onError <| "Error getting file list"
 
                 "GotFile" ->
-                    case D.decodeValue documentDecoder outsideInfo.data of
+                    case D.decodeValue Codec.Document.documentDecoder outsideInfo.data of
                         Ok file ->
                             tagger <| GotFile file
 
@@ -94,7 +89,7 @@ sendInfo info =
             infoForOutside { tag = "Highlight", data = encodeSelectedIdData idPair }
 
         WriteFile document ->
-            infoForOutside { tag = "WriteFile", data = documentEncoder document }
+            infoForOutside { tag = "WriteFile", data = Codec.Document.documentEncoder document }
 
         AskForFileList ->
             infoForOutside { tag = "AskForFileList", data = Encode.null }
@@ -126,80 +121,7 @@ encodeFile ( fileName, fileContents ) =
 -- DECODERS --
 
 
-documentListDecoder : D.Decoder (List MiniFileRecord)
-documentListDecoder =
-    D.list decodeMiniFileRecord
-
-
 clipboardDecoder : D.Decoder String
 clipboardDecoder =
     --    D.field "data" D.string
     D.string
-
-
-documentDecoder : Decoder Document
-documentDecoder =
-    D.succeed Document
-        |> required "fileName" string
-        |> required "id" string
-        |> required "content" string
-
-
-decodeMiniFileRecord : Decoder MiniFileRecord
-decodeMiniFileRecord =
-    D.succeed MiniFileRecord
-        |> required "id" string
-        |> required "fileName" string
-
-
-encodeMiniFileRecord : MiniFileRecord -> Encode.Value
-encodeMiniFileRecord record =
-    Encode.object
-        [ ( "fileName", Encode.string record.fileName )
-        , ( "id", Encode.string record.id )
-        ]
-
-
-type alias MessageContainer =
-    { msg : String }
-
-
-messageDecoder : Decoder String
-messageDecoder =
-    (D.succeed MessageContainer
-        |> required "msg" string
-    )
-        |> D.map .msg
-
-
-
-{-
-   > doc = { fileName = "foo.md", id = "12.45", content = "whatever"}
-   { content = "whatever", fileName = "foo.md", id = "12.45" }
-       : { content : String, fileName : String, id : String }
-
-   > val = basicDocumentEncoder doc
-   <internals> : E.Value
-
-   > doc2 = D.decodeValue basicDocumentDecoder val
-   Ok { content = "whatever", fileName = "foo.md", id = "12.45" }
--}
-
-
-documentEncoder : Document -> Encode.Value
-documentEncoder doc =
-    Encode.object
-        [ ( "fileName", Encode.string doc.fileName )
-        , ( "id", Encode.string doc.id )
-        , ( "content", Encode.string doc.content )
-        ]
-
-
-extendedDocumentEncoder : String -> Document -> Encode.Value
-extendedDocumentEncoder token doc =
-    Encode.object
-        [ ( "fileName", Encode.string doc.fileName )
-        , ( "id", Encode.string doc.id )
-        , ( "content", Encode.string doc.content )
-        , ( "token", Encode.string token )
-        ]
