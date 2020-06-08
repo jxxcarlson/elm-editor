@@ -124,29 +124,29 @@ closePopupButton model =
 openAuthorPopupButton model =
     case model.popupStatus of
         PopupOpen AuthorPopup ->
-            button_ 90 "Close" (ManagePopup PopupClosed)
+            button_ 60 "Close" (ManagePopup PopupClosed)
 
         PopupOpen _ ->
-            button_ 90 "Close" (ManagePopup PopupClosed)
+            button_ 60 "Author" (ManagePopup PopupClosed)
 
         PopupClosed ->
-            button_ 90 "Author" (ManagePopup (PopupOpen AuthorPopup))
+            button_ 60 "Author" (ManagePopup (PopupOpen AuthorPopup))
 
 
 openFileListPopupButton model =
     case model.popupStatus of
         PopupOpen RemoteFileListPopup ->
             Button.make (ManagePopup PopupClosed) "Close"
-                |> Button.withWidth (Bounded 120)
+                |> Button.withWidth (Bounded 60)
                 |> Button.withSelected False
                 |> Button.withBackgroundColor Style.redColor
                 |> Button.toElement
 
         PopupOpen _ ->
-            button 120 "Files" (ManagePopup (PopupOpen RemoteFileListPopup)) []
+            button 60 "Files" (ManagePopup (PopupOpen RemoteFileListPopup)) []
 
         PopupClosed ->
-            button 120 "Files" (ManagePopup (PopupOpen RemoteFileListPopup)) []
+            button 60 "Files" (ManagePopup (PopupOpen RemoteFileListPopup)) []
 
 
 openFilePopupButton model =

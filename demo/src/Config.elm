@@ -6,7 +6,7 @@ tickInterval =
 
 
 messageLifeTime =
-    8
+    5
 
 
 localServerUrl =

@@ -113,6 +113,12 @@ init flags =
     , randomSeed = Random.initialSeed 1727485
     , uuid = ""
     , fileStorageUrl = Config.localServerUrl
+
+    -- Author
+    , userName = ""
+    , email = ""
+    , password = ""
+    , passwordAgain = ""
     }
         |> Helper.Sync.syncModel newEditor
         |> Cmd.Extra.withCmds
@@ -505,6 +511,18 @@ update msg model =
             }
                 |> withNoCmd
 
+        InputUsername str ->
+            { model | userName = str } |> withNoCmd
+
+        InputEmail str ->
+            { model | email = str } |> withNoCmd
+
+        InputPassword str ->
+            { model | password = str } |> withNoCmd
+
+        InputPasswordAgain str ->
+            { model | passwordAgain = str } |> withNoCmd
+
 
 
 -- HELPER
@@ -611,7 +629,8 @@ mainColumn model =
     column [ centerX, centerY ]
         [ column [ Background.color <| gray 55 ]
             [ Element.el
-                [ Element.inFront (FileListPopup.view model)
+                [ Element.inFront (AuthorPopup.view model)
+                , Element.inFront (FileListPopup.view model)
                 , Element.inFront (FilePopup.view model)
                 , Element.inFront (RemoteFileListPopup.view model)
                 , Element.inFront (NewFilePopup.view model)
@@ -643,8 +662,8 @@ viewFooter model width_ height_ =
         , Element.moveUp 19
         , spacing 12
         ]
-        [ -- View.Widget.openAuthorPopupButton model
-          View.Widget.openFileListPopupButton model
+        [ View.Widget.openAuthorPopupButton model
+        , View.Widget.openFileListPopupButton model
         , View.Widget.toggleFileLocationButton model
         , View.Widget.saveFileToStorageButton model
         , View.Widget.documentTypeButton model

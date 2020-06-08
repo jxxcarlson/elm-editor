@@ -39,7 +39,10 @@ view model =
                 ]
                 [ titleLine model
                 , authorNameInput model
-                , el [ Font.size 14 ] (text model.uuid)
+                , userNameInput model
+                , emailInput model
+                , passwordInput model
+                , passwordAgainInput model
                 ]
 
         PopupOpen _ ->
@@ -61,3 +64,19 @@ authorInput msg text label =
 
 authorNameInput model =
     authorInput InputAuthorname model.authorName "Name"
+
+
+userNameInput model =
+    authorInput InputUsername model.userName "User Name"
+
+
+emailInput model =
+    authorInput InputEmail model.email "Email"
+
+
+passwordInput model =
+    authorInput InputPassword model.password "Password"
+
+
+passwordAgainInput model =
+    authorInput InputPasswordAgain model.passwordAgain "Password again"

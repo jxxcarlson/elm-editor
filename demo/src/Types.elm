@@ -50,10 +50,16 @@ type alias Model =
     , documentStatus : DocumentStatus
     , selectedId : ( Int, Int )
     , selectedId_ : String
-    , authorName : String
     , document : Document
     , uuid : String
     , fileStorageUrl : String
+
+    -- User
+    , authorName : String
+    , userName : String
+    , email : String
+    , password : String
+    , passwordAgain : String
     }
 
 
@@ -98,7 +104,6 @@ type Msg
       -- UI
     | ManagePopup PopupStatus
     | About
-    | InputAuthorname String
     | ToggleFileLocation FileLocation
       -- Document
     | InputFileName String
@@ -131,3 +136,9 @@ type Msg
     | AskForDocument String
     | GotDocument (Result Http.Error Document)
     | Message (Result Http.Error String)
+      -- Author
+    | InputAuthorname String
+    | InputUsername String
+    | InputPassword String
+    | InputPasswordAgain String
+    | InputEmail String
