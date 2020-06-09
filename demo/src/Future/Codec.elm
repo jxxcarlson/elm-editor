@@ -28,10 +28,12 @@ authorEncoder : Author -> Encode.Value
 authorEncoder author =
     Encode.object
         [ ( "name", Encode.string author.name )
+        , ( "userName", Encode.string author.userName )
         , ( "id", Encode.string author.id )
         , ( "email", Encode.string author.email )
-        , ( "timeCreated", Encode.int (Time.posixToMillis author.timeCreated) )
-        , ( "timeUpdated", Encode.int (Time.posixToMillis author.timeUpdated) )
+        , ( "passwordHash", Encode.string author.passwordHash )
+        , ( "dateCreated", Encode.int (Time.posixToMillis author.dateCreated) )
+        , ( "dateModified", Encode.int (Time.posixToMillis author.dateModified) )
         ]
 
 

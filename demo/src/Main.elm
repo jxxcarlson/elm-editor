@@ -539,7 +539,7 @@ update msg model =
             in
             { model | randomSeed = seed }
                 |> postMessage ("Created: " ++ model.userName)
-                |> withNoCmd
+                |> withCmd (Helper.Author.persist model.fileStorageUrl newAuthor)
 
 
 

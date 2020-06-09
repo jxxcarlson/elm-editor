@@ -23,3 +23,7 @@ scripts:
   cloc: cloc --by-file src2
   bundle: deno bundle src2/server.ts >serverBundle.js
   installServer: deno install -f --allow-read --allow-write --allow-net --allow-env /Users/jxxcarlson/dev/elm/projects/elm-editor/demo/public/src2/server.ts
+  r:
+    cmd: deno run --allow-env --allow-net --allow-read --allow-write
+    env:
+      FILE_STORE_PATH: "/Users/jxxcarlson/Documents/mudocs"

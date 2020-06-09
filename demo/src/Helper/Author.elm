@@ -1,8 +1,22 @@
 module Helper.Author exposing (..)
 
 import Author exposing (Author)
+import Codec.Author
+import Codec.Document
 import Crypto.HMAC exposing (sha512)
+import Http
+import Json.Decode as D
 import Time
+import Types exposing (Msg(..))
+
+
+persist : String -> Author -> Cmd Msg
+persist serverUrl author =
+    Http.post
+        { url = serverUrl ++ "/authors"
+        , body = Http.jsonBody (Codec.Author.encodeAuthor author)
+        , expect = Http.expectJson Message Codec.Document.messageDecoder
+        }
 
 
 createAuthor : Time.Posix -> String -> String -> String -> String -> String -> Author

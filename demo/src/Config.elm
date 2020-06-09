@@ -2,7 +2,7 @@ module Config exposing (..)
 
 
 tickInterval =
-    1000
+    10000
 
 
 messageLifeTime =

@@ -57,7 +57,7 @@ titleLine model =
 authorInput msg text label =
     TextField.make msg text label
         |> TextField.withHeight 30
-        |> TextField.withWidth 150
+        |> TextField.withWidth 170
         |> TextField.withLabelWidth 90
         |> TextField.withLabelPosition LabelAbove
         |> TextField.toElement

@@ -1,5 +1,7 @@
 scripts:
   make: elm make --optimize src/Main.elm --output=public/Main.js
+  debug: elm make --debug src/Main.elm --output=public/Main.js
+
   reactor:
     - elm reactor
     - open -a /Applications/Firefox.app/  http://localhost:8000/public/index.html
