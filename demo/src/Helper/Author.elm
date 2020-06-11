@@ -1,6 +1,6 @@
 module Helper.Author exposing (..)
 
-import Author exposing (Author)
+import Author exposing (AuthorWithPasswordHash)
 import Codec.Author
 import Codec.Document
 import Crypto.HMAC exposing (sha512)
@@ -10,7 +10,7 @@ import Time
 import Types exposing (Msg(..))
 
 
-persist : String -> Author -> Cmd Msg
+persist : String -> AuthorWithPasswordHash -> Cmd Msg
 persist serverUrl author =
     Http.post
         { url = serverUrl ++ "/authors"
@@ -19,7 +19,7 @@ persist serverUrl author =
         }
 
 
-createAuthor : Time.Posix -> String -> String -> String -> String -> String -> Author
+createAuthor : Time.Posix -> String -> String -> String -> String -> String -> AuthorWithPasswordHash
 createAuthor t uuid password name userName email =
     { name = name
     , userName = userName
@@ -32,11 +32,11 @@ createAuthor t uuid password name userName email =
 
 
 signInAuthor : String -> String -> String -> Cmd Msg
-signInAuthor serverUrl userName passwordHash =
+signInAuthor serverUrl userName password =
     Http.post
         { url = serverUrl ++ "/authors/signin"
-        , body = Http.jsonBody (Codec.Author.encodeSignUpInfo userName passwordHash)
-        , expect = Http.expectJson Message Codec.Document.messageDecoder
+        , body = Http.jsonBody (Codec.Author.encodeSignUpInfo userName (encryptForTransmission password))
+        , expect = Http.expectJson GotSigninReply Codec.Author.decodeAuthorization
         }
 
 

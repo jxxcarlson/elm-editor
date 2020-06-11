@@ -4,6 +4,7 @@ import Browser
 import Browser.Dom as Dom
 import Browser.Events
 import Cmd.Extra exposing (withCmd, withCmds, withNoCmd)
+import Codec.Author
 import Config
 import ContextMenu exposing (Item(..))
 import Data
@@ -50,7 +51,8 @@ import Task exposing (Task)
 import Time
 import Types
     exposing
-        ( ChangingFileNameState(..)
+        ( Authorization(..)
+        , ChangingFileNameState(..)
         , DocumentStatus(..)
         , FileLocation(..)
         , Model
@@ -122,6 +124,7 @@ init flags =
     , password = ""
     , passwordAgain = ""
     , signInMode = SigningIn
+    , currentUser = Nothing
     }
         |> Helper.Sync.syncModel newEditor
         |> Cmd.Extra.withCmds
@@ -544,7 +547,27 @@ update msg model =
                 |> withCmd (Helper.Author.persist model.fileStorageUrl newAuthor)
 
         SignIn ->
-            model |> withNoCmd
+            model
+                |> withCmd (Helper.Author.signInAuthor model.fileStorageUrl model.userName model.password)
+
+        GotSigninReply result ->
+            case result of
+                Ok reply ->
+                    case reply of
+                        A author ->
+                            { model | currentUser = Just author }
+                                |> postMessage (author.userName ++ " signed in")
+                                |> withNoCmd
+
+                        B _ ->
+                            { model | currentUser = Nothing }
+                                |> postMessage "Could not verify user/password"
+                                |> withNoCmd
+
+                Err _ ->
+                    model
+                        |> postMessage "Error authenticating user"
+                        |> withNoCmd
 
 
 

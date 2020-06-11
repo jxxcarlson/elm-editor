@@ -1,16 +1,19 @@
 module Codec.Author exposing
-    ( decodeAuthor
+    ( decodeAuthorWithPasswordHash
+    , decodeAuthorization
+    , decodeSigninReply
     , encodeAuthor
     , encodeSignUpInfo
     , test
     , testAuthor
     )
 
-import Author exposing (Author)
+import Author exposing (Author, AuthorWithPasswordHash)
 import Json.Decode as D exposing (Decoder, bool, int, list, nullable, string)
 import Json.Decode.Pipeline as JP exposing (required)
 import Json.Encode as Encode
 import Time
+import Types exposing (Authorization(..))
 
 
 encodeSignUpInfo userName passwordHash =
@@ -20,7 +23,7 @@ encodeSignUpInfo userName passwordHash =
         ]
 
 
-encodeAuthor : Author -> Encode.Value
+encodeAuthor : AuthorWithPasswordHash -> Encode.Value
 encodeAuthor author =
     Encode.object
         [ ( "name", Encode.string author.name )
@@ -33,9 +36,9 @@ encodeAuthor author =
         ]
 
 
-decodeAuthor : Decoder Author
-decodeAuthor =
-    D.succeed Author
+decodeAuthorWithPasswordHash : Decoder AuthorWithPasswordHash
+decodeAuthorWithPasswordHash =
+    D.succeed AuthorWithPasswordHash
         |> required "name" string
         |> required "userName" string
         |> required "id" string
@@ -43,6 +46,28 @@ decodeAuthor =
         |> required "passwordHash" string
         |> required "dateCreated" (int |> D.map Time.millisToPosix)
         |> required "dateModified" (int |> D.map Time.millisToPosix)
+
+
+decodeAuthorization : Decoder Authorization
+decodeAuthorization =
+    D.oneOf [ decodeSigninReply |> D.map B, decodeAuthor |> D.map A ]
+
+
+decodeAuthor : Decoder Author
+decodeAuthor =
+    D.succeed Author
+        |> required "name" string
+        |> required "userName" string
+        |> required "id" string
+        |> required "email" string
+        |> required "dateCreated" (int |> D.map Time.millisToPosix)
+        |> required "dateModified" (int |> D.map Time.millisToPosix)
+
+
+decodeSigninReply : Decoder Bool
+decodeSigninReply =
+    D.succeed identity
+        |> required "authorized" bool
 
 
 testAuthor =
@@ -64,7 +89,7 @@ testAuthor =
 -}
 test : Maybe Bool
 test =
-    case D.decodeValue decodeAuthor <| encodeAuthor testAuthor of
+    case D.decodeValue decodeAuthorWithPasswordHash <| encodeAuthor testAuthor of
         Ok rec ->
             Just <| rec == testAuthor
 

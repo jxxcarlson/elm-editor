@@ -1,5 +1,6 @@
 module Types exposing
-    ( ChangingFileNameState(..)
+    ( Authorization(..)
+    , ChangingFileNameState(..)
     , DocumentStatus(..)
     , FileLocation(..)
     , Model
@@ -9,6 +10,7 @@ module Types exposing
     , SignInMode(..)
     )
 
+import Author exposing (Author)
 import Browser.Dom as Dom
 import Document exposing (DocType(..), Document, MiniFileRecord)
 import Editor exposing (Editor)
@@ -63,6 +65,7 @@ type alias Model =
     , password : String
     , passwordAgain : String
     , signInMode : SignInMode
+    , currentUser : Maybe Author
     }
 
 
@@ -153,3 +156,9 @@ type Msg
     | InputEmail String
     | CreateAuthor
     | SignIn
+    | GotSigninReply (Result Http.Error Authorization)
+
+
+type Authorization
+    = A Author
+    | B Bool

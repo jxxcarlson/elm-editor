@@ -92,7 +92,7 @@ export const signInAuthor = async ({
 
   console.log("Authorized: " + authorized(passwordHash, authorsFound))
 
-  response.body = { msg: "Authorized: " + authorized(passwordHash, authorsFound)};
+  response.body = { authorized: authorized(passwordHash, authorsFound)};
   response.status = 200;
 
 
