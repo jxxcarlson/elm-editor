@@ -31,6 +31,19 @@ createAuthor t uuid password name userName email =
     }
 
 
+signInAuthor : String -> String -> String -> Cmd Msg
+signInAuthor serverUrl userName passwordHash =
+    Http.post
+        { url = serverUrl ++ "/authors/signin"
+        , body = Http.jsonBody (Codec.Author.encodeSignUpInfo userName passwordHash)
+        , expect = Http.expectJson Message Codec.Document.messageDecoder
+        }
+
+
+
+-- HELPERS
+
+
 encrypt : String -> String
 encrypt str =
     Crypto.HMAC.digest sha512 "YoKO-blah-yada-BM0L#10&%F.7.041-hoH0" str

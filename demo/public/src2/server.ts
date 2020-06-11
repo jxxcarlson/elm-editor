@@ -10,7 +10,7 @@ import {getDocument} from "./handlers/getDocument.ts"
 import {createDocument} from "./handlers/createDocument.ts"
 import {updateDocument} from "./manifest.ts"
 //import {options} from "./handlers/options.ts"
-import {createAuthor} from "./author.ts"
+import {createAuthor, signInAuthor} from "./author.ts"
 import { oakCors } from "https://deno.land/x/cors/mod.ts";
 //
 import { login, guest, auth } from "./handlers/login.ts";
@@ -34,6 +34,7 @@ router
   .put('/api/:fileName', updateDocument)
   .post('/api/login', login)
   .post('/api/authors', createAuthor)
+  .post('/api/authors/signin', signInAuthor)
   .get('/api/guest', guest)
   .get('/api/auth', authMiddleware,  auth) // Registering authMiddleware for /auth endpoint only
 ;

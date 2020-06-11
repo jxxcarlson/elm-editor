@@ -6,6 +6,7 @@ module Types exposing
     , Msg(..)
     , PopupStatus(..)
     , PopupWindow(..)
+    , SignInMode(..)
     )
 
 import Browser.Dom as Dom
@@ -61,7 +62,14 @@ type alias Model =
     , email : String
     , password : String
     , passwordAgain : String
+    , signInMode : SignInMode
     }
+
+
+type SignInMode
+    = SigningIn
+    | SignedIn
+    | SigningUp
 
 
 type FileLocation
@@ -144,3 +152,4 @@ type Msg
     | InputPasswordAgain String
     | InputEmail String
     | CreateAuthor
+    | SignIn

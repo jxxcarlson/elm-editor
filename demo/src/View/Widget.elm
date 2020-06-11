@@ -17,6 +17,7 @@ module View.Widget exposing
     , openNewFilePopupButton
     , plainButton
     , saveFileToStorageButton
+    , signInButton
     , textField
     , toggleFileLocationButton
     )
@@ -60,6 +61,10 @@ import Widget.Button as Button exposing (Size(..))
 
 createAuthorButton =
     button_ 70 "Create" CreateAuthor
+
+
+signInButton =
+    button_ 70 "Sign in" SignIn
 
 
 

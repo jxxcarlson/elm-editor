@@ -1,10 +1,23 @@
-module Codec.Author exposing (decodeAuthor, encodeAuthor, test, testAuthor)
+module Codec.Author exposing
+    ( decodeAuthor
+    , encodeAuthor
+    , encodeSignUpInfo
+    , test
+    , testAuthor
+    )
 
 import Author exposing (Author)
 import Json.Decode as D exposing (Decoder, bool, int, list, nullable, string)
 import Json.Decode.Pipeline as JP exposing (required)
 import Json.Encode as Encode
 import Time
+
+
+encodeSignUpInfo userName passwordHash =
+    Encode.object
+        [ ( "userName", Encode.string userName )
+        , ( "passwordHash", Encode.string passwordHash )
+        ]
 
 
 encodeAuthor : Author -> Encode.Value

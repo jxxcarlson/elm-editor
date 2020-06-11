@@ -18,13 +18,50 @@ import Element
 import Element.Background as Background
 import Element.Font as Font
 import Helper.Common
-import Types exposing (Model, Msg(..), PopupStatus(..), PopupWindow(..))
+import Types exposing (Model, Msg(..), PopupStatus(..), PopupWindow(..), SignInMode(..))
 import View.Widget as Widget
 import Widget.TextField as TextField exposing (LabelPosition(..))
 
 
 view : Model -> Element Msg
 view model =
+    case model.signInMode of
+        SigningIn ->
+            viewSignIn model
+
+        SignedIn ->
+            Element.none
+
+        SigningUp ->
+            viewSignUp model
+
+
+viewSignIn : Model -> Element Msg
+viewSignIn model =
+    case model.popupStatus of
+        PopupClosed ->
+            Element.none
+
+        PopupOpen AuthorPopup ->
+            column
+                [ width (px 500)
+                , height (px <| round <| Helper.Common.windowHeight model.height + 28)
+                , paddingXY 30 30
+                , Background.color (Element.rgba 1.0 0.75 0.75 0.8)
+                , spacing 16
+                ]
+                [ titleLine model
+                , userNameInput model
+                , passwordInput model
+                , Widget.signInButton
+                ]
+
+        PopupOpen _ ->
+            Element.none
+
+
+viewSignUp : Model -> Element Msg
+viewSignUp model =
     case model.popupStatus of
         PopupClosed ->
             Element.none

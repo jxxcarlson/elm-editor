@@ -64,6 +64,40 @@ export const writeAuthorList = async (data: Array<Author>): Promise<void> => {
 
 export var authorList = await fetchAuthorList();
 
+export const signInAuthor = async ({
+  request,
+  response,
+}: {
+  request: any;
+  response: any;
+}) => {
+  const {
+    value : {userName, passwordHash},
+  } = await request.body();
+  response.headers.set("Access-Control-Allow-Origin", "*");
+  response.headers.append("Access-Control-Allow-Methods", "POST, OPTIONS");
+  response.headers.append(
+    "Access-Control-Allow-Headers",
+    "X-Requested-With, Content-Type, Accept, Origin",
+  );
+
+  const authorsFound = authorList.filter((a) => a.userName == userName)
+
+  const authorized = (passwordHash_: String, aa : Array<Author>) =>
+    aa.length == 1 ?  authorized_(passwordHash_, aa[0]) : false
+
+  const authorized_ = (passwordHash_: String, a : Author) =>
+    passwordHash_ == a.passwordHash
+
+
+  console.log("Authorized: " + authorized(passwordHash, authorsFound))
+
+  response.body = { msg: "Authorized: " + authorized(passwordHash, authorsFound)};
+  response.status = 200;
+
+
+};
+
 export const createAuthor = async ({
   request,
   response,

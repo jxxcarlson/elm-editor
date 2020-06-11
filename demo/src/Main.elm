@@ -57,6 +57,7 @@ import Types
         , Msg(..)
         , PopupStatus(..)
         , PopupWindow(..)
+        , SignInMode(..)
         )
 import UuidHelper
 import View.AuthorPopup as AuthorPopup
@@ -120,6 +121,7 @@ init flags =
     , email = ""
     , password = ""
     , passwordAgain = ""
+    , signInMode = SigningIn
     }
         |> Helper.Sync.syncModel newEditor
         |> Cmd.Extra.withCmds
@@ -540,6 +542,9 @@ update msg model =
             { model | randomSeed = seed }
                 |> postMessage ("Created: " ++ model.userName)
                 |> withCmd (Helper.Author.persist model.fileStorageUrl newAuthor)
+
+        SignIn ->
+            model |> withNoCmd
 
 
 
