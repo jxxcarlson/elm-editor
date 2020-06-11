@@ -17,24 +17,25 @@ searchPanel_ model =
     H.div
         [ HA.style "width" (px model.width)
         , HA.style "padding-top" "5px"
+        , HA.style "padding-left" "25px"
         , HA.style "display" "flex"
         , HA.style "flex-direction" "row"
-        , HA.style "justify-content" "space-evenly"
+        , HA.style "justify-content" "left"
         , HA.style "align-items" "baseline"
         , HA.style "height" "30px"
-
-        -- , HA.style "padding-left" "8px"
-        , HA.style "background-color" EditorStyle.lightGray
+        , HA.style "background-color" EditorStyle.mediumGray
         , HA.style "opacity" "0.9"
         , HA.style "font-size" "14px"
+        , HA.style "width" (px (model.width - 25))
         ]
-        [ searchTextButton
-        , acceptSearchText
+        [ -- searchTextButton
+          acceptSearchText
         , numberOfHitsDisplay model
         , searchForwardButton
         , searchBackwardButton
-        , dismissSearchPanel
-        , openReplaceField
+
+        -- , dismissSearchPanel
+        -- , openReplaceField
         ]
 
 
@@ -46,18 +47,24 @@ replacePanel_ model =
     H.div
         [ HA.style "width" (px model.width)
         , HA.style "padding-top" "5px"
+        , HA.style "padding-left" "15px"
         , HA.style "display" "flex"
         , HA.style "flex-direction" "row"
         , HA.style "justify-content" "flex-start"
         , HA.style "align-items" "baseline"
         , HA.style "height" "30px"
         , HA.style "background-color" EditorStyle.mediumGray
+
+        --, HA.style "border-width" "1px"
+        --, HA.style "border-style" "solid"
         , HA.style "opacity" "0.9"
         , HA.style "font-size" "14px"
+        , HA.style "width" (px (model.width - 15))
         ]
         [ replaceTextButton
         , acceptReplaceText
-        , dismissReplacePanel
+
+        -- , dismissReplacePanel
         ]
 
 
@@ -121,7 +128,7 @@ acceptLineNumber =
 
 
 acceptSearchText =
-    Widget.textField 130
+    Widget.textField 220
         AcceptSearchText
         ""
         [ HA.style "float" "left"
@@ -130,7 +137,7 @@ acceptSearchText =
 
 
 acceptReplaceText =
-    Widget.textField 130 AcceptReplacementText "" [ HA.style "float" "left" ] [ setHtmlId "replacement-box" ]
+    Widget.textField 267 AcceptReplacementText "" [ HA.style "float" "left" ] [ setHtmlId "replacement-box" ]
 
 
 setHtmlId : String -> Attribute msg
