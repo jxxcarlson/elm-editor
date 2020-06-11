@@ -555,7 +555,10 @@ update msg model =
                 Ok reply ->
                     case reply of
                         A author ->
-                            { model | currentUser = Just author }
+                            { model
+                                | currentUser = Just author
+                                , popupStatus = PopupClosed
+                            }
                                 |> postMessage (author.userName ++ " signed in")
                                 |> withNoCmd
 

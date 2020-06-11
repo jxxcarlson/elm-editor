@@ -4,7 +4,7 @@ import { load, safeDump } from 'https://deno.land/x/js_yaml_port/js-yaml.js'
 
 // DATA STRUCTURES
 
-export interface Author {
+export interface AuthorWithPasswordHash {
   name: string;
   userName: string
   id: string;
@@ -12,9 +12,29 @@ export interface Author {
   passwordHash: string;
   dateCreated: number;
   dateModified: number;
-}
+};
 
-const testAuthor : Author = {
+export interface Author {
+  name: string;
+  userName: string
+  id: string;
+  email: string;
+  dateCreated: number;
+  dateModified: number;
+};
+
+let reduceAuthor = function (a: AuthorWithPasswordHash): Author {
+    return {
+         name: a.name,
+         userName: a.userName,
+         id: a.id,
+         email: a.email,
+         dateCreated: a.dateCreated,
+         dateModified: a.dateModified
+       }
+    }
+
+const testAuthor : AuthorWithPasswordHash = {
   name: "John Doe",
   userName: "jdoe",
   id: "1234",
@@ -24,7 +44,7 @@ const testAuthor : Author = {
   dateModified: 1234
 }
 
-const testAuthor2 : Author = {
+const testAuthor2 : AuthorWithPasswordHash = {
   name: "Henry Doe",
   userName: "hdoe",
   id: "4321",
@@ -35,16 +55,16 @@ const testAuthor2 : Author = {
 }
 
 
-const isNotPresent = (a: Author, authorList_: Array<Author>) =>
+const isNotPresent = (a: AuthorWithPasswordHash, authorList_: Array<AuthorWithPasswordHash>) =>
   authorList_.filter((x) => hasSameId(a, x)).length == 0;
 
-const hasSameId = (a: Author, b: Author) => a.id == b.id;
+const hasSameId = (a: AuthorWithPasswordHash, b: AuthorWithPasswordHash) => a.id == b.id;
 
-const changeAuthor = (s: Author, t : Author) =>
+const changeAuthor = (s: AuthorWithPasswordHash, t : AuthorWithPasswordHash) =>
   s.id == t.id ?  Object.assign({}, s) : t
 
 
-export const fetchAuthorList = async (): Promise<Author[]> => {
+export const fetchAuthorList = async (): Promise<AuthorWithPasswordHash[]> => {
   const data = await Deno.readFile(AUTHOR_LIST);
 
   const decoder = new TextDecoder();
@@ -55,7 +75,7 @@ export const fetchAuthorList = async (): Promise<Author[]> => {
   return load(decodedData);
 };
 
-export const writeAuthorList = async (data: Array<Author>): Promise<void> => {
+export const writeAuthorList = async (data: Array<AuthorWithPasswordHash>): Promise<void> => {
   const encoder = new TextEncoder();
   await Deno.writeFile(AUTHOR_LIST, encoder.encode(safeDump(data)));
 };
@@ -83,16 +103,21 @@ export const signInAuthor = async ({
 
   const authorsFound = authorList.filter((a) => a.userName == userName)
 
-  const authorized = (passwordHash_: String, aa : Array<Author>) =>
+  const authorized = (passwordHash_: String, aa : Array<AuthorWithPasswordHash>) =>
     aa.length == 1 ?  authorized_(passwordHash_, aa[0]) : false
 
-  const authorized_ = (passwordHash_: String, a : Author) =>
+  const authorized_ = (passwordHash_: String, a : AuthorWithPasswordHash) =>
     passwordHash_ == a.passwordHash
 
 
   console.log("Authorized: " + authorized(passwordHash, authorsFound))
 
-  response.body = { authorized: authorized(passwordHash, authorsFound)};
+  if (authorized(passwordHash, authorsFound)) {
+      response.body = reduceAuthor(authorsFound[0]);
+    } else {
+      response.body = { authorized: false}
+    }
+
   response.status = 200;
 
 
@@ -114,12 +139,12 @@ export const createAuthor = async ({
     "Access-Control-Allow-Headers",
     "X-Requested-With, Content-Type, Accept, Origin",
   );
-    const author: Author = { name: name
+    const author: AuthorWithPasswordHash = { name: name
        , userName: userName
        , id: id, email: email, passwordHash: passwordHash
        , dateCreated: dateCreated, dateModified: dateModified };
 
-    console.log("Author", author)
+    console.log("AuthorWithPasswordHash", author)
     if (isNotPresent(author, authorList)) {
       console.log("BRANCH 1")
       authorList.push(author);
@@ -129,7 +154,7 @@ export const createAuthor = async ({
       response.status = 200;
     } else {
       console.log("BRANCH 2")
-      authorList = authorList.map((a:Author) => changeAuthor(author, a))
+      authorList = authorList.map((a:AuthorWithPasswordHash) => changeAuthor(author, a))
       writeAuthorList(authorList)
       console.log("updated: " + author.userName);
       response.body = { msg: "Updated: " + author.userName};
