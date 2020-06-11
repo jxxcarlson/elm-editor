@@ -1,6 +1,6 @@
 // https://dev.to/kryz/write-a-small-api-using-deno-1cl0
 // DINOSAUR: https://dev.to/nickolasbenakis/create-a-simple-rest-api-with-deno-and-oak-framework-2fna
-// https://github.com/tajpouria/cors
+// CORS: https://github.com/tajpouria/cors
 
 
 import { Application, Router } from "https://deno.land/x/oak/mod.ts";

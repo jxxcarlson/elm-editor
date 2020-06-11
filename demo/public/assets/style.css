@@ -29,6 +29,10 @@ p {white-space: normal;}
     line-height: 12px !important;
  }
 
+.red { color: red;}
+.green { color: green;}
+.blue {color: blue;}
+
 
 .mm-paragraph {
 	white-space: normal;
@@ -142,7 +146,14 @@ p {white-space: normal;}
 
 }
 
- .mm-poetry > line { white-space : pre; }
+.mm-poetry > p {
+	margin-top: 0px;
+	margin-bottom: 0px;
+}
+
+.mm-poetry > line {
+   white-space : pre;
+}
 
 
 
