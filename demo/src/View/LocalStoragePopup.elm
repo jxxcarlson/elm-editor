@@ -1,6 +1,6 @@
 module View.LocalStoragePopup exposing (view)
 
-import Document exposing (MiniFileRecord)
+import Document exposing (Metadata)
 import Element
     exposing
         ( Element
@@ -49,7 +49,7 @@ view model =
             Element.none
 
 
-viewFileName : MiniFileRecord -> Element Msg
+viewFileName : Metadata -> Element Msg
 viewFileName record =
     row []
         [ Widget.plainButton 200 record.fileName (SendRequestForFile record.id) []

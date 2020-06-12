@@ -1,34 +1,47 @@
+env:
+  APP_ROOT: /Users/jxxcarlson/dev/elm/projects/elm-editor/demo/public
+  BROWSER: /Applications/Google\ Chrome.app/
 scripts:
-  make: elm make --optimize src/Main.elm --output=public/Main.js
-  debug: elm make --debug src/Main.elm --output=public/Main.js
-
-  reactor:
-    - elm reactor
-    - open -a /Applications/Firefox.app/  http://localhost:8000/public/index.html
+  make:
+    cmd: elm make --optimize src/Main.elm --output=public/Main.js
+    desc: Compline editor in optimize mode
+  debug:
+    cmd: elm make --debug src/Main.elm --output=public/Main.js
+    desc: Compile editor in debug mode
   live:
-    pll:
-      - elm-live --proxy-prefix=/api --proxy-host=http://localhost:4000 -p 8001 -d public/ src/Main.elm -- --output public/Main.js
-      - open -a /Applications/Google\ Chrome.app/  http://localhost:8001
-  publish: sh script/publish.sh
+    cmd:
+      pll:
+        - elm-live --proxy-prefix=/api --proxy-host=http://localhost:4000 -p 8001 -d public/ src/Main.elm -- --output public/Main.js
+        - open -a /Applications/Google\ Chrome.app/  http://localhost:8001
+    desc: Run editor with Elm Live
+  publish:
+    cmd: sh script/publish.sh
+    desc: publish editor to github pages
   app:
-    pll:
-      - file_server ..
-      - cmd: ./server.ts
-        allow:
-          - net
-          - env
-          - write
-          - read
-      - open -a /Applications/Google\ Chrome.app/  http://0.0.0.0:4507/index.html
-  ls: ls ../data | sort
-  uploadserver: scp -r ./public/src2 root@161.35.125.40:/root/docserver
-  uploaddocs: scp -r ./public/data root@161.35.125.40:/root/docserver
-  ssh: ssh root@161.35.125.40
-  edit:
-    pll:
-      - file_server /Users/jxxcarlson/dev/elm/projects/elm-editor/demo/public
-      - open -a /Applications/Google\ Chrome.app/  http://0.0.0.0:4507/index.html
-  editor:
-    pll:
-      - edit
-      - server
+    desc: run editor-app & start the server
+    cmd:
+      pll:
+        - file_server ${APP_ROOT}
+        - cmd: ${APP_ROOT}/src2/server.ts
+          allow:
+            - net
+            - env
+            - write
+            - read
+        - open -a /Applications/Google\ Chrome.app/  http://0.0.0.0:4507/index.html
+  ps:
+    cmd: ps aux | grep deno
+    desc: List processes
+  ls:
+    cmd: ls ${APP_ROOT}/data | sort
+    desc: List the data directory for the server
+  uploadserver:
+    cmd: scp -r ${APP_ROOT}/src2 root@161.35.125.40:/root/docserver
+    desc: Upload the server to Digital Ocean
+  uploaddocs:
+    cmd: scp -r ${APP_ROOT}/data root@161.35.125.40:/root/docserver
+    desc : Upload the server data to Digital Ocean
+  ssh:
+    cmd: ssh root@161.35.125.40
+    desc: ssh to Digital Ocean
+

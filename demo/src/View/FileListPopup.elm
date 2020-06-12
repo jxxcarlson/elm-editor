@@ -1,6 +1,6 @@
 module View.FileListPopup exposing (view)
 
-import Document exposing (MiniFileRecord)
+import Document exposing (Metadata)
 import Element
     exposing
         ( Element
@@ -67,14 +67,14 @@ view model =
             Element.none
 
 
-prepareFileList : List MiniFileRecord -> List MiniFileRecord
+prepareFileList : List Metadata -> List Metadata
 prepareFileList fileList =
     fileList
         |> List.filter (\r -> not (String.contains "deleted" r.fileName))
         |> List.sortBy .fileName
 
 
-viewFileName : MiniFileRecord -> MiniFileRecord -> Element Msg
+viewFileName : Metadata -> Metadata -> Element Msg
 viewFileName currentRecord record =
     let
         bgColor =

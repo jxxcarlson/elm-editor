@@ -10,7 +10,7 @@ At the moment, there is just one: external copy-paste.
 -}
 
 import Codec.Document
-import Document exposing (Document, MiniFileRecord)
+import Document exposing (Document, Metadata)
 import Json.Decode as D exposing (Decoder, bool, int, list, nullable, string)
 import Json.Decode.Pipeline as JP exposing (required)
 import Json.Encode as Encode
@@ -28,7 +28,7 @@ type alias GenericOutsideData =
 
 type InfoForElm
     = GotClipboard String
-    | GotFileList (List MiniFileRecord)
+    | GotFileList (List Metadata)
     | GotFile Document
 
 

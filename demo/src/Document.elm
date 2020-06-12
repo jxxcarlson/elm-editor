@@ -1,7 +1,7 @@
 module Document exposing
     ( DocType(..)
     , Document
-    , MiniFileRecord
+    , Metadata
     , NewDocumentData
     , miniFileRecord
     , new
@@ -13,14 +13,6 @@ type DocType
     | MiniLaTeXDoc
 
 
-type alias ExtendedDocument =
-    { fileName : String
-    , id : String
-    , content : String
-    , token : String
-    }
-
-
 type alias Document =
     { fileName : String
     , id : String
@@ -28,7 +20,7 @@ type alias Document =
     }
 
 
-type alias MiniFileRecord =
+type alias Metadata =
     { id : String
     , fileName : String
     }
@@ -74,6 +66,6 @@ new data =
     { fileName = fileName, id = data.id, content = data.content }
 
 
-miniFileRecord : Document -> MiniFileRecord
+miniFileRecord : Document -> Metadata
 miniFileRecord doc =
     { id = doc.id, fileName = doc.fileName }

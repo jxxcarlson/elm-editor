@@ -8,7 +8,7 @@ module Codec.Document exposing
     , messageDecoder
     )
 
-import Document exposing (Document, MiniFileRecord)
+import Document exposing (Document, Metadata)
 import Json.Decode as D exposing (Decoder, bool, int, list, nullable, string)
 import Json.Decode.Pipeline as JP exposing (required)
 import Json.Encode as Encode
@@ -18,7 +18,7 @@ import Json.Encode as Encode
 -- DECODERS
 
 
-documentListDecoder : D.Decoder (List MiniFileRecord)
+documentListDecoder : D.Decoder (List Metadata)
 documentListDecoder =
     D.list decodeMiniFileRecord
 
@@ -31,9 +31,9 @@ documentDecoder =
         |> required "content" string
 
 
-decodeMiniFileRecord : Decoder MiniFileRecord
+decodeMiniFileRecord : Decoder Metadata
 decodeMiniFileRecord =
-    D.succeed MiniFileRecord
+    D.succeed Metadata
         |> required "id" string
         |> required "fileName" string
 
@@ -54,7 +54,7 @@ messageDecoder =
 -- ENCODERS
 
 
-encodeMiniFileRecord : MiniFileRecord -> Encode.Value
+encodeMiniFileRecord : Metadata -> Encode.Value
 encodeMiniFileRecord record =
     Encode.object
         [ ( "fileName", Encode.string record.fileName )

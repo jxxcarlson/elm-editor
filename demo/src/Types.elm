@@ -12,7 +12,7 @@ module Types exposing
 
 import Author exposing (Author)
 import Browser.Dom as Dom
-import Document exposing (DocType(..), Document, MiniFileRecord)
+import Document exposing (DocType(..), Document, Metadata)
 import Editor exposing (Editor)
 import File exposing (File)
 import Http
@@ -51,7 +51,7 @@ type alias Model =
     , fileName : String
     , fileName_ : String
     , changingFileNameState : ChangingFileNameState
-    , fileList : List MiniFileRecord
+    , fileList : List Metadata
     , documentStatus : DocumentStatus
     , selectedId : ( Int, Int )
     , selectedId_ : String
@@ -125,7 +125,7 @@ type Msg
     | CreateDocument
     | ChangeFileName String
     | CancelChangeFileName
-    | SoftDelete MiniFileRecord
+    | SoftDelete Metadata
       -- External Files
     | RequestFile
     | SendRequestForFile String
@@ -144,7 +144,7 @@ type Msg
     | SaveFileToStorage
       -- File storage
     | AskForRemoteDocuments
-    | GotDocuments (Result Http.Error (List MiniFileRecord))
+    | GotDocuments (Result Http.Error (List Metadata))
     | AskForDocument String
     | GotDocument (Result Http.Error Document)
     | Message (Result Http.Error String)

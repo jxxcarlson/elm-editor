@@ -19,7 +19,7 @@ module Helper.File exposing
 
 import Codec.Document
 import Config
-import Document exposing (DocType(..), Document, MiniFileRecord)
+import Document exposing (DocType(..), Document, Metadata)
 import Editor
 import File exposing (File)
 import File.Download as Download
@@ -69,7 +69,7 @@ getDocumentList serverUrl =
         }
 
 
-updateDocumentList : String -> MiniFileRecord -> Cmd Msg
+updateDocumentList : String -> Metadata -> Cmd Msg
 updateDocumentList serverUrl record =
     Http.request
         { method = "PUT"
@@ -222,7 +222,7 @@ removePostfix postfix fileName =
             fileName
 
 
-updateFileList : MiniFileRecord -> List MiniFileRecord -> List MiniFileRecord
+updateFileList : Metadata -> List Metadata -> List Metadata
 updateFileList rec fileList =
     let
         mapper r =

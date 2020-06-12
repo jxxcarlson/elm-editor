@@ -1,14 +1,14 @@
 module Future.Document exposing
     ( Author
-    , Document
     , Manifest
+    , Metadata
     , Uuid
     , docTypeOfString
     , stringFromDocType
     )
 
+import Document exposing (DocType(..))
 import Time
-import Types exposing (DocType(..))
 
 
 type alias Author =
@@ -21,21 +21,24 @@ type alias Author =
     }
 
 
-type alias Document =
-    { title : String
-    , subtitle : String
+type alias Metadata =
+    { id : Uuid
     , fileName : String
-    , url : String
-    , id : Uuid
+
+    ----
+    , title : String
+    , subtitle : String
+    , authorName : String
+    , authorId : Uuid
+
+    ----
+    , domain : String
     , isPublic : Bool
     , tags : List String
     , categories : List String
-    , authorName : String
-    , authorId : Uuid
     , isPartOf : Maybe Uuid
     , level : Int
     , docType : DocType
-    , content : String
     , timeCreated : Time.Posix
     , timeUpdated : Time.Posix
     }
