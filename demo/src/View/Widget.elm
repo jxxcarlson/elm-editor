@@ -124,6 +124,7 @@ saveFileToStorageButton model =
                 SaveFileToStorage
                 [ height (px 20)
                 , Background.color (Element.rgb 0.55 0 0)
+                , Element.htmlAttribute (Attribute.title "Save file now")
                 ]
 
         DocumentSaved ->
@@ -132,6 +133,7 @@ saveFileToStorageButton model =
                 SaveFileToStorage
                 [ height (px 20)
                 , Background.color (Element.rgb 0.0 0.7 0)
+                , Element.htmlAttribute (Attribute.title "Save file (its OK now)")
                 ]
 
 
@@ -230,7 +232,12 @@ documentTypeButton model =
                 MiniLaTeXDoc ->
                     "LaTeX"
     in
-    button width title ToggleDocType [ Background.color Style.redColor ]
+    button width
+        title
+        ToggleDocType
+        [ Background.color Style.redColor
+        , Element.htmlAttribute (Attribute.title "Cycle document type")
+        ]
 
 
 loadDocumentButton model width docTitle buttonLabel =
