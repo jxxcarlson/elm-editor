@@ -30,10 +30,38 @@ view model =
             viewSignIn model
 
         SignedIn ->
-            Element.none
+            viewSignedIn model
 
         SigningUp ->
             viewSignUp model
+
+
+viewSignedIn : Model -> Element Msg
+viewSignedIn model =
+    case model.currentUser of
+        Nothing ->
+            viewSignIn model
+
+        Just author ->
+            case model.popupStatus of
+                PopupClosed ->
+                    Element.none
+
+                PopupOpen AuthorPopup ->
+                    column
+                        [ width (px 500)
+                        , height (px <| round <| Helper.Common.windowHeight model.height + 28)
+                        , paddingXY 30 30
+                        , Background.color (Element.rgba 1.0 0.75 0.75 0.8)
+                        , spacing 16
+                        ]
+                        [ titleLine model
+                        , el [ Font.size 18 ] (text author.userName)
+                        , Widget.signOutButton
+                        ]
+
+                PopupOpen _ ->
+                    Element.none
 
 
 viewSignIn : Model -> Element Msg
@@ -53,7 +81,7 @@ viewSignIn model =
                 [ titleLine model
                 , userNameInput model
                 , passwordInput model
-                , Widget.signInButton
+                , row [ spacing 8 ] [ Widget.signInButton, Widget.signUpButton ]
                 ]
 
         PopupOpen _ ->
@@ -80,7 +108,7 @@ viewSignUp model =
                 , emailInput model
                 , passwordInput model
                 , passwordAgainInput model
-                , Widget.createAuthorButton
+                , row [ spacing 8 ] [ Widget.createAuthorButton, Widget.cancelSignInButton ]
                 ]
 
         PopupOpen _ ->

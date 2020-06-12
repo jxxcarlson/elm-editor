@@ -155,7 +155,9 @@ type Msg
     | InputPasswordAgain String
     | InputEmail String
     | CreateAuthor
+    | SignUp
     | SignIn
+    | SignOut
     | GotSigninReply (Result Http.Error Authorization)
 
 

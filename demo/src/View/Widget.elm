@@ -2,6 +2,7 @@ module View.Widget exposing
     ( aboutButton
     , button
     , cancelChangeFileNameButton
+    , cancelSignInButton
     , changeFileNameButton
     , closePopupButton
     , createAuthorButton
@@ -18,6 +19,8 @@ module View.Widget exposing
     , plainButton
     , saveFileToStorageButton
     , signInButton
+    , signOutButton
+    , signUpButton
     , textField
     , toggleFileLocationButton
     )
@@ -63,7 +66,19 @@ createAuthorButton =
     button_ 70 "Create" CreateAuthor
 
 
+signUpButton =
+    button_ 70 "Sign up" SignUp
+
+
 signInButton =
+    button_ 70 "Sign in" SignIn
+
+
+signOutButton =
+    button_ 70 "Sign out" SignOut
+
+
+cancelSignInButton =
     button_ 70 "Sign in" SignIn
 
 

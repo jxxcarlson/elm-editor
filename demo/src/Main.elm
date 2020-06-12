@@ -546,9 +546,18 @@ update msg model =
                 |> postMessage ("Created: " ++ model.userName)
                 |> withCmd (Helper.Author.persist model.fileStorageUrl newAuthor)
 
+        SignUp ->
+            { model | signInMode = SigningUp, currentUser = Nothing }
+                |> withNoCmd
+
         SignIn ->
             model
                 |> withCmd (Helper.Author.signInAuthor model.fileStorageUrl model.userName model.password)
+
+        SignOut ->
+            { model | signInMode = SigningIn, currentUser = Nothing, popupStatus = PopupClosed }
+                |> postMessage "Signed out"
+                |> withNoCmd
 
         GotSigninReply result ->
             case result of
@@ -558,12 +567,13 @@ update msg model =
                             { model
                                 | currentUser = Just author
                                 , popupStatus = PopupClosed
+                                , signInMode = SignedIn
                             }
                                 |> postMessage (author.userName ++ " signed in")
                                 |> withNoCmd
 
                         B _ ->
-                            { model | currentUser = Nothing }
+                            { model | currentUser = Nothing, signInMode = SigningIn }
                                 |> postMessage "Could not verify user/password"
                                 |> withNoCmd
 
