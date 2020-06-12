@@ -1,6 +1,5 @@
 env:
   APP_ROOT: /Users/jxxcarlson/dev/elm/projects/elm-editor/demo/public
-  BROWSER: /Applications/Google\ Chrome.app/
 scripts:
   make:
     cmd: elm make --optimize src/Main.elm --output=public/Main.js
@@ -30,8 +29,8 @@ scripts:
             - read
         - open -a /Applications/Google\ Chrome.app/  http://0.0.0.0:4507/index.html
   ps:
-    cmd: ps aux | grep deno
-    desc: List processes
+    cmd: ps aux | grep ${APP_ROOT} | grep allow
+    desc: List editor processes (editor, server)
   ls:
     cmd: ls ${APP_ROOT}/data | sort
     desc: List the data directory for the server

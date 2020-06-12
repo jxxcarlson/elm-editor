@@ -1,7 +1,8 @@
 // https://dev.to/kryz/write-a-small-api-using-deno-1cl0
 // DINOSAUR: https://dev.to/nickolasbenakis/create-a-simple-rest-api-with-deno-and-oak-framework-2fna
 // CORS: https://github.com/tajpouria/cors
-
+// DOCKER https://blog.logrocket.com/how-to-deploy-deno-applications-to-production/
+// POGO https://github.com/sholladay/pogo
 
 import { Application, Router } from "https://deno.land/x/oak/mod.ts";
 import {Document, DocumentRecord, ExtendedDocument, documentOfExtendedDocument} from "./document.ts";

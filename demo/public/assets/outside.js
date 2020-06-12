@@ -1,5 +1,4 @@
-import { fetchManifest, writeManifest } from './bundles/manifest.js';
-import { foobar } from './bundles/simple.js'
+
 
 app.ports.infoForOutside.subscribe(msg => {
 
@@ -8,8 +7,10 @@ app.ports.infoForOutside.subscribe(msg => {
     switch(msg.tag) {
 
         case "AskForClipBoard":
+            console.log("AskForClipBoard")
             navigator.clipboard.readText()
               .then(text => {
+
                 app.ports.infoForElm.send({tag: "GotClipboard", data:  text})
               })
               .catch(err => {
@@ -44,7 +45,7 @@ app.ports.infoForOutside.subscribe(msg => {
            break;
 
         case "WriteToClipboard":
-
+            console.log("GotClipboard")
             navigator.permissions.query({name: "clipboard-write"}).then(result => {
               if (result.state == "granted" || result.state == "prompt") {
                 updateClipboard(JSON.stringify(msg.data))
@@ -100,6 +101,7 @@ app.ports.infoForOutside.subscribe(msg => {
     }
 
     function updateClipboard(newClip) {
+      console.log("updateClipboard")
       navigator.clipboard.writeText(newClip).then(function() {
       }, function() {
         console.log ("!JS! Clipboard write failed");
