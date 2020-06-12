@@ -104,11 +104,21 @@ numberOfHitsDisplay model =
 
 
 searchForwardButton =
-    Widget.rowButton 30 RollSearchSelectionForward ">" [ HA.style "float" "left" ]
+    Widget.rowButton 30
+        RollSearchSelectionForward
+        ">"
+        [ HA.style "float" "left"
+        , HA.title "Next search hit"
+        ]
 
 
 searchBackwardButton =
-    Widget.rowButton 30 RollSearchSelectionBackward "<" [ HA.style "float" "left" ]
+    Widget.rowButton 30
+        RollSearchSelectionBackward
+        "<"
+        [ HA.style "float" "left"
+        , HA.title "Previous search hit"
+        ]
 
 
 searchTextButton =
@@ -116,7 +126,12 @@ searchTextButton =
 
 
 replaceTextButton =
-    Widget.rowButton 70 ReplaceCurrentSelection "Replace" [ HA.style "margin-left" "10px" ]
+    Widget.rowButton 70
+        ReplaceCurrentSelection
+        "Replace"
+        [ HA.style "margin-left" "10px"
+        , HA.title "Replace current search hit"
+        ]
 
 
 acceptLineNumber =
