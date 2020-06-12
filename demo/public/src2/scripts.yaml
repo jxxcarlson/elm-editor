@@ -1,5 +1,6 @@
 env:
   SERVER_ROOT: /Users/jxxcarlson/dev/elm/projects/elm-editor/demo/public
+  DATA_ROOT: /Users/jxxcarlson/Documents/mudocs
 scripts:
   app:
     pll:
@@ -14,9 +15,9 @@ scripts:
     allow:
       - net
       - env
-      - write
-      - read
-  server?: ps aux | grep deno | grep server #| grep -v grep
+      - write=${DATA_ROOT}
+      - read=${DATA_ROOT}
+  server?: ps aux | grep deno | grep server.ts | grep allow | grep -v grep
   ssh: ssh root@161.35.125.40
   upload: scp -r ./data root@161.35.125.40:/root/docserver
   upone: scp scripts.yaml root@161.35.125.40:/root/docserver
