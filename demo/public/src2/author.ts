@@ -70,7 +70,7 @@ export const fetchAuthorList = async (): Promise<AuthorWithPasswordHash[]> => {
   const decoder = new TextDecoder();
   const decodedData = decoder.decode(data);
 
-  console.log("AUTHOR_LIST", decodedData)
+  // console.log("AUTHOR_LIST", decodedData)
 
   return load(decodedData);
 };
@@ -110,7 +110,7 @@ export const signInAuthor = async ({
     passwordHash_ == a.passwordHash
 
 
-  console.log("Authorized: " + authorized(passwordHash, authorsFound))
+  // console.log("Authorized: " + authorized(passwordHash, authorsFound))
 
   if (authorized(passwordHash, authorsFound)) {
       response.body = reduceAuthor(authorsFound[0]);
@@ -144,16 +144,14 @@ export const createAuthor = async ({
        , id: id, email: email, passwordHash: passwordHash
        , dateCreated: dateCreated, dateModified: dateModified };
 
-    console.log("AuthorWithPasswordHash", author)
+    // console.log("AuthorWithPasswordHash", author)
     if (isNotPresent(author, authorList)) {
-      console.log("BRANCH 1")
       authorList.push(author);
       writeAuthorList(authorList)
       console.log("added: " + author.userName);
       response.body = { msg: "Added: " + author.userName};
       response.status = 200;
     } else {
-      console.log("BRANCH 2")
       authorList = authorList.map((a:AuthorWithPasswordHash) => changeAuthor(author, a))
       writeAuthorList(authorList)
       console.log("updated: " + author.userName);

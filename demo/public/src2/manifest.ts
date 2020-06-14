@@ -17,7 +17,7 @@ export const fetchManifest = async (): Promise<DocumentRecord[]> => {
   const decoder = new TextDecoder();
   const decodedData = decoder.decode(data);
 
-  console.log("MANIFEST", decodedData)
+  // console.log("MANIFEST", decodedData)
 
   return load(decodedData);
 };
@@ -68,5 +68,5 @@ export const updateDocument = async ({
       response.body = { msg: "Updated: " + sourceDoc.fileName };
       response.status = 200;
     }
-  
+
 };

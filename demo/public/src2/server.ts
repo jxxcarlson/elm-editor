@@ -49,6 +49,5 @@ app.use(router.allowedMethods());
 
 console.log(`Listening on port ${PORT}...`);
 console.log(`Files stored in ${FILE_STORE_PATH}`);
-console.log(`Manifest: ${MANIFEST}`);
 
 await app.listen(`${HOST}:${PORT}`);

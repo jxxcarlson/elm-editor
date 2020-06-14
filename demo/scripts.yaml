@@ -1,46 +1,86 @@
 env:
   APP_ROOT: /Users/jxxcarlson/dev/elm/projects/elm-editor/demo/public
+  DATA_ROOT: /Users/jxxcarlson/Documents/mudocs
+
 scripts:
+
+  cloc:
+    cmd: cloc --by-file src2
+    desc: lines of code for server, by file
+
   make:
     cmd: elm make --optimize src/Main.elm --output=public/Main.js
     desc: Compline editor in optimize mode
+
   debug:
     cmd: elm make --debug src/Main.elm --output=public/Main.js
     desc: Compile editor in debug mode
+
   live:
     cmd:
       pll:
         - elm-live --proxy-prefix=/api --proxy-host=http://localhost:4000 -p 8001 -d public/ src/Main.elm -- --output public/Main.js
         - open -a /Applications/Google\ Chrome.app/  http://localhost:8001
     desc: Run editor with Elm Live
+
   publish:
     cmd: sh script/publish.sh
     desc: publish editor to github pages
+
+  server:
+    desc: Run the server
+    cmd:
+       - ${APP_ROOT}/src2/server.ts
+    allow:
+      - net
+      - env
+      - write=${DATA_ROOT}
+      - read=${DATA_ROOT}
+
+  editor:
+    cmd:
+      desc: Run the editor app
+      pll:
+        - file_server ${APP_ROOT}
+        - open -a /Applications/Google\ Chrome.app/  http://0.0.0.0:4507/index.html
+
   app:
     desc: run editor-app & start the server
     cmd:
       pll:
-        - file_server ${APP_ROOT}
         - cmd: ${APP_ROOT}/src2/server.ts
           allow:
             - net
             - env
-            - write
-            - read
+            - write=${DATA_ROOT}
+            - read=${DATA_ROOT}
+        - file_server ${APP_ROOT}
         - open -a /Applications/Google\ Chrome.app/  http://0.0.0.0:4507/index.html
-  ps:
-    cmd: ps aux | grep ${APP_ROOT} | grep allow
-    desc: List editor processes (editor, server)
+
+  server?:
+    cmd: ps aux | grep deno | grep server.ts | grep allow | grep -v grep
+    desc: See if the server is running
+
   ls:
-    cmd: ls ${APP_ROOT}/data | sort
+    cmd: ls ${DATA_ROOT} | sort
     desc: List the data directory for the server
+
+  upone:
+    cmd: scp $1 root@161.35.125.40:/root/docserver
+    desc: upload one file to Digital Ocean
+
+  upmany:
+    cmd: scp -r $1 root@161.35.125.40:/root/docserver
+    desc: upload one directory to Digital Ocean
+
   uploadserver:
     cmd: scp -r ${APP_ROOT}/src2 root@161.35.125.40:/root/docserver
     desc: Upload the server to Digital Ocean
+
   uploaddocs:
-    cmd: scp -r ${APP_ROOT}/data root@161.35.125.40:/root/docserver
+    cmd: scp -r ${DATA_ROOT} root@161.35.125.40:/root/docserver
     desc : Upload the server data to Digital Ocean
+
   ssh:
     cmd: ssh root@161.35.125.40
     desc: ssh to Digital Ocean
-
