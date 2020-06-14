@@ -23,6 +23,10 @@ scripts:
         - open -a /Applications/Google\ Chrome.app/  http://localhost:8001
     desc: Run editor with Elm Live
 
+  tauri:
+    cmd: npx tauri dev
+    desc: Start tauri dev
+
   publish:
     cmd: sh script/publish.sh
     desc: publish editor to github pages

@@ -4,6 +4,9 @@
 // DOCKER https://blog.logrocket.com/how-to-deploy-deno-applications-to-production/
 // POGO https://github.com/sholladay/pogo
 
+// TAURI: https://tauri.studio/
+// Boscop: https://github.com/Boscop/web-view
+
 import { Application, Router } from "https://deno.land/x/oak/mod.ts";
 import {Document, DocumentRecord, ExtendedDocument, documentOfExtendedDocument} from "./document.ts";
 import {getDocuments} from "./handlers/getDocuments.ts"
