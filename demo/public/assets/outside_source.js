@@ -1,7 +1,5 @@
 
-const {readTextFile, writeTextFile } = require('tauri/api/fs')
-
-
+const {readTextFile, writeTextFile } = require('./api/index.cjs.min.js')
 
 console.log("Im OK!")
 
@@ -90,11 +88,11 @@ app.ports.infoForOutside.subscribe(msg => {
 
     }
 
-    function manifest() {
+    function getManifest() {
 
       const path ='/Users/jxxcarlson/Documents/mudocs'
 
-      return readTextFile(path).then(value => console.log(value))
+      return readTextFile(path,  {}).then(value => console.log(value))
     }
 
     function getFileFromLocalStorage(fileName) {

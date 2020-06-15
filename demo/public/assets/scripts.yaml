@@ -1,0 +1,4 @@
+scripts:
+  bro:
+    cmd: browserify outside_source.js -o outside.js
+    desc: browserify

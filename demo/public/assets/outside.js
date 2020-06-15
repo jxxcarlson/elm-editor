@@ -1,12 +1,12 @@
-// import { readTextFile, writeFile } from 'tauri/api/fs'
-// import { open, save } from 'tauri/api/dialog'
+(function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
+"use strict";Object.defineProperty(exports,"__esModule",{value:!0});var e=require("./tauri.cjs.min.js");exports.default=e.default;
 
-const fs = require('tauri/api/fs')
+},{"./tauri.cjs.min.js":2}],2:[function(require,module,exports){
+"use strict";Object.defineProperty(exports,"__esModule",{value:!0});var e=window.tauri;exports.default=e;
 
-//<script type="module">
-//import { readTextFile, writeFile } from 'tauri/api/fs'
-//import { open, save } from 'tauri/api/dialog'
-//</script>
+},{}],3:[function(require,module,exports){
+
+const {readTextFile, writeTextFile } = require('./api/index.cjs.min.js')
 
 console.log("Im OK!")
 
@@ -95,11 +95,11 @@ app.ports.infoForOutside.subscribe(msg => {
 
     }
 
-    function manifest() {
+    function getManifest() {
 
       const path ='/Users/jxxcarlson/Documents/mudocs'
 
-      return fs.readTextFile(path).then(value => console.log(${value}))
+      return readTextFile(path,  {}).then(value => console.log(value))
     }
 
     function getFileFromLocalStorage(fileName) {
@@ -115,3 +115,5 @@ app.ports.infoForOutside.subscribe(msg => {
     }
 
 })
+
+},{"./api/index.cjs.min.js":1}]},{},[3]);
