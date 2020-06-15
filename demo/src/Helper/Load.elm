@@ -10,7 +10,7 @@ import Document exposing (DocType(..), Document)
 import Editor
 import EditorMsg exposing (WrapOption(..))
 import Helper.Common
-import Helper.File
+import Helper.Server
 import List.Extra
 import Markdown.Option exposing (MarkdownOption(..))
 import Render exposing (RenderingOption(..))
@@ -50,7 +50,7 @@ loadDocument : Document -> Model -> Model
 loadDocument document model =
     let
         docType =
-            Helper.File.docType document.fileName
+            Helper.Server.docType document.fileName
 
         renderingOption =
             case docType of

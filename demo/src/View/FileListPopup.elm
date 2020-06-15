@@ -28,7 +28,7 @@ view model =
         PopupClosed ->
             Element.none
 
-        PopupOpen RemoteFileListPopup ->
+        PopupOpen FileListPopup ->
             let
                 filesToDisplay =
                     model.fileList |> prepareFileList

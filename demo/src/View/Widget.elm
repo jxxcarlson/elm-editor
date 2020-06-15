@@ -41,7 +41,7 @@ import Element
 import Element.Background as Background
 import Element.Font as Font
 import Element.Input as Input
-import Helper.File
+import Helper.Server
 import Html exposing (Attribute, Html)
 import Html.Attributes as Attribute
 import Html.Events as HE
@@ -105,8 +105,8 @@ cancelChangeFileNameButton =
 
 changeFileNameButton fileName =
     case
-        ( Helper.File.fileExtension fileName
-        , String.length (Helper.File.titleFromFileName fileName) > 0
+        ( Helper.Server.fileExtension fileName
+        , String.length (Helper.Server.titleFromFileName fileName) > 0
         )
     of
         ( "md", True ) ->
@@ -170,7 +170,7 @@ openAuthorPopupButton model =
 
 openFileListPopupButton model =
     case model.popupStatus of
-        PopupOpen RemoteFileListPopup ->
+        PopupOpen FileListPopup ->
             Button.make (ManagePopup PopupClosed) "Close"
                 |> Button.withWidth (Bounded 60)
                 |> Button.withSelected False
@@ -178,10 +178,10 @@ openFileListPopupButton model =
                 |> Button.toElement
 
         PopupOpen _ ->
-            button 60 "Files" (ManagePopup (PopupOpen RemoteFileListPopup)) []
+            button 60 "Files" (ManagePopup (PopupOpen FileListPopup)) []
 
         PopupClosed ->
-            button 60 "Files" (ManagePopup (PopupOpen RemoteFileListPopup)) []
+            button 60 "Files" (ManagePopup (PopupOpen FileListPopup)) []
 
 
 openFilePopupButton model =

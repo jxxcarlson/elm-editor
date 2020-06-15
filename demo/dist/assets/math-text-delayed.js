@@ -1,4 +1,4 @@
-class MathText extends HTMLElement {
+class MathTextDelayed extends HTMLElement {
 
    // The "set content" code below detects the
    // argument to the custom element
@@ -17,5 +17,4 @@ class MathText extends HTMLElement {
   }
 }
 
-customElements.define('math-text', MathText)
-
+customElements.define('math-text-delayed', MathTextDelayed)

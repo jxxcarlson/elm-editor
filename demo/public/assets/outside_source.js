@@ -1,12 +1,7 @@
-// import { readTextFile, writeFile } from 'tauri/api/fs'
-// import { open, save } from 'tauri/api/dialog'
 
-const fs = require('tauri/api/fs')
+const {readTextFile, writeTextFile } = require('tauri/api/fs')
 
-//<script type="module">
-//import { readTextFile, writeFile } from 'tauri/api/fs'
-//import { open, save } from 'tauri/api/dialog'
-//</script>
+
 
 console.log("Im OK!")
 
@@ -99,7 +94,7 @@ app.ports.infoForOutside.subscribe(msg => {
 
       const path ='/Users/jxxcarlson/Documents/mudocs'
 
-      return fs.readTextFile(path).then(value => console.log(${value}))
+      return readTextFile(path).then(value => console.log(value))
     }
 
     function getFileFromLocalStorage(fileName) {

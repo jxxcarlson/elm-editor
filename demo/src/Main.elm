@@ -8,6 +8,7 @@ import Codec.Author
 import Config
 import ContextMenu exposing (Item(..))
 import Data
+import Helper.File
 import Document exposing (DocType(..))
 import Editor exposing (Editor, EditorMsg)
 import EditorMsg exposing (EMsg(..))
@@ -34,7 +35,7 @@ import Element.Font as Font
 import File exposing (File)
 import Helper.Author
 import Helper.Common
-import Helper.File
+import Helper.Server
 import Helper.Load
 import Helper.Sync
 import Html exposing (Attribute, Html)
@@ -240,7 +241,7 @@ update msg model =
             in
             ( { model
                 | docType = newDocType
-                , fileName = Helper.File.updateDocType newDocType model.fileName
+                , fileName = Helper.Server.updateDocType newDocType model.fileName
               }
             , Cmd.none
             )
@@ -264,7 +265,7 @@ update msg model =
                     (Cmd.batch
                         [ View.Scroll.toEditorTop
                         , View.Scroll.toRenderedTextTop
-                        , Helper.File.createDocument model.fileStorageUrl doc
+                        , Helper.Server.createDocument model.fileStorageUrl doc
                         ]
                     )
 
@@ -289,15 +290,15 @@ update msg model =
                         |> withNoCmd
 
         RequestFile ->
-            ( model, Helper.File.requestFile )
+            ( model, Helper.Server.requestFile )
 
         RequestedFile file ->
-            ( { model | fileName = File.name file }, Helper.File.read file )
+            ( { model | fileName = File.name file }, Helper.Server.read file )
 
         DocumentLoaded source ->
             let
                 docType =
-                    case Helper.File.fileExtension model.fileName of
+                    case Helper.Server.fileExtension model.fileName of
                         "md" ->
                             MarkdownDoc
 
@@ -311,7 +312,7 @@ update msg model =
                             MarkdownDoc
 
                 newModel =
-                    Helper.Load.loadDocument_ (Helper.File.titleFromFileName model.fileName) source docType model
+                    Helper.Load.loadDocument_ (Helper.Server.titleFromFileName model.fileName) source docType model
                         |> (\m -> { m | docType = docType })
                         |> Helper.Sync.syncModel2
 
@@ -322,14 +323,14 @@ update msg model =
                 |> withCmds
                     [ View.Scroll.toRenderedTextTop
                     , View.Scroll.toEditorTop
-                    , Helper.File.updateDocument model.fileStorageUrl newDocument
+                    , Helper.Server.updateDocument model.fileStorageUrl newDocument
                     ]
 
         SaveFile ->
-            ( model, Helper.File.saveFile model )
+            ( model, Helper.Server.saveFile model )
 
         ExportFile ->
-            ( model, Helper.File.exportFile model )
+            ( model, Helper.Server.exportFile model )
 
         SyncLR ->
             let
@@ -348,7 +349,7 @@ update msg model =
 
                 Outside.GotFile file ->
                     Helper.Load.loadDocument file model
-                        |> (\m -> m |> withCmd (Helper.File.updateDocument m.fileStorageUrl m.document))
+                        |> (\m -> m |> withCmd (Helper.Server.updateDocument m.fileStorageUrl m.document))
 
         LogErr _ ->
             ( model, Cmd.none )
@@ -379,7 +380,7 @@ update msg model =
                 PopupOpen LocalStoragePopup ->
                     -- TODO: needs to be eliminated
                     { model | popupStatus = status }
-                        |> withCmd (Helper.File.getDocumentList model.fileStorageUrl)
+                        |> withCmd (Helper.Server.getDocumentList model.fileStorageUrl)
 
                 PopupOpen FilePopup ->
                     { model | popupStatus = status } |> withNoCmd
@@ -387,13 +388,18 @@ update msg model =
                 PopupOpen NewFilePopup ->
                     { model | popupStatus = status } |> withNoCmd
 
-                PopupOpen RemoteFileListPopup ->
+                PopupOpen FileListPopup ->
+                    -- TODO: Add File API
                     { model | popupStatus = status, documentStatus = DocumentSaved }
                         |> withCmds
-                            [ Helper.File.getDocumentList model.fileStorageUrl
-                            , Helper.File.updateDocument model.fileStorageUrl model.document
-                            ]
-
+                          (case model.fileLocation of
+                              LocalFiles ->
+                                [ Helper.File.getDocumentList
+                                ]
+                              RemoteFiles ->
+                                [ Helper.Server.getDocumentList model.fileStorageUrl
+                                , Helper.Server.updateDocument model.fileStorageUrl model.document
+                                ])
                 PopupOpen _ ->
                     { model | popupStatus = status } |> withNoCmd
 
@@ -415,7 +421,7 @@ update msg model =
 
         SaveFileToStorage ->
             { model | documentStatus = DocumentSaved }
-                |> withCmd (Helper.File.updateDocument model.fileStorageUrl model.document)
+                |> withCmd (Helper.Server.updateDocument model.fileStorageUrl model.document)
 
         InputFileName str ->
             ( { model | fileName_ = str, changingFileNameState = ChangingFileName }, Cmd.none )
@@ -430,24 +436,24 @@ update msg model =
             in
             ( { model
                 | fileName = model.fileName_
-                , docType = Helper.File.docType model.fileName_
+                , docType = Helper.Server.docType model.fileName_
                 , changingFileNameState = FileNameOK
                 , popupStatus = PopupClosed
                 , document = newDocument
-                , fileList = Helper.File.updateFileList (Document.miniFileRecord newDocument) model.fileList
+                , fileList = Helper.Server.updateFileList (Document.miniFileRecord newDocument) model.fileList
               }
-            , Helper.File.updateDocument model.fileStorageUrl newDocument
+            , Helper.Server.updateDocument model.fileStorageUrl newDocument
             )
 
         SoftDelete record ->
             let
                 newRecord =
-                    { record | fileName = Helper.File.addPostfix "deleted" record.fileName }
+                    { record | fileName = Helper.Server.addPostfix "deleted" record.fileName }
             in
             { model
-                | fileList = Helper.File.updateFileList newRecord model.fileList
+                | fileList = Helper.Server.updateFileList newRecord model.fileList
             }
-                |> withCmd (Helper.File.updateDocumentList model.fileStorageUrl newRecord)
+                |> withCmd (Helper.Server.updateDocumentList model.fileStorageUrl newRecord)
 
         CancelChangeFileName ->
             ( { model | fileName_ = model.fileName, changingFileNameState = FileNameOK }, Cmd.none )
@@ -463,7 +469,7 @@ update msg model =
                 |> withNoCmd
 
         AskForDocument fileName ->
-            { model | popupStatus = PopupClosed } |> withCmd (Helper.File.getDocument model.fileStorageUrl fileName)
+            { model | popupStatus = PopupClosed } |> withCmd (Helper.Server.getDocument model.fileStorageUrl fileName)
 
         GotDocument result ->
             case result of
@@ -477,7 +483,7 @@ update msg model =
                         |> withNoCmd
 
         AskForRemoteDocuments ->
-            model |> withCmd (Helper.File.getDocumentList model.fileStorageUrl)
+            model |> withCmd (Helper.Server.getDocumentList model.fileStorageUrl)
 
         GotDocuments result ->
             case result of
@@ -611,7 +617,7 @@ saveFileToStorage_ model =
                 , documentStatus = DocumentSaved
               }
             , Cmd.batch
-                [ Helper.File.updateDocument model.fileStorageUrl model.document
+                [ Helper.Server.updateDocument model.fileStorageUrl model.document
                 ]
             )
 

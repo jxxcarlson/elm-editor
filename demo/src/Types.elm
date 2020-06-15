@@ -94,7 +94,7 @@ type PopupWindow
     = FilePopup
     | NewFilePopup
     | LocalStoragePopup
-    | RemoteFileListPopup
+    | FileListPopup
     | AuthorPopup
 
 
