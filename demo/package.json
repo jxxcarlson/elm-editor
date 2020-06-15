@@ -33,6 +33,7 @@
     "uglify-js": "^3.9.4"
   },
   "dependencies": {
-    "tauri": "^0.6.3"
+    "tauri": "^0.6.3",
+    "uniq": "^1.0.1"
   }
 }

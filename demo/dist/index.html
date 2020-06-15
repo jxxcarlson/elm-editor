@@ -1,0 +1,39 @@
+
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+
+    <!-- Load MathJax code -->
+    <script src="assets/custom-element-config.js"></script>
+    <script src="assets/math-text.js"></script>
+    <script src="assets/math-text-delayed.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+
+    <link rel="stylesheet" href="assets/style.css">
+
+    <title>Pure Elm Text Editor</title>
+
+    <script src="Main.js"></script>
+
+</head>
+
+<body>
+<div id="editor"></div>
+
+<script>
+      var app = Elm.Main.init({
+        node: document.getElementById('editor'),
+        flags : {
+          width : window.innerWidth,
+          height : window.innerHeight
+         }
+      });
+</script>
+
+<script  type="module" src="assets/outside.js"></script>
+
+</body>
+
+</html>
