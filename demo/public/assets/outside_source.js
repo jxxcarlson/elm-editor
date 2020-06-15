@@ -1,5 +1,5 @@
 
-const {readTextFile, writeTextFile } = require('./api/index.cjs.min.js')
+const {readTextFile, writeTextFile } = require('./api/fs/index.cjs.min.js')
 
 console.log("Im OK!")
 
@@ -90,7 +90,7 @@ app.ports.infoForOutside.subscribe(msg => {
 
     function getManifest() {
 
-      const path ='/Users/jxxcarlson/Documents/mudocs'
+      const path ='/Users/jxxcarlson/Documents/mudocs/manifest.yaml'
 
       return readTextFile(path,  {}).then(value => console.log(value))
     }
