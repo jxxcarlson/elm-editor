@@ -258,6 +258,10 @@ update msg model =
 
                 doc =
                     newModel.document
+
+                createDocCmd = case model.fileLocation of
+                    LocalFiles -> Outside.sendInfo(Outside.CreateFile doc)
+                    RemoteFiles -> Helper.Server.createDocument model.fileStorageUrl doc
             in
             { newModel | popupStatus = PopupClosed }
                 |> Helper.Sync.syncModel2
@@ -265,7 +269,7 @@ update msg model =
                     (Cmd.batch
                         [ View.Scroll.toEditorTop
                         , View.Scroll.toRenderedTextTop
-                        , Helper.Server.createDocument model.fileStorageUrl doc
+                        , createDocCmd
                         ]
                     )
 

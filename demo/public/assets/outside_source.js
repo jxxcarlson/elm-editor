@@ -85,6 +85,16 @@ app.ports.infoForOutside.subscribe(msg => {
 
              break;
 
+          case "CreateFile":
+
+              console.log("Here is CreateFile")
+
+              var document = msg.data
+
+              console.log("CREATE DOC", document.fileName)
+
+              createFile(document)
+
           case "WriteFile":
 
               console.log("Here is WriteFile")
@@ -133,27 +143,33 @@ app.ports.infoForOutside.subscribe(msg => {
 
         const pathToFile = docPath + '/' + document.fileName
 
-        console.log("Writing file: ", document.fileName)
-
         writeFile({file: pathToFile, contents: document.content})
     }
 
-/**
- * writes a text file
- *
- * @param {Object} file
- * @param {String} file.path path of the file
- * @param {String} file.contents contents of the file
- * @param {Object} [options] configuration object
- * @param {BaseDirectory} [options.dir] base directory
- * @return {Promise<void>}
+    function createFile(document) {
 
-function writeFile (file, options = {}) {
-  return tauri.writeFile(file, options)
-}
-**/
+        const metadata = {fileName: document.fileName, id: document.id}
 
-    /// END GET FILE
+        const pathToManifest = docPath + '/manifest.yaml'
+
+        writeFile_(document)
+
+        const append = (item, array) => {
+
+           array.push(item)
+
+           return array
+           }
+
+        readTextFile(pathToManifest,  {})
+             .then(value => load(value))
+             .then(m => append(metadata, m))
+             .then(m => safeDump(m))
+             .then(contents => writeFile({file: pathToManifest, contents: contents}))
+
+
+    }
+
 
     function getFileFromLocalStorage(fileName) {
         return JSON.parse(localStorage.getItem(fileName))

@@ -37,6 +37,7 @@ type InfoForOutside
     | WriteToClipBoard String
     | Highlight ( Maybe String, String )
     | WriteFile Document
+    | CreateFile Document
     | AskForFileList
     | AskForFile String
     | DeleteFileFromLocalStorage String
@@ -89,11 +90,10 @@ sendInfo info =
             infoForOutside { tag = "Highlight", data = encodeSelectedIdData idPair }
 
         WriteFile document ->
-            let
-                _ =
-                    Debug.log "Outside.WriteFile" document.fileName
-            in
             infoForOutside { tag = "WriteFile", data = Codec.Document.documentEncoder document }
+
+        CreateFile document ->
+            infoForOutside { tag = "CreateFile", data = Codec.Document.documentEncoder document }
 
         AskForFileList ->
             infoForOutside { tag = "AskForFileList", data = Encode.null }
