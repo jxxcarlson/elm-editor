@@ -1,6 +1,8 @@
 
 const {readTextFile, writeTextFile } = require('./api/fs/index.cjs.min.js')
 
+const { load, safeDump } = require('js-yaml')
+
 console.log("Im OK!")
 
 app.ports.infoForOutside.subscribe(msg => {
@@ -92,7 +94,10 @@ app.ports.infoForOutside.subscribe(msg => {
 
       const path ='/Users/jxxcarlson/Documents/mudocs/manifest.yaml'
 
-      return readTextFile(path,  {}).then(value => console.log(value))
+      const sendManifest = (value) => app.ports.infoForElm.send({tag: "GotFileList", data:  load(value)})
+
+      // return readTextFile(path,  {}).then(value => console.log(load(value)))
+      return readTextFile(path,  {}).then(value => sendManifest(value))
     }
 
     function getFileFromLocalStorage(fileName) {
