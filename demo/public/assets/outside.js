@@ -4024,11 +4024,10 @@ app.ports.infoForOutside.subscribe(msg => {
         case "AskForFileList":
 
            console.log("AskForFileList")
+           getManifest()
 
-           var manifest = getManifest()
-           console.log("Manifest", manifest)
-
-           // app.ports.infoForElm.send({tag: "GotFileList", data:  fileList})
+//           var manifest = getManifest()
+//           console.log("Manifest", manifest)
 
            break;
 

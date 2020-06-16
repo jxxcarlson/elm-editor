@@ -29,9 +29,16 @@ scripts:
         - open -a /Applications/Google\ Chrome.app/  http://localhost:8001
     desc: Run editor with Elm Live
 
+
+  bro:
+     cmd: browserify public/assets/outside_source.js -o public/assets/outside.js
+     desc: browserify outside.js
+
   tauri:
-    cmd: npx tauri dev
-    desc: Start tauri dev
+    cmd:
+      - browserify public/assets/outside_source.js -o public/assets/outside.js
+      - npx tauri dev
+    desc: Run tauri dev
 
   publish:
     cmd: sh script/publish.sh
