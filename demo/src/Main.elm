@@ -349,8 +349,10 @@ update msg model =
 
                 Outside.GotFile file ->
                     Helper.Load.loadDocument file model
-                        |> (\m -> m |> withCmd (Helper.Server.updateDocument m.fileStorageUrl m.document))
-
+                      |> (\m -> {m | popupStatus = PopupClosed})
+                      -- |> (\m -> m |> withCmd (Helper.Server.updateDocument m.fileStorageUrl m.document))
+                      -- TODO: fix the above
+                      |> withNoCmd
         LogErr _ ->
             ( model, Cmd.none )
 
@@ -469,7 +471,8 @@ update msg model =
                 |> withNoCmd
 
         AskForDocument fileName ->
-            { model | popupStatus = PopupClosed } |> withCmd (Helper.Server.getDocument model.fileStorageUrl fileName)
+            { model | popupStatus = PopupClosed }
+               |> withCmd (Helper.Server.getDocument model.fileStorageUrl fileName)
 
         GotDocument result ->
             case result of
@@ -484,6 +487,12 @@ update msg model =
 
         AskForRemoteDocuments ->
             model |> withCmd (Helper.Server.getDocumentList model.fileStorageUrl)
+
+        OutsideInfo msg_ ->
+           model
+             |> withCmd (Outside.sendInfo msg_)
+
+
 
         GotDocuments result ->
             case result of

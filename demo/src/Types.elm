@@ -140,6 +140,7 @@ type Msg
     | RenderMsg RenderMsg
       -- Local storage
     | Outside Outside.InfoForElm
+    | OutsideInfo Outside.InfoForOutside
     | DeleteFileFromLocalStorage String
     | SaveFileToStorage
       -- File storage

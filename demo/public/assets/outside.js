@@ -4000,6 +4000,30 @@ const {readTextFile, writeTextFile } = require('./api/fs/index.cjs.min.js')
 
 const { load, safeDump } = require('js-yaml')
 
+const docPath ='/Users/jxxcarlson/Documents/mudocs'
+
+   /// GET FILE
+
+const fetchDocumentByFileName = (fileName) => {
+
+  const manifestPath = docPath + '/manifest.yaml'
+  const filePath = docPath + '/' + fileName
+
+  console.log("filePath: ", filePath)
+
+  const getMetadata = (fileName, manifest) => manifest.filter(r => r.fileName == fileName)[0]
+
+  const sendFile = (str, metadata) => app.ports.infoForElm.send({tag: "GotFile", data: merge(str, metadata)})
+
+  const merge = (str, metadata) => ({ fileName: metadata.fileName, id: metadata.id, content: str})
+
+  return readTextFile(manifestPath,  {})
+     .then(value => load(value))
+     .then(manifest => getMetadata(fileName, manifest))
+     .then(metadata => readTextFile(filePath,  {}).then(str => sendFile(str, metadata)))
+
+}
+
 console.log("Im OK!")
 
 app.ports.infoForOutside.subscribe(msg => {
@@ -4023,18 +4047,19 @@ app.ports.infoForOutside.subscribe(msg => {
 
         case "AskForFileList":
 
-           console.log("AskForFileList")
            getManifest()
-
-//           var manifest = getManifest()
-//           console.log("Manifest", manifest)
 
            break;
 
         case "AskForFile":
+
+            console.log("AskForFile")
+
             var fileName = msg.data
-            var file = getFileFromLocalStorage(fileName)
-            app.ports.infoForElm.send({tag: "GotFile", data: file})
+
+            console.log("File name", fileName)
+
+            fetchDocumentByFileName(fileName)
 
            break;
 
@@ -4088,13 +4113,18 @@ app.ports.infoForOutside.subscribe(msg => {
 
     function getManifest() {
 
-      const path ='/Users/jxxcarlson/Documents/mudocs/manifest.yaml'
+      const path = docPath + '/manifest.yaml'
 
       const sendManifest = (value) => app.ports.infoForElm.send({tag: "GotFileList", data:  load(value)})
 
-      // return readTextFile(path,  {}).then(value => console.log(load(value)))
       return readTextFile(path,  {}).then(value => sendManifest(value))
     }
+
+
+
+
+
+    /// END GET FILE
 
     function getFileFromLocalStorage(fileName) {
         return JSON.parse(localStorage.getItem(fileName))

@@ -17,7 +17,9 @@ import Element
         , width
         )
 import Element.Background as Background
+import Element.Font as Font
 import Helper.Common
+import Outside
 import Types exposing (FileLocation(..), Model, Msg(..), PopupStatus(..), PopupWindow(..))
 import View.Widget as Widget
 
@@ -85,15 +87,17 @@ viewFileName currentRecord record =
                 False ->
                     Background.color (Element.rgba 0 0 0 0)
     in
-    row [ spacing 8 ]
-        [ Widget.plainButton 200
-            record.fileName
-            (AskForDocument record.fileName)
-            [ bgColor, Element.padding 2 ]
-        , el [ Element.padding 2, Background.color (Element.rgba 0.7 0.3 0.3 0.5) ]
-            (Widget.plainButton 55
-                "delete"
-                (SoftDelete record)
-                []
-            )
-        ]
+    Element.map OutsideInfo <|
+        row [ spacing 8 ]
+            [ Widget.plainButton 200
+                record.fileName
+                (Outside.AskForFile record.fileName)
+                [ Font.color (Element.rgb 0 0 0.9), bgColor, Element.padding 2 ]
+
+            --, el [ Element.padding 2, Background.color (Element.rgba 0.7 0.3 0.3 0.5) ]
+            --    (Widget.plainButton 55
+            --        "delete"
+            --        (SoftDelete record)
+            --        []
+            --    )
+            ]
