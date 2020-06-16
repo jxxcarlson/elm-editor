@@ -422,8 +422,10 @@ update msg model =
                 |> withNoCmd
 
         SaveFileToStorage ->
-            { model | documentStatus = DocumentSaved }
-                |> withCmd (Helper.Server.updateDocument model.fileStorageUrl model.document)
+            --{ model | documentStatus = DocumentSaved }
+            --                |> withCmd (Helper.Server.updateDocument model.fileStorageUrl model.document)
+            -- TODO: Review & cleanup
+            saveFileToStorage_ model
 
         InputFileName str ->
             ( { model | fileName_ = str, changingFileNameState = ChangingFileName }, Cmd.none )
@@ -619,16 +621,22 @@ updateMessageLife model =
 
 saveFileToStorage_ : Model -> ( Model, Cmd Msg )
 saveFileToStorage_ model =
+    let
+      _ = Debug.log "saveFileToStorage_, fileLocation"  model.fileLocation
+    in
     case model.documentStatus of
         DocumentDirty ->
-            ( { model
+            { model
                 | tickCount = model.tickCount + 1
                 , documentStatus = DocumentSaved
               }
-            , Cmd.batch
-                [ Helper.Server.updateDocument model.fileStorageUrl model.document
-                ]
-            )
+                |> withCmd
+                      ( case model.fileLocation  of
+                             LocalFiles -> Outside.sendInfo(Outside.WriteFile model.document)
+                             RemoteFiles -> Helper.Server.updateDocument model.fileStorageUrl model.document
+
+                        )
+
 
         DocumentSaved ->
             ( { model | tickCount = model.tickCount + 1 }
@@ -640,7 +648,7 @@ saveFileToStorage : Model -> ( Model, Cmd Msg )
 saveFileToStorage model =
     case modBy 15 model.tickCount == 14 of
         True ->
-            saveFileToStorage_ model
+             saveFileToStorage_ model
 
         False ->
             ( { model | tickCount = model.tickCount + 1 }

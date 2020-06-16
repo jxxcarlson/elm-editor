@@ -89,6 +89,10 @@ sendInfo info =
             infoForOutside { tag = "Highlight", data = encodeSelectedIdData idPair }
 
         WriteFile document ->
+            let
+                _ =
+                    Debug.log "Outside.WriteFile" document.fileName
+            in
             infoForOutside { tag = "WriteFile", data = Codec.Document.documentEncoder document }
 
         AskForFileList ->

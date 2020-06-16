@@ -3996,11 +3996,11 @@ module.exports = new Type('tag:yaml.org,2002:timestamp', {
 
 },{}],34:[function(require,module,exports){
 
-const {readTextFile, writeTextFile } = require('./api/fs/index.cjs.min.js')
+const {readTextFile, writeFile } = require('./api/fs/index.cjs.min.js')
 
 const { load, safeDump } = require('js-yaml')
 
-const docPath ='/Users/jxxcarlson/Documents/mudocs'
+const docPath = '/Users/jxxcarlson/Documents/mudocs'
 
    /// GET FILE
 
@@ -4083,9 +4083,15 @@ app.ports.infoForOutside.subscribe(msg => {
              break;
 
           case "WriteFile":
-               var key = msg.data.id
-               var document = msg.data
-               localStorage.setItem(key, JSON.stringify(document));
+
+              console.log("Here is WriteFile")
+
+              var document = msg.data
+
+              console.log("DOC", document.fileName)
+
+              writeFile_(document)
+
                break;
 
          case "Highlight":
@@ -4120,9 +4126,29 @@ app.ports.infoForOutside.subscribe(msg => {
       return readTextFile(path,  {}).then(value => sendManifest(value))
     }
 
+    function writeFile_(document) {
 
+        const pathToFile = docPath + '/' + document.fileName
 
+        console.log("Writing file: ", document.fileName)
 
+        writeFile({file: pathToFile, contents: document.content})
+    }
+
+/**
+ * writes a text file
+ *
+ * @param {Object} file
+ * @param {String} file.path path of the file
+ * @param {String} file.contents contents of the file
+ * @param {Object} [options] configuration object
+ * @param {BaseDirectory} [options.dir] base directory
+ * @return {Promise<void>}
+
+function writeFile (file, options = {}) {
+  return tauri.writeFile(file, options)
+}
+**/
 
     /// END GET FILE
 
