@@ -133,6 +133,7 @@ app.ports.infoForOutside.subscribe(msg => {
                readTextFile('.muEditPreferences.yaml', {dir: 11})
                     .then(str => load(str))
                     .then(o => app.ports.infoForElm.send({tag: "GotPreferences", data:  o}))
+                    .catch(reason => writeFile(  {  file: '.muEditPreferences.yaml', contents: "---\ndummy: 0\n"   }, {dir: 11}  ))
 
               break;
 
