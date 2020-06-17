@@ -42,6 +42,7 @@ type InfoForOutside
     | CreateFile Document
     | AskForFileList
     | AskForFile String
+    | SetUserName String
     | DeleteFileFromLocalStorage String
 
 
@@ -93,6 +94,9 @@ sendInfo info =
 
         OpenFileDialog _ ->
             infoForOutside { tag = "OpenFileDialog", data = Encode.null }
+
+        SetUserName userName ->
+            infoForOutside { tag = "SetUserName", data = Encode.string userName }
 
         WriteFile document ->
             infoForOutside { tag = "WriteFile", data = Codec.Document.documentEncoder document }

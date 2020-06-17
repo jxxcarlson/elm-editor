@@ -157,7 +157,7 @@ type Msg
     | InputPassword String
     | InputPasswordAgain String
     | InputEmail String
-    | SetAuthor
+    | SetUserName_
     | CreateAuthor
     | SignUp
     | SignIn

@@ -18,8 +18,8 @@ module View.Widget exposing
     , openNewFilePopupButton
     , plainButton
     , saveFileToStorageButton
-    , setAuthorButton
     , setDocumentDirectoryButton
+    , setUserNameButton
     , signInButton
     , signOutButton
     , signUpButton
@@ -137,8 +137,8 @@ setDocumentDirectoryButton =
     button_ 170 "Set Document Directory" SetDocumentDirectory
 
 
-setAuthorButton =
-    button_ 90 "Set Author" SetAuthor
+setUserNameButton =
+    button_ 170 "Set User Name" SetUserName_
 
 
 saveFileToStorageButton model =

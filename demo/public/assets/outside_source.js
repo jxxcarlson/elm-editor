@@ -89,10 +89,7 @@ app.ports.infoForOutside.subscribe(msg => {
 
           case "OpenFileDialog":
 
-              console.log("Here is OpenFileDialog")
-
               const preferredDirectory = open({directory: true})
-
 
               const preferences = readTextFile('.muEditPreferences.yaml', {dir: 11})
                                   .then(str => load(str))
@@ -106,8 +103,27 @@ app.ports.infoForOutside.subscribe(msg => {
               .then(pref => safeDump(pref))
               .then(data => writeFile(  {  file: '.muEditPreferences.yaml', contents: data   }, {dir: 11}  ))
 
+              break;
 
+          case "SetUserName":
 
+              var userName = msg.data
+
+              console.log("USER NAME", userName)
+
+              if (userName != null) {
+
+                  const preferences = readTextFile('.muEditPreferences.yaml', {dir: 11})
+                                      .then(str => load(str))
+
+                  const updatePreferences = (s, p) => {
+                        return Object.assign(p, {userName: s})
+                  }
+
+                  preferences.then(pref => updatePreferences(userName, pref))
+                  .then(pref => safeDump(pref))
+                  .then(data => writeFile(  {  file: '.muEditPreferences.yaml', contents: data   }, {dir: 11}  ))
+              }
 
               break;
 

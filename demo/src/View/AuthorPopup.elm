@@ -83,7 +83,7 @@ viewSetup model =
                 ]
                 [ titleLine model
                 , userNameInput model
-                , Widget.setAuthorButton
+                , Widget.setUserNameButton
                 , Widget.setDocumentDirectoryButton
                 ]
 

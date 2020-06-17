@@ -555,8 +555,8 @@ update msg model =
         InputPasswordAgain str ->
             { model | passwordAgain = str } |> withNoCmd
 
-        SetAuthor ->
-            model |> withNoCmd
+        SetUserName_ ->
+            model |> withCmd (Outside.sendInfo (Outside.SetUserName model.userName))
 
         CreateAuthor ->
             let
