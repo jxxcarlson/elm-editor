@@ -1,13 +1,11 @@
 module Helper.Server exposing
-    ( addPostfix
-    , createDocument
+    ( createDocument
     , docType
     , exportFile
     , fileExtension
     , getDocument
     , getDocumentList
     , read
-    , removePostfix
     , requestFile
     , saveFile
     , titleFromFileName
@@ -24,8 +22,8 @@ import Editor
 import File exposing (File)
 import File.Download as Download
 import File.Select as Select
+import Helper.Common
 import Http
-import List.Extra
 import MiniLatex.Export
 import Task exposing (Task)
 import Types exposing (Model, Msg(..))
@@ -75,7 +73,7 @@ updateDocumentList serverUrl record =
         { method = "PUT"
         , headers = []
         , url = serverUrl ++ "/documents"
-        , body = Http.jsonBody (Codec.Document.encodeMiniFileRecord record)
+        , body = Http.jsonBody (Codec.Document.metadataEncoder record)
         , expect = Http.expectJson Message Codec.Document.messageDecoder
         , timeout = Nothing
         , tracker = Nothing
@@ -170,56 +168,6 @@ docType fileName =
 
         _ ->
             MarkdownDoc
-
-
-addPostfix : String -> String -> String
-addPostfix postfix fileName =
-    let
-        parts =
-            String.split "." fileName
-
-        n =
-            List.length parts
-
-        extension =
-            List.drop (n - 1) parts
-
-        initialParts =
-            List.take (n - 1) parts
-
-        newParts =
-            initialParts ++ [ postfix ] ++ extension
-    in
-    String.join "." newParts
-
-
-removePostfix : String -> String -> String
-removePostfix postfix fileName =
-    let
-        parts =
-            String.split "." fileName
-
-        n =
-            List.length parts
-
-        extension =
-            List.drop (n - 1) parts
-
-        postfix_ =
-            List.Extra.getAt (n - 2) parts |> Maybe.withDefault "@%!"
-
-        initialParts =
-            List.take (n - 2) parts
-
-        newParts =
-            initialParts ++ extension
-    in
-    case postfix == postfix_ of
-        True ->
-            String.join "." newParts
-
-        False ->
-            fileName
 
 
 updateFileList : Metadata -> List Metadata -> List Metadata

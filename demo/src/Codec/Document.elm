@@ -3,9 +3,9 @@ module Codec.Document exposing
     , documentDecoder
     , documentEncoder
     , documentListDecoder
-    , encodeMiniFileRecord
     , extendedDocumentEncoder
     , messageDecoder
+    , metadataEncoder
     )
 
 import Document exposing (Document, Metadata)
@@ -54,8 +54,8 @@ messageDecoder =
 -- ENCODERS
 
 
-encodeMiniFileRecord : Metadata -> Encode.Value
-encodeMiniFileRecord record =
+metadataEncoder : Metadata -> Encode.Value
+metadataEncoder record =
     Encode.object
         [ ( "fileName", Encode.string record.fileName )
         , ( "id", Encode.string record.id )

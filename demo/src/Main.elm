@@ -455,13 +455,14 @@ update msg model =
 
         SoftDelete record ->
             let
+                -- TODO: review
                 newRecord =
-                    { record | fileName = Helper.Server.addPostfix "deleted" record.fileName }
+                    { record | fileName = Helper.Common.addPostfix "deleted" record.fileName }
             in
             { model
                 | fileList = Helper.Server.updateFileList newRecord model.fileList
             }
-                |> withCmd (Helper.Server.updateDocumentList model.fileStorageUrl newRecord)
+                |> withCmd (Outside.sendInfo (Outside.WriteMetadata newRecord))
 
         CancelChangeFileName ->
             ( { model | fileName_ = model.fileName, changingFileNameState = FileNameOK }, Cmd.none )

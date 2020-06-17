@@ -37,6 +37,7 @@ type InfoForOutside
     | WriteToClipBoard String
     | Highlight ( Maybe String, String )
     | WriteFile Document
+    | WriteMetadata Metadata
     | CreateFile Document
     | AskForFileList
     | AskForFile String
@@ -91,6 +92,9 @@ sendInfo info =
 
         WriteFile document ->
             infoForOutside { tag = "WriteFile", data = Codec.Document.documentEncoder document }
+
+        WriteMetadata metadata ->
+            infoForOutside { tag = "WriteMetadata", data = Codec.Document.metadataEncoder metadata }
 
         CreateFile document ->
             infoForOutside { tag = "CreateFile", data = Codec.Document.documentEncoder document }

@@ -87,17 +87,15 @@ viewFileName currentRecord record =
                 False ->
                     Background.color (Element.rgba 0 0 0 0)
     in
-    Element.map OutsideInfo <|
-        row [ spacing 8 ]
-            [ Widget.plainButton 200
-                record.fileName
-                (Outside.AskForFile record.fileName)
-                [ Font.color (Element.rgb 0 0 0.9), bgColor, Element.padding 2 ]
-
-            --, el [ Element.padding 2, Background.color (Element.rgba 0.7 0.3 0.3 0.5) ]
-            --    (Widget.plainButton 55
-            --        "delete"
-            --        (SoftDelete record)
-            --        []
-            --    )
-            ]
+    row [ spacing 8 ]
+        [ Widget.plainButton 200
+            record.fileName
+            (OutsideInfo (Outside.AskForFile record.fileName))
+            [ Font.color (Element.rgb 0 0 0.9), bgColor, Element.padding 2 ]
+        , el [ Element.padding 2, Background.color (Element.rgba 0.7 0.3 0.3 0.5) ]
+            (Widget.plainButton 55
+                "delete"
+                (SoftDelete record)
+                []
+            )
+        ]

@@ -107,6 +107,16 @@ app.ports.infoForOutside.subscribe(msg => {
 
                break;
 
+          case "WriteMetadata":
+
+              var document = msg.data
+
+              console.log("Write metadata: ", document.fileName)
+
+              writeMetadata(document)
+
+               break;
+
          case "Highlight":
 
            var id = "#".concat(msg.data.id)
@@ -145,6 +155,27 @@ app.ports.infoForOutside.subscribe(msg => {
 
         writeFile({file: pathToFile, contents: document.content})
     }
+
+    function writeMetadata(document) {
+
+        const pathToManifest = docPath + '/manifest.yaml'
+
+        const metadata = { fileName: document.fileName, id: document.id}
+
+        // s and t are metadata: source and target
+        const changeMetadata = (s, t ) =>
+           s.id == t.id ?  Object.assign({}, s) : t
+
+        // Update the item in the manifest m with id == s.id with the value s
+        const updateManifest = (s, m) => m.map((t) => changeMetadata(s, t))
+
+        readTextFile(pathToManifest,  {})
+             .then(value => load(value))
+             .then(m => updateManifest(metadata, m))
+             .then(m => safeDump(m))
+             .then(contents => writeFile({file: pathToManifest, contents: contents}))
+
+        }
 
     function createFile(document) {
 
