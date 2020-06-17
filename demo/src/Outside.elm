@@ -10,9 +10,9 @@ At the moment, there is just one: external copy-paste.
 -}
 
 import Codec.Document
+import Codec.System exposing (Preferences)
 import Document exposing (Document, Metadata)
 import Json.Decode as D exposing (Decoder, bool, int, list, nullable, string)
-import Json.Decode.Pipeline as JP exposing (required)
 import Json.Encode as Encode
 
 
@@ -30,6 +30,7 @@ type InfoForElm
     = GotClipboard String
     | GotFileList (List Metadata)
     | GotFile Document
+    | GotPreferences Preferences
 
 
 type InfoForOutside
@@ -38,6 +39,7 @@ type InfoForOutside
     | Highlight ( Maybe String, String )
     | OpenFileDialog Encode.Value
     | WriteFile Document
+    | GetPreferences Encode.Value
     | WriteMetadata Metadata
     | CreateFile Document
     | AskForFileList
@@ -75,6 +77,22 @@ getInfo tagger onError =
                         Err _ ->
                             onError <| "Error decoding file from value"
 
+                "GotPreferences" ->
+                    case D.decodeValue Codec.System.preferencesDecoder outsideInfo.data of
+                        Ok p ->
+                            let
+                                _ =
+                                    Debug.log "GotPreferences" p
+                            in
+                            tagger <| GotPreferences p
+
+                        Err _ ->
+                            let
+                                _ =
+                                    Debug.log "GotPreferences" "(Error)"
+                            in
+                            onError <| "Error decoding preferences"
+
                 _ ->
                     onError <| "Unexpected info from outside"
         )
@@ -97,6 +115,9 @@ sendInfo info =
 
         SetUserName userName ->
             infoForOutside { tag = "SetUserName", data = Encode.string userName }
+
+        GetPreferences _ ->
+            infoForOutside { tag = "GetPreferences", data = Encode.null }
 
         WriteFile document ->
             infoForOutside { tag = "WriteFile", data = Codec.Document.documentEncoder document }

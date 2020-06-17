@@ -1,3 +1,34 @@
+/*
+
+i think this would be more modern:
+
+https://developer.mozilla.org/en-US/docs/Web/API/Selection
+
+https://developer.mozilla.org/en-US/docs/Web/API/Window/getSelection
+
+but again, experimental tech
+MDN Web Docs
+Selection
+A Selection object represents the range of text selected
+by the user or the current position of the caret.
+To obtain a Selection object for examination or
+manipulation, call window.getSelection().
+
+MDN Web Docs
+Window.getSelection()
+The Window.getSelection() method returns a
+Selection object representing the range of
+text selected by the user or the current
+position of the caret.
+
+It is worth noting that currently getSelection()
+doesn't work on the content of <textarea>
+and <input> elements in Firefox, Edge (Legacy)
+and Internet Explorer. HTMLInputElement.setSelectionRange()
+or the selectionStart and selectionEnd properties
+could be used to work around this.
+
+*/
 
 const {readTextFile, writeFile, Dir } = require('./api/fs/index.cjs.min.js')
 
@@ -86,6 +117,17 @@ app.ports.infoForOutside.subscribe(msg => {
 
 
              break;
+
+          case "GetPreferences":
+
+               console.log("Getting preferences")
+
+               readTextFile('.muEditPreferences.yaml', {dir: 11})
+                    .then(str => load(str))
+                    .then(o => app.ports.infoForElm.send({tag: "GotPreferences", data:  o}))
+
+              break;
+
 
           case "OpenFileDialog":
 

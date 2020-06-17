@@ -12,10 +12,12 @@ module Types exposing
 
 import Author exposing (Author)
 import Browser.Dom as Dom
+import Codec.System exposing (Preferences)
 import Document exposing (DocType(..), Document, Metadata)
 import Editor exposing (Editor)
 import File exposing (File)
 import Http
+import Json.Decode
 import Outside
 import Random
 import Render exposing (RenderingData)
@@ -39,6 +41,7 @@ type alias Model =
     , height : Float
     , editor : Editor
     , message : String
+    , preferences : Maybe Preferences
 
     -- UI
     , popupStatus : PopupStatus
@@ -163,6 +166,7 @@ type Msg
     | SignIn
     | SignOut
     | GotSigninReply (Result Http.Error Authorization)
+    | GotPreferences (Result Json.Decode.Error Preferences)
 
 
 type Authorization

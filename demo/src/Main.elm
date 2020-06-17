@@ -97,6 +97,7 @@ init flags =
     , renderingData = load 0 ( 0, 0 ) (OMarkdown ExtendedMath) Data.about
     , counter = 1
     , currentTime = Time.millisToPosix 0
+    , preferences = Nothing
     , messageLife = 0
     , width = flags.width
     , height = flags.height
@@ -133,6 +134,7 @@ init flags =
             , View.Scroll.toEditorTop
             , View.Scroll.toRenderedTextTop
             , UuidHelper.getRandomNumber
+            , Outside.sendInfo (Outside.GetPreferences Json.Encode.null)
             ]
 
 
@@ -357,6 +359,10 @@ update msg model =
                       -- |> (\m -> m |> withCmd (Helper.Server.updateDocument m.fileStorageUrl m.document))
                       -- TODO: fix the above
                       |> withNoCmd
+
+                Outside.GotPreferences preferences ->
+                    { model | preferences = Just preferences } |> withNoCmd
+
         LogErr _ ->
             ( model, Cmd.none )
 
@@ -554,6 +560,16 @@ update msg model =
 
         InputPasswordAgain str ->
             { model | passwordAgain = str } |> withNoCmd
+
+        GotPreferences result ->
+            case result of
+                Ok preferences ->
+                  { model | preferences = Just preferences}
+                      |> postMessage ("username: " ++ preferences.userName)
+                      |> withNoCmd
+                Err _ -> { model | preferences = Nothing }
+                         |> postMessage "Error getting preferences"
+                         |> withNoCmd
 
         SetUserName_ ->
             model |> withCmd (Outside.sendInfo (Outside.SetUserName model.userName))
