@@ -232,26 +232,14 @@ app.ports.infoForOutside.subscribe(msg => {
 
     }
 
-
-
     function getManifest() {
 
-      const path = docPath + '/manifest.yaml'
-
       const sendManifest = (value) => app.ports.infoForElm.send({tag: "GotFileList", data:  load(value)})
-
-      return readTextFile(path,  {}).then(value => sendManifest(value))
-    }
-
-    function writeFile_(document) {
-
-        getPreferences()
+o
         .then(p => writeFile({file: (p.documentDirectory + '/' + document.fileName), contents: document.content}))
     }
 
     function writeMetadata(document) {
-
-        const pathToManifest = docPath + '/manifest.yaml'
 
         const metadata = { fileName: document.fileName, id: document.id}
 
@@ -262,13 +250,18 @@ app.ports.infoForOutside.subscribe(msg => {
         // Update the item in the manifest m with id == s.id with the value s
         const updateManifest = (s, m) => m.map((t) => changeMetadata(s, t))
 
-        readTextFile(pathToManifest,  {})
+        const writeMetadata_ = (metadata, pathToManifest) => (
+              readTextFile(pathToManifest,  {})
              .then(value => load(value))
              .then(m => updateManifest(metadata, m))
              .then(m => safeDump(m))
-             .then(contents => writeFile({file: pathToManifest, contents: contents}))
+             .then(contents => writeFile({file: pathToManifest, contents: contents})))
 
-        }
+
+        getPreferences()
+        .then(p => writeMetadata_(metadata, p.documentDirectory + '/manifest.yaml'))
+
+      }
 
     function createFile(document) {
 
