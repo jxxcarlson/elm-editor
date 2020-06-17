@@ -166,7 +166,7 @@ type Msg
     | SignIn
     | SignOut
     | GotSigninReply (Result Http.Error Authorization)
-    | GotPreferences (Result Json.Decode.Error Preferences)
+    | GotPreferences Preferences
 
 
 type Authorization

@@ -561,15 +561,11 @@ update msg model =
         InputPasswordAgain str ->
             { model | passwordAgain = str } |> withNoCmd
 
-        GotPreferences result ->
-            case result of
-                Ok preferences ->
+        GotPreferences preferences ->
                   { model | preferences = Just preferences}
                       |> postMessage ("username: " ++ preferences.userName)
                       |> withNoCmd
-                Err _ -> { model | preferences = Nothing }
-                         |> postMessage "Error getting preferences"
-                         |> withNoCmd
+
 
         SetUserName_ ->
             model |> withCmd (Outside.sendInfo (Outside.SetUserName model.userName))

@@ -85,10 +85,40 @@ viewSetup model =
                 , userNameInput model
                 , Widget.setUserNameButton
                 , Widget.setDocumentDirectoryButton
+                , displayUserName model
+                , displayDocumentDirectory model
                 ]
 
         PopupOpen _ ->
             Element.none
+
+
+getUserName : Model -> String
+getUserName model =
+    case model.preferences of
+        Nothing ->
+            "Not set"
+
+        Just pref ->
+            pref.userName
+
+
+getDocumentDirectory : Model -> String
+getDocumentDirectory model =
+    case model.preferences of
+        Nothing ->
+            "Not set"
+
+        Just pref ->
+            pref.documentDirectory
+
+
+displayUserName model =
+    el [ Font.size 14 ] (text ("User name: " ++ getUserName model))
+
+
+displayDocumentDirectory model =
+    el [ Font.size 14 ] (text ("Document directory: " ++ getDocumentDirectory model))
 
 
 viewSignIn : Model -> Element Msg
