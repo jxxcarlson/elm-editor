@@ -4036,10 +4036,6 @@ const {open} = require('./api/dialog.cjs.min.js')
 
 const { load, safeDump } = require('js-yaml')
 
-const docPath = '/Users/jxxcarlson/Documents/mudocs'
-
-   /// GET FILE
-
 const getPreferences = () => {
    return readTextFile('.muEditPreferences.yaml', {dir: 11}).then(str => load(str))
 }
@@ -4089,7 +4085,13 @@ app.ports.infoForOutside.subscribe(msg => {
 
         case "AskForFileList":
 
-           getManifest()
+           const sendManifest = (value) => app.ports.infoForElm.send({tag: "GotFileList", data:  load(value)})
+
+           const getManifest = (pathToManifest) => readTextFile(pathToManifest,  {}).then(value => sendManifest(value))
+
+           getPreferences()
+             .then(p => (p.documentDirectory + '/manifest.yaml'))
+             .then(pathToManifest => getManifest(pathToManifest))
 
            break;
 
@@ -4189,21 +4191,16 @@ app.ports.infoForOutside.subscribe(msg => {
 
           case "WriteFile":
 
-              console.log("Here is WriteFile")
-
               var document = msg.data
 
-              console.log("DOC", document.fileName)
-
-              writeFile_(document)
+              getPreferences()
+              .then(p => writeFile({file: (p.documentDirectory + '/' + document.fileName), contents: document.content}))
 
                break;
 
           case "WriteMetadata":
 
               var document = msg.data
-
-              console.log("Write metadata: ", document.fileName)
 
               writeMetadata(document)
 
@@ -4234,24 +4231,16 @@ app.ports.infoForOutside.subscribe(msg => {
 
     function getManifest() {
 
-      const sendManifest = (value) => app.ports.infoForElm.send({tag: "GotFileList", data:  load(value)})
+        const sendManifest = (value) => app.ports.infoForElm.send({tag: "GotFileList", data:  load(value)})
 
-      const manifest =
+        return
           getPreferences()
-         .then(p => (p.documentDirectory + '/manifest.yaml'))
-         .then(pathToManifest => readTextFile(pathToManifest,  {}).then(value => sendManifest(value)))
+          .then(p => (p.documentDirectory + '/manifest.yaml'))
+          .then(pathToManifest => readTextFile(pathToManifest,  {}).then(value => sendManifest(value)))
 
-    }
-
-    function writeFile_(document) {
-
-        getPreferences()
-        .then(p => writeFile({file: (p.documentDirectory + '/' + document.fileName), contents: document.content}))
     }
 
     function writeMetadata(document) {
-
-        // const pathToManifest = docPath + '/manifest.yaml'
 
         const metadata = { fileName: document.fileName, id: document.id}
 
@@ -4279,9 +4268,8 @@ app.ports.infoForOutside.subscribe(msg => {
 
         const metadata = {fileName: document.fileName, id: document.id}
 
-        const pathToManifest = docPath + '/manifest.yaml'
-
-        writeFile_(document)
+        getPreferences()
+        .then(p => writeFile({file: (p.documentDirectory + '/' + document.fileName), contents: document.content}))
 
         const append = (item, array) => {
 
@@ -4290,13 +4278,16 @@ app.ports.infoForOutside.subscribe(msg => {
            return array
            }
 
-        readTextFile(pathToManifest,  {})
+        const createFile_ = (pathToManifest) => (
+           readTextFile(pathToManifest,  {})
              .then(value => load(value))
              .then(m => append(metadata, m))
              .then(m => safeDump(m))
              .then(contents => writeFile({file: pathToManifest, contents: contents}))
+           )
 
-
+        getPreferences()
+        .then(p => createFile_(p.documentDirectory + '/manifest.yaml'))
     }
 
 
