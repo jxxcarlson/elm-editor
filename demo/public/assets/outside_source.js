@@ -46,23 +46,25 @@ const getPreferences = () => {
 
 const fetchDocumentByFileName = (fileName) => {
 
-  const manifestPath = docPath + '/manifest.yaml'
-  const filePath = docPath + '/' + fileName
-
-  console.log("filePath: ", filePath)
-
-  const getMetadata = (fileName, manifest) => manifest.filter(r => r.fileName == fileName)[0]
+  const getMetadata = (fileName, manifest) => (manifest.filter(r => r.fileName == fileName)[0])
 
   const sendFile = (str, metadata) => app.ports.infoForElm.send({tag: "GotFile", data: merge(str, metadata)})
 
   const merge = (str, metadata) => ({ fileName: metadata.fileName, id: metadata.id, content: str})
 
-  return readTextFile(manifestPath,  {})
-     .then(value => load(value))
-     .then(manifest => getMetadata(fileName, manifest))
-     .then(metadata => readTextFile(filePath,  {}).then(str => sendFile(str, metadata)))
+  const paths = (p) => ({toManifest: (p.documentDirectory + '/manifest.yaml'), toFile: (p.documentDirectory + '/' + fileName )})
+
+  getPreferences()
+  .then(p => paths(p))
+  .then(paths => (
+     readTextFile(paths.toManifest,  {})
+    .then(value => load(value))
+    .then(manifest => getMetadata(fileName, manifest))
+    .then(metadata => readTextFile(paths.toFile,  {}).then(str => sendFile(str, metadata)))
+   ))
 
 }
+
 
 console.log("Im OK!")
 
