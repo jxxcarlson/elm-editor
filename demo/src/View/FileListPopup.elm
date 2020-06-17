@@ -1,4 +1,4 @@
-module View.FileListPopup exposing (view)
+module View.FileListPopup exposing (prettify, view)
 
 import Document exposing (Metadata)
 import Element
@@ -89,7 +89,7 @@ viewFileName currentRecord record =
     in
     row [ spacing 8 ]
         [ Widget.plainButton 200
-            record.fileName
+            (prettify record.fileName)
             (OutsideInfo (Outside.AskForFile record.fileName))
             [ Font.color (Element.rgb 0 0 0.9), bgColor, Element.padding 2 ]
         , el [ Element.padding 2, Background.color (Element.rgba 0.7 0.3 0.3 0.5) ]
@@ -99,3 +99,32 @@ viewFileName currentRecord record =
                 []
             )
         ]
+
+
+prettify : String -> String
+prettify str =
+    let
+        parts =
+            String.split "-" str
+    in
+    case List.length parts == 3 of
+        False ->
+            str
+
+        True ->
+            let
+                a =
+                    List.take 1 parts
+                        |> List.head
+                        |> Maybe.withDefault "???"
+
+                b =
+                    parts
+                        |> List.drop 2
+                        |> List.map (String.split ".")
+                        |> List.concat
+                        |> List.drop 1
+                        |> List.head
+                        |> Maybe.withDefault "???"
+            in
+            a ++ "." ++ b
