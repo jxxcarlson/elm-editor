@@ -3986,17 +3986,22 @@ module.exports = new Type('tag:yaml.org,2002:timestamp', {
 });
 
 },{"../type":14}],31:[function(require,module,exports){
+"use strict";Object.defineProperty(exports,"__esModule",{value:!0});var e=require("./tauri.cjs.min.js");exports.open=function(r={}){return e.default.openDialog(r)},exports.save=function(r={}){return e.default.saveDialog(r)};
+
+},{"./tauri.cjs.min.js":34}],32:[function(require,module,exports){
 "use strict";Object.defineProperty(exports,"__esModule",{value:!0});exports.Dir={Audio:1,Cache:2,Config:3,Data:4,LocalData:5,Desktop:6,Document:7,Download:8,Executable:9,Font:10,Home:11,Picture:12,Public:13,Runtime:14,Template:15,Video:16,Resource:17,App:18};
 
-},{}],32:[function(require,module,exports){
+},{}],33:[function(require,module,exports){
 "use strict";Object.defineProperty(exports,"__esModule",{value:!0});var e=require("../tauri.cjs.min.js"),r=require("./dir.cjs.min.js");exports.Dir=r.Dir,exports.copyFile=function(r,t,i={}){return e.default.copyFile(r,t,i)},exports.createDir=function(r,t={}){return e.default.createDir(r,t)},exports.readBinaryFile=function(r,t={}){return e.default.readBinaryFile(r,t)},exports.readDir=function(r,t={}){return e.default.readDir(r,t)},exports.readTextFile=function(r,t={}){return e.default.readTextFile(r,t)},exports.removeDir=function(r,t={}){return e.default.removeDir(r,t)},exports.removeFile=function(r,t={}){return e.default.removeFile(r,t)},exports.renameFile=function(r,t,i={}){return e.default.renameFile(r,t,i)},exports.writeFile=function(r,t={}){return e.default.writeFile(r,t)};
 
-},{"../tauri.cjs.min.js":33,"./dir.cjs.min.js":31}],33:[function(require,module,exports){
+},{"../tauri.cjs.min.js":34,"./dir.cjs.min.js":32}],34:[function(require,module,exports){
 "use strict";Object.defineProperty(exports,"__esModule",{value:!0});var e=window.tauri;exports.default=e;
 
-},{}],34:[function(require,module,exports){
+},{}],35:[function(require,module,exports){
 
-const {readTextFile, writeFile } = require('./api/fs/index.cjs.min.js')
+const {readTextFile, writeFile, Dir } = require('./api/fs/index.cjs.min.js')
+
+const {open} = require('./api/dialog.cjs.min.js')
 
 const { load, safeDump } = require('js-yaml')
 
@@ -4082,6 +4087,34 @@ app.ports.infoForOutside.subscribe(msg => {
 
              break;
 
+          case "OpenFileDialog":
+
+              console.log("Here is OpenFileDialog")
+
+              //open({directory: true}).then(val => console.log(val))
+
+
+              const preferredDirectory = open({directory: true})
+
+
+              const preferences = readTextFile('.muEditPreferences.yaml', {dir: 11})
+                                  .then(str => load(str))
+
+//              preferredDirectory.then(x => console.log("PD", x))
+//              preferences.then(x => console.log("PREFS", x))
+
+              const updatePreferences = (s, p) => {
+                    return Object.assign(p, {documentDirectory: s})
+              }
+
+              preferredDirectory
+              .then(pd => preferences.then(pref => updatePreferences(pd, pref)))
+              .then(x => console.log("UPDATED: ", x))
+
+
+
+              break;
+
           case "CreateFile":
 
               console.log("Here is CreateFile")
@@ -4091,6 +4124,8 @@ app.ports.infoForOutside.subscribe(msg => {
               console.log("CREATE DOC", document.fileName)
 
               createFile(document)
+
+              break;
 
           case "WriteFile":
 
@@ -4213,4 +4248,4 @@ app.ports.infoForOutside.subscribe(msg => {
 
 })
 
-},{"./api/fs/index.cjs.min.js":32,"js-yaml":1}]},{},[34]);
+},{"./api/dialog.cjs.min.js":31,"./api/fs/index.cjs.min.js":33,"js-yaml":1}]},{},[35]);

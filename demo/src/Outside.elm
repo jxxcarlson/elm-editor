@@ -36,6 +36,7 @@ type InfoForOutside
     = AskForClipBoard Encode.Value
     | WriteToClipBoard String
     | Highlight ( Maybe String, String )
+    | OpenFileDialog Encode.Value
     | WriteFile Document
     | WriteMetadata Metadata
     | CreateFile Document
@@ -89,6 +90,9 @@ sendInfo info =
 
         Highlight idPair ->
             infoForOutside { tag = "Highlight", data = encodeSelectedIdData idPair }
+
+        OpenFileDialog _ ->
+            infoForOutside { tag = "OpenFileDialog", data = Encode.null }
 
         WriteFile document ->
             infoForOutside { tag = "WriteFile", data = Codec.Document.documentEncoder document }

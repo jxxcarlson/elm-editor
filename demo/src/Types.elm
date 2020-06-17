@@ -144,6 +144,7 @@ type Msg
     | DeleteFileFromLocalStorage String
     | SaveFileToStorage
       -- File storage
+    | SetDocumentDirectory
     | AskForRemoteDocuments
     | GotDocuments (Result Http.Error (List Metadata))
     | AskForDocument String

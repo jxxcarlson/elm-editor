@@ -82,6 +82,7 @@ viewSignIn model =
                 , userNameInput model
                 , passwordInput model
                 , row [ spacing 8 ] [ Widget.signInButton, Widget.signUpButton ]
+                , Widget.setDocumentDirectoryButton
                 ]
 
         PopupOpen _ ->

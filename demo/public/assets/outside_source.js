@@ -1,5 +1,7 @@
 
-const {readTextFile, writeFile } = require('./api/fs/index.cjs.min.js')
+const {readTextFile, writeFile, Dir } = require('./api/fs/index.cjs.min.js')
+
+const {open} = require('./api/dialog.cjs.min.js')
 
 const { load, safeDump } = require('js-yaml')
 
@@ -85,6 +87,34 @@ app.ports.infoForOutside.subscribe(msg => {
 
              break;
 
+          case "OpenFileDialog":
+
+              console.log("Here is OpenFileDialog")
+
+              //open({directory: true}).then(val => console.log(val))
+
+
+              const preferredDirectory = open({directory: true})
+
+
+              const preferences = readTextFile('.muEditPreferences.yaml', {dir: 11})
+                                  .then(str => load(str))
+
+//              preferredDirectory.then(x => console.log("PD", x))
+//              preferences.then(x => console.log("PREFS", x))
+
+              const updatePreferences = (s, p) => {
+                    return Object.assign(p, {documentDirectory: s})
+              }
+
+              preferredDirectory
+              .then(pd => preferences.then(pref => updatePreferences(pd, pref)))
+              .then(x => console.log("UPDATED: ", x))
+
+
+
+              break;
+
           case "CreateFile":
 
               console.log("Here is CreateFile")
@@ -94,6 +124,8 @@ app.ports.infoForOutside.subscribe(msg => {
               console.log("CREATE DOC", document.fileName)
 
               createFile(document)
+
+              break;
 
           case "WriteFile":
 

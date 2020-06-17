@@ -453,6 +453,10 @@ update msg model =
             , Helper.Server.updateDocument model.fileStorageUrl newDocument
             )
 
+        SetDocumentDirectory ->
+            model
+            |> withCmd  (Outside.sendInfo (Outside.OpenFileDialog Json.Encode.null))
+
         SoftDelete record ->
             let
                 -- TODO: review

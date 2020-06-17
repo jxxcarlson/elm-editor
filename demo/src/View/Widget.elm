@@ -18,6 +18,7 @@ module View.Widget exposing
     , openNewFilePopupButton
     , plainButton
     , saveFileToStorageButton
+    , setDocumentDirectoryButton
     , signInButton
     , signOutButton
     , signUpButton
@@ -129,6 +130,10 @@ doNotChangeFileNameButton =
 
 
 -- [ Font.color (Element.rgb 0.7 0.7 0.7) ]
+
+
+setDocumentDirectoryButton =
+    button_ 170 "Set Document Directory" SetDocumentDirectory
 
 
 saveFileToStorageButton model =
