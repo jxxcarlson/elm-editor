@@ -40,6 +40,10 @@ const docPath = '/Users/jxxcarlson/Documents/mudocs'
 
    /// GET FILE
 
+const getPreferences = () => {
+   return readTextFile('.muEditPreferences.yaml', {dir: 11}).then(str => load(str))
+}
+
 const fetchDocumentByFileName = (fileName) => {
 
   const manifestPath = docPath + '/manifest.yaml'
@@ -226,6 +230,8 @@ app.ports.infoForOutside.subscribe(msg => {
 
     }
 
+
+
     function getManifest() {
 
       const path = docPath + '/manifest.yaml'
@@ -237,9 +243,8 @@ app.ports.infoForOutside.subscribe(msg => {
 
     function writeFile_(document) {
 
-        const pathToFile = docPath + '/' + document.fileName
-
-        writeFile({file: pathToFile, contents: document.content})
+        getPreferences()
+        .then(p => writeFile({file: (p.documentDirectory + '/' + document.fileName), contents: document.content}))
     }
 
     function writeMetadata(document) {
