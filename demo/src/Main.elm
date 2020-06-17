@@ -124,7 +124,7 @@ init flags =
     , email = ""
     , password = ""
     , passwordAgain = ""
-    , signInMode = SigningIn
+    , signInMode = SetupAuthor
     , currentUser = Nothing
     }
         |> Helper.Sync.syncModel newEditor
@@ -554,6 +554,9 @@ update msg model =
 
         InputPasswordAgain str ->
             { model | passwordAgain = str } |> withNoCmd
+
+        SetAuthor ->
+            model |> withNoCmd
 
         CreateAuthor ->
             let

@@ -71,6 +71,7 @@ type alias Model =
 
 type SignInMode
     = SigningIn
+    | SetupAuthor
     | SignedIn
     | SigningUp
 
@@ -156,6 +157,7 @@ type Msg
     | InputPassword String
     | InputPasswordAgain String
     | InputEmail String
+    | SetAuthor
     | CreateAuthor
     | SignUp
     | SignIn

@@ -91,17 +91,11 @@ app.ports.infoForOutside.subscribe(msg => {
 
               console.log("Here is OpenFileDialog")
 
-              //open({directory: true}).then(val => console.log(val))
-
-
               const preferredDirectory = open({directory: true})
 
 
               const preferences = readTextFile('.muEditPreferences.yaml', {dir: 11})
                                   .then(str => load(str))
-
-//              preferredDirectory.then(x => console.log("PD", x))
-//              preferences.then(x => console.log("PREFS", x))
 
               const updatePreferences = (s, p) => {
                     return Object.assign(p, {documentDirectory: s})
@@ -109,7 +103,9 @@ app.ports.infoForOutside.subscribe(msg => {
 
               preferredDirectory
               .then(pd => preferences.then(pref => updatePreferences(pd, pref)))
-              .then(x => console.log("UPDATED: ", x))
+              .then(pref => safeDump(pref))
+              .then(data => writeFile(  {  file: '.muEditPreferences.yaml', contents: data   }, {dir: 11}  ))
+
 
 
 

@@ -29,6 +29,9 @@ view model =
         SigningIn ->
             viewSignIn model
 
+        SetupAuthor ->
+            viewSetup model
+
         SignedIn ->
             viewSignedIn model
 
@@ -62,6 +65,30 @@ viewSignedIn model =
 
                 PopupOpen _ ->
                     Element.none
+
+
+viewSetup : Model -> Element Msg
+viewSetup model =
+    case model.popupStatus of
+        PopupClosed ->
+            Element.none
+
+        PopupOpen AuthorPopup ->
+            column
+                [ width (px 500)
+                , height (px <| round <| Helper.Common.windowHeight model.height + 28)
+                , paddingXY 30 30
+                , Background.color (Element.rgba 1.0 0.75 0.75 0.8)
+                , spacing 16
+                ]
+                [ titleLine model
+                , userNameInput model
+                , Widget.setAuthorButton
+                , Widget.setDocumentDirectoryButton
+                ]
+
+        PopupOpen _ ->
+            Element.none
 
 
 viewSignIn : Model -> Element Msg
