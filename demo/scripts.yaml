@@ -5,7 +5,7 @@ env:
 scripts:
 
   cloc:
-    cmd: cloc --by-file src2
+    cmd: cloc --by-file src
     desc: lines of code for server, by file
 
   make:
