@@ -319,9 +319,10 @@ update msg model =
                 |> withNoCmd
 
         SaveFileToStorage ->
-            --{ model | documentStatus = DocumentSaved }
-            --                |> withCmd (Helper.Server.updateDocument model.fileStorageUrl model.document)
-            -- TODO: Review & cleanup
+            let
+                _ =
+                    Debug.log "I AM HERE" "SaveFileToStorage"
+            in
             saveFileToStorage_ model
 
         InputFileName str ->
@@ -446,11 +447,15 @@ update msg model =
 saveFileToStorage_ : Model -> ( Model, Cmd Msg )
 saveFileToStorage_ model =
     let
+        _ =
+            Debug.log "SAVE FILE TO STORAGE" "!!!"
+
         document_ =
             model.document
 
         document =
-            { document_ | timeUpdated = model.currentTime }
+            Debug.log "Updated" <|
+                { document_ | timeUpdated = model.currentTime }
     in
     case model.documentStatus of
         DocumentDirty ->

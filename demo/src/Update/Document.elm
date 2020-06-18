@@ -33,7 +33,7 @@ changeFileName fileName model =
         , document = newDocument
         , fileList = Helper.Server.updateFileList (Document.toMetadata newDocument) model.fileList
       }
-    , Helper.Server.updateDocument model.fileStorageUrl newDocument
+    , Outside.sendInfo (Outside.WriteFile newDocument)
     )
 
 

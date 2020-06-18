@@ -55,7 +55,7 @@ infoPanel model =
         , item "id" model.document.id
         , item "Author" model.document.author
         , item "Created" (Helper.Common.dateStringFromPosix model.document.timeCreated)
-        , item "Modified" (Helper.Common.dateStringFromPosix model.document.timeCreated)
+        , item "Modified" (Helper.Common.dateStringFromPosix model.document.timeUpdated)
         ]
 
 

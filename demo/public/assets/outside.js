@@ -4210,7 +4210,9 @@ app.ports.infoForOutside.subscribe(msg => {
               getPreferences()
               .then(p => writeFile({file: (p.documentDirectory + '/' + document.fileName), contents: document.content}))
 
-               break;
+               writeMetadata(document)
+
+          break;
 
           case "WriteMetadata":
 
