@@ -20,7 +20,7 @@ import UuidHelper
 
 loadAboutDocument : Model -> Model
 loadAboutDocument model =
-    loadDocument "about" Data.about MarkdownDoc model
+    updateModeWithDocument Data.about model
 
 
 {-|
@@ -73,8 +73,16 @@ loadDocument fileName_ content_ docType_ model =
         content =
             List.drop 1 lines |> String.join "\n"
 
+        author_ =
+            model.currentUser |> Maybe.map .userName |> Maybe.withDefault "unknown"
+
+        -- |> Maybe.withDefault "anonymous"
         doc =
-            Document.new { fileName = fileName_, content = content, id = model.uuid, docType = docType_ }
+            { fileName = fileName_
+            , id = model.uuid
+            , author = author_
+            , content = content_
+            }
     in
     updateModeWithDocument doc model
         |> UuidHelper.newUuid

@@ -1,9 +1,9 @@
 module Codec.Document exposing
-    ( decodeMetadata
-    , documentDecoder
+    ( documentDecoder
     , documentEncoder
     , extendedDocumentEncoder
     , messageDecoder
+    , metadataDecoder
     , metadataEncoder
     , metadataListDecoder
     )
@@ -23,6 +23,7 @@ documentDecoder =
     D.succeed Document
         |> required "fileName" string
         |> required "id" string
+        |> required "author" string
         |> required "content" string
 
 
@@ -31,6 +32,7 @@ documentEncoder doc =
     Encode.object
         [ ( "fileName", Encode.string doc.fileName )
         , ( "id", Encode.string doc.id )
+        , ( "author", Encode.string doc.author )
         , ( "content", Encode.string doc.content )
         ]
 
@@ -55,21 +57,23 @@ extendedDocumentEncoder token doc =
 
 metadataListDecoder : D.Decoder (List Metadata)
 metadataListDecoder =
-    D.list decodeMetadata
+    D.list metadataDecoder
 
 
-decodeMetadata : Decoder Metadata
-decodeMetadata =
+metadataDecoder : Decoder Metadata
+metadataDecoder =
     D.succeed Metadata
-        |> required "id" string
         |> required "fileName" string
+        |> required "id" string
+        |> required "author" string
 
 
 metadataEncoder : Metadata -> Encode.Value
-metadataEncoder record =
+metadataEncoder metadata =
     Encode.object
-        [ ( "fileName", Encode.string record.fileName )
-        , ( "id", Encode.string record.id )
+        [ ( "fileName", Encode.string metadata.fileName )
+        , ( "id", Encode.string metadata.id )
+        , ( "author", Encode.string metadata.author )
         ]
 
 

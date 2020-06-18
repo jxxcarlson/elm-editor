@@ -46,7 +46,7 @@ view model =
                         RemoteFiles ->
                             "Remote Files (" ++ n ++ ")"
 
-                currentRecord =
+                metadataOfCurrentDocument =
                     Document.toMetadata model.document
             in
             column
@@ -62,7 +62,7 @@ view model =
                     , height (px 400)
                     , scrollbarY
                     ]
-                    (filesToDisplay |> List.map (viewFileName currentRecord))
+                    (filesToDisplay |> List.map (viewFileName metadataOfCurrentDocument))
                 ]
 
         PopupOpen _ ->
@@ -77,10 +77,10 @@ prepareFileList fileList =
 
 
 viewFileName : Metadata -> Metadata -> Element Msg
-viewFileName currentRecord record =
+viewFileName metaDataOfCurrentDocument metadata =
     let
         bgColor =
-            case currentRecord.id == record.id of
+            case metaDataOfCurrentDocument.id == metadata.id of
                 True ->
                     Background.color (Element.rgba 0.7 0.7 1.0 0.5)
 
@@ -89,13 +89,13 @@ viewFileName currentRecord record =
     in
     row [ spacing 8 ]
         [ Widget.plainButton 200
-            (prettify record.fileName)
-            (OutsideInfo (Outside.AskForFile record.fileName))
+            (prettify metadata.fileName)
+            (OutsideInfo (Outside.AskForFile metadata.fileName))
             [ Font.color (Element.rgb 0 0 0.9), bgColor, Element.padding 2 ]
         , el [ Element.padding 2, Background.color (Element.rgba 0.7 0.3 0.3 0.5) ]
             (Widget.plainButton 55
                 "delete"
-                (SoftDelete record)
+                (SoftDelete metadata)
                 []
             )
         ]

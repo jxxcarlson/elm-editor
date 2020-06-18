@@ -97,10 +97,10 @@ init : Flags -> ( Model, Cmd Msg )
 init flags =
     let
         newEditor =
-            Editor.initWithContent Data.about (Helper.Load.config flags)
+            Editor.initWithContent Data.about.content (Helper.Load.config flags)
     in
     { editor = newEditor
-    , renderingData = load 0 ( 0, 0 ) (OMarkdown ExtendedMath) Data.about
+    , renderingData = load 0 ( 0, 0 ) (OMarkdown ExtendedMath) Data.about.content
     , counter = 1
     , currentTime = Time.millisToPosix 0
     , preferences = Nothing
@@ -121,7 +121,7 @@ init flags =
     , tickCount = 0
     , popupStatus = PopupClosed
     , authorName = ""
-    , document = { fileName = "untitled", id = "1234", content = "---" }
+    , document = { fileName = "untitled", id = "1234", author = "unknown", content = "---" }
     , randomSeed = Random.initialSeed 1727485
     , uuid = ""
     , fileStorageUrl = Config.localServerUrl

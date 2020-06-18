@@ -35,13 +35,12 @@ view model =
                 , height (px <| round <| Helper.Common.windowHeight model.height + 28)
                 , paddingXY 30 30
                 , Background.color (Element.rgba 1.0 0.75 0.75 0.8)
-                , spacing 16
+                , spacing 24
                 ]
                 [ titleLine model
-                , fileNameInput model
-                , row [ spacing 12 ]
-                    [ Widget.changeFileNameButton model.fileName_
-                    , Widget.cancelChangeFileNameButton
+                , column [ spacing 36 ]
+                    [ infoPanel model
+                    , changePanel model
                     ]
                 ]
 
@@ -49,8 +48,34 @@ view model =
             Element.none
 
 
+infoPanel model =
+    column [ spacing 12 ]
+        [ item "File name" model.document.fileName
+        , item "id" model.document.id
+        , item "Author" model.document.author
+        ]
+
+
+changePanel model =
+    column [ spacing 12 ]
+        [ fileNameInput model
+        , row [ spacing 12 ]
+            [ Widget.changeFileNameButton model.fileName_
+            , Widget.cancelChangeFileNameButton
+            ]
+        ]
+
+
+item : String -> String -> Element msg
+item label str =
+    row [ Font.size 14, spacing 12 ]
+        [ el [ Font.bold, width (px 65) ] (el [ alignRight ] (text label))
+        , el [] (text str)
+        ]
+
+
 titleLine model =
-    row [ width (px 450) ] [ text "File", el [ alignRight ] (Widget.closePopupButton model) ]
+    row [ width (px 450) ] [ text "File info", el [ alignRight ] (Widget.closePopupButton model) ]
 
 
 fileInput msg text label =

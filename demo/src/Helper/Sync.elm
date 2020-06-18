@@ -51,23 +51,31 @@ syncModel2 model =
 
 updateDocument : Editor -> Model -> Model
 updateDocument editor model =
-    case model.document.id == "1234" || model.document.id == "" of
-        False ->
-            { model | document = updateDocument_ editor model.document }
+    let
+        doc =
+            model.document
 
-        True ->
-            { model | document = updateDocumentWithUuid_ model.uuid editor model.document }
-                |> UuidHelper.newUuid
-
-
-updateDocumentWithUuid_ : String -> Editor -> Document -> Document
-updateDocumentWithUuid_ uuid editor document =
-    { document | content = Editor.getContent editor, id = uuid }
+        newDoc =
+            { doc | content = Editor.getContent editor }
+    in
+    { model | document = newDoc }
 
 
-updateDocument_ : Editor -> Document -> Document
-updateDocument_ editor document =
-    { document | content = Editor.getContent editor }
+
+--case model.document.id == "1234" || model.document.id == "" of
+--    False ->
+--        { model | document = updateDocument_ editor model.document }
+--
+--    True ->
+--        { model | document = updateDocumentWithUuid_ model.uuid editor model.document }
+--            |> UuidHelper.newUuid
+--updateDocumentWithUuid_ : String -> Editor -> Document -> Document
+--updateDocumentWithUuid_ uuid editor document =
+--    { document | content = Editor.getContent editor, id = uuid }
+--
+--updateDocument_ : Editor -> Document -> Document
+--updateDocument_ editor document =
+--    { document | content = Editor.getContent editor }
 
 
 syncAndHighlightRenderedText : String -> Cmd Msg -> Model -> ( Model, Cmd Msg )

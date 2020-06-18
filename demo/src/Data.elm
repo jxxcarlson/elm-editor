@@ -1,15 +1,18 @@
-module Data exposing
-    ( about
-    , aboutMiniLaTeX
-    , aboutMiniLaTeX2
-    , astro
-    , markdownExample
-    , mathExample
-    , miniLaTeXExample
-    )
+module Data exposing (about)
+
+import Document exposing (Document)
 
 
+about : Document
 about =
+    { fileName = "about.md"
+    , id = "about.1234"
+    , author = "jxxcarlson"
+    , content = aboutContent
+    }
+
+
+aboutContent =
     """
 # A Pure Elm Text Editor
 

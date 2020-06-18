@@ -4030,6 +4030,7 @@ could be used to work around this.
 
 */
 
+// IMPORTS
 const {readTextFile, writeFile, Dir } = require('./api/fs/index.cjs.min.js')
 
 const {open} = require('./api/dialog.cjs.min.js')
@@ -4040,13 +4041,22 @@ const getPreferences = () => {
    return readTextFile('.muEditPreferences.yaml', {dir: 11}).then(str => load(str))
 }
 
+const toMetadata = (doc) => (
+       { fileName: doc.fileName,
+        id: doc.id,
+        author: doc.author
+        }
+   )
+
+// FETCH DOCUMENT FROM DISK BY FILENAME, SEND TO ELM
 const fetchDocumentByFileName = (fileName) => {
 
   const getMetadata = (fileName, manifest) => (manifest.filter(r => r.fileName == fileName)[0])
 
   const sendFile = (str, metadata) => app.ports.infoForElm.send({tag: "GotFile", data: merge(str, metadata)})
 
-  const merge = (str, metadata) => ({ fileName: metadata.fileName, id: metadata.id, content: str})
+  // const merge = (str, metadata) => ({ fileName: metadata.fileName, id: metadata.id, metadata.author, content: str})
+  const merge = (str, metadata) => Object.assign(metadata, {content: str})
 
   const paths = (p) => ({toManifest: (p.documentDirectory + '/manifest.yaml'), toFile: (p.documentDirectory + '/' + fileName )})
 
@@ -4088,6 +4098,8 @@ app.ports.infoForOutside.subscribe(msg => {
            const sendManifest = (value) => app.ports.infoForElm.send({tag: "GotFileList", data:  load(value)})
 
            const getManifest = (pathToManifest) => readTextFile(pathToManifest,  {}).then(value => sendManifest(value))
+           // const getManifest = (pathToManifest) => readTextFile(pathToManifest,  {}).then(value => console.log(value))
+
 
            getPreferences()
              .then(p => (p.documentDirectory + '/manifest.yaml'))
@@ -4243,7 +4255,7 @@ app.ports.infoForOutside.subscribe(msg => {
 
     function writeMetadata(document) {
 
-        const metadata = { fileName: document.fileName, id: document.id}
+        const metadata = toMetadata(document)
 
         // s and t are metadata: source and target
         const changeMetadata = (s, t ) =>
@@ -4267,7 +4279,7 @@ app.ports.infoForOutside.subscribe(msg => {
 
     function createFile(document) {
 
-        const metadata = {fileName: document.fileName, id: document.id}
+        const metadata = toMetadata(document)
 
         getPreferences()
         .then(p => writeFile({file: (p.documentDirectory + '/' + document.fileName), contents: document.content}))

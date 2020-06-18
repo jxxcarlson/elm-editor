@@ -17,10 +17,27 @@ type DocType
     | MiniLaTeXDoc
 
 
+
+--type alias Document =
+--    { fileName : String
+--    , id : String
+--    , author: String
+--    , content : String
+--    }
+
+
 type alias Document =
     { fileName : String
     , id : String
+    , author : String
     , content : String
+    }
+
+
+type alias Metadata =
+    { fileName : String
+    , id : String
+    , author : String
     }
 
 
@@ -29,12 +46,6 @@ type alias SimpleDocument a =
         | fileName : String
         , id : String
         , content : String
-    }
-
-
-type alias Metadata =
-    { id : String
-    , fileName : String
     }
 
 
@@ -74,9 +85,12 @@ new data =
     { fileName = fileName, id = data.id, content = data.content }
 
 
-toMetadata : SimpleDocument {} -> Metadata
+toMetadata : Document -> Metadata
 toMetadata doc =
-    { id = doc.id, fileName = doc.fileName }
+    { fileName = doc.fileName
+    , id = doc.id
+    , author = doc.author
+    }
 
 
 changeDocType : DocType -> String -> String
