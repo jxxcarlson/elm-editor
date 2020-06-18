@@ -39,11 +39,7 @@ type alias Metadata =
 
 
 type alias NewDocumentData =
-    { fileName : String
-    , id : String
-    , docType : DocType
-    , content : String
-    }
+    SimpleDocument { docType : DocType }
 
 
 shortId : String -> String
@@ -58,7 +54,7 @@ shortId uuid =
     String.join "-" parts
 
 
-new : NewDocumentData -> Document
+new : SimpleDocument { docType : DocType } -> SimpleDocument {}
 new data =
     let
         shortId_ =
@@ -78,7 +74,7 @@ new data =
     { fileName = fileName, id = data.id, content = data.content }
 
 
-toMetadata : Document -> Metadata
+toMetadata : SimpleDocument {} -> Metadata
 toMetadata doc =
     { id = doc.id, fileName = doc.fileName }
 

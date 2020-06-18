@@ -1,11 +1,11 @@
 module Codec.Document exposing
-    ( decodeMiniFileRecord
+    ( decodeMetadata
     , documentDecoder
     , documentEncoder
-    , documentListDecoder
     , extendedDocumentEncoder
     , messageDecoder
     , metadataEncoder
+    , metadataListDecoder
     )
 
 import Document exposing (Document, Metadata)
@@ -15,12 +15,7 @@ import Json.Encode as Encode
 
 
 
--- DECODERS
-
-
-documentListDecoder : D.Decoder (List Metadata)
-documentListDecoder =
-    D.list decodeMiniFileRecord
+-- DOCUMENT
 
 
 documentDecoder : Decoder Document
@@ -31,11 +26,55 @@ documentDecoder =
         |> required "content" string
 
 
-decodeMiniFileRecord : Decoder Metadata
-decodeMiniFileRecord =
+documentEncoder : Document -> Encode.Value
+documentEncoder doc =
+    Encode.object
+        [ ( "fileName", Encode.string doc.fileName )
+        , ( "id", Encode.string doc.id )
+        , ( "content", Encode.string doc.content )
+        ]
+
+
+
+-- EXTENDED DOCUMENT
+
+
+extendedDocumentEncoder : String -> Document -> Encode.Value
+extendedDocumentEncoder token doc =
+    Encode.object
+        [ ( "fileName", Encode.string doc.fileName )
+        , ( "id", Encode.string doc.id )
+        , ( "content", Encode.string doc.content )
+        , ( "token", Encode.string token )
+        ]
+
+
+
+-- METADATA
+
+
+metadataListDecoder : D.Decoder (List Metadata)
+metadataListDecoder =
+    D.list decodeMetadata
+
+
+decodeMetadata : Decoder Metadata
+decodeMetadata =
     D.succeed Metadata
         |> required "id" string
         |> required "fileName" string
+
+
+metadataEncoder : Metadata -> Encode.Value
+metadataEncoder record =
+    Encode.object
+        [ ( "fileName", Encode.string record.fileName )
+        , ( "id", Encode.string record.id )
+        ]
+
+
+
+--  MESSAGE
 
 
 type alias MessageContainer =
@@ -48,34 +87,3 @@ messageDecoder =
         |> required "msg" string
     )
         |> D.map .msg
-
-
-
--- ENCODERS
-
-
-metadataEncoder : Metadata -> Encode.Value
-metadataEncoder record =
-    Encode.object
-        [ ( "fileName", Encode.string record.fileName )
-        , ( "id", Encode.string record.id )
-        ]
-
-
-documentEncoder : Document -> Encode.Value
-documentEncoder doc =
-    Encode.object
-        [ ( "fileName", Encode.string doc.fileName )
-        , ( "id", Encode.string doc.id )
-        , ( "content", Encode.string doc.content )
-        ]
-
-
-extendedDocumentEncoder : String -> Document -> Encode.Value
-extendedDocumentEncoder token doc =
-    Encode.object
-        [ ( "fileName", Encode.string doc.fileName )
-        , ( "id", Encode.string doc.id )
-        , ( "content", Encode.string doc.content )
-        , ( "token", Encode.string token )
-        ]

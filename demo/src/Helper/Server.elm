@@ -59,7 +59,7 @@ getDocumentList : String -> Cmd Msg
 getDocumentList serverUrl =
     Http.get
         { url = serverUrl ++ "/documents"
-        , expect = Http.expectJson GotDocuments Codec.Document.documentListDecoder
+        , expect = Http.expectJson GotDocuments Codec.Document.metadataListDecoder
         }
 
 
