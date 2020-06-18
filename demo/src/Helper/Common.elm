@@ -1,11 +1,21 @@
 module Helper.Common exposing
     ( addPostfix
+    , dateStringFromPosix
     , removePostfix
     , windowHeight
     , windowWidth
     )
 
+import Date
 import List.Extra
+import Time
+
+
+dateStringFromPosix : Time.Posix -> String
+dateStringFromPosix t =
+    t
+        |> Date.fromPosix Time.utc
+        |> Date.toIsoString
 
 
 windowWidth : Float -> Float

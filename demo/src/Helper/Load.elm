@@ -14,6 +14,7 @@ import Helper.Server
 import List.Extra
 import Markdown.Option exposing (MarkdownOption(..))
 import Render exposing (RenderingOption(..))
+import Time
 import Types exposing (Model, Msg(..))
 import UuidHelper
 
@@ -64,8 +65,8 @@ updateModeWithDocument document model =
     - Compute the rendered content and store it in the model.
 
 -}
-loadDocument : String -> String -> DocType -> Model -> Model
-loadDocument fileName_ content_ docType_ model =
+loadDocument : Time.Posix -> String -> String -> DocType -> Model -> Model
+loadDocument time fileName_ content_ docType_ model =
     let
         lines =
             String.lines content_
@@ -81,6 +82,8 @@ loadDocument fileName_ content_ docType_ model =
             { fileName = fileName_
             , id = model.uuid
             , author = author_
+            , timeCreated = time
+            , timeUpdated = time
             , content = content_
             }
     in

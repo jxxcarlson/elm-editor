@@ -121,7 +121,7 @@ init flags =
     , tickCount = 0
     , popupStatus = PopupClosed
     , authorName = ""
-    , document = { fileName = "untitled", id = "1234", author = "unknown", content = "---" }
+    , document = Data.about
     , randomSeed = Random.initialSeed 1727485
     , uuid = ""
     , fileStorageUrl = Config.localServerUrl

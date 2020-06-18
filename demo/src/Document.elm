@@ -11,25 +11,20 @@ module Document exposing
     , toMetadata
     )
 
+import Time
+
 
 type DocType
     = MarkdownDoc
     | MiniLaTeXDoc
 
 
-
---type alias Document =
---    { fileName : String
---    , id : String
---    , author: String
---    , content : String
---    }
-
-
 type alias Document =
     { fileName : String
     , id : String
     , author : String
+    , timeCreated : Time.Posix
+    , timeUpdated : Time.Posix
     , content : String
     }
 
@@ -38,6 +33,8 @@ type alias Metadata =
     { fileName : String
     , id : String
     , author : String
+    , timeCreated : Time.Posix
+    , timeUpdated : Time.Posix
     }
 
 
@@ -90,6 +87,8 @@ toMetadata doc =
     { fileName = doc.fileName
     , id = doc.id
     , author = doc.author
+    , timeCreated = doc.timeCreated
+    , timeUpdated = doc.timeUpdated
     }
 
 

@@ -1,6 +1,7 @@
 module Data exposing (about)
 
 import Document exposing (Document)
+import Time
 
 
 about : Document
@@ -9,6 +10,8 @@ about =
     , id = "about.1234"
     , author = "jxxcarlson"
     , content = aboutContent
+    , timeCreated = Time.millisToPosix 1592511028000
+    , timeUpdated = Time.millisToPosix 1592511028000
     }
 
 

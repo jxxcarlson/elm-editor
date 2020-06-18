@@ -12,6 +12,7 @@ import Document exposing (Document, Metadata)
 import Json.Decode as D exposing (Decoder, bool, int, list, nullable, string)
 import Json.Decode.Pipeline as JP exposing (required)
 import Json.Encode as Encode
+import Time
 
 
 
@@ -24,6 +25,8 @@ documentDecoder =
         |> required "fileName" string
         |> required "id" string
         |> required "author" string
+        |> required "timeCreated" (int |> D.map Time.millisToPosix)
+        |> required "timeUpdated" (int |> D.map Time.millisToPosix)
         |> required "content" string
 
 
@@ -33,6 +36,8 @@ documentEncoder doc =
         [ ( "fileName", Encode.string doc.fileName )
         , ( "id", Encode.string doc.id )
         , ( "author", Encode.string doc.author )
+        , ( "timeCreated", Encode.int (Time.posixToMillis doc.timeCreated) )
+        , ( "timeUpdated", Encode.int (Time.posixToMillis doc.timeUpdated) )
         , ( "content", Encode.string doc.content )
         ]
 
@@ -66,6 +71,8 @@ metadataDecoder =
         |> required "fileName" string
         |> required "id" string
         |> required "author" string
+        |> required "timeCreated" (int |> D.map Time.millisToPosix)
+        |> required "timeUpdated" (int |> D.map Time.millisToPosix)
 
 
 metadataEncoder : Metadata -> Encode.Value
@@ -74,6 +81,8 @@ metadataEncoder metadata =
         [ ( "fileName", Encode.string metadata.fileName )
         , ( "id", Encode.string metadata.id )
         , ( "author", Encode.string metadata.author )
+        , ( "timeCreated", Encode.int (Time.posixToMillis metadata.timeCreated) )
+        , ( "timeUpdated", Encode.int (Time.posixToMillis metadata.timeUpdated) )
         ]
 
 
