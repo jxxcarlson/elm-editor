@@ -269,16 +269,7 @@ update msg model =
             Update.Document.createDocument model
 
         SetViewPortForElement result ->
-            case result of
-                Ok ( element, viewport ) ->
-                    model
-                        |> Update.Helper.postMessage "synced"
-                        |> withCmd (View.Scroll.setViewPortForSelectedLineInRenderedText element viewport)
-
-                Err _ ->
-                    model
-                        |> Update.Helper.postMessage "sync error"
-                        |> withNoCmd
+            Update.UI.setViewportForElement result model
 
         -- REMOTE DOCUMENTS
         RequestFile ->
@@ -298,30 +289,13 @@ update msg model =
 
         -- DOCUMENT SYNC
         SyncLR ->
-            let
-                ( newEditor, cmd ) =
-                    Editor.sendLine model.editor
-            in
-            ( { model | editor = newEditor }, Cmd.map EditorMsg cmd )
+            Update.UI.syncLR model
 
         LogErr _ ->
             ( model, Cmd.none )
 
         RenderMsg renderMsg ->
-            {- DOC sync RL: renderMsg receives the id of the element clicked in
-               the rendered text.  It is used highlight the corresponding
-               source text (RL sync)
-            -}
-            case renderMsg of
-                LaTeXMsg latexMsg ->
-                    case latexMsg of
-                        MLE.IDClicked id ->
-                            Helper.Sync.onId id model
-
-                Render.Types.MarkdownMsg markdownMsg ->
-                    case markdownMsg of
-                        IDClicked id ->
-                            Helper.Sync.onId id model
+            Update.UI.handleRenderMsg renderMsg model
 
         -- UI
         ManagePopup status ->
@@ -350,23 +324,7 @@ update msg model =
             ( { model | fileName_ = str, changingFileNameState = ChangingFileName }, Cmd.none )
 
         ChangeFileName fileName ->
-            let
-                oldDocument =
-                    model.document
-
-                newDocument =
-                    { oldDocument | fileName = fileName }
-            in
-            ( { model
-                | fileName = model.fileName_
-                , docType = Document.docType model.fileName_
-                , changingFileNameState = FileNameOK
-                , popupStatus = PopupClosed
-                , document = newDocument
-                , fileList = Helper.Server.updateFileList (Document.toMetadata newDocument) model.fileList
-              }
-            , Helper.Server.updateDocument model.fileStorageUrl newDocument
-            )
+            Update.Document.changeFileName fileName model
 
         SetDocumentDirectory ->
             model

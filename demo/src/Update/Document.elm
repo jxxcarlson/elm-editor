@@ -1,5 +1,6 @@
 module Update.Document exposing
-    ( createDocument
+    ( changeFileName
+    , createDocument
     , loadDocument
     , toggleDocType
     )
@@ -10,9 +11,30 @@ import Helper.Load
 import Helper.Server
 import Helper.Sync
 import Outside
-import Types exposing (FileLocation(..), Model, Msg, PopupStatus(..))
+import Types exposing (ChangingFileNameState(..), FileLocation(..), Model, Msg, PopupStatus(..))
 import Update.Helper
 import View.Scroll
+
+
+changeFileName : String -> Model -> ( Model, Cmd Msg )
+changeFileName fileName model =
+    let
+        oldDocument =
+            model.document
+
+        newDocument =
+            { oldDocument | fileName = fileName }
+    in
+    ( { model
+        | fileName = model.fileName_
+        , docType = Document.docType model.fileName_
+        , changingFileNameState = FileNameOK
+        , popupStatus = PopupClosed
+        , document = newDocument
+        , fileList = Helper.Server.updateFileList (Document.toMetadata newDocument) model.fileList
+      }
+    , Helper.Server.updateDocument model.fileStorageUrl newDocument
+    )
 
 
 {-|
@@ -97,19 +119,6 @@ loadDocument content model =
             , View.Scroll.toEditorTop
             , Helper.Server.updateDocument model.fileStorageUrl newDocument
             ]
-
-
-setViewportForSync result model =
-    case result of
-        Ok ( element, viewport ) ->
-            model
-                |> Update.Helper.postMessage "synced"
-                |> withCmd (View.Scroll.setViewPortForSelectedLineInRenderedText element viewport)
-
-        Err _ ->
-            model
-                |> Update.Helper.postMessage "sync error"
-                |> withNoCmd
 
 
 toggleDocType : Model -> ( Model, Cmd Msg )

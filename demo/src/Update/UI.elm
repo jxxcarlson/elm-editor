@@ -1,9 +1,22 @@
-module Update.UI exposing (managePopup)
+module Update.UI exposing (managePopup
+  , syncLR
+  , setViewportForElement
+  , handleRenderMsg
+  )
 
-import Types exposing(Model, PopupStatus(..),  PopupWindow(..), DocumentStatus(..), FileLocation(..))
+import Types exposing(Model, PopupStatus(..),  Msg(..), PopupWindow(..), DocumentStatus(..), FileLocation(..))
 import Cmd.Extra exposing (withCmd,withNoCmd, withCmds)
 import Helper.Server
 import Helper.File
+import View.Scroll
+import Markdown.Render exposing (MarkdownMsg(..))
+import MiniLatex.Edit
+import Helper.Sync
+import Update.Helper
+import Editor
+import Browser.Dom
+import Render.Types exposing (RenderMsg(..))
+
 
 
 managePopup : PopupStatus -> Model -> (Model, Cmd Types.Msg)
@@ -37,3 +50,58 @@ managePopup status model =
 
     PopupClosed ->
         { model | popupStatus = status } |> withNoCmd
+
+
+setViewportForElement : Result error (Browser.Dom.Element, Browser.Dom.Viewport) -> Model -> (Model, Cmd Types.Msg)
+setViewportForElement result model =
+   case result of
+        Ok ( element, viewport ) ->
+            model
+                |> Update.Helper.postMessage "synced"
+                |> withCmd (View.Scroll.setViewPortForSelectedLineInRenderedText element viewport)
+
+        Err _ ->
+            model
+                |> Update.Helper.postMessage "sync error"
+                |> withNoCmd
+
+
+
+--setViewportForSync : Result error (Browser.Dom.Element, Browser.Dom.Viewport) -> Model -> (Model, Cmd Msg)
+--setViewportForSync result model =
+--    case result of
+--        Ok ( element, viewport ) ->
+--            model
+--                |> Update.Helper.postMessage "synced"
+--                |> withCmd (View.Scroll.setViewPortForSelectedLineInRenderedText element viewport)
+--
+--        Err _ ->
+--            model
+--                |> Update.Helper.postMessage "sync error"
+--                |> withNoCmd
+
+
+handleRenderMsg : RenderMsg -> Model -> (Model, Cmd Msg)
+handleRenderMsg renderMsg model =
+            {- DOC sync RL: renderMsg receives the id of the element clicked in
+               the rendered text.  It is used highlight the corresponding
+               source text (RL sync)
+            -}
+            case renderMsg of
+                LaTeXMsg latexMsg ->
+                    case latexMsg of
+                        MiniLatex.Edit.IDClicked id ->
+                            Helper.Sync.onId id model
+
+                Render.Types.MarkdownMsg markdownMsg ->
+                    case markdownMsg of
+                        IDClicked id ->
+                            Helper.Sync.onId id model
+
+syncLR : Model -> (Model, Cmd Msg)
+syncLR model =
+    let
+        ( newEditor, cmd ) =
+            Editor.sendLine model.editor
+    in
+    ( { model | editor = newEditor }, Cmd.map EditorMsg cmd )
