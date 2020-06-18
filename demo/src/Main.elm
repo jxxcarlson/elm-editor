@@ -8,6 +8,7 @@ import Codec.Author
 import Config
 import ContextMenu exposing (Item(..))
 import Data
+import Update.Document
 import Helper.File
 import Document exposing (DocType(..))
 import Editor exposing (Editor, EditorMsg)
@@ -156,6 +157,70 @@ update msg model =
         NoOp ->
             ( model, Cmd.none )
 
+        -- SYSTEM
+
+        GotAtmosphericRandomNumber result ->
+            UuidHelper.handleResponseFromRandomDotOrg model result
+                |> withNoCmd
+
+        WindowSize width height ->
+            let
+                w =
+                    toFloat width
+
+                h =
+                    toFloat height
+            in
+            ( { model
+                | width = w
+                , height = h
+                , editor = Editor.resize (Helper.Common.windowWidth w) (Helper.Common.windowHeight h) model.editor
+              }
+            , Cmd.none
+            )
+
+
+
+        Message result ->
+            case result of
+                Ok str ->
+                    model
+                        |> postMessage str
+                        |> withNoCmd
+
+                Err _ ->
+                    model
+                        |> postMessage "Unknown error"
+                        |> withNoCmd
+
+
+
+        -- OUTSIDE (JAVASCRIPT INTEROP)
+
+        OutsideInfo msg_ ->
+           model
+             |> withCmd (Outside.sendInfo msg_)
+
+        Outside infoForElm ->
+            case infoForElm of
+                Outside.GotClipboard clipboard ->
+                    pasteToEditorAndClipboard model clipboard
+
+                Outside.GotFileList fileList ->
+                    ( { model | fileList = fileList }, Cmd.none )
+
+                Outside.GotFile file ->
+                    Helper.Load.updateModeWithDocument file model
+                      |> (\m -> {m | popupStatus = PopupClosed})
+                      -- |> (\m -> m |> withCmd (Helper.Server.updateDocument m.fileStorageUrl m.document))
+                      -- TODO: fix the above
+                      |> withNoCmd
+
+                Outside.GotPreferences preferences ->
+                    { model | preferences = Just preferences } |> withNoCmd
+
+        -- EDITOR
+
         EditorMsg editorMsg ->
             -- Handle messages from the Editor.  The messages CopyPasteClipboard, ... GotViewportForSync
             -- require special handling.  The others are passed to a default handler
@@ -206,21 +271,7 @@ update msg model =
                         False ->
                             ( { model | editor = newEditor }, Cmd.map EditorMsg cmd )
 
-        WindowSize width height ->
-            let
-                w =
-                    toFloat width
-
-                h =
-                    toFloat height
-            in
-            ( { model
-                | width = w
-                , height = h
-                , editor = Editor.resize (Helper.Common.windowWidth w) (Helper.Common.windowHeight h) model.editor
-              }
-            , Cmd.none
-            )
+        -- DOCUMENT
 
         LoadAboutDocument ->
             Helper.Load.loadAboutDocument model
@@ -249,40 +300,9 @@ update msg model =
             )
 
         CreateDocument ->
-            let
-                newModel =
-                    case model.docType of
-                        MarkdownDoc ->
-                            Helper.Load.loadDocument model.fileName_ "" MarkdownDoc model
+            Update.Document.createDocument model
 
-                        MiniLaTeXDoc ->
-                            Helper.Load.loadDocument model.fileName_ "" MiniLaTeXDoc model
 
-                doc =
-                    newModel.document
-
-                createDocCmd = case model.fileLocation of
-                    LocalFiles -> Outside.sendInfo(Outside.CreateFile doc)
-                    RemoteFiles -> Helper.Server.createDocument model.fileStorageUrl doc
-            in
-            { newModel | popupStatus = PopupClosed }
-                |> Helper.Sync.syncModel2
-                |> withCmd
-                    (Cmd.batch
-                        [ View.Scroll.toEditorTop
-                        , View.Scroll.toRenderedTextTop
-                        , createDocCmd
-                        ]
-                    )
-
-        --
-        --|> Helper.Sync.syncModel2
-        --|> withCmd
-        --    (Cmd.batch
-        --        [ View.Scroll.toEditorTop
-        --        , View.Scroll.toRenderedTextTop
-        --        ]
-        --    )
         SetViewPortForElement result ->
             case result of
                 Ok ( element, viewport ) ->
@@ -294,6 +314,8 @@ update msg model =
                     model
                         |> postMessage "sync error"
                         |> withNoCmd
+
+        -- FILE PERSISTENCE
 
         RequestFile ->
             ( model, Helper.Server.requestFile )
@@ -345,23 +367,7 @@ update msg model =
             in
             ( { model | editor = newEditor }, Cmd.map EditorMsg cmd )
 
-        Outside infoForElm ->
-            case infoForElm of
-                Outside.GotClipboard clipboard ->
-                    pasteToEditorAndClipboard model clipboard
 
-                Outside.GotFileList fileList ->
-                    ( { model | fileList = fileList }, Cmd.none )
-
-                Outside.GotFile file ->
-                    Helper.Load.updateModeWithDocument file model
-                      |> (\m -> {m | popupStatus = PopupClosed})
-                      -- |> (\m -> m |> withCmd (Helper.Server.updateDocument m.fileStorageUrl m.document))
-                      -- TODO: fix the above
-                      |> withNoCmd
-
-                Outside.GotPreferences preferences ->
-                    { model | preferences = Just preferences } |> withNoCmd
 
         LogErr _ ->
             ( model, Cmd.none )
@@ -483,9 +489,7 @@ update msg model =
         InputAuthorname str ->
             { model | authorName = str } |> withNoCmd
 
-        GotAtmosphericRandomNumber result ->
-            UuidHelper.handleResponseFromRandomDotOrg model result
-                |> withNoCmd
+
 
         AskForDocument fileName ->
             { model | popupStatus = PopupClosed }
@@ -505,11 +509,6 @@ update msg model =
         AskForRemoteDocuments ->
             model |> withCmd (Helper.Server.getDocumentList model.fileStorageUrl)
 
-        OutsideInfo msg_ ->
-           model
-             |> withCmd (Outside.sendInfo msg_)
-
-
 
         GotDocuments result ->
             case result of
@@ -521,17 +520,6 @@ update msg model =
                         |> postMessage "Error getting remote documents"
                         |> withNoCmd
 
-        Message result ->
-            case result of
-                Ok str ->
-                    model
-                        |> postMessage str
-                        |> withNoCmd
-
-                Err _ ->
-                    model
-                        |> postMessage "Unknown error"
-                        |> withNoCmd
 
         ToggleFileLocation fileLocation ->
             let
@@ -549,6 +537,16 @@ update msg model =
             }
                 |> withNoCmd
 
+
+
+        GotPreferences preferences ->
+                  { model | preferences = Just preferences}
+                      |> postMessage ("username: " ++ preferences.userName)
+                      |> withNoCmd
+
+
+        -- AUTHOR / USER
+
         InputUsername str ->
             { model | userName = str } |> withNoCmd
 
@@ -560,13 +558,6 @@ update msg model =
 
         InputPasswordAgain str ->
             { model | passwordAgain = str } |> withNoCmd
-
-        GotPreferences preferences ->
-                  { model | preferences = Just preferences}
-                      |> postMessage ("username: " ++ preferences.userName)
-                      |> withNoCmd
-
-
         SetUserName_ ->
             model |> withCmd (Outside.sendInfo (Outside.SetUserName model.userName))
 
