@@ -1,16 +1,12 @@
 module Main exposing (main)
 
 import Browser
-import Update.Helper
 import Browser.Dom as Dom
 import Browser.Events
 import Cmd.Extra exposing (withCmd, withCmds, withNoCmd)
-import Update.System
 import Config
 import ContextMenu exposing (Item(..))
 import Data
-import Update.Document
-import Helper.File
 import Document exposing (DocType(..))
 import Editor exposing (Editor, EditorMsg)
 import EditorMsg exposing (EMsg(..))
@@ -37,13 +33,13 @@ import Element.Font as Font
 import File exposing (File)
 import Helper.Author
 import Helper.Common
-import Helper.Server
+import Helper.File
 import Helper.Load
+import Helper.Server
 import Helper.Sync
 import Html exposing (Attribute, Html)
 import Html.Attributes as Attribute
 import Json.Encode
-import View.Helpers
 import Markdown.Option exposing (..)
 import Markdown.Render exposing (MarkdownMsg(..))
 import MiniLatex.Edit as MLE
@@ -65,11 +61,16 @@ import Types
         , PopupWindow(..)
         , SignInMode(..)
         )
+import Update.Document
+import Update.Helper
+import Update.System
+import Update.UI
 import UuidHelper
 import View.AuthorPopup as AuthorPopup
 import View.FileListPopup as RemoteFileListPopup
 import View.FilePopup as FilePopup
 import View.Footer
+import View.Helpers
 import View.LocalStoragePopup as FileListPopup
 import View.NewFilePopup as NewFilePopup
 import View.Scroll
@@ -161,7 +162,6 @@ update msg model =
             ( model, Cmd.none )
 
         -- SYSTEM
-
         Tick t ->
             { model | currentTime = t }
                 |> Update.Helper.updateMessageLife
@@ -174,17 +174,13 @@ update msg model =
         WindowSize width height ->
             Update.System.windowSize width height model
 
-
         Message result ->
             Update.System.handleMessage result model
 
-
-
         -- OUTSIDE (JAVASCRIPT INTEROP)
-
         OutsideInfo msg_ ->
-           model
-             |> withCmd (Outside.sendInfo msg_)
+            model
+                |> withCmd (Outside.sendInfo msg_)
 
         Outside infoForElm ->
             case infoForElm of
@@ -196,16 +192,15 @@ update msg model =
 
                 Outside.GotFile file ->
                     Helper.Load.updateModeWithDocument file model
-                      |> (\m -> {m | popupStatus = PopupClosed})
-                      -- |> (\m -> m |> withCmd (Helper.Server.updateDocument m.fileStorageUrl m.document))
-                      -- TODO: fix the above
-                      |> withNoCmd
+                        |> (\m -> { m | popupStatus = PopupClosed })
+                        -- |> (\m -> m |> withCmd (Helper.Server.updateDocument m.fileStorageUrl m.document))
+                        -- TODO: fix the above
+                        |> withNoCmd
 
                 Outside.GotPreferences preferences ->
                     { model | preferences = Just preferences } |> withNoCmd
 
         -- EDITOR
-
         EditorMsg editorMsg ->
             -- Handle messages from the Editor.  The messages CopyPasteClipboard, ... GotViewportForSync
             -- require special handling.  The others are passed to a default handler
@@ -257,7 +252,6 @@ update msg model =
                             ( { model | editor = newEditor }, Cmd.map EditorMsg cmd )
 
         -- DOCUMENT
-
         LoadAboutDocument ->
             Helper.Load.loadAboutDocument model
                 |> withCmd
@@ -273,7 +267,6 @@ update msg model =
         CreateDocument ->
             Update.Document.createDocument model
 
-
         SetViewPortForElement result ->
             case result of
                 Ok ( element, viewport ) ->
@@ -286,8 +279,7 @@ update msg model =
                         |> Update.Helper.postMessage "sync error"
                         |> withNoCmd
 
-        -- FILE PERSISTENCE
-
+        -- REMOTE DOCUMENTS
         RequestFile ->
             ( model, Helper.Server.requestFile )
 
@@ -303,14 +295,13 @@ update msg model =
         ExportFile ->
             ( model, Helper.Server.exportFile model )
 
+        -- DOCUMENT SYNC
         SyncLR ->
             let
                 ( newEditor, cmd ) =
                     Editor.sendLine model.editor
             in
             ( { model | editor = newEditor }, Cmd.map EditorMsg cmd )
-
-
 
         LogErr _ ->
             ( model, Cmd.none )
@@ -331,38 +322,9 @@ update msg model =
                         IDClicked id ->
                             Helper.Sync.onId id model
 
-
-
+        -- UI
         ManagePopup status ->
-            case status of
-                PopupOpen LocalStoragePopup ->
-                    -- TODO: needs to be eliminated
-                    { model | popupStatus = status }
-                        |> withCmd (Helper.Server.getDocumentList model.fileStorageUrl)
-
-                PopupOpen FilePopup ->
-                    { model | popupStatus = status } |> withNoCmd
-
-                PopupOpen NewFilePopup ->
-                    { model | popupStatus = status } |> withNoCmd
-
-                PopupOpen FileListPopup ->
-                    -- TODO: Add File API
-                    { model | popupStatus = status, documentStatus = DocumentSaved }
-                        |> withCmds
-                          (case model.fileLocation of
-                              LocalFiles ->
-                                [ Helper.File.getDocumentList
-                                ]
-                              RemoteFiles ->
-                                [ Helper.Server.getDocumentList model.fileStorageUrl
-                                , Helper.Server.updateDocument model.fileStorageUrl model.document
-                                ])
-                PopupOpen _ ->
-                    { model | popupStatus = status } |> withNoCmd
-
-                PopupClosed ->
-                    { model | popupStatus = status } |> withNoCmd
+            Update.UI.managePopup status model
 
         -- LOCAL STORAGE
         SendRequestForFile fileName ->
@@ -407,7 +369,7 @@ update msg model =
 
         SetDocumentDirectory ->
             model
-            |> withCmd  (Outside.sendInfo (Outside.OpenFileDialog Json.Encode.null))
+                |> withCmd (Outside.sendInfo (Outside.OpenFileDialog Json.Encode.null))
 
         SoftDelete record ->
             let
@@ -424,16 +386,14 @@ update msg model =
             ( { model | fileName_ = model.fileName, changingFileNameState = FileNameOK }, Cmd.none )
 
         About ->
-            ( Helper.Load.loadAboutDocument  model, Cmd.none )
+            ( Helper.Load.loadAboutDocument model, Cmd.none )
 
         InputAuthorname str ->
             { model | authorName = str } |> withNoCmd
 
-
-
         AskForDocument fileName ->
             { model | popupStatus = PopupClosed }
-               |> withCmd (Helper.Server.getDocument model.fileStorageUrl fileName)
+                |> withCmd (Helper.Server.getDocument model.fileStorageUrl fileName)
 
         GotDocument result ->
             case result of
@@ -449,7 +409,6 @@ update msg model =
         AskForRemoteDocuments ->
             model |> withCmd (Helper.Server.getDocumentList model.fileStorageUrl)
 
-
         GotDocuments result ->
             case result of
                 Ok documents ->
@@ -459,7 +418,6 @@ update msg model =
                     model
                         |> Update.Helper.postMessage "Error getting remote documents"
                         |> withNoCmd
-
 
         ToggleFileLocation fileLocation ->
             let
@@ -477,16 +435,12 @@ update msg model =
             }
                 |> withNoCmd
 
-
-
         GotPreferences preferences ->
-                  { model | preferences = Just preferences}
-                      |> Update.Helper.postMessage ("username: " ++ preferences.userName)
-                      |> withNoCmd
-
+            { model | preferences = Just preferences }
+                |> Update.Helper.postMessage ("username: " ++ preferences.userName)
+                |> withNoCmd
 
         -- AUTHOR / USER
-
         InputUsername str ->
             { model | userName = str } |> withNoCmd
 
@@ -498,6 +452,7 @@ update msg model =
 
         InputPasswordAgain str ->
             { model | passwordAgain = str } |> withNoCmd
+
         SetUserName_ ->
             model |> withCmd (Outside.sendInfo (Outside.SetUserName model.userName))
 
@@ -559,25 +514,26 @@ update msg model =
 -- HELPER
 
 
-
 saveFileToStorage_ : Model -> ( Model, Cmd Msg )
 saveFileToStorage_ model =
     let
-      _ = Debug.log "saveFileToStorage_, fileLocation"  model.fileLocation
+        _ =
+            Debug.log "saveFileToStorage_, fileLocation" model.fileLocation
     in
     case model.documentStatus of
         DocumentDirty ->
             { model
                 | tickCount = model.tickCount + 1
                 , documentStatus = DocumentSaved
-              }
+            }
                 |> withCmd
-                      ( case model.fileLocation  of
-                             LocalFiles -> Outside.sendInfo(Outside.WriteFile model.document)
-                             RemoteFiles -> Helper.Server.updateDocument model.fileStorageUrl model.document
+                    (case model.fileLocation of
+                        LocalFiles ->
+                            Outside.sendInfo (Outside.WriteFile model.document)
 
-                        )
-
+                        RemoteFiles ->
+                            Helper.Server.updateDocument model.fileStorageUrl model.document
+                    )
 
         DocumentSaved ->
             ( { model | tickCount = model.tickCount + 1 }
@@ -589,7 +545,7 @@ saveFileToStorage : Model -> ( Model, Cmd Msg )
 saveFileToStorage model =
     case modBy 15 model.tickCount == 14 of
         True ->
-             saveFileToStorage_ model
+            saveFileToStorage_ model
 
         False ->
             ( { model | tickCount = model.tickCount + 1 }
@@ -674,10 +630,6 @@ viewEditorAndRenderedText model =
         ]
 
 
-
-
-
-
 viewEditor model =
     Editor.view model.editor |> Html.map EditorMsg |> Element.html
 
@@ -713,4 +665,3 @@ setHtmlId id =
 setElementId : String -> Element.Attribute msg
 setElementId id =
     Element.htmlAttribute (setHtmlId id)
-
