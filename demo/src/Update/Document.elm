@@ -50,10 +50,10 @@ createDocument model =
         newModel =
             case model.docType of
                 MarkdownDoc ->
-                    Helper.Load.loadDocument model.currentTime model.fileName_ "" MarkdownDoc model
+                    Helper.Load.loadDocument model.currentTime (model.fileName_ ++ ".md") "" MarkdownDoc model
 
                 MiniLaTeXDoc ->
-                    Helper.Load.loadDocument model.currentTime model.fileName_ "" MiniLaTeXDoc model
+                    Helper.Load.loadDocument model.currentTime (model.fileName_ ++ ".tex") "" MiniLaTeXDoc model
 
         doc =
             newModel.document

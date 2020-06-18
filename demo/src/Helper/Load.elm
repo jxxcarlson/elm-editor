@@ -68,14 +68,8 @@ updateModeWithDocument document model =
 loadDocument : Time.Posix -> String -> String -> DocType -> Model -> Model
 loadDocument time fileName_ content_ docType_ model =
     let
-        lines =
-            String.lines content_
-
-        content =
-            List.drop 1 lines |> String.join "\n"
-
         author_ =
-            model.currentUser |> Maybe.map .userName |> Maybe.withDefault "unknown"
+            model.preferences |> Maybe.map .userName |> Maybe.withDefault "unknown"
 
         -- |> Maybe.withDefault "anonymous"
         doc =

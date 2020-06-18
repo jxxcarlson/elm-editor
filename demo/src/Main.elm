@@ -189,6 +189,10 @@ update msg model =
                     pasteToEditorAndClipboard model clipboard
 
                 Outside.GotFileList fileList ->
+                    let
+                        _ =
+                            Debug.log "fileList" fileList
+                    in
                     ( { model | fileList = fileList }, Cmd.none )
 
                 Outside.GotFile file ->
@@ -442,8 +446,11 @@ update msg model =
 saveFileToStorage_ : Model -> ( Model, Cmd Msg )
 saveFileToStorage_ model =
     let
-        _ =
-            Debug.log "saveFileToStorage_, fileLocation" model.fileLocation
+        document_ =
+            model.document
+
+        document =
+            { document_ | timeUpdated = model.currentTime }
     in
     case model.documentStatus of
         DocumentDirty ->
@@ -454,10 +461,10 @@ saveFileToStorage_ model =
                 |> withCmd
                     (case model.fileLocation of
                         LocalFiles ->
-                            Outside.sendInfo (Outside.WriteFile model.document)
+                            Outside.sendInfo (Outside.WriteFile document)
 
                         RemoteFiles ->
-                            Helper.Server.updateDocument model.fileStorageUrl model.document
+                            Helper.Server.updateDocument model.fileStorageUrl document
                     )
 
         DocumentSaved ->

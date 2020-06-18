@@ -66,8 +66,8 @@ getInfo tagger onError =
                         Ok fileList ->
                             tagger <| GotFileList fileList
 
-                        Err _ ->
-                            onError <| "Error getting file list"
+                        Err e ->
+                            onError <| Debug.toString <| Debug.log "File list error" e
 
                 "GotFile" ->
                     case D.decodeValue Codec.Document.documentDecoder outsideInfo.data of

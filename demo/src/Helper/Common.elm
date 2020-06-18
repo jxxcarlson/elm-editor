@@ -8,7 +8,7 @@ module Helper.Common exposing
 
 import Date
 import List.Extra
-import Time
+import Time exposing (toHour, toMinute, toSecond)
 
 
 dateStringFromPosix : Time.Posix -> String
@@ -16,6 +16,15 @@ dateStringFromPosix t =
     t
         |> Date.fromPosix Time.utc
         |> Date.toIsoString
+        |> (\x -> x ++ " at " ++ toUtcString t)
+
+
+toUtcString : Time.Posix -> String
+toUtcString time =
+    String.fromInt (toHour Time.utc time)
+        ++ ":"
+        ++ String.fromInt (toMinute Time.utc time)
+        ++ " (UTC)"
 
 
 windowWidth : Float -> Float

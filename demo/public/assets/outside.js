@@ -4044,7 +4044,9 @@ const getPreferences = () => {
 const toMetadata = (doc) => (
        { fileName: doc.fileName,
         id: doc.id,
-        author: doc.author
+        author: doc.author,
+        timeCreated: doc.timeCreated,
+        timeUpdated: doc.timeUpdated
         }
    )
 
@@ -4055,7 +4057,6 @@ const fetchDocumentByFileName = (fileName) => {
 
   const sendFile = (str, metadata) => app.ports.infoForElm.send({tag: "GotFile", data: merge(str, metadata)})
 
-  // const merge = (str, metadata) => ({ fileName: metadata.fileName, id: metadata.id, metadata.author, content: str})
   const merge = (str, metadata) => Object.assign(metadata, {content: str})
 
   const paths = (p) => ({toManifest: (p.documentDirectory + '/manifest.yaml'), toFile: (p.documentDirectory + '/' + fileName )})
@@ -4250,6 +4251,7 @@ app.ports.infoForOutside.subscribe(msg => {
           getPreferences()
           .then(p => (p.documentDirectory + '/manifest.yaml'))
           .then(pathToManifest => readTextFile(pathToManifest,  {}).then(value => sendManifest(value)))
+          //.then(pathToManifest => readTextFile(pathToManifest,  {}).then(value => console.log(value)))
 
     }
 
@@ -4280,6 +4282,8 @@ app.ports.infoForOutside.subscribe(msg => {
     function createFile(document) {
 
         const metadata = toMetadata(document)
+
+        console.log("METADATA", metadata)
 
         getPreferences()
         .then(p => writeFile({file: (p.documentDirectory + '/' + document.fileName), contents: document.content}))
