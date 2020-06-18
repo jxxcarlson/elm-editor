@@ -1,6 +1,7 @@
 module Main exposing (main)
 
 import Browser
+import Update.Helper
 import Browser.Dom as Dom
 import Browser.Events
 import Cmd.Extra exposing (withCmd, withCmds, withNoCmd)
@@ -159,6 +160,11 @@ update msg model =
 
         -- SYSTEM
 
+        Tick t ->
+            { model | currentTime = t }
+                |> Update.Helper.updateMessageLife
+                |> saveFileToStorage
+
         GotAtmosphericRandomNumber result ->
             UuidHelper.handleResponseFromRandomDotOrg model result
                 |> withNoCmd
@@ -185,12 +191,12 @@ update msg model =
             case result of
                 Ok str ->
                     model
-                        |> postMessage str
+                        |> Update.Helper.postMessage str
                         |> withNoCmd
 
                 Err _ ->
                     model
-                        |> postMessage "Unknown error"
+                        |> Update.Helper.postMessage "Unknown error"
                         |> withNoCmd
 
 
@@ -283,21 +289,7 @@ update msg model =
                     )
 
         ToggleDocType ->
-            let
-                newDocType =
-                    case model.docType of
-                        MarkdownDoc ->
-                            MiniLaTeXDoc
-
-                        MiniLaTeXDoc ->
-                            MarkdownDoc
-            in
-            ( { model
-                | docType = newDocType
-                , fileName = Document.changeDocType newDocType model.fileName
-              }
-            , Cmd.none
-            )
+            Update.Document.toggleDocType model
 
         CreateDocument ->
             Update.Document.createDocument model
@@ -307,12 +299,12 @@ update msg model =
             case result of
                 Ok ( element, viewport ) ->
                     model
-                        |> postMessage "synced"
+                        |> Update.Helper.postMessage "synced"
                         |> withCmd (View.Scroll.setViewPortForSelectedLineInRenderedText element viewport)
 
                 Err _ ->
                     model
-                        |> postMessage "sync error"
+                        |> Update.Helper.postMessage "sync error"
                         |> withNoCmd
 
         -- FILE PERSISTENCE
@@ -323,36 +315,8 @@ update msg model =
         RequestedFile file ->
             ( { model | fileName = File.name file }, Helper.Server.read file )
 
-        DocumentLoaded source ->
-            let
-                docType =
-                    case Document.fileExtension model.fileName of
-                        "md" ->
-                            MarkdownDoc
-
-                        "latex" ->
-                            MiniLaTeXDoc
-
-                        "tex" ->
-                            MiniLaTeXDoc
-
-                        _ ->
-                            MarkdownDoc
-
-                newModel =
-                    Helper.Load.loadDocument (Document.titleFromFileName model.fileName) source docType model
-                        |> (\m -> { m | docType = docType })
-                        |> Helper.Sync.syncModel2
-
-                newDocument =
-                    newModel.document
-            in
-            newModel
-                |> withCmds
-                    [ View.Scroll.toRenderedTextTop
-                    , View.Scroll.toEditorTop
-                    , Helper.Server.updateDocument model.fileStorageUrl newDocument
-                    ]
+        DocumentLoaded content ->
+            Update.Document.loadDocument content model
 
         SaveFile ->
             ( model, Helper.Server.saveFile model )
@@ -388,10 +352,7 @@ update msg model =
                         IDClicked id ->
                             Helper.Sync.onId id model
 
-        Tick t ->
-            { model | currentTime = t }
-                |> updateMessageLife
-                |> saveFileToStorage
+
 
         ManagePopup status ->
             case status of
@@ -503,7 +464,7 @@ update msg model =
 
                 Err _ ->
                     model
-                        |> postMessage "Error getting remote document"
+                        |> Update.Helper.postMessage "Error getting remote document"
                         |> withNoCmd
 
         AskForRemoteDocuments ->
@@ -517,7 +478,7 @@ update msg model =
 
                 Err _ ->
                     model
-                        |> postMessage "Error getting remote documents"
+                        |> Update.Helper.postMessage "Error getting remote documents"
                         |> withNoCmd
 
 
@@ -541,7 +502,7 @@ update msg model =
 
         GotPreferences preferences ->
                   { model | preferences = Just preferences}
-                      |> postMessage ("username: " ++ preferences.userName)
+                      |> Update.Helper.postMessage ("username: " ++ preferences.userName)
                       |> withNoCmd
 
 
@@ -575,7 +536,7 @@ update msg model =
                         model.email
             in
             { model | randomSeed = seed }
-                |> postMessage ("Created: " ++ model.userName)
+                |> Update.Helper.postMessage ("Created: " ++ model.userName)
                 |> withCmd (Helper.Author.persist model.fileStorageUrl newAuthor)
 
         SignUp ->
@@ -588,7 +549,7 @@ update msg model =
 
         SignOut ->
             { model | signInMode = SigningIn, currentUser = Nothing, popupStatus = PopupClosed }
-                |> postMessage "Signed out"
+                |> Update.Helper.postMessage "Signed out"
                 |> withNoCmd
 
         GotSigninReply result ->
@@ -601,37 +562,23 @@ update msg model =
                                 , popupStatus = PopupClosed
                                 , signInMode = SignedIn
                             }
-                                |> postMessage (author.userName ++ " signed in")
+                                |> Update.Helper.postMessage (author.userName ++ " signed in")
                                 |> withNoCmd
 
                         B _ ->
                             { model | currentUser = Nothing, signInMode = SigningIn }
-                                |> postMessage "Could not verify user/password"
+                                |> Update.Helper.postMessage "Could not verify user/password"
                                 |> withNoCmd
 
                 Err _ ->
                     model
-                        |> postMessage "Error authenticating user"
+                        |> Update.Helper.postMessage "Error authenticating user"
                         |> withNoCmd
 
 
 
 -- HELPER
 
-
-postMessage : String -> Model -> Model
-postMessage msg model =
-    { model | message = msg, messageLife = Config.messageLifeTime }
-
-
-updateMessageLife : Model -> Model
-updateMessageLife model =
-    case model.messageLife > 0 of
-        True ->
-            { model | messageLife = model.messageLife - 1 }
-
-        False ->
-            model
 
 
 saveFileToStorage_ : Model -> ( Model, Cmd Msg )
