@@ -107,8 +107,8 @@ cancelChangeFileNameButton =
 
 changeFileNameButton fileName =
     case
-        ( Helper.Server.fileExtension fileName
-        , String.length (Helper.Server.titleFromFileName fileName) > 0
+        ( Document.fileExtension fileName
+        , String.length (Document.titleFromFileName fileName) > 0
         )
     of
         ( "md", True ) ->

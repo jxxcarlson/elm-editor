@@ -243,7 +243,7 @@ update msg model =
             in
             ( { model
                 | docType = newDocType
-                , fileName = Helper.Server.updateDocType newDocType model.fileName
+                , fileName = Document.changeDocType newDocType model.fileName
               }
             , Cmd.none
             )
@@ -304,7 +304,7 @@ update msg model =
         DocumentLoaded source ->
             let
                 docType =
-                    case Helper.Server.fileExtension model.fileName of
+                    case Document.fileExtension model.fileName of
                         "md" ->
                             MarkdownDoc
 
@@ -318,7 +318,7 @@ update msg model =
                             MarkdownDoc
 
                 newModel =
-                    Helper.Load.loadDocument_ (Helper.Server.titleFromFileName model.fileName) source docType model
+                    Helper.Load.loadDocument_ (Document.titleFromFileName model.fileName) source docType model
                         |> (\m -> { m | docType = docType })
                         |> Helper.Sync.syncModel2
 

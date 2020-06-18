@@ -2,14 +2,11 @@ module Helper.Server exposing
     ( createDocument
     , docType
     , exportFile
-    , fileExtension
     , getDocument
     , getDocumentList
     , read
     , requestFile
     , saveFile
-    , titleFromFileName
-    , updateDocType
     , updateDocument
     , updateDocumentList
     , updateFileList
@@ -84,31 +81,6 @@ updateDocumentList serverUrl record =
 -- FILE I/O
 
 
-updateDocType : DocType -> String -> String
-updateDocType docType_ fileName =
-    case docType_ of
-        MiniLaTeXDoc ->
-            titleFromFileName fileName ++ ".tex"
-
-        MarkdownDoc ->
-            titleFromFileName fileName ++ ".md"
-
-
-titleFromFileName : String -> String
-titleFromFileName fileName =
-    fileName
-        |> String.split "."
-        |> List.reverse
-        |> List.drop 1
-        |> List.reverse
-        |> String.join "."
-
-
-fileExtension : String -> String
-fileExtension str =
-    str |> String.split "." |> List.reverse |> List.head |> Maybe.withDefault "txt"
-
-
 read : File -> Cmd Msg
 read file =
     Task.perform DocumentLoaded (File.toString file)
@@ -156,7 +128,7 @@ exportFile model =
 
 docType : String -> DocType
 docType fileName =
-    case fileExtension fileName of
+    case Document.fileExtension fileName of
         "md" ->
             MarkdownDoc
 

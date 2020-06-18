@@ -3,8 +3,11 @@ module Document exposing
     , Document
     , Metadata
     , NewDocumentData
+    , changeDocType
+    , fileExtension
     , miniFileRecord
     , new
+    , titleFromFileName
     )
 
 
@@ -69,3 +72,28 @@ new data =
 miniFileRecord : Document -> Metadata
 miniFileRecord doc =
     { id = doc.id, fileName = doc.fileName }
+
+
+changeDocType : DocType -> String -> String
+changeDocType docType_ fileName =
+    case docType_ of
+        MiniLaTeXDoc ->
+            titleFromFileName fileName ++ ".tex"
+
+        MarkdownDoc ->
+            titleFromFileName fileName ++ ".md"
+
+
+titleFromFileName : String -> String
+titleFromFileName fileName =
+    fileName
+        |> String.split "."
+        |> List.reverse
+        |> List.drop 1
+        |> List.reverse
+        |> String.join "."
+
+
+fileExtension : String -> String
+fileExtension str =
+    str |> String.split "." |> List.reverse |> List.head |> Maybe.withDefault "txt"
