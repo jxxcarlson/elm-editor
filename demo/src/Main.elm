@@ -43,6 +43,7 @@ import Helper.Sync
 import Html exposing (Attribute, Html)
 import Html.Attributes as Attribute
 import Json.Encode
+import View.Helpers
 import Markdown.Option exposing (..)
 import Markdown.Render exposing (MarkdownMsg(..))
 import MiniLatex.Edit as MLE
@@ -68,6 +69,7 @@ import UuidHelper
 import View.AuthorPopup as AuthorPopup
 import View.FileListPopup as RemoteFileListPopup
 import View.FilePopup as FilePopup
+import View.Footer
 import View.LocalStoragePopup as FileListPopup
 import View.NewFilePopup as NewFilePopup
 import View.Scroll
@@ -635,7 +637,7 @@ load counter selectedId renderingOption str =
 view : Model -> Html Msg
 view model =
     Element.layoutWith { options = [ Element.focusStyle myFocusStyle ] }
-        [ Background.color <| gray 55 ]
+        [ Background.color <| View.Helpers.gray 55 ]
         (mainColumn model)
 
 
@@ -648,7 +650,7 @@ myFocusStyle =
 
 mainColumn model =
     column [ centerX, centerY ]
-        [ column [ Background.color <| gray 55 ]
+        [ column [ Background.color <| View.Helpers.gray 55 ]
             [ Element.el
                 [ Element.inFront (AuthorPopup.view model)
                 , Element.inFront (FileListPopup.view model)
@@ -657,13 +659,13 @@ mainColumn model =
                 , Element.inFront (NewFilePopup.view model)
                 ]
                 (viewEditorAndRenderedText model)
-            , viewFooter model model.width 40
+            , View.Footer.view model model.width 40
             ]
         ]
 
 
 viewEditorAndRenderedText model =
-    row [ Background.color <| gray 255 ]
+    row [ Background.color <| View.Helpers.gray 255 ]
         [ viewEditor model
         , viewRenderedText
             model
@@ -672,50 +674,8 @@ viewEditorAndRenderedText model =
         ]
 
 
-viewFooter model width_ height_ =
-    row
-        [ width (pxFloat (2 * Helper.Common.windowWidth width_ - 40))
-        , height (pxFloat height_)
-        , Background.color (Element.rgb255 130 130 140)
-        , Font.color (gray 240)
-        , Font.size 14
-        , paddingXY 10 0
-        , Element.moveUp 19
-        , spacing 12
-        ]
-        [ View.Widget.openAuthorPopupButton model
-        , View.Widget.openFileListPopupButton model
-        , View.Widget.toggleFileLocationButton model
-        , View.Widget.saveFileToStorageButton model
-        , View.Widget.documentTypeButton model
-        , View.Widget.openNewFilePopupButton model
-        , View.Widget.openFilePopupButton model
-        , View.Widget.importFileButton model
-        , View.Widget.exportFileButton model
-        , View.Widget.exportLaTeXFileButton model
-        , displayFilename model
-        , row [ alignRight, spacing 12 ]
-            [ displayMessage model
-            , View.Widget.aboutButton
-            ]
-        ]
 
 
-displayMessage model =
-    showIf (model.messageLife > 0)
-        (el
-            [ width (px 250)
-            , paddingXY 8 8
-            , Background.color Style.whiteColor
-            , Font.color Style.blackColor
-            ]
-            (text model.message)
-        )
-
-
-displayFilename : Model -> Element Msg
-displayFilename model =
-    el [] (text model.fileName)
 
 
 viewEditor model =
@@ -725,17 +685,17 @@ viewEditor model =
 viewRenderedText : Model -> Float -> Float -> Element Msg
 viewRenderedText model width_ height_ =
     column
-        [ width (pxFloat width_)
-        , height (pxFloat height_)
+        [ width (View.Helpers.pxFloat width_)
+        , height (View.Helpers.pxFloat height_)
         , Font.size 14
         , Element.htmlAttribute (Attribute.style "line-height" "20px")
         , Element.paddingEach { left = 14, top = 0, right = 14, bottom = 24 }
         , Border.width 1
-        , Background.color <| gray 255
+        , Background.color <| View.Helpers.gray 255
 
         -- , Element.htmlAttribute (Attribute.id model.selectedId_ (Html.style "background-color" "#cce"))
         ]
-        [ showIf (model.docType == MarkdownDoc)
+        [ View.Helpers.showIf (model.docType == MarkdownDoc)
             ((Render.get model.selectedId_ model.renderingData).title |> Html.map RenderMsg |> Element.html)
         , (Render.get model.selectedId_ model.renderingData).document |> Html.map RenderMsg |> Element.html
         ]
@@ -743,16 +703,6 @@ viewRenderedText model width_ height_ =
 
 
 -- VIEW HELPERS
-
-
-showIf : Bool -> Element Msg -> Element Msg
-showIf flag el =
-    case flag of
-        True ->
-            el
-
-        False ->
-            Element.none
 
 
 setHtmlId : String -> Html.Attribute msg
@@ -764,11 +714,3 @@ setElementId : String -> Element.Attribute msg
 setElementId id =
     Element.htmlAttribute (setHtmlId id)
 
-
-pxFloat : Float -> Element.Length
-pxFloat p =
-    px (round p)
-
-
-gray g =
-    rgb255 g g g
