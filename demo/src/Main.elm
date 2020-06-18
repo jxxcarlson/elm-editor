@@ -65,6 +65,7 @@ import Update.Document
 import Update.Helper
 import Update.System
 import Update.UI
+import Update.User
 import UuidHelper
 import View.AuthorPopup as AuthorPopup
 import View.FileListPopup as RemoteFileListPopup
@@ -457,21 +458,7 @@ update msg model =
             model |> withCmd (Outside.sendInfo (Outside.SetUserName model.userName))
 
         CreateAuthor ->
-            let
-                ( uuid, seed ) =
-                    UuidHelper.generate model.randomSeed
-
-                newAuthor =
-                    Helper.Author.createAuthor model.currentTime
-                        uuid
-                        model.password
-                        model.authorName
-                        model.userName
-                        model.email
-            in
-            { model | randomSeed = seed }
-                |> Update.Helper.postMessage ("Created: " ++ model.userName)
-                |> withCmd (Helper.Author.persist model.fileStorageUrl newAuthor)
+            Update.User.createAuthor model
 
         SignUp ->
             { model | signInMode = SigningUp, currentUser = Nothing }
@@ -487,27 +474,7 @@ update msg model =
                 |> withNoCmd
 
         GotSigninReply result ->
-            case result of
-                Ok reply ->
-                    case reply of
-                        A author ->
-                            { model
-                                | currentUser = Just author
-                                , popupStatus = PopupClosed
-                                , signInMode = SignedIn
-                            }
-                                |> Update.Helper.postMessage (author.userName ++ " signed in")
-                                |> withNoCmd
-
-                        B _ ->
-                            { model | currentUser = Nothing, signInMode = SigningIn }
-                                |> Update.Helper.postMessage "Could not verify user/password"
-                                |> withNoCmd
-
-                Err _ ->
-                    model
-                        |> Update.Helper.postMessage "Error authenticating user"
-                        |> withNoCmd
+            Update.User.gotSigninReply result model
 
 
 
