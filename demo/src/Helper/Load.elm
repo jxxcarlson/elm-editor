@@ -1,8 +1,8 @@
 module Helper.Load exposing
     ( config
+    , loadAboutDocument
     , loadDocument
-    , loadDocumentByTitle
-    , loadDocument_
+    , updateModeWithDocument
     )
 
 import Data
@@ -18,39 +18,22 @@ import Types exposing (Model, Msg(..))
 import UuidHelper
 
 
-loadDocumentByTitle : String -> Model -> Model
-loadDocumentByTitle docTitle model =
-    case docTitle of
-        "about" ->
-            loadDocument_ docTitle Data.about MarkdownDoc model
-
-        "markdownExample" ->
-            loadDocument_ docTitle Data.markdownExample MarkdownDoc model
-
-        "mathExample" ->
-            loadDocument_ docTitle Data.mathExample MarkdownDoc model
-
-        "astro" ->
-            loadDocument_ docTitle Data.astro MarkdownDoc model
-
-        "aboutMiniLaTeX" ->
-            loadDocument_ docTitle Data.aboutMiniLaTeX MiniLaTeXDoc model
-
-        "miniLaTeXExample" ->
-            loadDocument_ docTitle Data.miniLaTeXExample MiniLaTeXDoc model
-
-        "aboutMiniLaTeX2" ->
-            loadDocument_ docTitle Data.aboutMiniLaTeX2 MiniLaTeXDoc model
-
-        _ ->
-            model
+loadAboutDocument : Model -> Model
+loadAboutDocument model =
+    loadDocument "about" Data.about MarkdownDoc model
 
 
-loadDocument : Document -> Model -> Model
-loadDocument document model =
+{-|
+
+    - Load the document content into the editor
+    - Compute the rendered content and store it in the model.
+
+-}
+updateModeWithDocument : Document -> Model -> Model
+updateModeWithDocument document model =
     let
         docType =
-            Helper.Server.docType document.fileName
+            Document.docType document.fileName
 
         renderingOption =
             case docType of
@@ -74,62 +57,27 @@ loadDocument document model =
     }
 
 
-loadDocument_ : String -> String -> DocType -> Model -> Model
-loadDocument_ title source_ docType model =
+{-|
+
+    - Create a document with given file name, content, and document type into the model
+    - Load the content into the editor
+    - Compute the rendered content and store it in the model.
+
+-}
+loadDocument : String -> String -> DocType -> Model -> Model
+loadDocument fileName_ content_ docType_ model =
     let
         lines =
-            String.lines source_
+            String.lines content_
 
-        source =
+        content =
             List.drop 1 lines |> String.join "\n"
 
-        newDocument =
-            Document.new { fileName = title, content = source, id = model.uuid, docType = docType }
+        doc =
+            Document.new { fileName = fileName_, content = content, id = model.uuid, docType = docType_ }
     in
-    case docType of
-        MarkdownDoc ->
-            let
-                renderingData =
-                    Render.load ( 0, 0 ) model.counter (OMarkdown ExtendedMath) source
-
-                fileName =
-                    title ++ ".md"
-            in
-            { model
-                | renderingData = renderingData
-                , fileName = fileName
-                , fileName_ = fileName
-                , counter = model.counter + 1
-                , editor =
-                    Editor.initWithContent source
-                        (config { width = model.width, height = model.height, wrapOption = DontWrap })
-                , docTitle = title
-                , docType = MarkdownDoc
-                , document = newDocument
-            }
-                |> UuidHelper.newUuid
-
-        MiniLaTeXDoc ->
-            let
-                renderingData =
-                    Render.load ( 0, 0 ) (model.counter + 1) OMiniLatex source
-
-                fileName =
-                    title ++ ".tex"
-            in
-            { model
-                | renderingData = renderingData
-                , fileName = fileName
-                , fileName_ = fileName
-                , counter = model.counter + 2
-                , editor =
-                    Editor.initWithContent source
-                        (config { width = model.width, height = model.height, wrapOption = DontWrap })
-                , docTitle = title
-                , docType = MiniLaTeXDoc
-                , document = newDocument
-            }
-                |> UuidHelper.newUuid
+    updateModeWithDocument doc model
+        |> UuidHelper.newUuid
 
 
 config flags =

@@ -222,8 +222,8 @@ update msg model =
             , Cmd.none
             )
 
-        Load title ->
-            Helper.Load.loadDocumentByTitle title model
+        LoadAboutDocument ->
+            Helper.Load.loadAboutDocument model
                 |> withCmd
                     (Cmd.batch
                         [ View.Scroll.toEditorTop
@@ -253,10 +253,10 @@ update msg model =
                 newModel =
                     case model.docType of
                         MarkdownDoc ->
-                            Helper.Load.loadDocument_ model.fileName_ "" MarkdownDoc model
+                            Helper.Load.loadDocument model.fileName_ "" MarkdownDoc model
 
                         MiniLaTeXDoc ->
-                            Helper.Load.loadDocument_ model.fileName_ "" MiniLaTeXDoc model
+                            Helper.Load.loadDocument model.fileName_ "" MiniLaTeXDoc model
 
                 doc =
                     newModel.document
@@ -318,7 +318,7 @@ update msg model =
                             MarkdownDoc
 
                 newModel =
-                    Helper.Load.loadDocument_ (Document.titleFromFileName model.fileName) source docType model
+                    Helper.Load.loadDocument (Document.titleFromFileName model.fileName) source docType model
                         |> (\m -> { m | docType = docType })
                         |> Helper.Sync.syncModel2
 
@@ -354,7 +354,7 @@ update msg model =
                     ( { model | fileList = fileList }, Cmd.none )
 
                 Outside.GotFile file ->
-                    Helper.Load.loadDocument file model
+                    Helper.Load.updateModeWithDocument file model
                       |> (\m -> {m | popupStatus = PopupClosed})
                       -- |> (\m -> m |> withCmd (Helper.Server.updateDocument m.fileStorageUrl m.document))
                       -- TODO: fix the above
@@ -450,11 +450,11 @@ update msg model =
             in
             ( { model
                 | fileName = model.fileName_
-                , docType = Helper.Server.docType model.fileName_
+                , docType = Document.docType model.fileName_
                 , changingFileNameState = FileNameOK
                 , popupStatus = PopupClosed
                 , document = newDocument
-                , fileList = Helper.Server.updateFileList (Document.miniFileRecord newDocument) model.fileList
+                , fileList = Helper.Server.updateFileList (Document.toMetadata newDocument) model.fileList
               }
             , Helper.Server.updateDocument model.fileStorageUrl newDocument
             )
@@ -478,7 +478,7 @@ update msg model =
             ( { model | fileName_ = model.fileName, changingFileNameState = FileNameOK }, Cmd.none )
 
         About ->
-            ( Helper.Load.loadDocumentByTitle "about" model, Cmd.none )
+            ( Helper.Load.loadAboutDocument  model, Cmd.none )
 
         InputAuthorname str ->
             { model | authorName = str } |> withNoCmd
@@ -494,7 +494,7 @@ update msg model =
         GotDocument result ->
             case result of
                 Ok document ->
-                    Helper.Load.loadDocument document model
+                    Helper.Load.updateModeWithDocument document model
                         |> withNoCmd
 
                 Err _ ->

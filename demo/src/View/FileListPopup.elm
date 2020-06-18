@@ -47,7 +47,7 @@ view model =
                             "Remote Files (" ++ n ++ ")"
 
                 currentRecord =
-                    Document.miniFileRecord model.document
+                    Document.toMetadata model.document
             in
             column
                 [ width (px 500)

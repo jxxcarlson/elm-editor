@@ -275,7 +275,7 @@ loadDocumentButton model width docTitle buttonLabel =
                 False ->
                     Style.grayColor
     in
-    button width buttonLabel (Load docTitle) [ Background.color bgColor ]
+    button width buttonLabel LoadAboutDocument [ Background.color bgColor ]
 
 
 button_ width str msg =

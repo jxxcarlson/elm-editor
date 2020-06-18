@@ -1,6 +1,5 @@
 module Helper.Server exposing
     ( createDocument
-    , docType
     , exportFile
     , getDocument
     , getDocumentList
@@ -124,22 +123,6 @@ exportFile model =
 
 
 -- HELPERS
-
-
-docType : String -> DocType
-docType fileName =
-    case Document.fileExtension fileName of
-        "md" ->
-            MarkdownDoc
-
-        "tex" ->
-            MiniLaTeXDoc
-
-        "latex" ->
-            MiniLaTeXDoc
-
-        _ ->
-            MarkdownDoc
 
 
 updateFileList : Metadata -> List Metadata -> List Metadata

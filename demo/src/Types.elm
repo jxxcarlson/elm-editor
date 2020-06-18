@@ -123,7 +123,7 @@ type Msg
     | ToggleFileLocation FileLocation
       -- Document
     | InputFileName String
-    | Load String
+    | LoadAboutDocument
     | DocumentLoaded String
     | ToggleDocType
     | CreateDocument

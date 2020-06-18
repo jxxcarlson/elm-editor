@@ -4,10 +4,11 @@ module Document exposing
     , Metadata
     , NewDocumentData
     , changeDocType
+    , docType
     , fileExtension
-    , miniFileRecord
     , new
     , titleFromFileName
+    , toMetadata
     )
 
 
@@ -20,6 +21,14 @@ type alias Document =
     { fileName : String
     , id : String
     , content : String
+    }
+
+
+type alias SimpleDocument a =
+    { a
+        | fileName : String
+        , id : String
+        , content : String
     }
 
 
@@ -69,8 +78,8 @@ new data =
     { fileName = fileName, id = data.id, content = data.content }
 
 
-miniFileRecord : Document -> Metadata
-miniFileRecord doc =
+toMetadata : Document -> Metadata
+toMetadata doc =
     { id = doc.id, fileName = doc.fileName }
 
 
@@ -97,3 +106,19 @@ titleFromFileName fileName =
 fileExtension : String -> String
 fileExtension str =
     str |> String.split "." |> List.reverse |> List.head |> Maybe.withDefault "txt"
+
+
+docType : String -> DocType
+docType fileName =
+    case fileExtension fileName of
+        "md" ->
+            MarkdownDoc
+
+        "tex" ->
+            MiniLaTeXDoc
+
+        "latex" ->
+            MiniLaTeXDoc
+
+        _ ->
+            MarkdownDoc
