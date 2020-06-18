@@ -5,7 +5,7 @@ import Update.Helper
 import Browser.Dom as Dom
 import Browser.Events
 import Cmd.Extra exposing (withCmd, withCmds, withNoCmd)
-import Codec.Author
+import Update.System
 import Config
 import ContextMenu exposing (Item(..))
 import Data
@@ -170,34 +170,11 @@ update msg model =
                 |> withNoCmd
 
         WindowSize width height ->
-            let
-                w =
-                    toFloat width
-
-                h =
-                    toFloat height
-            in
-            ( { model
-                | width = w
-                , height = h
-                , editor = Editor.resize (Helper.Common.windowWidth w) (Helper.Common.windowHeight h) model.editor
-              }
-            , Cmd.none
-            )
-
+            Update.System.windowSize width height model
 
 
         Message result ->
-            case result of
-                Ok str ->
-                    model
-                        |> Update.Helper.postMessage str
-                        |> withNoCmd
-
-                Err _ ->
-                    model
-                        |> Update.Helper.postMessage "Unknown error"
-                        |> withNoCmd
+            Update.System.handleMessage result model
 
 
 
