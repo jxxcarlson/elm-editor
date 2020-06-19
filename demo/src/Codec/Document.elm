@@ -27,6 +27,8 @@ documentDecoder =
         |> required "author" string
         |> required "timeCreated" (int |> D.map Time.millisToPosix)
         |> required "timeUpdated" (int |> D.map Time.millisToPosix)
+        |> required "tags" (list string)
+        |> required "categories" (list string)
         |> required "content" string
 
 
@@ -38,6 +40,8 @@ documentEncoder doc =
         , ( "author", Encode.string doc.author )
         , ( "timeCreated", Encode.int (Time.posixToMillis doc.timeCreated) )
         , ( "timeUpdated", Encode.int (Time.posixToMillis doc.timeUpdated) )
+        , ( "tags", Encode.list Encode.string doc.tags )
+        , ( "categories", Encode.list Encode.string doc.categories )
         , ( "content", Encode.string doc.content )
         ]
 
@@ -73,6 +77,8 @@ metadataDecoder =
         |> required "author" string
         |> required "timeCreated" (int |> D.map Time.millisToPosix)
         |> required "timeUpdated" (int |> D.map Time.millisToPosix)
+        |> required "tags" (list string)
+        |> required "categories" (list string)
 
 
 metadataEncoder : Metadata -> Encode.Value
@@ -83,6 +89,8 @@ metadataEncoder metadata =
         , ( "author", Encode.string metadata.author )
         , ( "timeCreated", Encode.int (Time.posixToMillis metadata.timeCreated) )
         , ( "timeUpdated", Encode.int (Time.posixToMillis metadata.timeUpdated) )
+        , ( "tags", Encode.list Encode.string metadata.tags )
+        , ( "categories", Encode.list Encode.string metadata.categories )
         ]
 
 

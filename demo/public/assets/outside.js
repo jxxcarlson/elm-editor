@@ -4253,7 +4253,6 @@ app.ports.infoForOutside.subscribe(msg => {
           getPreferences()
           .then(p => (p.documentDirectory + '/manifest.yaml'))
           .then(pathToManifest => readTextFile(pathToManifest,  {}).then(value => sendManifest(value)))
-          //.then(pathToManifest => readTextFile(pathToManifest,  {}).then(value => console.log(value)))
 
     }
 
@@ -4284,8 +4283,6 @@ app.ports.infoForOutside.subscribe(msg => {
     function createFile(document) {
 
         const metadata = toMetadata(document)
-
-        console.log("METADATA", metadata)
 
         getPreferences()
         .then(p => writeFile({file: (p.documentDirectory + '/' + document.fileName), contents: document.content}))

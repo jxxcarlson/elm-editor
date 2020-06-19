@@ -454,8 +454,7 @@ saveFileToStorage_ model =
             model.document
 
         document =
-            Debug.log "Updated" <|
-                { document_ | timeUpdated = model.currentTime }
+            { document_ | timeUpdated = model.currentTime }
     in
     case model.documentStatus of
         DocumentDirty ->

@@ -78,6 +78,8 @@ loadDocument time fileName_ content_ docType_ model =
             , author = author_
             , timeCreated = time
             , timeUpdated = time
+            , tags = []
+            , categories = []
             , content = content_
             }
     in

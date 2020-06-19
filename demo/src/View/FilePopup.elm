@@ -56,6 +56,8 @@ infoPanel model =
         , item "Author" model.document.author
         , item "Created" (Helper.Common.dateStringFromPosix model.document.timeCreated)
         , item "Modified" (Helper.Common.dateStringFromPosix model.document.timeUpdated)
+        , item "Tags" (String.join ", " model.document.tags)
+        , item "Categories" (String.join ", " model.document.categories)
         ]
 
 

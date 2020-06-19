@@ -12,6 +12,8 @@ about =
     , content = aboutContent
     , timeCreated = Time.millisToPosix 1592511028000
     , timeUpdated = Time.millisToPosix 1592511028000
+    , tags = []
+    , categories = []
     }
 
 
