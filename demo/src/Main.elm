@@ -99,6 +99,7 @@ init flags =
     , counter = 1
     , currentTime = Time.millisToPosix 0
     , preferences = Nothing
+    , appMode = Config.appMode
     , messageLife = 0
     , width = flags.width
     , height = flags.height

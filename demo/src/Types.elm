@@ -1,5 +1,6 @@
 module Types exposing
-    ( Authorization(..)
+    ( AppMode(..)
+    , Authorization(..)
     , ChangingFileNameState(..)
     , DocumentStatus(..)
     , FileLocation(..)
@@ -42,6 +43,7 @@ type alias Model =
     , editor : Editor
     , message : String
     , preferences : Maybe Preferences
+    , appMode : AppMode
 
     -- UI
     , popupStatus : PopupStatus
@@ -76,6 +78,11 @@ type alias Model =
     , signInMode : SignInMode
     , currentUser : Maybe Author
     }
+
+
+type AppMode
+    = Desktop
+    | Webapp
 
 
 type SignInMode

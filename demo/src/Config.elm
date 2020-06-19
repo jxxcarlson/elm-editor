@@ -1,5 +1,11 @@
 module Config exposing (..)
 
+import Types exposing (AppMode(..))
+
+
+appMode =
+    Desktop
+
 
 tickInterval =
     1000
