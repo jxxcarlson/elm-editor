@@ -50,8 +50,8 @@ const toMetadata = (doc) => (
         tags: doc.tags,
         categories: doc.categories,
         title: doc.title,
-        subtitle: doc.subtitle
-        abstract: doc.abstract
+        subtitle: doc.subtitle,
+        abstract: doc.abstract,
         belongsTo: doc.belongsTo
         }
    )
