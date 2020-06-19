@@ -48,7 +48,11 @@ const toMetadata = (doc) => (
         timeCreated: doc.timeCreated,
         timeUpdated: doc.timeUpdated,
         tags: doc.tags,
-        categories: doc.categories
+        categories: doc.categories,
+        title: doc.title,
+        subtitle: doc.subtitle
+        abstract: doc.abstract
+        belongsTo: doc.belongsTo
         }
    )
 

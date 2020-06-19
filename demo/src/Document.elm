@@ -27,6 +27,10 @@ type alias Document =
     , timeUpdated : Time.Posix
     , tags : List String
     , categories : List String
+    , title : String
+    , subtitle : String
+    , abstract : String
+    , belongsTo : String
     , content : String
     }
 
@@ -39,6 +43,10 @@ type alias Metadata =
     , timeUpdated : Time.Posix
     , tags : List String
     , categories : List String
+    , title : String
+    , subtitle : String
+    , abstract : String
+    , belongsTo : String
     }
 
 
@@ -94,6 +102,10 @@ toMetadata doc =
     , timeCreated = doc.timeCreated
     , timeUpdated = doc.timeUpdated
     , tags = doc.tags
+    , title = doc.title
+    , subtitle = doc.subtitle
+    , abstract = doc.abstract
+    , belongsTo = doc.belongsTo
     , categories = doc.categories
     }
 

@@ -14,6 +14,10 @@ about =
     , timeUpdated = Time.millisToPosix 1592511028000
     , tags = []
     , categories = []
+    , title = "About this app"
+    , subtitle = "It's cool!"
+    , abstract = "Coming soon."
+    , belongsTo = ""
     }
 
 

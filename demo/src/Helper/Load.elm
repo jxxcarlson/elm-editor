@@ -81,6 +81,10 @@ loadDocument time fileName_ content_ docType_ model =
             , tags = []
             , categories = []
             , content = content_
+            , title = ""
+            , subtitle = ""
+            , abstract = ""
+            , belongsTo = ""
             }
     in
     updateModelWithDocument doc model

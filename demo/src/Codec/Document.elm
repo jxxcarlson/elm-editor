@@ -29,6 +29,10 @@ documentDecoder =
         |> required "timeUpdated" (int |> D.map Time.millisToPosix)
         |> required "tags" (list string)
         |> required "categories" (list string)
+        |> required "title" string
+        |> required "subtitle" string
+        |> required "abstract" string
+        |> required "belongsTo" string
         |> required "content" string
 
 
@@ -79,6 +83,10 @@ metadataDecoder =
         |> required "timeUpdated" (int |> D.map Time.millisToPosix)
         |> required "tags" (list string)
         |> required "categories" (list string)
+        |> required "title" string
+        |> required "subtitle" string
+        |> required "abstract" string
+        |> required "belongsTo" string
 
 
 metadataEncoder : Metadata -> Encode.Value
@@ -91,6 +99,10 @@ metadataEncoder metadata =
         , ( "timeUpdated", Encode.int (Time.posixToMillis metadata.timeUpdated) )
         , ( "tags", Encode.list Encode.string metadata.tags )
         , ( "categories", Encode.list Encode.string metadata.categories )
+        , ( "title", Encode.string metadata.title )
+        , ( "subtitle", Encode.string metadata.subtitle )
+        , ( "abstract", Encode.string metadata.abstract )
+        , ( "belongsTo", Encode.string metadata.belongsTo )
         ]
 
 
