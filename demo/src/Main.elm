@@ -196,7 +196,7 @@ update msg model =
                     ( { model | fileList = fileList }, Cmd.none )
 
                 Outside.GotFile file ->
-                    Helper.Load.updateModeWithDocument file model
+                    Helper.Load.updateModelWithDocument file model
                         |> (\m -> { m | popupStatus = PopupClosed })
                         -- |> (\m -> m |> withCmd (Helper.Server.updateDocument m.fileStorageUrl m.document))
                         -- TODO: fix the above
@@ -362,7 +362,7 @@ update msg model =
         GotDocument result ->
             case result of
                 Ok document ->
-                    Helper.Load.updateModeWithDocument document model
+                    Helper.Load.updateModelWithDocument document model
                         |> withNoCmd
 
                 Err _ ->

@@ -4046,7 +4046,9 @@ const toMetadata = (doc) => (
         id: doc.id,
         author: doc.author,
         timeCreated: doc.timeCreated,
-        timeUpdated: doc.timeUpdated
+        timeUpdated: doc.timeUpdated,
+        tags: doc.tags,
+        categories: doc.categories
         }
    )
 

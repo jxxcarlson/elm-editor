@@ -2,7 +2,7 @@ module Helper.Load exposing
     ( config
     , loadAboutDocument
     , loadDocument
-    , updateModeWithDocument
+    , updateModelWithDocument
     )
 
 import Data
@@ -21,7 +21,7 @@ import UuidHelper
 
 loadAboutDocument : Model -> Model
 loadAboutDocument model =
-    updateModeWithDocument Data.about model
+    updateModelWithDocument Data.about model
 
 
 {-|
@@ -30,8 +30,8 @@ loadAboutDocument model =
     - Compute the rendered content and store it in the model.
 
 -}
-updateModeWithDocument : Document -> Model -> Model
-updateModeWithDocument document model =
+updateModelWithDocument : Document -> Model -> Model
+updateModelWithDocument document model =
     let
         docType =
             Document.docType document.fileName
@@ -83,7 +83,7 @@ loadDocument time fileName_ content_ docType_ model =
             , content = content_
             }
     in
-    updateModeWithDocument doc model
+    updateModelWithDocument doc model
         |> UuidHelper.newUuid
 
 
