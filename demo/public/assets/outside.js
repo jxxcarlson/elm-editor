@@ -4265,6 +4265,8 @@ app.ports.infoForOutside.subscribe(msg => {
     function writeMetadata(document) {
 
         const metadata = toMetadata(document)
+        console.log("Metadata", metadata)
+
 
         // s and t are metadata: source and target
         const changeMetadata = (s, t ) =>
@@ -4278,8 +4280,8 @@ app.ports.infoForOutside.subscribe(msg => {
              .then(value => load(value))
              .then(m => updateManifest(metadata, m))
              .then(m => safeDump(m))
-             .then(contents => writeFile({file: pathToManifest, contents: contents})))
-
+             .then(contents => writeFile({file: pathToManifest, contents: contents}))
+          )
 
         getPreferences()
         .then(p => writeMetadata_(metadata, p.documentDirectory + '/manifest.yaml'))

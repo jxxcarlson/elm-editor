@@ -55,6 +55,10 @@ type alias Model =
     , fileName_ : String
     , tags_ : String
     , categories_ : String
+    , title_ : String
+    , subtitle_ : String
+    , abstract_ : String
+    , belongsTo_ : String
     , changingFileNameState : ChangingFileNameState
     , fileList : List Metadata
     , documentStatus : DocumentStatus
@@ -87,7 +91,7 @@ type FileLocation
 
 
 type ChangingFileNameState
-    = ChangingFileName
+    = ChangingMetadata
     | FileNameOK
 
 
@@ -127,6 +131,9 @@ type Msg
     | InputFileName String
     | InputTags String
     | InputCategories String
+    | InputTitle String
+    | InputSubtitle String
+    | InputBelongsTo String
     | LoadAboutDocument
     | DocumentLoaded String
     | ToggleDocType

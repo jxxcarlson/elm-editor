@@ -102,7 +102,7 @@ aboutButton =
 
 
 cancelChangeMetadataButton =
-    button_ 70 "Cancel" CancelChangeFileName
+    button_ 70 "Cancel" (ManagePopup PopupClosed)
 
 
 changeMetadataButton fileName =

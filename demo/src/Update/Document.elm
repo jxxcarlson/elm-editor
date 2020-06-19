@@ -27,6 +27,10 @@ changeMetaData model =
                 | fileName = model.fileName_
                 , tags = Helper.Common.listFromString model.tags_
                 , categories = Helper.Common.listFromString model.categories_
+                , title = model.title_
+                , subtitle = model.subtitle_
+                , abstract = model.abstract_
+                , belongsTo = model.belongsTo_
             }
     in
     ( { model

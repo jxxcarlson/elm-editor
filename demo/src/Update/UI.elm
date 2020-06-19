@@ -32,7 +32,11 @@ managePopup status model =
         let
             tags_ = Helper.Common.stringFromList model.document.tags
             categories_ = Helper.Common.stringFromList model.document.categories
-            newModel = { model | tags_ = tags_, categories_ = categories_}
+            newModel = { model | tags_ = tags_
+                         , categories_ = categories_
+                         , title_ = model.document.title
+                         , subtitle_ = model.document.subtitle
+                         ,  belongsTo_ = model.document.belongsTo}
         in
         { newModel | popupStatus = status } |> withNoCmd
 

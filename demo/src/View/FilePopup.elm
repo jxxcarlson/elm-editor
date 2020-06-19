@@ -63,6 +63,9 @@ changePanel model =
         [ inputItem "File name" InputFileName model.fileName_ 150
         , inputItem "Tags" InputTags model.tags_ 300
         , inputItem "Categories" InputCategories model.categories_ 300
+        , inputItem "Title" InputTitle model.title_ 300
+        , inputItem "Subtitle" InputSubtitle model.subtitle_ 300
+        , inputItem "Belongs to" InputBelongsTo model.belongsTo_ 300
         , row [ spacing 12 ]
             [ Widget.changeMetadataButton model.fileName_
             , Widget.cancelChangeMetadataButton

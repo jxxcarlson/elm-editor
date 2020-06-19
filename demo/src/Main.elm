@@ -108,6 +108,10 @@ init flags =
     , fileName_ = ""
     , tags_ = ""
     , categories_ = ""
+    , title_ = ""
+    , subtitle_ = ""
+    , abstract_ = ""
+    , belongsTo_ = ""
     , changingFileNameState = FileNameOK
     , fileList = []
     , fileLocation = LocalFiles
@@ -186,10 +190,6 @@ update msg model =
                     pasteToEditorAndClipboard model clipboard
 
                 Outside.GotFileList fileList ->
-                    let
-                        _ =
-                            Debug.log "fileList" fileList
-                    in
                     ( { model | fileList = fileList }, Cmd.none )
 
                 Outside.GotFile file ->
@@ -323,13 +323,22 @@ update msg model =
             saveFileToStorage_ model
 
         InputFileName str ->
-            ( { model | fileName_ = str, changingFileNameState = ChangingFileName }, Cmd.none )
+            ( { model | fileName_ = str, changingFileNameState = ChangingMetadata }, Cmd.none )
 
         InputTags str ->
-            ( { model | tags_ = str, changingFileNameState = ChangingFileName }, Cmd.none )
+            ( { model | tags_ = str, changingFileNameState = ChangingMetadata }, Cmd.none )
 
         InputCategories str ->
-            ( { model | categories_ = str, changingFileNameState = ChangingFileName }, Cmd.none )
+            ( { model | categories_ = str, changingFileNameState = ChangingMetadata }, Cmd.none )
+
+        InputTitle str ->
+            ( { model | title_ = str, changingFileNameState = ChangingMetadata }, Cmd.none )
+
+        InputSubtitle str ->
+            ( { model | subtitle_ = str, changingFileNameState = ChangingMetadata }, Cmd.none )
+
+        InputBelongsTo str ->
+            ( { model | belongsTo_ = str, changingFileNameState = ChangingMetadata }, Cmd.none )
 
         ChangeMetadata fileName ->
             Update.Document.changeMetaData model
@@ -450,9 +459,6 @@ update msg model =
 saveFileToStorage_ : Model -> ( Model, Cmd Msg )
 saveFileToStorage_ model =
     let
-        _ =
-            Debug.log "SAVE FILE TO STORAGE" "!!!"
-
         document_ =
             model.document
 

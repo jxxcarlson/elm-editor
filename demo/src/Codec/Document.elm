@@ -46,6 +46,10 @@ documentEncoder doc =
         , ( "timeUpdated", Encode.int (Time.posixToMillis doc.timeUpdated) )
         , ( "tags", Encode.list Encode.string doc.tags )
         , ( "categories", Encode.list Encode.string doc.categories )
+        , ( "title", Encode.string (normalize doc.title) )
+        , ( "subtitle", Encode.string (normalize doc.subtitle) )
+        , ( "abstract", Encode.string (normalize doc.abstract) )
+        , ( "belongsTo", Encode.string (normalize doc.belongsTo) )
         , ( "content", Encode.string doc.content )
         ]
 
@@ -99,11 +103,21 @@ metadataEncoder metadata =
         , ( "timeUpdated", Encode.int (Time.posixToMillis metadata.timeUpdated) )
         , ( "tags", Encode.list Encode.string metadata.tags )
         , ( "categories", Encode.list Encode.string metadata.categories )
-        , ( "title", Encode.string metadata.title )
-        , ( "subtitle", Encode.string metadata.subtitle )
-        , ( "abstract", Encode.string metadata.abstract )
-        , ( "belongsTo", Encode.string metadata.belongsTo )
+        , ( "title", Encode.string (normalize metadata.title) )
+        , ( "subtitle", Encode.string (normalize metadata.subtitle) )
+        , ( "abstract", Encode.string (normalize metadata.abstract) )
+        , ( "belongsTo", Encode.string (normalize metadata.belongsTo) )
         ]
+
+
+normalize : String -> String
+normalize str =
+    case str == "" of
+        True ->
+            "none"
+
+        False ->
+            str
 
 
 
