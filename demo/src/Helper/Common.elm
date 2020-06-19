@@ -1,7 +1,9 @@
 module Helper.Common exposing
     ( addPostfix
     , dateStringFromPosix
+    , listFromString
     , removePostfix
+    , stringFromList
     , windowHeight
     , windowWidth
     )
@@ -87,3 +89,14 @@ removePostfix postfix fileName =
 
         False ->
             fileName
+
+
+stringFromList : List String -> String
+stringFromList list =
+    String.join ", " list
+
+
+listFromString : String -> List String
+listFromString str =
+    String.split "," str
+        |> List.map String.trim

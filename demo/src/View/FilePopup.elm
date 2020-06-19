@@ -51,19 +51,18 @@ view model =
 
 infoPanel model =
     column [ spacing 12 ]
-        [ item "File name" model.document.fileName
-        , item "id" model.document.id
+        [ item "id" model.document.id
         , item "Author" model.document.author
         , item "Created" (Helper.Common.dateStringFromPosix model.document.timeCreated)
         , item "Modified" (Helper.Common.dateStringFromPosix model.document.timeUpdated)
-        , item "Tags" (String.join ", " model.document.tags)
-        , item "Categories" (String.join ", " model.document.categories)
         ]
 
 
 changePanel model =
     column [ spacing 12 ]
-        [ fileNameInput model
+        [ inputItem "File name" InputFileName model.fileName_ 150
+        , inputItem "Tags" InputTags model.tags_ 300
+        , inputItem "Categories" InputCategories model.categories_ 300
         , row [ spacing 12 ]
             [ Widget.changeFileNameButton model.fileName_
             , Widget.cancelChangeFileNameButton
@@ -71,7 +70,6 @@ changePanel model =
         ]
 
 
-item : String -> String -> Element msg
 item label str =
     row [ Font.size 14, spacing 12 ]
         [ el [ Font.bold, width (px 65) ] (el [ alignRight ] (text label))
@@ -79,18 +77,27 @@ item label str =
         ]
 
 
+inputItem : String -> (String -> Msg) -> String -> Int -> Element Msg
+inputItem label msg inputText width_ =
+    row [ Font.size 14, spacing 12 ]
+        [ el [ Font.bold, width (px 65) ] (el [ alignRight ] (text label))
+        , fileInput msg inputText "" width_
+        ]
+
+
 titleLine model =
-    row [ width (px 450) ] [ text "File info", el [ alignRight ] (Widget.closePopupButton model) ]
+    row [ width (px 450) ] [ text ("File info: " ++ model.document.fileName), el [ alignRight ] (Widget.closePopupButton model) ]
 
 
-fileInput msg text label =
+fileInput : (String -> Msg) -> String -> String -> Int -> Element Msg
+fileInput msg text label width_ =
     TextField.make msg text label
         |> TextField.withHeight 30
-        |> TextField.withWidth 150
-        |> TextField.withLabelWidth 70
-        |> TextField.withLabelPosition LabelAbove
+        |> TextField.withWidth width_
+        |> TextField.withLabelWidth 0
+        |> TextField.withLabelPosition LabelLeft
         |> TextField.toElement
 
 
 fileNameInput model =
-    fileInput InputFileName model.fileName_ "File name"
+    fileInput InputFileName model.fileName_ ""

@@ -53,6 +53,8 @@ type alias Model =
     , docType : DocType
     , fileName : String
     , fileName_ : String
+    , tags_ : String
+    , categories_ : String
     , changingFileNameState : ChangingFileNameState
     , fileList : List Metadata
     , documentStatus : DocumentStatus
@@ -123,6 +125,8 @@ type Msg
     | ToggleFileLocation FileLocation
       -- Document
     | InputFileName String
+    | InputTags String
+    | InputCategories String
     | LoadAboutDocument
     | DocumentLoaded String
     | ToggleDocType

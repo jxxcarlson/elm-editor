@@ -8,6 +8,7 @@ import Types exposing(Model, PopupStatus(..),  Msg(..), PopupWindow(..), Documen
 import Cmd.Extra exposing (withCmd,withNoCmd, withCmds)
 import Helper.Server
 import Helper.File
+import Helper.Common
 import View.Scroll
 import Markdown.Render exposing (MarkdownMsg(..))
 import MiniLatex.Edit
@@ -28,7 +29,12 @@ managePopup status model =
             |> withCmd (Helper.Server.getDocumentList model.fileStorageUrl)
 
     PopupOpen FilePopup ->
-        { model | popupStatus = status } |> withNoCmd
+        let
+            tags_ = Helper.Common.stringFromList model.document.tags
+            categories_ = Helper.Common.stringFromList model.document.categories
+            newModel = { model | tags_ = tags_, categories_ = categories_}
+        in
+        { newModel | popupStatus = status } |> withNoCmd
 
     PopupOpen NewFilePopup ->
         { model | popupStatus = status } |> withNoCmd

@@ -33,7 +33,6 @@ import Element.Font as Font
 import File exposing (File)
 import Helper.Author
 import Helper.Common
-import Helper.File
 import Helper.Load
 import Helper.Server
 import Helper.Sync
@@ -41,8 +40,6 @@ import Html exposing (Attribute, Html)
 import Html.Attributes as Attribute
 import Json.Encode
 import Markdown.Option exposing (..)
-import Markdown.Render exposing (MarkdownMsg(..))
-import MiniLatex.Edit as MLE
 import Outside
 import Random
 import Render exposing (MDData, MLData, RenderingData(..), RenderingOption(..))
@@ -75,8 +72,6 @@ import View.Helpers
 import View.LocalStoragePopup as FileListPopup
 import View.NewFilePopup as NewFilePopup
 import View.Scroll
-import View.Style as Style
-import View.Widget
 
 
 type alias Flags =
@@ -111,6 +106,8 @@ init flags =
     , docType = MarkdownDoc
     , fileName = "about.md"
     , fileName_ = ""
+    , tags_ = ""
+    , categories_ = ""
     , changingFileNameState = FileNameOK
     , fileList = []
     , fileLocation = LocalFiles
@@ -327,6 +324,12 @@ update msg model =
 
         InputFileName str ->
             ( { model | fileName_ = str, changingFileNameState = ChangingFileName }, Cmd.none )
+
+        InputTags str ->
+            ( { model | tags_ = str, changingFileNameState = ChangingFileName }, Cmd.none )
+
+        InputCategories str ->
+            ( { model | categories_ = str, changingFileNameState = ChangingFileName }, Cmd.none )
 
         ChangeFileName fileName ->
             Update.Document.changeFileName fileName model
