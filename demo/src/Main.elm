@@ -331,8 +331,8 @@ update msg model =
         InputCategories str ->
             ( { model | categories_ = str, changingFileNameState = ChangingFileName }, Cmd.none )
 
-        ChangeFileName fileName ->
-            Update.Document.changeFileName fileName model
+        ChangeMetadata fileName ->
+            Update.Document.changeMetaData model
 
         SetDocumentDirectory ->
             model

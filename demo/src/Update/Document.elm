@@ -1,5 +1,5 @@
 module Update.Document exposing
-    ( changeFileName
+    ( changeMetaData
     , createDocument
     , loadDocument
     , toggleDocType
@@ -7,23 +7,27 @@ module Update.Document exposing
 
 import Cmd.Extra exposing (withCmd, withCmds, withNoCmd)
 import Document exposing (DocType(..))
+import Helper.Common
 import Helper.Load
 import Helper.Server
 import Helper.Sync
 import Outside
 import Types exposing (ChangingFileNameState(..), FileLocation(..), Model, Msg, PopupStatus(..))
-import Update.Helper
 import View.Scroll
 
 
-changeFileName : String -> Model -> ( Model, Cmd Msg )
-changeFileName fileName model =
+changeMetaData : Model -> ( Model, Cmd Msg )
+changeMetaData model =
     let
         oldDocument =
             model.document
 
         newDocument =
-            { oldDocument | fileName = fileName }
+            { oldDocument
+                | fileName = model.fileName_
+                , tags = Helper.Common.listFromString model.tags_
+                , categories = Helper.Common.listFromString model.categories_
+            }
     in
     ( { model
         | fileName = model.fileName_

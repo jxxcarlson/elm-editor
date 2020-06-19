@@ -1,9 +1,9 @@
 module View.Widget exposing
     ( aboutButton
     , button
-    , cancelChangeFileNameButton
+    , cancelChangeMetadataButton
     , cancelSignInButton
-    , changeFileNameButton
+    , changeMetadataButton
     , closePopupButton
     , createAuthorButton
     , documentTypeButton
@@ -101,31 +101,31 @@ aboutButton =
     button_ 50 "About" About
 
 
-cancelChangeFileNameButton =
+cancelChangeMetadataButton =
     button_ 70 "Cancel" CancelChangeFileName
 
 
-changeFileNameButton fileName =
+changeMetadataButton fileName =
     case
         ( Document.fileExtension fileName
         , String.length (Document.titleFromFileName fileName) > 0
         )
     of
         ( "md", True ) ->
-            changeFileNameButton_ fileName
+            changeMetadataButton_ fileName
 
         ( "tex", True ) ->
-            changeFileNameButton_ fileName
+            changeMetadataButton_ fileName
 
         ( _, _ ) ->
-            doNotChangeFileNameButton
+            doNotChangeMetadataButton
 
 
-changeFileNameButton_ fileName =
-    button_ 70 "Change" (ChangeFileName fileName)
+changeMetadataButton_ fileName =
+    button_ 70 "Change" (ChangeMetadata fileName)
 
 
-doNotChangeFileNameButton =
+doNotChangeMetadataButton =
     button_ 70 "Change" (ManagePopup PopupClosed)
 
 

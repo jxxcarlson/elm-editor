@@ -131,7 +131,7 @@ type Msg
     | DocumentLoaded String
     | ToggleDocType
     | CreateDocument
-    | ChangeFileName String
+    | ChangeMetadata String
     | CancelChangeFileName
     | SoftDelete Metadata
       -- External Files

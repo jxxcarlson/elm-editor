@@ -64,8 +64,8 @@ changePanel model =
         , inputItem "Tags" InputTags model.tags_ 300
         , inputItem "Categories" InputCategories model.categories_ 300
         , row [ spacing 12 ]
-            [ Widget.changeFileNameButton model.fileName_
-            , Widget.cancelChangeFileNameButton
+            [ Widget.changeMetadataButton model.fileName_
+            , Widget.cancelChangeMetadataButton
             ]
         ]
 
