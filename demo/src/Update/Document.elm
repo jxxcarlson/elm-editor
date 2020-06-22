@@ -1,6 +1,8 @@
 module Update.Document exposing
     ( changeMetaData
     , createDocument
+    , getDocumentCmd
+    , listDocuments
     , loadDocument
     , toggleDocType
     )
@@ -10,10 +12,20 @@ import Document exposing (DocType(..))
 import Helper.Common
 import Helper.Load
 import Helper.Server
+import Helper.File
 import Helper.Sync
 import Outside
-import Types exposing (ChangingFileNameState(..), FileLocation(..), Model, Msg, PopupStatus(..))
+import Types exposing (ChangingFileNameState(..)
+  , DocumentStatus(..),
+  FileLocation(..), Model, Msg, PopupStatus(..))
 import View.Scroll
+
+getDocumentCmd fileName model =
+    case model.fileLocation of
+                 LocalFiles ->
+                   Outside.sendInfo (Outside.AskForFile fileName)
+                 ServerFiles ->
+                    Helper.Server.getDocument model.fileStorageUrl fileName
 
 
 changeMetaData : Model -> ( Model, Cmd Msg )
@@ -71,7 +83,7 @@ createDocument model =
                 LocalFiles ->
                     Outside.sendInfo (Outside.CreateFile doc)
 
-                RemoteFiles ->
+                ServerFiles ->
                     Helper.Server.createDocument model.fileStorageUrl doc
     in
     { newModel | popupStatus = PopupClosed }
@@ -83,6 +95,20 @@ createDocument model =
                 , createDocCmd
                 ]
             )
+
+
+listDocuments : PopupStatus -> Model -> ( Model, Cmd Msg )
+listDocuments status model =
+   { model | popupStatus = status, documentStatus = DocumentSaved }
+       |> withCmds
+         (case model.fileLocation of
+             LocalFiles ->
+               [ Helper.File.getDocumentList
+               ]
+             ServerFiles ->
+               [ Helper.Server.getDocumentList model.fileStorageUrl
+               -- , Helper.Server.updateDocument model.fileStorageUrl model.document
+               ])
 
 
 

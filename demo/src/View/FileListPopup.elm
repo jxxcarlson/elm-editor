@@ -43,7 +43,7 @@ view model =
                         LocalFiles ->
                             "Local Files (" ++ n ++ ")"
 
-                        RemoteFiles ->
+                        ServerFiles ->
                             "Remote Files (" ++ n ++ ")"
 
                 metadataOfCurrentDocument =
@@ -90,7 +90,7 @@ viewFileName metaDataOfCurrentDocument metadata =
     row [ spacing 8 ]
         [ Widget.plainButton 200
             (prettify metadata.fileName)
-            (OutsideInfo (Outside.AskForFile metadata.fileName))
+            (GetDocument metadata.fileName)
             [ Font.color (Element.rgb 0 0 0.9), bgColor, Element.padding 2 ]
         , el [ Element.padding 2, Background.color (Element.rgba 0.7 0.3 0.3 0.5) ]
             (Widget.plainButton 55

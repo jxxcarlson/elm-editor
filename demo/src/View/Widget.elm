@@ -91,9 +91,9 @@ cancelSignInButton =
 toggleFileLocationButton model =
     case model.fileLocation of
         LocalFiles ->
-            button_ 60 "Local" (ToggleFileLocation RemoteFiles)
+            button_ 60 "Local" (ToggleFileLocation ServerFiles)
 
-        RemoteFiles ->
+        ServerFiles ->
             button_ 60 "Remote" (ToggleFileLocation LocalFiles)
 
 

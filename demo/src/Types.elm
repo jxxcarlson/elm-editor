@@ -94,7 +94,7 @@ type SignInMode
 
 type FileLocation
     = LocalFiles
-    | RemoteFiles
+    | ServerFiles
 
 
 type ChangingFileNameState
@@ -145,6 +145,7 @@ type Msg
     | DocumentLoaded String
     | ToggleDocType
     | CreateDocument
+    | GetDocument String
     | ChangeMetadata String
     | CancelChangeFileName
     | SoftDelete Metadata

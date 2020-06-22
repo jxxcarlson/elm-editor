@@ -1,5 +1,7 @@
 module Main exposing (main)
 
+-- import View.LocalStoragePopup as FileListPopup
+
 import Browser
 import Browser.Dom as Dom
 import Browser.Events
@@ -69,7 +71,6 @@ import View.FileListPopup as RemoteFileListPopup
 import View.FilePopup as FilePopup
 import View.Footer
 import View.Helpers
-import View.LocalStoragePopup as FileListPopup
 import View.NewFilePopup as NewFilePopup
 import View.Scroll
 
@@ -115,7 +116,7 @@ init flags =
     , belongsTo_ = ""
     , changingFileNameState = FileNameOK
     , fileList = []
-    , fileLocation = LocalFiles
+    , fileLocation = Config.fileLocation
     , documentStatus = DocumentSaved
     , selectedId = ( 0, 0 )
     , selectedId_ = ""
@@ -142,8 +143,18 @@ init flags =
             , View.Scroll.toEditorTop
             , View.Scroll.toRenderedTextTop
             , UuidHelper.getRandomNumber
-            , Outside.sendInfo (Outside.GetPreferences Json.Encode.null)
+            , preferencesCmd Config.fileLocation
             ]
+
+
+preferencesCmd : FileLocation -> Cmd Msg
+preferencesCmd fileLocation =
+    case fileLocation of
+        LocalFiles ->
+            Outside.sendInfo (Outside.GetPreferences Json.Encode.null)
+
+        ServerFiles ->
+            Cmd.none
 
 
 subscriptions : Model -> Sub Msg
@@ -270,6 +281,9 @@ update msg model =
         CreateDocument ->
             Update.Document.createDocument model
 
+        GetDocument fileName ->
+            model |> withCmd (Update.Document.getDocumentCmd fileName model)
+
         SetViewPortForElement result ->
             Update.UI.setViewportForElement result model
 
@@ -391,9 +405,9 @@ update msg model =
                 Ok documents ->
                     { model | fileList = documents } |> withNoCmd
 
-                Err _ ->
+                Err e ->
                     model
-                        |> Update.Helper.postMessage "Error getting remote documents"
+                        |> Update.Helper.postMessage (Debug.toString e)
                         |> withNoCmd
 
         ToggleFileLocation fileLocation ->
@@ -403,7 +417,7 @@ update msg model =
                         LocalFiles ->
                             Config.localServerUrl
 
-                        RemoteFiles ->
+                        ServerFiles ->
                             Config.remoteServerUrl
             in
             { model
@@ -477,7 +491,7 @@ saveFileToStorage_ model =
                         LocalFiles ->
                             Outside.sendInfo (Outside.WriteFile document)
 
-                        RemoteFiles ->
+                        ServerFiles ->
                             Helper.Server.updateDocument model.fileStorageUrl document
                     )
 
@@ -555,7 +569,6 @@ mainColumn model =
         [ column [ Background.color <| View.Helpers.gray 55 ]
             [ Element.el
                 [ Element.inFront (AuthorPopup.view model)
-                , Element.inFront (FileListPopup.view model)
                 , Element.inFront (FilePopup.view model)
                 , Element.inFront (RemoteFileListPopup.view model)
                 , Element.inFront (NewFilePopup.view model)

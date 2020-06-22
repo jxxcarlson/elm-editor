@@ -1,28 +1,22 @@
 import { load, safeDump } from 'https://deno.land/x/js_yaml_port/js-yaml.js'
-import {Document, DocumentRecord} from './document.ts'
+import {Document, Metadata} from './document.ts'
 import {FILE_STORE_PATH} from './config.ts'
-import {manifest} from "./manifest.ts";
-
-export const fetchDocumentByFileName = async (fileName: String): Promise<Document> => {
-  const docRec = manifest.filter(r => r.fileName == fileName)[0]
-  return fetchDocument_(docRec)
-}
 
 
-export const fetchDocumentById = async (id: String): Promise<Document> => {
-  const docRec = manifest.filter(r => r.id == id)[0]
-  return fetchDocument_(docRec)
-}
-
-const fetchDocument_ = async (docRec: DocumentRecord): Promise<Document> => {
-  const path = FILE_STORE_PATH + '/' + docRec.fileName
+export const fetchDocument = async (metaData: Metadata): Promise<Document> => {
+  const path = FILE_STORE_PATH + '/' + metaData.fileName
   console.log("path", path)
   const data = await Deno.readFile(path);
 
   const decoder = new TextDecoder();
   const decodedData = decoder.decode(data);
 
-  const doc: Document = { fileName: docRec.fileName, id: docRec.id, content: decodedData}
+  const doc: Document = { id: metaData.id, fileName: metaData.fileName, author: metaData.author,
+     timeCreated: metaData.timeCreated, timeUpdated: metaData.timeUpdated, tags: metaData.tags,
+     categories: metaData.categories, title: metaData.title, subtitle: metaData.subtitle,
+     abstract: metaData.abstract, belongsTo: metaData.belongsTo,
+     content: decodedData }
+
 
   return doc;
 };

@@ -1,15 +1,15 @@
-import {DocumentRecord, Document} from "../document.ts";
+import {Metadata, Document} from "../document.ts";
 import {manifest, writeManifest} from "../manifest.ts";
 import {writeDocument} from "../file.ts"
 
-const hasSameFileName = (a: DocumentRecord, b: DocumentRecord) => a.fileName == b.fileName;
+const hasSameFileName = (a: Metadata, b: Metadata) => a.fileName == b.fileName;
 
-const hasSameId = (a: DocumentRecord, b: DocumentRecord) => a.id == b.id;
+const hasSameId = (a: Metadata, b: Metadata) => a.id == b.id;
 
-const isNotPresent = (d: DocumentRecord, manifest_: Array<DocumentRecord>) =>
+const isNotPresent = (d: Metadata, manifest_: Array<Metadata>) =>
   manifest_.filter((r) => hasSameId(r, d)).length == 0;
 
-const updateDocRecord = (sourceDocRecord: DocumentRecord, targetDocRecord: DocumentRecord) =>
+const updateDocRecord = (sourceDocRecord: Metadata, targetDocRecord: Metadata) =>
   {
    if (sourceDocRecord.id == targetDocRecord.id)  {
         sourceDocRecord
@@ -20,11 +20,11 @@ const updateDocRecord = (sourceDocRecord: DocumentRecord, targetDocRecord: Docum
 
 
 
-const changeDoc = (s: DocumentRecord, t : DocumentRecord) =>
+const changeDoc = (s: Metadata, t : Metadata) =>
   s.id == t.id ?  Object.assign({}, s) : t
 
 
-const newManifest = manifest.map((d:DocumentRecord) => changeDoc(changed, d))
+const newManifest = manifest.map((d:Metadata) => changeDoc(changed, d))
 
 
 
@@ -47,7 +47,7 @@ const updateDocument = async ({
   );
 
     const sourceDoc: Document = { id: id, fileName: fileName, content: content };
-    const sourceDocRecord: DocumentRecord = { id: id, fileName: fileName };
+    const sourceDocRecord: Metadata = { id: id, fileName: fileName };
     if (isNotPresent(sourceDocRecord, manifest)) {
       manifest.push(sourceDocRecord);
       writeManifest(manifest)
@@ -56,7 +56,7 @@ const updateDocument = async ({
       response.body = { msg: "Added: " + sourceDoc.fileName};
       response.status = 200;
     } else {
-      manifest.forEach((d:DocumentRecord) => updateDocRecord(sourceDocRecord, d))
+      manifest.forEach((d:Metadata) => updateDocRecord(sourceDocRecord, d))
       writeManifest(manifest)
       writeDocument(sourceDoc)
       console.log("updated: " + sourceDoc.fileName);

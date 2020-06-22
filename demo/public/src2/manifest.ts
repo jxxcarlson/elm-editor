@@ -1,17 +1,17 @@
-import {DocumentRecord, Document} from "./document.ts";
+import {Metadata, Document} from "./document.ts";
 import { load, safeDump } from 'https://deno.land/x/js_yaml_port/js-yaml.js'
 import {MANIFEST} from './config.ts'
-import {writeDocument} from "./file.ts"
+import {fetchDocument, writeDocument} from "./file.ts"
 
-const hasSameFileName = (a: DocumentRecord, b: DocumentRecord) => a.fileName == b.fileName;
+const hasSameFileName = (a: Metadata, b: Metadata) => a.fileName == b.fileName;
 
-const hasSameId = (a: DocumentRecord, b: DocumentRecord) => a.id == b.id;
+const hasSameId = (a: Metadata, b: Metadata) => a.id == b.id;
 
-const isNotPresent = (d: DocumentRecord, manifest_: Array<DocumentRecord>) =>
+const isNotPresent = (d: Metadata, manifest_: Array<Metadata>) =>
   manifest_.filter((r) => hasSameId(r, d)).length == 0;
 
 
-export const fetchManifest = async (): Promise<DocumentRecord[]> => {
+export const fetchManifest = async (): Promise<Metadata[]> => {
   const data = await Deno.readFile(MANIFEST);
 
   const decoder = new TextDecoder();
@@ -22,17 +22,43 @@ export const fetchManifest = async (): Promise<DocumentRecord[]> => {
   return load(decodedData);
 };
 
-export const writeManifest = async (data: Array<DocumentRecord>): Promise<void> => {
+var manifest = await fetchManifest();
+
+console.log("MANIFEST", manifest[0])
+
+// console.log("MANIFEST", manifest.filter(r => r.id == "fe14bdf8-23e5-4e4f-873b-6a7caaa9b32a")[0])
+
+export const writeManifest = async (data: Array<Metadata>): Promise<void> => {
   const encoder = new TextEncoder();
   await Deno.writeFile(MANIFEST, encoder.encode(safeDump(data)));
 };
 
-export var manifest = await fetchManifest();
 
-const changeDoc = (s: DocumentRecord, t : DocumentRecord) =>
+/////////////////////////
+
+
+const changeDoc = (s: Metadata, t : Metadata) =>
   s.id == t.id ?  Object.assign({}, s) : t
 
 
+export const fetchDocumentById = async (id: String): Promise<Document> => {
+   const metaData = manifest.filter(r => r.id == id)[0]
+
+   return fetchDocument(metaData)
+
+}
+
+export const fetchDocumentByFileName = async (fileName: String): Promise<Document> => {
+   const metaData = manifest.filter(r => r.fileName == fileName)[0]
+
+   return fetchDocument(metaData)
+
+}
+
+
+// console.log("DOC", await fetchDocumentById("143d1170-f8ce-47b3-904d-e84191d3d717"))
+
+//
 export const updateDocument = async ({
   request,
   response,
@@ -41,7 +67,8 @@ export const updateDocument = async ({
   response: any;
 }) => {
   const {
-    value : {token, fileName, id, content},
+    value : {token, fileName, id, author, timeCreated, timeUpdated, tags, categories,
+       title, subtitle, abstract, belongsTo, content},
   } = await request.body();
   response.headers.set("Access-Control-Allow-Origin", "*");
   response.headers.append("Access-Control-Allow-Methods", "PUT, OPTIONS");
@@ -50,18 +77,25 @@ export const updateDocument = async ({
     "X-Requested-With, Content-Type, Accept, Origin",
   );
 
-    const sourceDoc: Document = { id: id, fileName: fileName, content: content };
-    const sourceDocRecord: DocumentRecord = { id: id, fileName: fileName };
+    const sourceDoc: Document = { id: id, fileName: fileName, author: author,
+       timeCreated: timeCreated, timeUpdated: timeUpdated, tags: tags,
+       categories: categories, title: title, subtitle: subtitle,
+       abstract: abstract, belongsTo: belongsTo,
+       content: content };
+    const sourceMetadata: Metadata = { id: id, fileName: fileName, author: author,
+       timeCreated: timeCreated, timeUpdated: timeUpdated, tags: tags,
+       categories: categories, title: title, subtitle: subtitle,
+       abstract: abstract, belongsTo: belongsTo};
 
-    if (isNotPresent(sourceDocRecord, manifest)) {
-      manifest.push(sourceDocRecord);
+    if (isNotPresent(sourceMetadata, manifest)) {
+      manifest.push(sourceMetadata);
       writeManifest(manifest)
       writeDocument(sourceDoc)
       console.log("added: " + sourceDoc.fileName);
       response.body = { msg: "Added: " + sourceDoc.fileName};
       response.status = 200;
     } else {
-      manifest = manifest.map((d:DocumentRecord) => changeDoc(sourceDocRecord, d))
+      manifest = manifest.map((d:Metadata) => changeDoc(sourceMetadata, d))
       writeManifest(manifest)
       writeDocument(sourceDoc)
       console.log("updated: " + sourceDoc.fileName);
@@ -69,4 +103,93 @@ export const updateDocument = async ({
       response.status = 200;
     }
 
+};
+
+//////////////////////
+
+
+export const getDocuments = ( { response }: { response: any }) => {
+  console.log("file list requested");
+  response.headers.set("Access-Control-Allow-Origin", "*");
+  response.body = manifest;
+};
+
+// Get a document by file name
+export const  getDocument = async ({
+  params,
+  response,
+}: {
+  params: {
+    fileName: string;
+  };
+  response: any;
+}) => {
+  console.log("GET", params.fileName)
+  response.headers.set("Access-Control-Allow-Origin", "*");
+  response.body = await fetchDocumentByFileName(params.fileName)
+
+  response.status = 200;
+  return;
+};
+
+
+// const hasSameFileName = (a: Metadata, b: Metadata) => a.fileName == b.fileName;
+
+// const hasSameId = (a: Metadata, b: Metadata) => a.id == b.id;
+
+// const isNotPresent = (d: Metadata, manifest_: Array<Metadata>) =>
+//   manifest_.filter((r) => hasSameId(r, d)).length == 0;
+
+
+// Add a new document
+export const createDocument = async ({
+  request,
+  response,
+}: {
+  request: any;
+  response: any;
+}) => {
+  console.log("processing POST request");
+  const {
+    value : {token, fileName, id, author, timeCreated, timeUpdated, tags, categories,
+       title, subtitle, abstract, belongsTo, content},
+  } = await request.body();
+  response.headers.set("Access-Control-Allow-Origin", "*");
+  response.headers.append("Access-Control-Allow-Methods", "POST, OPTIONS");
+  response.headers.append(
+    "Access-Control-Allow-Headers",
+    "X-Requested-With, Content-Type, Accept, Origin",
+  );
+
+  if (token == "abracadabra") {
+
+    const doc_ = { id: id, fileName: fileName, author: author,
+       timeCreated: timeCreated, timeUpdated: timeUpdated, tags: tags,
+       categories: categories, title: title, subtitle: subtitle,
+       abstract: abstract, belongsTo: belongsTo,
+       content: content };
+    const metaData_ = { id: id, fileName: fileName, author: author,
+       timeCreated: timeCreated, timeUpdated: timeUpdated, tags: tags,
+       categories: categories, title: title, subtitle: subtitle,
+       abstract: abstract, belongsTo: belongsTo};
+
+    if (isNotPresent(metaData_, manifest)) {
+
+      manifest.push(doc_);
+      writeManifest(manifest)
+      writeDocument(doc_)
+
+      console.log("pushing document: " + doc_.fileName);
+      response.body = { msg: "OK" };
+      response.status = 200;
+
+    } else {
+      console.log("duplicate document");
+      response.body = { msg: "file already exists" };
+      response.status = 200;
+    }
+  } else {
+    response.body = { msg: "Token does not match" };
+    response.status = 400;
+  }
 };

@@ -8,12 +8,8 @@
 // Boscop: https://github.com/Boscop/web-view
 
 import { Application, Router } from "https://deno.land/x/oak/mod.ts";
-import {Document, DocumentRecord, ExtendedDocument, documentOfExtendedDocument} from "./document.ts";
-import {getDocuments} from "./handlers/getDocuments.ts"
-import {getDocument} from "./handlers/getDocument.ts"
-import {createDocument} from "./handlers/createDocument.ts"
-import {updateDocument} from "./manifest.ts"
-//import {options} from "./handlers/options.ts"
+import {Document, Metadata} from "./document.ts";
+import {createDocument, updateDocument, getDocuments, getDocument} from "./manifest.ts"
 import {createAuthor, signInAuthor} from "./author.ts"
 import { oakCors } from "https://deno.land/x/cors/mod.ts";
 //

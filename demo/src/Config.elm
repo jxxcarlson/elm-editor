@@ -1,6 +1,6 @@
 module Config exposing (..)
 
-import Types exposing (AppMode(..))
+import Types exposing (AppMode(..), FileLocation(..))
 
 
 appMode =
@@ -8,11 +8,15 @@ appMode =
 
 
 tickInterval =
-    1000
+    10000
 
 
 messageLifeTime =
     5
+
+
+fileLocation =
+    ServerFiles
 
 
 localServerUrl =
@@ -20,7 +24,11 @@ localServerUrl =
 
 
 remoteServerUrl =
-    "http://161.35.125.40:80/api"
+    "http://localhost:4000/api"
+
+
+
+--- "http://161.35.125.40:80/api"
 
 
 token =
