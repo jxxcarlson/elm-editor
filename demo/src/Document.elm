@@ -5,6 +5,7 @@ module Document exposing
     , NewDocumentData
     , changeDocType
     , docType
+    , extensionOfDocType
     , fileExtension
     , new
     , titleFromFileName
@@ -133,6 +134,16 @@ titleFromFileName fileName =
 fileExtension : String -> String
 fileExtension str =
     str |> String.split "." |> List.reverse |> List.head |> Maybe.withDefault "txt"
+
+
+extensionOfDocType : DocType -> String
+extensionOfDocType docType_ =
+    case docType_ of
+        MarkdownDoc ->
+            "md"
+
+        MiniLaTeXDoc ->
+            "tex"
 
 
 docType : String -> DocType

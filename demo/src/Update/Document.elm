@@ -9,7 +9,7 @@ module Update.Document exposing
     )
 
 import Cmd.Extra exposing (withCmd, withCmds, withNoCmd)
-import Document exposing (DocType(..))
+import Document exposing (DocType(..), Document)
 import Helper.Common
 import Helper.Load
 import Helper.Server
@@ -43,19 +43,22 @@ updateDocument model =
                 | tickCount = model.tickCount + 1
                 , documentStatus = DocumentSaved
             }
-                |> withCmd
-                    (case model.fileLocation of
-                        FilesOnDisk ->
-                            Outside.sendInfo (Outside.WriteFile document)
-
-                        FilesOnServer ->
-                            Helper.Server.updateDocument model.serverURL document
-                    )
+                |> withCmd (updateDocumentCmd document model)
 
         DocumentSaved ->
             ( { model | tickCount = model.tickCount + 1 }
             , Cmd.none
             )
+
+
+updateDocumentCmd : Document -> Model -> Cmd Msg
+updateDocumentCmd document model =
+    case model.fileLocation of
+        FilesOnDisk ->
+            Outside.sendInfo (Outside.WriteFile document)
+
+        FilesOnServer ->
+            Helper.Server.updateDocument model.serverURL document
 
 changeMetaData : Model -> ( Model, Cmd Msg )
 changeMetaData model =
@@ -107,13 +110,7 @@ createDocument model =
         doc =
             newModel.document
 
-        createDocCmd =
-            case model.fileLocation of
-                FilesOnDisk ->
-                    Outside.sendInfo (Outside.CreateFile doc)
 
-                FilesOnServer ->
-                    Helper.Server.createDocument model.serverURL doc
     in
     { newModel | popupStatus = PopupClosed }
         |> Helper.Sync.syncModel2
@@ -121,10 +118,18 @@ createDocument model =
             (Cmd.batch
                 [ View.Scroll.toEditorTop
                 , View.Scroll.toRenderedTextTop
-                , createDocCmd
+                , createDocCmd newModel.document model
                 ]
             )
 
+createDocCmd : Document -> Model-> Cmd Msg
+createDocCmd doc model =
+            case model.fileLocation of
+                FilesOnDisk ->
+                    Outside.sendInfo (Outside.CreateFile doc)
+
+                FilesOnServer ->
+                    Helper.Server.createDocument model.serverURL doc
 
 listDocuments : PopupStatus -> Model -> ( Model, Cmd Msg )
 listDocuments status model =
@@ -184,7 +189,7 @@ loadDocument content model =
         |> withCmds
             [ View.Scroll.toRenderedTextTop
             , View.Scroll.toEditorTop
-            , Helper.Server.updateDocument model.serverURL newDocument
+            , createDocCmd newDocument model
             ]
 
 

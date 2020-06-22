@@ -35,6 +35,7 @@ import Element.Font as Font
 import File exposing (File)
 import Helper.Author
 import Helper.Common
+import Helper.File
 import Helper.Load
 import Helper.Server
 import Helper.Sync
@@ -203,7 +204,7 @@ update msg model =
                     pasteToEditorAndClipboard model clipboard
 
                 Outside.GotFileList fileList ->
-                    ( { model | fileList = Debug.log "FILE LIST" fileList }, Cmd.none )
+                    ( { model | fileList = fileList }, Cmd.none )
 
                 Outside.GotFile file ->
                     Helper.Load.updateModelWithDocument file model
@@ -288,12 +289,11 @@ update msg model =
         SetViewPortForElement result ->
             Update.UI.setViewportForElement result model
 
-        -- REMOTE DOCUMENTS
-        ImportFile ->
-            ( model, Helper.Server.requestFile )
+        GetFileToImport ->
+            ( model, Helper.File.importFile )
 
-        RequestedFile file ->
-            ( { model | fileName = File.name file }, Helper.Server.read file )
+        ImportFile file ->
+            ( { model | fileName = File.name file }, Helper.File.load file )
 
         DocumentLoaded content ->
             Update.Document.loadDocument content model
@@ -332,10 +332,6 @@ update msg model =
                 |> withNoCmd
 
         SaveFileToStorage ->
-            let
-                _ =
-                    Debug.log "I AM HERE" "SaveFileToStorage"
-            in
             Update.Document.updateDocument model
 
         InputFileName str ->
@@ -408,7 +404,7 @@ update msg model =
 
                 Err e ->
                     model
-                        |> Update.Helper.postMessage (Debug.toString e)
+                        |> Update.Helper.postMessage "GotDocuments: error"
                         |> withNoCmd
 
         ToggleFileLocation fileLocation ->

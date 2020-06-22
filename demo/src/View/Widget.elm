@@ -227,7 +227,7 @@ openNewFilePopupButton model =
 
 
 importFileButton model =
-    button_ 60 "Import" ImportFile
+    button_ 60 "Import" GetFileToImport
 
 
 exportFileButton model =

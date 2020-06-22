@@ -52,10 +52,6 @@ getInfo : (InfoForElm -> msg) -> (String -> msg) -> Sub msg
 getInfo tagger onError =
     infoForElm
         (\outsideInfo ->
-            let
-                _ =
-                    Debug.log "outsideInfo" outsideInfo.tag
-            in
             case outsideInfo.tag of
                 "GotClipboard" ->
                     case D.decodeValue clipboardDecoder outsideInfo.data of
@@ -68,7 +64,7 @@ getInfo tagger onError =
                 "GotFileList" ->
                     case D.decodeValue Codec.Document.metadataListDecoder outsideInfo.data of
                         Ok fileList ->
-                            tagger <| GotFileList (Debug.log "FILE LIST" fileList)
+                            tagger <| "GotFileList: error"
 
                         Err e ->
                             onError <| Debug.toString e
@@ -84,10 +80,6 @@ getInfo tagger onError =
                 "GotPreferences" ->
                     case D.decodeValue Codec.System.preferencesDecoder outsideInfo.data of
                         Ok p ->
-                            let
-                                _ =
-                                    Debug.log "GotPreferences" p
-                            in
                             tagger <| GotPreferences p
 
                         Err _ ->

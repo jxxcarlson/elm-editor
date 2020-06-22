@@ -3,8 +3,6 @@ module Helper.Server exposing
     , exportFile
     , getDocument
     , getDocumentList
-    , read
-    , requestFile
     , saveFile
     , updateDocument
     , updateDocumentList
@@ -12,13 +10,10 @@ module Helper.Server exposing
     )
 
 import Codec.Document
-import Config
 import Document exposing (DocType(..), Document, Metadata)
 import Editor
 import File exposing (File)
 import File.Download as Download
-import File.Select as Select
-import Helper.Common
 import Http
 import MiniLatex.Export
 import Task exposing (Task)
@@ -78,16 +73,6 @@ updateDocumentList serverUrl record =
 
 
 -- FILE I/O
-
-
-read : File -> Cmd Msg
-read file =
-    Task.perform DocumentLoaded (File.toString file)
-
-
-requestFile : Cmd Msg
-requestFile =
-    Select.file [ "text/markdown", "text/x-tex" ] RequestedFile
 
 
 saveFile : Model -> Cmd msg

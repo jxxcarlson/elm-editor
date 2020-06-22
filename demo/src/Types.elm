@@ -151,9 +151,9 @@ type Msg
     | CancelChangeFileName
     | SoftDelete Metadata
       -- External Files
-    | ImportFile
+    | GetFileToImport
     | SendRequestForFile String
-    | RequestedFile File
+    | ImportFile File
     | SaveFile
     | ExportFile
       -- Editor

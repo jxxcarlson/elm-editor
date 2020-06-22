@@ -168,6 +168,8 @@ app.ports.infoForOutside.subscribe(msg => {
 
           case "OpenFileDialog":
 
+              console.log("OpenFileDialog")
+
               const preferredDirectory = open({directory: true})
 
               const preferences = readTextFile('.muEditPreferences.yaml', {dir: 11})
@@ -193,9 +195,14 @@ app.ports.infoForOutside.subscribe(msg => {
               if (userName != null) {
 
                   const preferences = readTextFile('.muEditPreferences.yaml', {dir: 11})
-                                      .then(str => load(str))
+                                      .then(str => {
+                                         console.log("PREF (1)",str )
+                                         load(str)
 
-                  const updatePreferences = (s, p) => {
+                                         })
+
+
+                   const updatePreferences = (s, p) => {
                         return Object.assign(p, {userName: s})
                   }
 
