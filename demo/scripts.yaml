@@ -54,16 +54,24 @@ scripts:
     cmd: sh script/publish.sh
     desc: publish editor to github pages
 
-  server:
-    desc: Run the server
+  lserver:
+    desc: Run the local server
     cmd:
-       - ${APP_ROOT}/src2/server.ts
+       - ${APP_ROOT}/localServer/server.ts
     allow:
       - net
       - env
       - write=${DATA_ROOT}
       - read=${DATA_ROOT}
-
+  rserver:
+    desc: Run the local server
+    cmd:
+      - ${APP_ROOT}/remoteServer/server.ts
+    allow:
+      - net
+      - env
+      - write=${DATA_ROOT}
+      - read=${DATA_ROOT}
   editor:
     cmd:
       desc: Run the editor app
