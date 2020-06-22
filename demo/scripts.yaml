@@ -10,7 +10,7 @@ scripts:
 
   make:
     cmd: elm make --optimize src/Main.elm --output=public/Main.js
-    desc: Compline editor in optimize mode
+    desc: Compile editor in optimize mode
 
   debug:
     cmd: elm make --debug src/Main.elm --output=public/Main.js
@@ -39,6 +39,16 @@ scripts:
       - browserify public/assets/outside_source.js -o public/assets/outside.js
       - npx tauri dev
     desc: Run tauri dev
+
+  bundle:
+    cmd:
+      - echo "Compiling ..."
+      - elm make --optimize src/Main.elm --output=dist/Main.js
+      - echo "Browserifying ..."
+      - browserify public/assets/outside_source.js -o dist/assets/outside.js
+      - echo "Building ..."
+      - npx tauri build
+      - open src-tauri/target/release/bundle/
 
   publish:
     cmd: sh script/publish.sh
