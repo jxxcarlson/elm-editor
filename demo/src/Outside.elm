@@ -64,10 +64,10 @@ getInfo tagger onError =
                 "GotFileList" ->
                     case D.decodeValue Codec.Document.metadataListDecoder outsideInfo.data of
                         Ok fileList ->
-                            tagger <| "GotFileList: error"
+                            tagger <| GotFileList fileList
 
                         Err e ->
-                            onError <| Debug.toString e
+                            onError <| "GotFileList: error"
 
                 "GotFile" ->
                     case D.decodeValue Codec.Document.documentDecoder outsideInfo.data of
