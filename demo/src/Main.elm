@@ -203,7 +203,7 @@ update msg model =
                     pasteToEditorAndClipboard model clipboard
 
                 Outside.GotFileList fileList ->
-                    ( { model | fileList = fileList }, Cmd.none )
+                    ( { model | fileList = Debug.log "FILE LIST" fileList }, Cmd.none )
 
                 Outside.GotFile file ->
                     Helper.Load.updateModelWithDocument file model

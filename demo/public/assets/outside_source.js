@@ -102,15 +102,24 @@ app.ports.infoForOutside.subscribe(msg => {
 
         case "AskForFileList":
 
+           console.log("AskForFileList")
+
            const sendManifest = (value) => app.ports.infoForElm.send({tag: "GotFileList", data:  load(value)})
 
-           const getManifest = (pathToManifest) => readTextFile(pathToManifest,  {}).then(value => sendManifest(value))
+           // Given the path to the manifest, return it as a string
+           const getManifest = (pathToManifest) => readTextFile(pathToManifest,  {})
+           // const getManifest = (pathToManifest) => readTextFile(pathToManifest,  {}).then(value => sendManifest(value))
            // const getManifest = (pathToManifest) => readTextFile(pathToManifest,  {}).then(value => console.log(value))
 
-
+           // Get the preferences
            getPreferences()
-             .then(p => (p.documentDirectory + '/manifest.yaml'))
-             .then(pathToManifest => getManifest(pathToManifest))
+             .then(p => (p.documentDirectory + '/manifest.yaml')) // compute path to the manifest
+             .then(pathToManifest => getManifest(pathToManifest)) // get the contents of the manifest
+             .then(value => load(value))                          // compute the object representation of the manifest
+             .then(value => app.ports.infoForElm.send({tag: "GotFileList", data:  value})) // send it to Elm
+             
+
+
 
            break;
 
@@ -251,7 +260,7 @@ app.ports.infoForOutside.subscribe(msg => {
 
     }
 
-    function getManifest() {
+        function getManifest() {
 
         const sendManifest = (value) => app.ports.infoForElm.send({tag: "GotFileList", data:  load(value)})
 
