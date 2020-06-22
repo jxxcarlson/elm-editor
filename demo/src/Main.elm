@@ -291,7 +291,8 @@ update msg model =
             Update.UI.setViewportForElement result model
 
         GetFileToImport ->
-            ( model, Helper.File.importFile )
+            model
+                |> withCmds [ preferencesCmd Config.fileLocation, Helper.File.importFile ]
 
         ImportFile file ->
             ( { model | fileName = File.name file }, Helper.File.load file )
@@ -426,7 +427,6 @@ update msg model =
 
         GetPreferences ->
             model |> withCmd (Outside.sendInfo (Outside.GetPreferences Json.Encode.null))
-
 
         GotPreferences preferences ->
             { model | preferences = Just preferences }
