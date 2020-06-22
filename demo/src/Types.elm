@@ -55,6 +55,7 @@ type alias Model =
     , docType : DocType
     , fileName : String
     , fileName_ : String
+    , fileName__ : String
     , tags_ : String
     , categories_ : String
     , title_ : String
@@ -67,7 +68,7 @@ type alias Model =
     , selectedId : ( Int, Int )
     , selectedId_ : String
     , document : Document
-    , fileStorageUrl : String
+    , serverURL : String
 
     -- User
     , authorName : String
@@ -93,8 +94,8 @@ type SignInMode
 
 
 type FileLocation
-    = LocalFiles
-    | ServerFiles
+    = FilesOnDisk
+    | FilesOnServer
 
 
 type ChangingFileNameState

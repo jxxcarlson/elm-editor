@@ -29,7 +29,7 @@ createDocument : String -> Document -> Cmd Msg
 createDocument serverUrl document =
     Http.post
         { url = serverUrl ++ "/documents"
-        , body = Http.jsonBody (Codec.Document.extendedDocumentEncoder Config.token document)
+        , body = Http.jsonBody (Codec.Document.documentEncoder document)
         , expect = Http.expectJson Message Codec.Document.messageDecoder
         }
 
@@ -40,7 +40,7 @@ updateDocument serverUrl document =
         { method = "PUT"
         , headers = []
         , url = serverUrl ++ "/documents"
-        , body = Http.jsonBody (Codec.Document.extendedDocumentEncoder Config.token document)
+        , body = Http.jsonBody (Codec.Document.documentEncoder document)
         , expect = Http.expectJson Message Codec.Document.messageDecoder
         , timeout = Nothing
         , tracker = Nothing

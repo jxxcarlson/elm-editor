@@ -8,7 +8,7 @@ appMode =
 
 
 tickInterval =
-    10000
+    1000
 
 
 messageLifeTime =
@@ -16,10 +16,10 @@ messageLifeTime =
 
 
 fileLocation =
-    ServerFiles
+    FilesOnServer
 
 
-localServerUrl =
+serverURL =
     "http://localhost:4000/api"
 
 

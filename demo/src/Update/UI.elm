@@ -26,7 +26,7 @@ managePopup status model =
         PopupOpen LocalStoragePopup ->
             -- TODO: needs to be eliminated
             { model | popupStatus = status }
-                |> withCmd (Helper.Server.getDocumentList model.fileStorageUrl)
+                |> withCmd (Helper.Server.getDocumentList model.serverURL)
 
         PopupOpen FilePopup ->
             let
@@ -45,10 +45,10 @@ managePopup status model =
                         , belongsTo_ = model.document.belongsTo
                     }
             in
-            { newModel | popupStatus = status } |> withNoCmd
+            { newModel | popupStatus = status, fileName__ = model.fileName_ } |> withNoCmd
 
         PopupOpen NewFilePopup ->
-            { model | popupStatus = status } |> withNoCmd
+            { model | popupStatus = status, fileName__ = "" } |> withNoCmd
 
         PopupOpen FileListPopup ->
             Update.Document.listDocuments status model

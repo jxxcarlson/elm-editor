@@ -40,10 +40,10 @@ view model =
 
                 title =
                     case model.fileLocation of
-                        LocalFiles ->
+                        FilesOnDisk ->
                             "Local Files (" ++ n ++ ")"
 
-                        ServerFiles ->
+                        FilesOnServer ->
                             "Remote Files (" ++ n ++ ")"
 
                 metadataOfCurrentDocument =

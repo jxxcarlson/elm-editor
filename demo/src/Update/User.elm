@@ -23,7 +23,7 @@ createAuthor model =
     in
     { model | randomSeed = seed }
         |> Update.Helper.postMessage ("Created: " ++ model.userName)
-        |> withCmd (Helper.Author.persist model.fileStorageUrl newAuthor)
+        |> withCmd (Helper.Author.persist model.serverURL newAuthor)
 
 
 gotSigninReply : Result error Authorization -> Model -> ( Model, Cmd msg )

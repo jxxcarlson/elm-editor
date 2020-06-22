@@ -108,6 +108,7 @@ init flags =
     , docType = MarkdownDoc
     , fileName = "about.md"
     , fileName_ = ""
+    , fileName__ = ""
     , tags_ = ""
     , categories_ = ""
     , title_ = ""
@@ -127,7 +128,7 @@ init flags =
     , document = Data.about
     , randomSeed = Random.initialSeed 1727485
     , uuid = ""
-    , fileStorageUrl = Config.localServerUrl
+    , serverURL = Config.serverURL
 
     -- Author
     , userName = ""
@@ -150,10 +151,10 @@ init flags =
 preferencesCmd : FileLocation -> Cmd Msg
 preferencesCmd fileLocation =
     case fileLocation of
-        LocalFiles ->
+        FilesOnDisk ->
             Outside.sendInfo (Outside.GetPreferences Json.Encode.null)
 
-        ServerFiles ->
+        FilesOnServer ->
             Cmd.none
 
 
@@ -207,7 +208,7 @@ update msg model =
                 Outside.GotFile file ->
                     Helper.Load.updateModelWithDocument file model
                         |> (\m -> { m | popupStatus = PopupClosed })
-                        -- |> (\m -> m |> withCmd (Helper.Server.updateDocument m.fileStorageUrl m.document))
+                        -- |> (\m -> m |> withCmd (Helper.Server.updateDocument m.serverURL m.document))
                         -- TODO: fix the above
                         |> withNoCmd
 
@@ -282,7 +283,7 @@ update msg model =
             Update.Document.createDocument model
 
         GetDocument fileName ->
-            model |> withCmd (Update.Document.getDocumentCmd fileName model)
+            { model | popupStatus = PopupClosed } |> withCmd (Update.Document.readDocumentCmd fileName model)
 
         SetViewPortForElement result ->
             Update.UI.setViewportForElement result model
@@ -335,10 +336,10 @@ update msg model =
                 _ =
                     Debug.log "I AM HERE" "SaveFileToStorage"
             in
-            saveFileToStorage_ model
+            Update.Document.updateDocument model
 
         InputFileName str ->
-            ( { model | fileName_ = str, changingFileNameState = ChangingMetadata }, Cmd.none )
+            ( { model | fileName__ = str, changingFileNameState = ChangingMetadata }, Cmd.none )
 
         InputTags str ->
             ( { model | tags_ = str, changingFileNameState = ChangingMetadata }, Cmd.none )
@@ -384,7 +385,7 @@ update msg model =
 
         AskForDocument fileName ->
             { model | popupStatus = PopupClosed }
-                |> withCmd (Helper.Server.getDocument model.fileStorageUrl fileName)
+                |> withCmd (Helper.Server.getDocument model.serverURL fileName)
 
         GotDocument result ->
             case result of
@@ -398,7 +399,7 @@ update msg model =
                         |> withNoCmd
 
         AskForRemoteDocuments ->
-            model |> withCmd (Helper.Server.getDocumentList model.fileStorageUrl)
+            model |> withCmd (Helper.Server.getDocumentList model.serverURL)
 
         GotDocuments result ->
             case result of
@@ -412,17 +413,17 @@ update msg model =
 
         ToggleFileLocation fileLocation ->
             let
-                fileStorageUrl =
+                serverUrl =
                     case fileLocation of
-                        LocalFiles ->
-                            Config.localServerUrl
+                        FilesOnDisk ->
+                            Config.serverURL
 
-                        ServerFiles ->
+                        FilesOnServer ->
                             Config.remoteServerUrl
             in
             { model
                 | fileLocation = fileLocation
-                , fileStorageUrl = fileStorageUrl
+                , serverURL = serverUrl
             }
                 |> withNoCmd
 
@@ -456,7 +457,7 @@ update msg model =
 
         SignIn ->
             model
-                |> withCmd (Helper.Author.signInAuthor model.fileStorageUrl model.userName model.password)
+                |> withCmd (Helper.Author.signInAuthor model.serverURL model.userName model.password)
 
         SignOut ->
             { model | signInMode = SigningIn, currentUser = Nothing, popupStatus = PopupClosed }
@@ -471,41 +472,11 @@ update msg model =
 -- HELPER
 
 
-saveFileToStorage_ : Model -> ( Model, Cmd Msg )
-saveFileToStorage_ model =
-    let
-        document_ =
-            model.document
-
-        document =
-            { document_ | timeUpdated = model.currentTime }
-    in
-    case model.documentStatus of
-        DocumentDirty ->
-            { model
-                | tickCount = model.tickCount + 1
-                , documentStatus = DocumentSaved
-            }
-                |> withCmd
-                    (case model.fileLocation of
-                        LocalFiles ->
-                            Outside.sendInfo (Outside.WriteFile document)
-
-                        ServerFiles ->
-                            Helper.Server.updateDocument model.fileStorageUrl document
-                    )
-
-        DocumentSaved ->
-            ( { model | tickCount = model.tickCount + 1 }
-            , Cmd.none
-            )
-
-
 saveFileToStorage : Model -> ( Model, Cmd Msg )
 saveFileToStorage model =
     case modBy 15 model.tickCount == 14 of
         True ->
-            saveFileToStorage_ model
+            Update.Document.updateDocument model
 
         False ->
             ( { model | tickCount = model.tickCount + 1 }

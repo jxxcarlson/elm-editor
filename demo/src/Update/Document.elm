@@ -1,7 +1,8 @@
 module Update.Document exposing
     ( changeMetaData
     , createDocument
-    , getDocumentCmd
+    , readDocumentCmd
+    , updateDocument
     , listDocuments
     , loadDocument
     , toggleDocType
@@ -20,13 +21,41 @@ import Types exposing (ChangingFileNameState(..)
   FileLocation(..), Model, Msg, PopupStatus(..))
 import View.Scroll
 
-getDocumentCmd fileName model =
+readDocumentCmd fileName model =
     case model.fileLocation of
-                 LocalFiles ->
+                 FilesOnDisk ->
                    Outside.sendInfo (Outside.AskForFile fileName)
-                 ServerFiles ->
-                    Helper.Server.getDocument model.fileStorageUrl fileName
+                 FilesOnServer ->
+                    Helper.Server.getDocument model.serverURL fileName
 
+updateDocument : Model -> ( Model, Cmd Msg )
+updateDocument model =
+    let
+        document_ =
+            model.document
+
+        document =
+            { document_ | timeUpdated = model.currentTime }
+    in
+    case model.documentStatus of
+        DocumentDirty ->
+            { model
+                | tickCount = model.tickCount + 1
+                , documentStatus = DocumentSaved
+            }
+                |> withCmd
+                    (case model.fileLocation of
+                        FilesOnDisk ->
+                            Outside.sendInfo (Outside.WriteFile document)
+
+                        FilesOnServer ->
+                            Helper.Server.updateDocument model.serverURL document
+                    )
+
+        DocumentSaved ->
+            ( { model | tickCount = model.tickCount + 1 }
+            , Cmd.none
+            )
 
 changeMetaData : Model -> ( Model, Cmd Msg )
 changeMetaData model =
@@ -80,11 +109,11 @@ createDocument model =
 
         createDocCmd =
             case model.fileLocation of
-                LocalFiles ->
+                FilesOnDisk ->
                     Outside.sendInfo (Outside.CreateFile doc)
 
-                ServerFiles ->
-                    Helper.Server.createDocument model.fileStorageUrl doc
+                FilesOnServer ->
+                    Helper.Server.createDocument model.serverURL doc
     in
     { newModel | popupStatus = PopupClosed }
         |> Helper.Sync.syncModel2
@@ -102,12 +131,12 @@ listDocuments status model =
    { model | popupStatus = status, documentStatus = DocumentSaved }
        |> withCmds
          (case model.fileLocation of
-             LocalFiles ->
+             FilesOnDisk ->
                [ Helper.File.getDocumentList
                ]
-             ServerFiles ->
-               [ Helper.Server.getDocumentList model.fileStorageUrl
-               -- , Helper.Server.updateDocument model.fileStorageUrl model.document
+             FilesOnServer ->
+               [ Helper.Server.getDocumentList model.serverURL
+               -- , Helper.Server.updateDocument model.serverURL model.document
                ])
 
 
@@ -155,7 +184,7 @@ loadDocument content model =
         |> withCmds
             [ View.Scroll.toRenderedTextTop
             , View.Scroll.toEditorTop
-            , Helper.Server.updateDocument model.fileStorageUrl newDocument
+            , Helper.Server.updateDocument model.serverURL newDocument
             ]
 
 

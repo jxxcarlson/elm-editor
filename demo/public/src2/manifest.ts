@@ -17,16 +17,10 @@ export const fetchManifest = async (): Promise<Metadata[]> => {
   const decoder = new TextDecoder();
   const decodedData = decoder.decode(data);
 
-  // console.log("MANIFEST", decodedData)
-
   return load(decodedData);
 };
 
 var manifest = await fetchManifest();
-
-console.log("MANIFEST", manifest[0])
-
-// console.log("MANIFEST", manifest.filter(r => r.id == "fe14bdf8-23e5-4e4f-873b-6a7caaa9b32a")[0])
 
 export const writeManifest = async (data: Array<Metadata>): Promise<void> => {
   const encoder = new TextEncoder();
@@ -37,7 +31,7 @@ export const writeManifest = async (data: Array<Metadata>): Promise<void> => {
 /////////////////////////
 
 
-const changeDoc = (s: Metadata, t : Metadata) =>
+const updateMetadata = (s: Metadata, t : Metadata) =>
   s.id == t.id ?  Object.assign({}, s) : t
 
 
@@ -55,10 +49,9 @@ export const fetchDocumentByFileName = async (fileName: String): Promise<Documen
 
 }
 
+/////////////
 
-// console.log("DOC", await fetchDocumentById("143d1170-f8ce-47b3-904d-e84191d3d717"))
 
-//
 export const updateDocument = async ({
   request,
   response,
@@ -67,7 +60,7 @@ export const updateDocument = async ({
   response: any;
 }) => {
   const {
-    value : {token, fileName, id, author, timeCreated, timeUpdated, tags, categories,
+    value : {fileName, id, author, timeCreated, timeUpdated, tags, categories,
        title, subtitle, abstract, belongsTo, content},
   } = await request.body();
   response.headers.set("Access-Control-Allow-Origin", "*");
@@ -82,6 +75,7 @@ export const updateDocument = async ({
        categories: categories, title: title, subtitle: subtitle,
        abstract: abstract, belongsTo: belongsTo,
        content: content };
+
     const sourceMetadata: Metadata = { id: id, fileName: fileName, author: author,
        timeCreated: timeCreated, timeUpdated: timeUpdated, tags: tags,
        categories: categories, title: title, subtitle: subtitle,
@@ -94,8 +88,9 @@ export const updateDocument = async ({
       console.log("added: " + sourceDoc.fileName);
       response.body = { msg: "Added: " + sourceDoc.fileName};
       response.status = 200;
+
     } else {
-      manifest = manifest.map((d:Metadata) => changeDoc(sourceMetadata, d))
+      manifest = manifest.map((d:Metadata) => updateMetadata(sourceMetadata, d))
       writeManifest(manifest)
       writeDocument(sourceDoc)
       console.log("updated: " + sourceDoc.fileName);
@@ -133,14 +128,6 @@ export const  getDocument = async ({
 };
 
 
-// const hasSameFileName = (a: Metadata, b: Metadata) => a.fileName == b.fileName;
-
-// const hasSameId = (a: Metadata, b: Metadata) => a.id == b.id;
-
-// const isNotPresent = (d: Metadata, manifest_: Array<Metadata>) =>
-//   manifest_.filter((r) => hasSameId(r, d)).length == 0;
-
-
 // Add a new document
 export const createDocument = async ({
   request,
@@ -161,13 +148,14 @@ export const createDocument = async ({
     "X-Requested-With, Content-Type, Accept, Origin",
   );
 
-  if (token == "abracadabra") {
+  if (true) {
 
     const doc_ = { id: id, fileName: fileName, author: author,
        timeCreated: timeCreated, timeUpdated: timeUpdated, tags: tags,
        categories: categories, title: title, subtitle: subtitle,
        abstract: abstract, belongsTo: belongsTo,
        content: content };
+
     const metaData_ = { id: id, fileName: fileName, author: author,
        timeCreated: timeCreated, timeUpdated: timeUpdated, tags: tags,
        categories: categories, title: title, subtitle: subtitle,

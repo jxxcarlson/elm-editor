@@ -5,7 +5,6 @@ import {FILE_STORE_PATH} from './config.ts'
 
 export const fetchDocument = async (metaData: Metadata): Promise<Document> => {
   const path = FILE_STORE_PATH + '/' + metaData.fileName
-  console.log("path", path)
   const data = await Deno.readFile(path);
 
   const decoder = new TextDecoder();
