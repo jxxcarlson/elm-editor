@@ -289,7 +289,7 @@ update msg model =
             Update.UI.setViewportForElement result model
 
         -- REMOTE DOCUMENTS
-        RequestFile ->
+        ImportFile ->
             ( model, Helper.Server.requestFile )
 
         RequestedFile file ->

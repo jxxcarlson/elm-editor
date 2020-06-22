@@ -16,7 +16,7 @@ messageLifeTime =
 
 
 fileLocation =
-    FilesOnServer
+    FilesOnDisk
 
 
 serverURL =
