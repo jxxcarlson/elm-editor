@@ -88,6 +88,7 @@ viewSetup model =
                 , displayUserName model
                 , displayDocumentDirectory model
                 , el [ Font.size 14 ] (text "Preferences are in HOME/.muEditPreferences.yaml")
+                , Widget.getPreferencesButton
                 ]
 
         PopupOpen _ ->

@@ -55,7 +55,6 @@ type alias Model =
     , docType : DocType
     , fileName : String
     , fileName_ : String
-    , fileName__ : String
     , tags_ : String
     , categories_ : String
     , title_ : String
@@ -186,6 +185,7 @@ type Msg
     | SignIn
     | SignOut
     | GotSigninReply (Result Http.Error Authorization)
+    | GetPreferences
     | GotPreferences Preferences
 
 

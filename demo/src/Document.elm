@@ -5,9 +5,9 @@ module Document exposing
     , NewDocumentData
     , changeDocType
     , docType
+    , extendFileName
     , extensionOfDocType
     , fileExtension
-    , new
     , titleFromFileName
     , toMetadata
     )
@@ -75,24 +75,45 @@ shortId uuid =
     String.join "-" parts
 
 
-new : SimpleDocument { docType : DocType } -> SimpleDocument {}
-new data =
+extendFileName : DocType -> String -> String -> String -> String
+extendFileName docType_ prefix uuid fileName =
     let
         shortId_ =
-            shortId data.id
+            shortId uuid
 
         ext =
-            case data.docType of
+            case docType_ of
                 MarkdownDoc ->
                     ".md"
 
                 MiniLaTeXDoc ->
                     ".tex"
 
-        fileName =
-            data.fileName ++ "-" ++ shortId_ ++ ext
+        removeMDSuffix s =
+            case String.right 3 s == ".md" of
+                True ->
+                    String.dropRight 3 s
+
+                False ->
+                    s
+
+        removeTeXSuffix s =
+            case String.right 4 s == ".tex" of
+                True ->
+                    String.dropRight 4 s
+
+                False ->
+                    s
+
+        fileName_ =
+            fileName |> removeMDSuffix |> removeTeXSuffix
     in
-    { fileName = fileName, id = data.id, content = data.content }
+    case prefix of
+        "" ->
+            fileName_ ++ "-" ++ shortId_ ++ ext
+
+        _ ->
+            prefix ++ "." ++ fileName_ ++ "-" ++ shortId_ ++ ext
 
 
 toMetadata : Document -> Metadata

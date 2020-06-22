@@ -60,4 +60,4 @@ fileInput msg text label =
 
 
 fileNameInput model =
-    fileInput InputFileName model.fileName__ "File name"
+    fileInput InputFileName model.fileName_ "File name"

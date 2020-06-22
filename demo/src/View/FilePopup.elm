@@ -60,7 +60,7 @@ infoPanel model =
 
 changePanel model =
     column [ spacing 12 ]
-        [ inputItem "File name" InputFileName model.fileName__ 150
+        [ inputItem "File name" InputFileName model.fileName_ 150
         , inputItem "Tags" InputTags model.tags_ 300
         , inputItem "Categories" InputCategories model.categories_ 300
         , inputItem "Title" InputTitle model.title_ 300

@@ -72,7 +72,7 @@ loadDocument time fileName_ content_ docType_ model =
             model.preferences |> Maybe.map .userName |> Maybe.withDefault "unknown"
 
         doc =
-            { fileName = fileName_ ++ "." ++ Document.extensionOfDocType docType_
+            { fileName = fileName_
             , id = model.uuid
             , author = author_
             , timeCreated = time

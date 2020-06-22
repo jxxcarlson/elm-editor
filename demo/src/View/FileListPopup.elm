@@ -38,6 +38,14 @@ view model =
                 n =
                     List.length filesToDisplay |> String.fromInt
 
+                userName =
+                    case model.preferences of
+                        Nothing ->
+                            "noUserName"
+
+                        Just prefs ->
+                            prefs.userName ++ "."
+
                 title =
                     case model.fileLocation of
                         FilesOnDisk ->
@@ -62,7 +70,7 @@ view model =
                     , height (px 400)
                     , scrollbarY
                     ]
-                    (filesToDisplay |> List.map (viewFileName metadataOfCurrentDocument))
+                    (filesToDisplay |> List.map (viewFileName userName metadataOfCurrentDocument))
                 ]
 
         PopupOpen _ ->
@@ -76,8 +84,8 @@ prepareFileList fileList =
         |> List.sortBy .fileName
 
 
-viewFileName : Metadata -> Metadata -> Element Msg
-viewFileName metaDataOfCurrentDocument metadata =
+viewFileName : String -> Metadata -> Metadata -> Element Msg
+viewFileName userName metaDataOfCurrentDocument metadata =
     let
         bgColor =
             case metaDataOfCurrentDocument.id == metadata.id of
@@ -88,8 +96,8 @@ viewFileName metaDataOfCurrentDocument metadata =
                     Background.color (Element.rgba 0 0 0 0)
     in
     row [ spacing 8 ]
-        [ Widget.plainButton 200
-            (prettify metadata.fileName)
+        [ Widget.plainButton 350
+            (prettify userName metadata.fileName)
             (GetDocument metadata.fileName)
             [ Font.color (Element.rgb 0 0 0.9), bgColor, Element.padding 2 ]
         , el [ Element.padding 2, Background.color (Element.rgba 0.7 0.3 0.3 0.5) ]
@@ -101,15 +109,15 @@ viewFileName metaDataOfCurrentDocument metadata =
         ]
 
 
-prettify : String -> String
-prettify str =
+prettify : String -> String -> String
+prettify userName str =
     let
         parts =
             String.split "-" str
     in
     case List.length parts == 3 of
         False ->
-            str
+            String.replace userName "" str
 
         True ->
             let
@@ -127,4 +135,4 @@ prettify str =
                         |> List.head
                         |> Maybe.withDefault "???"
             in
-            a ++ "." ++ b
+            a ++ "." ++ b |> String.replace userName ""

@@ -9,6 +9,7 @@ module View.Widget exposing
     , documentTypeButton
     , exportFileButton
     , exportLaTeXFileButton
+    , getPreferencesButton
     , importFileButton
     , loadDocumentButton
     , newDocumentButton
@@ -86,6 +87,10 @@ cancelSignInButton =
 
 
 -- DOCUMENT
+
+
+getPreferencesButton =
+    button_ 170 "Get Preferences" GetPreferences
 
 
 toggleFileLocationButton model =

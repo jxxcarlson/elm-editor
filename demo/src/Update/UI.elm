@@ -45,10 +45,10 @@ managePopup status model =
                         , belongsTo_ = model.document.belongsTo
                     }
             in
-            { newModel | popupStatus = status, fileName__ = model.fileName_ } |> withNoCmd
+            { newModel | popupStatus = status } |> withNoCmd
 
         PopupOpen NewFilePopup ->
-            { model | popupStatus = status, fileName__ = "" } |> withNoCmd
+            { model | popupStatus = status, fileName_ = "" } |> withNoCmd
 
         PopupOpen FileListPopup ->
             Update.Document.listDocuments status model

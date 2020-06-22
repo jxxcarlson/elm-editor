@@ -12,6 +12,7 @@ import Cmd.Extra exposing (withCmd, withCmds, withNoCmd)
 import Document exposing (DocType(..), Document)
 import Helper.Common
 import Helper.Load
+import UuidHelper
 import Helper.Server
 import Helper.File
 import Helper.Sync
@@ -99,20 +100,26 @@ changeMetaData model =
 createDocument : Model -> ( Model, Cmd Msg )
 createDocument model =
     let
+
+
+        fileName = case model.preferences of
+           Nothing -> Document.extendFileName model.docType "" uuid model.fileName_
+           Just pref  -> Document.extendFileName model.docType pref.userName uuid model.fileName_
+
+
+        ( uuid, seed ) =
+            UuidHelper.generate model.randomSeed
+
         newModel =
             case model.docType of
                 MarkdownDoc ->
-                    Helper.Load.loadDocument model.currentTime (model.fileName_ ++ ".md") "" MarkdownDoc model
+                    Helper.Load.loadDocument model.currentTime fileName  "" MarkdownDoc model
 
                 MiniLaTeXDoc ->
-                    Helper.Load.loadDocument model.currentTime (model.fileName_ ++ ".tex") "" MiniLaTeXDoc model
-
-        doc =
-            newModel.document
-
+                    Helper.Load.loadDocument model.currentTime fileName "" MiniLaTeXDoc model
 
     in
-    { newModel | popupStatus = PopupClosed }
+    { newModel | popupStatus = PopupClosed, uuid = uuid, randomSeed = seed }
         |> Helper.Sync.syncModel2
         |> withCmd
             (Cmd.batch
@@ -159,8 +166,17 @@ listDocuments status model =
 loadDocument : String -> Model -> ( Model, Cmd Msg )
 loadDocument content model =
     let
+
+        fileName = case model.preferences of
+                   Nothing -> Document.extendFileName model.docType "" uuid model.fileName_
+                   Just pref  -> Document.extendFileName model.docType pref.userName uuid model.fileName
+
+
+        ( uuid, seed ) =
+                    UuidHelper.generate model.randomSeed
+
         docType =
-            case Document.fileExtension model.fileName of
+            case Document.fileExtension fileName of
                 "md" ->
                     MarkdownDoc
 
@@ -175,14 +191,14 @@ loadDocument content model =
 
         newModel =
             Helper.Load.loadDocument model.currentTime
-                (Document.titleFromFileName model.fileName)
+                fileName
                 content
                 docType
                 model
-                |> (\m -> { m | docType = docType })
+                |> (\m -> { m | docType = docType, uuid = uuid, randomSeed = seed })
                 |> Helper.Sync.syncModel2
 
-        newDocument =
+        newDocument = Debug.log "NEW DOCUMENT"
             newModel.document
     in
     newModel

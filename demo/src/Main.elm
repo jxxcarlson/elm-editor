@@ -109,7 +109,6 @@ init flags =
     , docType = MarkdownDoc
     , fileName = "about.md"
     , fileName_ = ""
-    , fileName__ = ""
     , tags_ = ""
     , categories_ = ""
     , title_ = ""
@@ -214,7 +213,9 @@ update msg model =
                         |> withNoCmd
 
                 Outside.GotPreferences preferences ->
-                    { model | preferences = Just preferences } |> withNoCmd
+                    { model | preferences = Just preferences }
+                        |> Update.Helper.postMessage ("username: " ++ preferences.userName)
+                        |> withNoCmd
 
         -- EDITOR
         EditorMsg editorMsg ->
@@ -335,7 +336,7 @@ update msg model =
             Update.Document.updateDocument model
 
         InputFileName str ->
-            ( { model | fileName__ = str, changingFileNameState = ChangingMetadata }, Cmd.none )
+            ( { model | fileName_ = str, changingFileNameState = ChangingMetadata }, Cmd.none )
 
         InputTags str ->
             ( { model | tags_ = str, changingFileNameState = ChangingMetadata }, Cmd.none )
@@ -422,6 +423,10 @@ update msg model =
                 , serverURL = serverUrl
             }
                 |> withNoCmd
+
+        GetPreferences ->
+            model |> withCmd (Outside.sendInfo (Outside.GetPreferences Json.Encode.null))
+
 
         GotPreferences preferences ->
             { model | preferences = Just preferences }
