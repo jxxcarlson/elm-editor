@@ -192,6 +192,14 @@ update msg model =
         Message result ->
             Update.System.handleMessage result model
 
+        GetPreferences ->
+            model |> withCmd (Outside.sendInfo (Outside.GetPreferences Json.Encode.null))
+
+        GotPreferences preferences ->
+            { model | preferences = Just preferences }
+                |> Update.Helper.postMessage ("username: " ++ preferences.userName)
+                |> withNoCmd
+
         -- OUTSIDE (JAVASCRIPT INTEROP)
         OutsideInfo msg_ ->
             model
@@ -206,7 +214,7 @@ update msg model =
                     ( { model | fileList = fileList }, Cmd.none )
 
                 Outside.GotFile file ->
-                    Helper.Load.updateModelWithDocument file model
+                    Helper.Load.load file model
                         |> (\m -> { m | popupStatus = PopupClosed })
                         -- |> (\m -> m |> withCmd (Helper.Server.updateDocument m.serverURL m.document))
                         -- TODO: fix the above
@@ -283,6 +291,10 @@ update msg model =
 
         CreateDocument ->
             Update.Document.createDocument model
+
+        Publish ->
+            model
+                |> withCmd (Helper.Server.createDocument model.serverURL model.document)
 
         GetDocument fileName ->
             { model | popupStatus = PopupClosed } |> withCmd (Update.Document.readDocumentCmd fileName model)
@@ -388,7 +400,7 @@ update msg model =
         GotDocument result ->
             case result of
                 Ok document ->
-                    Helper.Load.updateModelWithDocument document model
+                    Helper.Load.load document model
                         |> withNoCmd
 
                 Err _ ->
@@ -411,26 +423,19 @@ update msg model =
 
         ToggleFileLocation fileLocation ->
             let
-                serverUrl =
+                ( serverUrl, message ) =
                     case fileLocation of
                         FilesOnDisk ->
-                            Config.serverURL
+                            ( Config.serverURL, "# Notice!\n\n*Changing storage to your computer's hard disk.*" )
 
                         FilesOnServer ->
-                            Config.remoteServerUrl
+                            ( Config.remoteServerUrl, "# Notice!\n\n*Changing storage to web server at* " ++ Config.remoteServerUrl )
             in
             { model
                 | fileLocation = fileLocation
                 , serverURL = serverUrl
             }
-                |> withNoCmd
-
-        GetPreferences ->
-            model |> withCmd (Outside.sendInfo (Outside.GetPreferences Json.Encode.null))
-
-        GotPreferences preferences ->
-            { model | preferences = Just preferences }
-                |> Update.Helper.postMessage ("username: " ++ preferences.userName)
+                |> Helper.Load.load (Data.tmp message)
                 |> withNoCmd
 
         -- AUTHOR / USER

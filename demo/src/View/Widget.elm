@@ -18,6 +18,7 @@ module View.Widget exposing
     , openFilePopupButton
     , openNewFilePopupButton
     , plainButton
+    , publishFileButton
     , saveFileToStorageButton
     , setDocumentDirectoryButton
     , setUserNameButton
@@ -96,10 +97,10 @@ getPreferencesButton =
 toggleFileLocationButton model =
     case model.fileLocation of
         FilesOnDisk ->
-            button_ 60 "Local" (ToggleFileLocation FilesOnServer)
+            button_ 100 "Store: Disk" (ToggleFileLocation FilesOnServer)
 
         FilesOnServer ->
-            button_ 60 "Remote" (ToggleFileLocation FilesOnDisk)
+            button_ 100 "Store: Server" (ToggleFileLocation FilesOnDisk)
 
 
 aboutButton =
@@ -209,10 +210,10 @@ openFilePopupButton model =
                 |> Button.toElement
 
         PopupOpen _ ->
-            button 100 "File info" (ManagePopup (PopupOpen FilePopup)) []
+            button 60 "info" (ManagePopup (PopupOpen FilePopup)) []
 
         PopupClosed ->
-            button 100 "File info" (ManagePopup (PopupOpen FilePopup)) []
+            button 60 "Info " (ManagePopup (PopupOpen FilePopup)) []
 
 
 openNewFilePopupButton model =
@@ -237,6 +238,10 @@ importFileButton model =
 
 exportFileButton model =
     button_ 60 "Export" SaveFile
+
+
+publishFileButton model =
+    button_ 60 "Publish" Publish
 
 
 exportLaTeXFileButton model =

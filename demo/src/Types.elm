@@ -173,6 +173,7 @@ type Msg
     | AskForDocument String
     | GotDocument (Result Http.Error Document)
     | Message (Result Http.Error String)
+    | Publish
       -- Author
     | InputAuthorname String
     | InputUsername String

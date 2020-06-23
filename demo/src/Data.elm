@@ -1,7 +1,24 @@
-module Data exposing (about)
+module Data exposing (about, tmp)
 
 import Document exposing (Document)
 import Time
+
+
+tmp : String -> Document
+tmp content =
+    { fileName = "tmp.md"
+    , id = "tmp.1234"
+    , author = "jxxcarlson"
+    , content = content
+    , timeCreated = Time.millisToPosix 1592511028000
+    , timeUpdated = Time.millisToPosix 1592511028000
+    , tags = []
+    , categories = []
+    , title = "System info"
+    , subtitle = ""
+    , abstract = ""
+    , belongsTo = ""
+    }
 
 
 about : Document

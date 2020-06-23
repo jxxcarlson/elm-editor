@@ -113,10 +113,10 @@ createDocument model =
         newModel =
             case model.docType of
                 MarkdownDoc ->
-                    Helper.Load.loadDocument model.currentTime fileName  "" MarkdownDoc model
+                    Helper.Load.createAndLoad model.currentTime fileName  "" MarkdownDoc model
 
                 MiniLaTeXDoc ->
-                    Helper.Load.loadDocument model.currentTime fileName "" MiniLaTeXDoc model
+                    Helper.Load.createAndLoad model.currentTime fileName "" MiniLaTeXDoc model
 
     in
     { newModel | popupStatus = PopupClosed, uuid = uuid, randomSeed = seed }
@@ -190,7 +190,7 @@ loadDocument content model =
                     MarkdownDoc
 
         newModel =
-            Helper.Load.loadDocument model.currentTime
+            Helper.Load.createAndLoad model.currentTime
                 fileName
                 content
                 docType

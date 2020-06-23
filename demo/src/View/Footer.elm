@@ -37,12 +37,13 @@ view model width_ height_ =
         , View.Widget.openFileListPopupButton model
         , View.Widget.toggleFileLocationButton model
         , View.Widget.saveFileToStorageButton model
+        , View.Widget.openFilePopupButton model
         , View.Widget.documentTypeButton model
         , View.Widget.openNewFilePopupButton model
-        , View.Widget.openFilePopupButton model
         , View.Widget.importFileButton model
         , View.Widget.exportFileButton model
         , View.Widget.exportLaTeXFileButton model
+        , View.Widget.publishFileButton model
         , displayFilename model
         , row [ alignRight, spacing 12 ]
             [ displayMessage model

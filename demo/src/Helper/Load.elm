@@ -1,8 +1,8 @@
 module Helper.Load exposing
     ( config
+    , createAndLoad
+    , load
     , loadAboutDocument
-    , loadDocument
-    , updateModelWithDocument
     )
 
 import Data
@@ -21,17 +21,18 @@ import UuidHelper
 
 loadAboutDocument : Model -> Model
 loadAboutDocument model =
-    updateModelWithDocument Data.about model
+    load Data.about model
 
 
 {-|
 
-    - Load the document content into the editor
-    - Compute the rendered content and store it in the model.
+    - Load the document content into the model and editor
+    - Compute the rendered content and store it in the model
+    - NOTE: the document is not saved
 
 -}
-updateModelWithDocument : Document -> Model -> Model
-updateModelWithDocument document model =
+load : Document -> Model -> Model
+load document model =
     let
         docType =
             Document.docType document.fileName
@@ -65,8 +66,8 @@ updateModelWithDocument document model =
     - Compute the rendered content and store it in the model.
 
 -}
-loadDocument : Time.Posix -> String -> String -> DocType -> Model -> Model
-loadDocument time fileName_ content_ docType_ model =
+createAndLoad : Time.Posix -> String -> String -> DocType -> Model -> Model
+createAndLoad time fileName_ content_ docType_ model =
     let
         author_ =
             model.preferences |> Maybe.map .userName |> Maybe.withDefault "unknown"
@@ -86,7 +87,7 @@ loadDocument time fileName_ content_ docType_ model =
             , belongsTo = ""
             }
     in
-    updateModelWithDocument doc model
+    load doc model
         |> UuidHelper.newUuid
 
 
