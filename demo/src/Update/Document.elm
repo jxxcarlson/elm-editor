@@ -198,8 +198,7 @@ loadDocument content model =
                 |> (\m -> { m | docType = docType, uuid = uuid, randomSeed = seed })
                 |> Helper.Sync.syncModel2
 
-        newDocument = Debug.log "NEW DOCUMENT"
-            newModel.document
+        newDocument =  newModel.document
     in
     newModel
         |> withCmds

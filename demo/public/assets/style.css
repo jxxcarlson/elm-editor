@@ -29,10 +29,11 @@ p {white-space: normal;}
     line-height: 12px !important;
  }
 
-.red { color: red;}
-.green { color: green;}
-.blue {color: blue;}
-
+.red { color: red}
+.green { color: green}
+.blue { color: blue}
+.mark {background-color: yellow}
+.censored {background-color: black}
 
 .mm-paragraph {
 	white-space: normal;
@@ -78,27 +79,22 @@ p {white-space: normal;}
    background-color: #8d9ffe;
   }
 
-.mm-block-0 {
+..mm-block-1 {
+   margin-left: 16px;
+ }
+
+ .mm-block-2 {
+   margin-left: 32px;
  }
 
 
+ .mm-block-3 {
+   margin-left: 48px;
+ }
 
-.mm-block-1 {
-  margin-left: 16px;
-}
-
-.mm-block-2 {
-  margin-left: 32px;
-}
-
-
-.mm-block-3 {
-  margin-left: 48px;
-}
-
-.mm-block-4 {
-  margin-left: 64px;
-}
+ .mm-block-4 {
+   margin-left: 64px;
+ }
 
 
 .mm-olist-item {

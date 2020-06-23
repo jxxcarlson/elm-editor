@@ -23,5 +23,9 @@ serverURL =
     "http://161.35.125.40:80/api"
 
 
+testURL =
+    "http://161.35.125.40:80/api/document/jxxcarlson.test-3f7d-483d.tex"
+
+
 token =
     "abracadabra"
