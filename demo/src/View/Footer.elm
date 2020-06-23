@@ -33,7 +33,7 @@ view model width_ height_ =
         , Element.moveUp 19
         , spacing 12
         ]
-        [ View.Widget.openAuthorPopupButton model
+        [ View.Widget.openPreferencesPopupButton model
         , View.Widget.openFileListPopupButton model
         , View.Widget.toggleFileLocationButton model
         , View.Widget.saveFileToStorageButton model

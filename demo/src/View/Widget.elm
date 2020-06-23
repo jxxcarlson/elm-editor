@@ -13,10 +13,10 @@ module View.Widget exposing
     , importFileButton
     , loadDocumentButton
     , newDocumentButton
-    , openAuthorPopupButton
     , openFileListPopupButton
     , openFilePopupButton
     , openNewFilePopupButton
+    , openPreferencesPopupButton
     , plainButton
     , publishFileButton
     , saveFileToStorageButton
@@ -172,16 +172,16 @@ closePopupButton model =
     altButton 20 "X" (ManagePopup PopupClosed) [ Font.size 14 ]
 
 
-openAuthorPopupButton model =
+openPreferencesPopupButton model =
     case model.popupStatus of
         PopupOpen AuthorPopup ->
             button_ 60 "Close" (ManagePopup PopupClosed)
 
         PopupOpen _ ->
-            button_ 60 "Author" (ManagePopup PopupClosed)
+            button_ 90 "Preferences" (ManagePopup PopupClosed)
 
         PopupClosed ->
-            button_ 60 "Author" (ManagePopup (PopupOpen AuthorPopup))
+            button_ 90 "Preferences" (ManagePopup (PopupOpen AuthorPopup))
 
 
 openFileListPopupButton model =
