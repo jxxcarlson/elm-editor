@@ -429,7 +429,7 @@ update msg model =
                             "# Notice!\n\n*Changing storage to your computer's hard disk.*"
 
                         FilesOnServer ->
-                            "# Notice!\n\n*Changing storage to web server at* " ++ model.serverURL
+                            "# Notice!\n\n*Changing storage to web server*\n\n> " ++ model.serverURL
             in
             { model
                 | fileLocation = fileLocation
