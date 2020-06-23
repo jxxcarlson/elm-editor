@@ -423,17 +423,16 @@ update msg model =
 
         ToggleFileLocation fileLocation ->
             let
-                ( serverUrl, message ) =
+                message =
                     case fileLocation of
                         FilesOnDisk ->
-                            ( Config.serverURL, "# Notice!\n\n*Changing storage to your computer's hard disk.*" )
+                            "# Notice!\n\n*Changing storage to your computer's hard disk.*"
 
                         FilesOnServer ->
-                            ( Config.remoteServerUrl, "# Notice!\n\n*Changing storage to web server at* " ++ Config.remoteServerUrl )
+                            "# Notice!\n\n*Changing storage to web server at* " ++ model.serverURL
             in
             { model
                 | fileLocation = fileLocation
-                , serverURL = serverUrl
             }
                 |> Helper.Load.load (Data.tmp message)
                 |> withNoCmd

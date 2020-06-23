@@ -109,7 +109,7 @@ scripts:
     desc: upload one directory to Digital Ocean
 
   uploadserver:
-    cmd: scp -r ${APP_ROOT}/src2 root@161.35.125.40:/root/docserver
+    cmd: scp -r ${APP_ROOT}/localServer root@161.35.125.40:/root/docserver
     desc: Upload the server to Digital Ocean
 
   uploaddocs:
