@@ -70,22 +70,12 @@ copySelection model =
 
 pasteSelection : EditorModel -> EditorModel
 pasteSelection model =
-    -- TODO: This needs work! (a hack for now)
     let
-        selectedText =
-            Debug.log "SELECTION (P)"
-                (model.selectedText
-                 -- |> Array.toList
-                 -- |> String.join "\n"
-                )
-
         newCursor =
-            { line = model.cursor.line, column = model.cursor.column + Array.length selectedText }
+            { line = model.cursor.line + Array.length model.selectedText, column = model.cursor.column }
     in
     { model
-        | -- lines = ArrayUtil.paste model.cursor model.selectedText model.lines
-          -- lines = ArrayUtil.replace model.cursor model.cursor selectedText model.lines
-          lines = ArrayUtil.replaceLines model.cursor model.cursor selectedText model.lines
+        | lines = ArrayUtil.replaceLines model.cursor model.cursor model.selectedText model.lines
         , cursor = newCursor
     }
 
