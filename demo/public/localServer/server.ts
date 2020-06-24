@@ -7,6 +7,13 @@
 // TAURI: https://tauri.studio/
 // Boscop: https://github.com/Boscop/web-view
 
+/*
+
+Lazy way; run a screen session
+Proper way; setup a systemd service for it
+
+*/
+
 import { Application, Router } from "https://deno.land/x/oak/mod.ts";
 import {Document, Metadata} from "./document.ts";
 import {createDocument, updateDocument, getDocument, getDocuments } from "./manifest.ts"

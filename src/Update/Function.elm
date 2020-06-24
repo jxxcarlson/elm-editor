@@ -41,12 +41,18 @@ copySelection model =
     let
         ( debounce, debounceCmd ) =
             Debounce.push EditorModel.debounceConfig "RCB" model.debounce
+
+        _ =
+            Debug.log "SELECTION (1)" model.selection
     in
     case model.selection of
         (Selection beginSel endSel) as sel ->
             let
                 ( _, selectedText ) =
                     Action.deleteSelection sel model.lines
+
+                _ =
+                    Debug.log "SELECTION (2)" selectedText
             in
             ( { model
                 | cursor = { endSel | column = endSel.column + 1 }
@@ -67,9 +73,11 @@ pasteSelection model =
     -- TODO: This needs work! (a hack for now)
     let
         selectedText =
-            model.selectedText
-                |> Array.toList
-                |> String.join "\n"
+            Debug.log "SELECTION (P)"
+                (model.selectedText
+                    |> Array.toList
+                    |> String.join "\n"
+                )
 
         newCursor =
             { line = model.cursor.line, column = model.cursor.column + String.length selectedText }
