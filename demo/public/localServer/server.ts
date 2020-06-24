@@ -9,7 +9,7 @@
 
 import { Application, Router } from "https://deno.land/x/oak/mod.ts";
 import {Document, Metadata} from "./document.ts";
-import {createDocument, updateDocument, getDocuments, getDocument} from "./manifest.ts"
+import {createDocument, updateDocument, getDocument, getDocuments } from "./manifest.ts"
 import {createAuthor, signInAuthor} from "./author.ts"
 import { oakCors } from "https://deno.land/x/cors/mod.ts";
 //
@@ -32,6 +32,7 @@ router
   .get("/api/document/:fileName", getDocument)
   .post("/api/documents", createDocument)
   .put('/api/:fileName', updateDocument)
+  //
   .post('/api/login', login)
   .post('/api/authors', createAuthor)
   .post('/api/authors/signin', signInAuthor)

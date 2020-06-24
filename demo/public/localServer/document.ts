@@ -17,12 +17,6 @@ export interface Document {
   content: string;
 }
 
-// export interface ExtendedDocument {
-//   token: string;
-//   fileName: string;
-//   id: string;
-//   content: string;
-// }
 
 export interface Metadata {
   id: string;
@@ -40,6 +34,3 @@ export interface Metadata {
 }
 // 11 fields
 
-// export function documentOfExtendedDocument(doc: ExtendedDocument) {
-//   return { fileName: doc.fileName, id: doc.id, content: doc.content };
-// }

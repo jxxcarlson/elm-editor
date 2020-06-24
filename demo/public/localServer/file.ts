@@ -3,7 +3,8 @@ import {Document, Metadata} from './document.ts'
 import {FILE_STORE_PATH} from './config.ts'
 
 
-export const fetchDocument = async (metaData: Metadata): Promise<Document> => {
+export const readDocument = async (metaData: Metadata): Promise<Document> => {
+
   const path = FILE_STORE_PATH + '/' + metaData.fileName
   const data = await Deno.readFile(path);
 
@@ -26,4 +27,4 @@ export const writeDocument = async (doc: Document): Promise<void> => {
 };
 
 
-// console.log("FETCHED:", await fetchDocument("143d1170-f8ce-47b3-904d-e84191d3d717"));
+// console.log("FETCHED:", await readDocument("143d1170-f8ce-47b3-904d-e84191d3d717"));

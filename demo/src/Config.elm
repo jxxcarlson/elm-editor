@@ -20,7 +20,16 @@ fileLocation =
 
 
 serverURL =
-    "http://161.35.125.40:80/api"
+    "http://localhost:4000/api"
+
+
+
+{-
+   SERVERS:
+   "http://localhost:4000/api"
+   "http://161.35.125.40:80/api"
+
+-}
 
 
 testURL =

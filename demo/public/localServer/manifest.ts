@@ -1,7 +1,7 @@
 import {Metadata, Document} from "./document.ts";
 import { load, safeDump } from 'https://deno.land/x/js_yaml_port/js-yaml.js'
+import {readDocument, writeDocument} from "./file.ts"
 import {MANIFEST} from './config.ts'
-import {fetchDocument, writeDocument} from "./file.ts"
 
 const hasSameFileName = (a: Metadata, b: Metadata) => a.fileName == b.fileName;
 
@@ -11,7 +11,7 @@ const isNotPresent = (d: Metadata, manifest_: Array<Metadata>) =>
   manifest_.filter((r) => hasSameId(r, d)).length == 0;
 
 
-export const fetchManifest = async (): Promise<Metadata[]> => {
+export const readManifest = async (): Promise<Metadata[]> => {
   const data = await Deno.readFile(MANIFEST);
 
   const decoder = new TextDecoder();
@@ -20,7 +20,11 @@ export const fetchManifest = async (): Promise<Metadata[]> => {
   return load(decodedData);
 };
 
-var manifest = await fetchManifest();
+// The manifest is read from disk and kept in memory
+// When it is modified, the updated manifest is written
+// to disk so that the on-disk and in-memory versions
+// stay in sync.
+var manifest = await readManifest();
 
 export const writeManifest = async (data: Array<Metadata>): Promise<void> => {
   const encoder = new TextEncoder();
@@ -35,97 +39,32 @@ const updateMetadata = (s: Metadata, t : Metadata) =>
   s.id == t.id ?  Object.assign({}, s) : t
 
 
-export const fetchDocumentById = async (id: String): Promise<Document> => {
+export const readDocumentById = async (id: String): Promise<Document> => {
    const metaData = manifest.filter(r => r.id == id)[0]
 
-   return fetchDocument(metaData)
+   return readDocument(metaData)
 
 }
 
-export const fetchDocumentByFileName = async (fileName: String): Promise<Document> => {
+export const readDocumentByFileName = async (fileName: String): Promise<Document> => {
    const metaData = manifest.filter(r => r.fileName == fileName)[0]
 
-   return fetchDocument(metaData)
+   return readDocument(metaData)
 
 }
 
-/////////////
+/*
 
+Below is the code for the handlers for the server:
 
-export const updateDocument = async ({
-  request,
-  response,
-}: {
-  request: any;
-  response: any;
-}) => {
-  const {
-    value : {fileName, id, author, timeCreated, timeUpdated, tags, categories,
-       title, subtitle, abstract, belongsTo, content},
-  } = await request.body();
-  response.headers.set("Access-Control-Allow-Origin", "*");
-  response.headers.append("Access-Control-Allow-Methods", "PUT, OPTIONS");
-  response.headers.append(
-    "Access-Control-Allow-Headers",
-    "X-Requested-With, Content-Type, Accept, Origin",
-  );
+  - createDocument
+  - updateDocument
+  - getDocuments
+  - getDocument
 
-    const sourceDoc: Document = { id: id, fileName: fileName, author: author,
-       timeCreated: timeCreated, timeUpdated: timeUpdated, tags: tags,
-       categories: categories, title: title, subtitle: subtitle,
-       abstract: abstract, belongsTo: belongsTo,
-       content: content };
+The handlers are here becasue they require access to the var 'manifest'.
 
-    const sourceMetadata: Metadata = { id: id, fileName: fileName, author: author,
-       timeCreated: timeCreated, timeUpdated: timeUpdated, tags: tags,
-       categories: categories, title: title, subtitle: subtitle,
-       abstract: abstract, belongsTo: belongsTo};
-
-    if (isNotPresent(sourceMetadata, manifest)) {
-      manifest.push(sourceMetadata);
-      writeManifest(manifest)
-      writeDocument(sourceDoc)
-      console.log("added: " + sourceDoc.fileName);
-      response.body = { msg: "Added: " + sourceDoc.fileName};
-      response.status = 200;
-
-    } else {
-      manifest = manifest.map((d:Metadata) => updateMetadata(sourceMetadata, d))
-      writeManifest(manifest)
-      writeDocument(sourceDoc)
-      console.log("updated: " + sourceDoc.fileName);
-      response.body = { msg: "Updated: " + sourceDoc.fileName };
-      response.status = 200;
-    }
-
-};
-
-//////////////////////
-
-
-export const getDocuments = ( { response }: { response: any }) => {
-  console.log("file list requested");
-  response.headers.set("Access-Control-Allow-Origin", "*");
-  response.body = manifest;
-};
-
-// Get a document by file name
-export const  getDocument = async ({
-  params,
-  response,
-}: {
-  params: {
-    fileName: string;
-  };
-  response: any;
-}) => {
-  console.log("GET", params.fileName)
-  response.headers.set("Access-Control-Allow-Origin", "*");
-  response.body = await fetchDocumentByFileName(params.fileName)
-
-  response.status = 200;
-  return;
-};
+*/
 
 
 // Add a new document
@@ -181,3 +120,79 @@ export const createDocument = async ({
     response.status = 400;
   }
 };
+
+
+export const updateDocument = async ({
+  request,
+  response,
+}: {
+  request: any;
+  response: any;
+}) => {
+  const {
+    value : {fileName, id, author, timeCreated, timeUpdated, tags, categories,
+       title, subtitle, abstract, belongsTo, content},
+  } = await request.body();
+  response.headers.set("Access-Control-Allow-Origin", "*");
+  response.headers.append("Access-Control-Allow-Methods", "PUT, OPTIONS");
+  response.headers.append(
+    "Access-Control-Allow-Headers",
+    "X-Requested-With, Content-Type, Accept, Origin",
+  );
+
+    const sourceDoc: Document = { id: id, fileName: fileName, author: author,
+       timeCreated: timeCreated, timeUpdated: timeUpdated, tags: tags,
+       categories: categories, title: title, subtitle: subtitle,
+       abstract: abstract, belongsTo: belongsTo,
+       content: content };
+
+    const sourceMetadata: Metadata = { id: id, fileName: fileName, author: author,
+       timeCreated: timeCreated, timeUpdated: timeUpdated, tags: tags,
+       categories: categories, title: title, subtitle: subtitle,
+       abstract: abstract, belongsTo: belongsTo};
+
+    if (isNotPresent(sourceMetadata, manifest)) {
+      manifest.push(sourceMetadata);
+      writeManifest(manifest)
+      writeDocument(sourceDoc)
+      console.log("added: " + sourceDoc.fileName);
+      response.body = { msg: "Added: " + sourceDoc.fileName};
+      response.status = 200;
+
+    } else {
+      manifest = manifest.map((d:Metadata) => updateMetadata(sourceMetadata, d))
+      writeManifest(manifest)
+      writeDocument(sourceDoc)
+      console.log("updated: " + sourceDoc.fileName);
+      response.body = { msg: "Updated: " + sourceDoc.fileName };
+      response.status = 200;
+    }
+
+};
+
+
+
+export const getDocuments = ( { response }: { response: any }) => {
+  console.log("file list requested");
+  response.headers.set("Access-Control-Allow-Origin", "*");
+  response.body = manifest;
+};
+
+// Get a document by file name
+export const  getDocument = async ({
+  params,
+  response,
+}: {
+  params: {
+    fileName: string;
+  };
+  response: any;
+}) => {
+  console.log("GET", params.fileName)
+  response.headers.set("Access-Control-Allow-Origin", "*");
+  response.body = await readDocumentByFileName(params.fileName)
+
+  response.status = 200;
+  return;
+};
+
