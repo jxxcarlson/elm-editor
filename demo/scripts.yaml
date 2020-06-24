@@ -54,19 +54,18 @@ scripts:
     cmd: sh script/publish.sh
     desc: publish editor to github pages
 
-  lserver:
+  sserver:
     desc: Run the local server
     cmd:
-       - ${APP_ROOT}/localServer/server.ts
+      - ${APP_ROOT}/simpleServer/server.ts
     allow:
       - net
       - env
-      - write=${DATA_ROOT}
       - read=${DATA_ROOT}
-  rserver:
+  server:
     desc: Run the local server
     cmd:
-      - ${APP_ROOT}/remoteServer/server.ts
+       - ${APP_ROOT}/localServer/server.ts
     allow:
       - net
       - env

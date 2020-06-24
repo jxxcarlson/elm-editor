@@ -16,6 +16,7 @@ Proper way; setup a systemd service for it
 
 import { Application, Router } from "https://deno.land/x/oak/mod.ts";
 import {Document, Metadata} from "./document.ts";
+import {iAmAlive, getDocumentText} from "./handlers/simpleDocument.ts"
 import {createDocument, updateDocument, getDocument, getDocuments } from "./manifest.ts"
 import {createAuthor, signInAuthor} from "./author.ts"
 import { oakCors } from "https://deno.land/x/cors/mod.ts";
@@ -23,7 +24,7 @@ import { oakCors } from "https://deno.land/x/cors/mod.ts";
 import { login, guest, auth } from "./handlers/login.ts";
 import { authMiddleware } from "./auth/middleware.ts"
 //
-import { FILE_STORE_PATH, MANIFEST } from "./config.ts"
+import { DATA_PATH, MANIFEST } from "./config.ts"
 
 
 // WEB SERVER
@@ -37,6 +38,10 @@ const router = new Router();
 router
   .get("/api/documents", getDocuments)
   .get("/api/document/:fileName", getDocument)
+
+  .get("/api", iAmAlive)
+  .get("/api/text/:fileName", getDocumentText)
+
   .post("/api/documents", createDocument)
   .put('/api/:fileName', updateDocument)
   //
@@ -54,7 +59,7 @@ app.use(oakCors()); // Enable CORS for All Routes
 app.use(router.routes());
 app.use(router.allowedMethods());
 
-console.log(`Listening on port ${PORT}...`);
-console.log(`Files stored in ${FILE_STORE_PATH}`);
+console.log(`DocServer listening to ${HOST} on port ${PORT}...`);
+console.log(`Files stored in ${DATA_PATH}`);
 
 await app.listen(`${HOST}:${PORT}`);

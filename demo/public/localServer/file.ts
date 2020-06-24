@@ -1,11 +1,11 @@
 import { load, safeDump } from 'https://deno.land/x/js_yaml_port/js-yaml.js'
 import {Document, Metadata} from './document.ts'
-import {FILE_STORE_PATH} from './config.ts'
+import {DATA_PATH} from './config.ts'
 
 
 export const readDocument = async (metaData: Metadata): Promise<Document> => {
 
-  const path = FILE_STORE_PATH + '/' + metaData.fileName
+  const path = DATA_PATH + '/' + metaData.fileName
   const data = await Deno.readFile(path);
 
   const decoder = new TextDecoder();
@@ -23,7 +23,7 @@ export const readDocument = async (metaData: Metadata): Promise<Document> => {
 
 export const writeDocument = async (doc: Document): Promise<void> => {
   const encoder = new TextEncoder();
-  await Deno.writeFile(FILE_STORE_PATH + "/" + doc.fileName, encoder.encode(doc.content));
+  await Deno.writeFile(DATA_PATH + "/" + doc.fileName, encoder.encode(doc.content));
 };
 
 
