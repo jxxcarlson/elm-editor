@@ -17,6 +17,9 @@ Proper way; setup a systemd service for it
 import { Application, Router } from "https://deno.land/x/oak/mod.ts";
 import {Document, Metadata} from "./document.ts";
 import {iAmAlive, getDocumentText} from "./handlers/simpleDocument.ts"
+//
+import {list} from "./handlers/listDirectory.ts"
+//
 import {createDocument, updateDocument, getDocument, getDocuments } from "./manifest.ts"
 import {createAuthor, signInAuthor} from "./author.ts"
 import { oakCors } from "https://deno.land/x/cors/mod.ts";
@@ -26,7 +29,7 @@ import { authMiddleware } from "./auth/middleware.ts"
 //
 import { DATA_PATH, MANIFEST } from "./config.ts"
 
-
+//
 // WEB SERVER
 
 const env = Deno.env.toObject();
@@ -41,6 +44,7 @@ router
 
   .get("/api", iAmAlive)
   .get("/api/text/:fileName", getDocumentText)
+  .get("/api/list", list)
 
   .post("/api/documents", createDocument)
   .put('/api/:fileName', updateDocument)
