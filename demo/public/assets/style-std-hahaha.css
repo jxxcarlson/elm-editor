@@ -1,51 +1,33 @@
-.flex-column {
-  display: flex;
-  flex-direction: column;
-}
 
-.flex-column-space {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
+body { background-color: #e1e6e8; padding-left: 40px; }
 
-
-.flex-row {
-  display: flex;
-  flex-direction: row;
-}
-
-.flex-row-text-aligned {
-  display: flex;
-  flex-direction: row;
-  align-items: baseline;
-}
-
-p {white-space: normal;}
-
+.red { color: red}
+.green { color: green}
+.blue { color: blue}
+.highlight {background-color: yellow}
+.mark {background-color: yellow}
+.censored {background-color: black}
 
 .elmsh-line {
     padding : 8px;
     line-height: 12px !important;
+    width : 400px !important;
+    overflow : scroll;
  }
 
 .red { color: red}
 .green { color: green}
 .blue { color: blue}
-.pale { color: #aaa; }
-.mark {background-color: yellow}
-.highlight { background-color: #8d9ffe; }
+.highlight {background-color: yellow}
 .censored {background-color: black}
 
-.mm-paragraph {
-	white-space: normal;
 
-}
+h1 {font-size: 20pt}
+h2 {font-size: 16pt}
+h3 {font-size: 12pt}
+h4 {font-size: 10pt}
+h5 {font-size: 10pt}
 
-#__RENDERED_TEXT__ {
-  overflow-y: scroll;
-  font-size: 14px;
-  }
 
 .toc-level-0 { margin-left: 0em; font-size : 10pt; line-height: 4pt; font-weight: normal; text-decoration: none; }
 .toc-level-1 {  margin-left: 1em; font-size : 10pt; line-height: 4pt; font-weight: normal; text-decoration: none;  }
@@ -69,16 +51,14 @@ p {white-space: normal;}
   width: 60%;
 }
 
-.mm-h1 {font-size: 24px;}
-.mm-h2 {font-size: 20px;}
-.mm-h3 {font-size: 16px}
-.mm-h4 {font-size: 12px;}
-.mm-h5 {font-size: 12px;}
+.mm-h1 {font-size: 18pt}
+.mm-h2 {font-size: 16pt}
+.mm-h3 {font-size: 12pt}
+.mm-h4 {font-size: 10pt}
+.mm-h5 {font-size: 10pt}
 
 
-
-
-.mm-block-1 {
+..mm-block-1 {
    margin-left: 16px;
  }
 
@@ -88,42 +68,11 @@ p {white-space: normal;}
 
 
  .mm-block-3 {
-   margin-left: 48x;
+   margin-left: 48px;
  }
 
  .mm-block-4 {
    margin-left: 64px;
- }
-
-.mm-ulist-item {
-	list-style: none;
-  margin-bottom: 8px;
-  padding-left: 18px;
-  text-indent: -12px;
-	white-space: normal;
-}
-
-
-.mm-ulist-item .mm-block-0 {
-   margin-left: 8px;
- }
-
-
-li .mm-block-1 {
-   margin-left: 16px  !important;
- }
-
-li .mm-block-2 {
-   margin-left: 32px  !important;
- }
-
-
-li .mm-block-3 {
-   margin-left: 90px  !important;
- }
-
-li .mm-block-4  {
-   margin-left: 122px  !important;
  }
 
 
@@ -133,19 +82,13 @@ li .mm-block-4  {
   padding-left: 18px;
   text-indent: -18px;
 }
-
-.mm-olist-item.mm-block-0 {
-   margin-left: 12px;
- }
-
-.mm-olist-item.mm-block-1 {
-   margin-left: 12px;
- }
-
-
-
-
-
+.mm-ulist-item {
+	list-style: none;
+  margin-bottom: 8px;
+  padding-left: 18px;
+  text-indent: -12px;
+	white-space: normal;
+}
 .mm-quotation {
 	margin-top: 18px;
 	margin-right: 36px;
@@ -154,37 +97,11 @@ li .mm-block-4  {
 }
 .mm-poetry {
 	margin-left: 24px;
-	padding-left: 24px;
 	margin-top: 18px;
 	margin-right: 36px;
 	margin-bottom: 18px;
-	white-space: pre;
-	}
-
+	white-space: nowrap;
 }
-
-.mm-poetry > p {
-	margin-top: 0px;
-	margin-bottom: 0px;
-}
-w
-.mm-poetry > line {
-   white-space : pre;
-}
-
-
-
-.mm-poetry p p span {
-  margin : 0;
-  white-space: pre;
-  }
-
-p > p {
-  margin : 0;
-  }
-
-
-
 .mm-closed-block {
 	margin-bottom; 12px;
 	width: inherit;
@@ -199,6 +116,25 @@ p > p {
 	margin-bottom: 4px;
 	width: inherit;
 }
+
+.mm-poetry > p {
+	margin-top: 0px;
+	margin-bottom: 0px;
+}
+w
+.mm-poetry > line {
+   white-space : pre;
+}
+
+.mm-poetry p p span {
+  margin : 0;
+  white-space: pre;
+  }
+
+p > p {
+  margin : 0;
+  }
+
 .mm-error-message {
 	color: red; margin-bottom: 12px;
 }
@@ -209,20 +145,6 @@ p > p {
 .mm-strike-through {
 	 text-decoration: line-through;
 }
-
-
-.mm-table-cell {
-  padding: 4px;
-  margin-right : 3px;
-  margin-bottom: 6px;
-  background-color: #eef;
-  }
-
-
-.mm-paragraph.mm-block-2 {
-  margin: 0;
-  }
-
 
 .mm-table-row {
 	 display: block;
@@ -246,4 +168,5 @@ p.mm-table-cell {
 
 .mm-verbatim {
 	font: 16px courier; background-color: #eee; padding: 8px;
+}
 }
