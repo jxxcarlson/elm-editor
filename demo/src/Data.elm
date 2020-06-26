@@ -1,6 +1,6 @@
 module Data exposing (about, tmp)
 
-import Document exposing (Document)
+import Document exposing (DocType(..), Document)
 import Time
 
 
@@ -18,6 +18,7 @@ tmp content =
     , subtitle = ""
     , abstract = ""
     , belongsTo = ""
+    , docType = MarkdownDoc
     }
 
 
@@ -35,6 +36,7 @@ about =
     , subtitle = "It's cool!"
     , abstract = "Coming soon."
     , belongsTo = ""
+    , docType = MarkdownDoc
     }
 
 

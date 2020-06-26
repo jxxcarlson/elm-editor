@@ -85,6 +85,7 @@ createAndLoad time fileName_ content_ docType_ model =
             , subtitle = ""
             , abstract = ""
             , belongsTo = ""
+            , docType = docType_
             }
     in
     load doc model

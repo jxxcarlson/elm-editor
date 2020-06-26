@@ -8,6 +8,7 @@ module Document exposing
     , extendFileName
     , extensionOfDocType
     , fileExtension
+    , stringOfDocType
     , titleFromFileName
     , toMetadata
     )
@@ -32,6 +33,7 @@ type alias Document =
     , subtitle : String
     , abstract : String
     , belongsTo : String
+    , docType : DocType
     , content : String
     }
 
@@ -48,6 +50,7 @@ type alias Metadata =
     , subtitle : String
     , abstract : String
     , belongsTo : String
+    , docType : DocType
     }
 
 
@@ -129,6 +132,7 @@ toMetadata doc =
     , abstract = doc.abstract
     , belongsTo = doc.belongsTo
     , categories = doc.categories
+    , docType = doc.docType
     }
 
 
@@ -165,6 +169,16 @@ extensionOfDocType docType_ =
 
         MiniLaTeXDoc ->
             "tex"
+
+
+stringOfDocType : DocType -> String
+stringOfDocType docType_ =
+    case docType_ of
+        MarkdownDoc ->
+            "markdown"
+
+        MiniLaTeXDoc ->
+            "minilatex"
 
 
 docType : String -> DocType

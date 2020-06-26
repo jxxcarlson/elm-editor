@@ -33,6 +33,7 @@ documentDecoder =
         |> required "subtitle" string
         |> required "abstract" string
         |> required "belongsTo" string
+        |> required "docType" (string |> D.map Document.docType)
         |> required "content" string
 
 
@@ -50,6 +51,7 @@ documentEncoder doc =
         , ( "subtitle", Encode.string (normalize doc.subtitle) )
         , ( "abstract", Encode.string (normalize doc.abstract) )
         , ( "belongsTo", Encode.string (normalize doc.belongsTo) )
+        , ( "docType", Encode.string (Document.stringOfDocType doc.docType) )
         , ( "content", Encode.string doc.content )
         ]
 
@@ -91,6 +93,7 @@ metadataDecoder =
         |> required "subtitle" string
         |> required "abstract" string
         |> required "belongsTo" string
+        |> required "docType" (string |> D.map Document.docType)
 
 
 metadataEncoder : Metadata -> Encode.Value
@@ -107,6 +110,7 @@ metadataEncoder metadata =
         , ( "subtitle", Encode.string (normalize metadata.subtitle) )
         , ( "abstract", Encode.string (normalize metadata.abstract) )
         , ( "belongsTo", Encode.string (normalize metadata.belongsTo) )
+        , ( "docType", Encode.string (Document.stringOfDocType metadata.docType) )
         ]
 
 
