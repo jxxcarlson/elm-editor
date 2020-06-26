@@ -78,7 +78,7 @@ export const createDocument = async ({
   console.log("processing POST request");
   const {
     value : {token, fileName, id, author, timeCreated, timeUpdated, tags, categories,
-       title, subtitle, abstract, belongsTo, content},
+       title, subtitle, abstract, belongsTo, docType, content},
   } = await request.body();
   response.headers.set("Access-Control-Allow-Origin", "*");
   response.headers.append("Access-Control-Allow-Methods", "POST, OPTIONS");
@@ -92,13 +92,13 @@ export const createDocument = async ({
     const doc_ = { id: id, fileName: fileName, author: author,
        timeCreated: timeCreated, timeUpdated: timeUpdated, tags: tags,
        categories: categories, title: title, subtitle: subtitle,
-       abstract: abstract, belongsTo: belongsTo,
+       abstract: abstract, belongsTo: belongsTo, docType: docType
        content: content };
 
     const metaData_ = { id: id, fileName: fileName, author: author,
        timeCreated: timeCreated, timeUpdated: timeUpdated, tags: tags,
        categories: categories, title: title, subtitle: subtitle,
-       abstract: abstract, belongsTo: belongsTo};
+       abstract: abstract, belongsTo: belongsTo, docType: docType};
 
     if (isNotPresent(metaData_, manifest)) {
 
@@ -131,7 +131,7 @@ export const updateDocument = async ({
 }) => {
   const {
     value : {fileName, id, author, timeCreated, timeUpdated, tags, categories,
-       title, subtitle, abstract, belongsTo, content},
+       title, subtitle, abstract, belongsTo, docType, content},
   } = await request.body();
   response.headers.set("Access-Control-Allow-Origin", "*");
   response.headers.append("Access-Control-Allow-Methods", "PUT, OPTIONS");
@@ -143,13 +143,13 @@ export const updateDocument = async ({
     const sourceDoc: Document = { id: id, fileName: fileName, author: author,
        timeCreated: timeCreated, timeUpdated: timeUpdated, tags: tags,
        categories: categories, title: title, subtitle: subtitle,
-       abstract: abstract, belongsTo: belongsTo,
+       abstract: abstract, belongsTo: belongsTo, docType: string;
        content: content };
 
     const sourceMetadata: Metadata = { id: id, fileName: fileName, author: author,
        timeCreated: timeCreated, timeUpdated: timeUpdated, tags: tags,
        categories: categories, title: title, subtitle: subtitle,
-       abstract: abstract, belongsTo: belongsTo};
+       abstract: abstract, belongsTo: belongsTo, docType: string; };
 
     if (isNotPresent(sourceMetadata, manifest)) {
       manifest.push(sourceMetadata);
@@ -195,4 +195,3 @@ export const  getDocument = async ({
   response.status = 200;
   return;
 };
-

@@ -52,7 +52,8 @@ const toMetadata = (doc) => (
         title: doc.title,
         subtitle: doc.subtitle,
         abstract: doc.abstract,
-        belongsTo: doc.belongsTo
+        belongsTo: doc.belongsTo,
+        docType: doc.docType
         }
    )
 
@@ -117,7 +118,7 @@ app.ports.infoForOutside.subscribe(msg => {
              .then(pathToManifest => getManifest(pathToManifest)) // get the contents of the manifest
              .then(value => load(value))                          // compute the object representation of the manifest
              .then(value => app.ports.infoForElm.send({tag: "GotFileList", data:  value})) // send it to Elm
-             
+
 
 
 

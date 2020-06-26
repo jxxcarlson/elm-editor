@@ -14,6 +14,7 @@ export interface Document {
   subtitle: string;
   abstract: string;
   belongsTo: string;
+  docType string;
   content: string;
 }
 
@@ -30,7 +31,8 @@ export interface Metadata {
   subtitle: string;
   abstract: string;
   belongsTo: string;
+  docType: string;
+
 
 }
 // 11 fields
-

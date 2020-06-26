@@ -1,6 +1,7 @@
 module View.FilePopup exposing (..)
 
 import Date
+import Document
 import Element
     exposing
         ( Element
@@ -55,6 +56,7 @@ infoPanel model =
         , item "Author" model.document.author
         , item "Created" (Helper.Common.dateStringFromPosix model.document.timeCreated)
         , item "Modified" (Helper.Common.dateStringFromPosix model.document.timeUpdated)
+        , item "DocType" (Document.stringOfDocType model.document.docType)
         ]
 
 
