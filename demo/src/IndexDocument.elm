@@ -1,10 +1,23 @@
 module IndexDocument exposing (render)
 
-import Html exposing (Html)
-import Html.Attributes as HA
-import Html.Events as HE
+import Element
+    exposing
+        ( Element
+        , alignRight
+        , column
+        , el
+        , height
+        , paddingXY
+        , px
+        , row
+        , scrollbarY
+        , spacing
+        , text
+        , width
+        )
+import Element.Background as Background
+import Element.Font as Font
 import Parser.Advanced exposing (..)
-import Render.Types exposing (IndexMsg(..), RenderMsg(..))
 import Types exposing (Msg(..))
 
 
@@ -22,14 +35,14 @@ type Context
     | Record
 
 
-render : String -> String -> String -> Html RenderMsg
+render : String -> String -> String -> Element Msg
 render userName currentFileName str =
     case getIndexBlock str of
         Ok fileList ->
             renderBlock userName currentFileName (String.lines fileList)
 
         Err _ ->
-            Html.span [] [ Html.text "Error constructing file list" ]
+            Element.el [] (Element.text "Error constructing file list")
 
 
 {-|
@@ -58,15 +71,26 @@ restOfBlock =
             |. chompUntil (Token "\n\n" (Expecting "expecting blank line"))
 
 
-renderBlock : String -> String -> List String -> Html RenderMsg
+renderBlock : String -> String -> List String -> Element Msg
 renderBlock userName currentFileName list =
-    Html.div [] (List.map (viewFileName userName currentFileName) list)
+    Element.column [] (List.map (viewFileName userName currentFileName) list)
 
 
-viewFileName : String -> String -> String -> Html RenderMsg
+viewFileName : String -> String -> String -> Element Msg
 viewFileName userName currentFileName fileName =
-    Html.button [ HE.onClick (GetDocumentForIndex fileName) ] [ Html.text (prettify userName fileName) ]
-        |> Html.map IndexMsg
+    let
+        bgColor =
+            case currentFileName == fileName of
+                True ->
+                    Background.color (Element.rgba 0.7 0.7 1.0 0.5)
+
+                False ->
+                    Background.color (Element.rgba 0 0 0 0)
+    in
+    Widget.plainButton 350
+        (prettify userName fileName)
+        (GetDocument fileName)
+        [ Font.color (Element.rgb 0 0 0.9), bgColor, Element.padding 2 ]
 
 
 prettify : String -> String -> String

@@ -19,7 +19,6 @@ import Element
 import Element.Background as Background
 import Element.Font as Font
 import Helper.Common
-import Outside
 import Types exposing (FileLocation(..), Model, Msg(..), PopupStatus(..), PopupWindow(..))
 import View.Widget as Widget
 
