@@ -44,6 +44,9 @@ load document model =
 
                 MiniLaTeXDoc ->
                     OMiniLatex
+
+                IndexDoc ->
+                    OMarkdown ExtendedMath
     in
     { model
         | renderingData = Render.load ( 0, 0 ) model.counter renderingOption document.content

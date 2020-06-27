@@ -109,8 +109,7 @@ app.ports.infoForOutside.subscribe(msg => {
 
            // Given the path to the manifest, return it as a string
            const getManifest = (pathToManifest) => readTextFile(pathToManifest,  {})
-           // const getManifest = (pathToManifest) => readTextFile(pathToManifest,  {}).then(value => sendManifest(value))
-           // const getManifest = (pathToManifest) => readTextFile(pathToManifest,  {}).then(value => console.log(value))
+
 
            // Get the preferences
            getPreferences()

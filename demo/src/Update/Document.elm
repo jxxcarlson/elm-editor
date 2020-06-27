@@ -118,6 +118,8 @@ createDocument model =
                 MiniLaTeXDoc ->
                     Helper.Load.createAndLoad model.currentTime fileName "" MiniLaTeXDoc model
 
+                IndexDoc ->
+                    Helper.Load.createAndLoad model.currentTime fileName "" IndexDoc model
     in
     { newModel | popupStatus = PopupClosed, uuid = uuid, randomSeed = seed }
         |> Helper.Sync.syncModel2
@@ -150,6 +152,7 @@ listDocuments status model =
                [ Helper.Server.getDocumentList model.serverURL
                -- , Helper.Server.updateDocument model.serverURL model.document
                ])
+
 
 
 
@@ -217,7 +220,11 @@ toggleDocType model =
                     MiniLaTeXDoc
 
                 MiniLaTeXDoc ->
-                    MarkdownDoc
+                    IndexDoc
+
+                IndexDoc -> MarkdownDoc
+
+
     in
     ( { model
         | docType = newDocType

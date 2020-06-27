@@ -19,6 +19,7 @@ import Time
 type DocType
     = MarkdownDoc
     | MiniLaTeXDoc
+    | IndexDoc
 
 
 type alias Document =
@@ -92,6 +93,9 @@ extendFileName docType_ prefix uuid fileName =
                 MiniLaTeXDoc ->
                     ".tex"
 
+                IndexDoc ->
+                    ".index"
+
         removeMDSuffix s =
             case String.right 3 s == ".md" of
                 True ->
@@ -108,8 +112,16 @@ extendFileName docType_ prefix uuid fileName =
                 False ->
                     s
 
+        removeIndexSuffix s =
+            case String.right 6 s == ".index" of
+                True ->
+                    String.dropRight 6 s
+
+                False ->
+                    s
+
         fileName_ =
-            fileName |> removeMDSuffix |> removeTeXSuffix
+            fileName |> removeMDSuffix |> removeTeXSuffix |> removeIndexSuffix
     in
     case prefix of
         "" ->
@@ -145,6 +157,9 @@ changeDocType docType_ fileName =
         MarkdownDoc ->
             titleFromFileName fileName ++ ".md"
 
+        IndexDoc ->
+            titleFromFileName fileName ++ ".index"
+
 
 titleFromFileName : String -> String
 titleFromFileName fileName =
@@ -170,6 +185,9 @@ extensionOfDocType docType_ =
         MiniLaTeXDoc ->
             "tex"
 
+        IndexDoc ->
+            "index"
+
 
 stringOfDocType : DocType -> String
 stringOfDocType docType_ =
@@ -179,6 +197,9 @@ stringOfDocType docType_ =
 
         MiniLaTeXDoc ->
             "minilatex"
+
+        IndexDoc ->
+            "index"
 
 
 docType : String -> DocType
@@ -192,6 +213,9 @@ docType fileName =
 
         "latex" ->
             MiniLaTeXDoc
+
+        "index" ->
+            IndexDoc
 
         _ ->
             MarkdownDoc

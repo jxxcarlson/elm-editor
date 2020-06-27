@@ -91,6 +91,9 @@ saveFile model =
         MiniLaTeXDoc ->
             Download.string fileName "text/x-tex" content
 
+        IndexDoc ->
+            Download.string fileName "text/plain " content
+
 
 exportFile : Model -> Cmd msg
 exportFile model =
@@ -104,6 +107,9 @@ exportFile model =
                     Editor.getContent model.editor |> MiniLatex.Export.toLaTeX
             in
             Download.string model.fileName "text/x-tex" contentForExport
+
+        IndexDoc ->
+            Cmd.none
 
 
 

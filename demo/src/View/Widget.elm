@@ -252,6 +252,9 @@ exportLaTeXFileButton model =
         MiniLaTeXDoc ->
             button_ 120 "LaTeX Export" ExportFile
 
+        IndexDoc ->
+            Element.none
+
 
 newDocumentButton model =
     button_ 70 "Create" CreateDocument
@@ -266,6 +269,9 @@ documentTypeButton model =
 
                 MiniLaTeXDoc ->
                     "LaTeX"
+
+                IndexDoc ->
+                    "Index"
     in
     button width
         title
