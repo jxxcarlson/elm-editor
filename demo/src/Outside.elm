@@ -28,8 +28,8 @@ type alias GenericOutsideData =
 
 type InfoForElm
     = GotClipboard String
-    | GotFileList (List Metadata)
-    | GotFile Document
+    | GotDocumentList (List Metadata)
+    | GotDocument Document
     | GotPreferences Preferences
 
 
@@ -38,12 +38,12 @@ type InfoForOutside
     | WriteToClipBoard String
     | Highlight ( Maybe String, String )
     | OpenFileDialog Encode.Value
-    | WriteFile Document
+    | WriteDocument Document
     | GetPreferences Encode.Value
     | WriteMetadata Metadata
-    | CreateFile Document
-    | AskForFileList
-    | AskForFile String
+    | CreateDocument Document
+    | AskForDocumentList
+    | AskForDocument String
     | SetUserName String
     | DeleteFileFromLocalStorage String
 
@@ -64,15 +64,22 @@ getInfo tagger onError =
                 "GotFileList" ->
                     case D.decodeValue Codec.Document.metadataListDecoder outsideInfo.data of
                         Ok fileList ->
-                            tagger <| GotFileList fileList
+                            tagger <| GotDocumentList fileList
 
                         Err e ->
                             onError <| "GotFileList: error"
 
                 "GotFile" ->
                     case D.decodeValue Codec.Document.documentDecoder outsideInfo.data of
-                        Ok file ->
-                            tagger <| GotFile file
+                        Ok document ->
+                            let
+                                _ =
+                                    Debug.log "GotDocument" document.fileName
+
+                                _ =
+                                    Debug.log "DocType" document.docType
+                            in
+                            tagger <| GotDocument document
 
                         Err _ ->
                             onError <| "Error decoding file from value"
@@ -111,19 +118,19 @@ sendInfo info =
         GetPreferences _ ->
             infoForOutside { tag = "GetPreferences", data = Encode.null }
 
-        WriteFile document ->
+        WriteDocument document ->
             infoForOutside { tag = "WriteFile", data = Codec.Document.documentEncoder document }
 
         WriteMetadata metadata ->
             infoForOutside { tag = "WriteMetadata", data = Codec.Document.metadataEncoder metadata }
 
-        CreateFile document ->
+        CreateDocument document ->
             infoForOutside { tag = "CreateFile", data = Codec.Document.documentEncoder document }
 
-        AskForFileList ->
+        AskForDocumentList ->
             infoForOutside { tag = "AskForFileList", data = Encode.null }
 
-        AskForFile fileName ->
+        AskForDocument fileName ->
             infoForOutside { tag = "AskForFile", data = Encode.string fileName }
 
         DeleteFileFromLocalStorage fileName ->

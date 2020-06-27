@@ -2,6 +2,9 @@ module Update.Document exposing
     ( changeMetaData
     , createDocument
     , readDocumentCmd
+    , setIndex
+    , load
+    , load_
     , updateDocument
     , listDocuments
     , loadDocument
@@ -12,20 +15,55 @@ import Cmd.Extra exposing (withCmd, withCmds, withNoCmd)
 import Document exposing (DocType(..), Document)
 import Helper.Common
 import Helper.Load
+import Update.Helper
 import UuidHelper
+import Index
 import Helper.Server
 import Helper.File
 import Helper.Sync
 import Outside
 import Types exposing (ChangingFileNameState(..)
-  , DocumentStatus(..),
+  , DocumentStatus(..), PopupWindow(..),
   FileLocation(..), Model, Msg, PopupStatus(..))
 import View.Scroll
+
+load : Result error Document-> Model -> Model
+load result model =
+    let
+                    _ =
+                        Debug.log "GotDocument" "load"
+    in
+    case result of
+        Ok document ->
+            load_ document model
+
+        Err _ ->
+            model
+                |> Update.Helper.postMessage "Error getting remote document"
+
+load_ : Document -> Model -> Model
+load_ document model =
+     case document.docType of
+            MarkdownDoc ->
+                Helper.Load.load document model
+
+            MiniLaTeXDoc ->
+                Helper.Load.load document model
+
+            IndexDoc ->
+                model
+                    |> setIndex document
+
+setIndex : Document -> Model -> Model
+setIndex document model =
+    { model | index = Debug.log "INDEX" (Index.get  (Debug.log "CONT" document.content))
+    , popupStatus = PopupOpen IndexPopup}
+
 
 readDocumentCmd fileName model =
     case model.fileLocation of
                  FilesOnDisk ->
-                   Outside.sendInfo (Outside.AskForFile fileName)
+                   Outside.sendInfo (Outside.AskForDocument fileName)
                  FilesOnServer ->
                     Helper.Server.getDocument model.serverURL fileName
 
@@ -56,7 +94,7 @@ updateDocumentCmd : Document -> Model -> Cmd Msg
 updateDocumentCmd document model =
     case model.fileLocation of
         FilesOnDisk ->
-            Outside.sendInfo (Outside.WriteFile document)
+            Outside.sendInfo (Outside.WriteDocument document)
 
         FilesOnServer ->
             Helper.Server.updateDocument model.serverURL document
@@ -86,7 +124,7 @@ changeMetaData model =
         , document = newDocument
         , fileList = Helper.Server.updateFileList (Document.toMetadata newDocument) model.fileList
       }
-    , Outside.sendInfo (Outside.WriteFile newDocument)
+    , Outside.sendInfo (Outside.WriteDocument newDocument)
     )
 
 
@@ -135,7 +173,7 @@ createDocCmd : Document -> Model-> Cmd Msg
 createDocCmd doc model =
             case model.fileLocation of
                 FilesOnDisk ->
-                    Outside.sendInfo (Outside.CreateFile doc)
+                    Outside.sendInfo (Outside.CreateDocument doc)
 
                 FilesOnServer ->
                     Helper.Server.createDocument model.serverURL doc

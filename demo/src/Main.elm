@@ -72,6 +72,7 @@ import View.FileListPopup as RemoteFileListPopup
 import View.FilePopup as FilePopup
 import View.Footer
 import View.Helpers
+import View.IndexPopup as IndexPopup
 import View.NewFilePopup as NewFilePopup
 import View.Scroll
 
@@ -98,6 +99,8 @@ init flags =
     in
     { editor = newEditor
     , renderingData = load 0 ( 0, 0 ) (OMarkdown ExtendedMath) Data.about.content
+    , indexName = ""
+    , index = []
     , counter = 1
     , currentTime = Time.millisToPosix 0
     , preferences = Nothing
@@ -210,14 +213,11 @@ update msg model =
                 Outside.GotClipboard clipboard ->
                     pasteToEditorAndClipboard model clipboard
 
-                Outside.GotFileList fileList ->
+                Outside.GotDocumentList fileList ->
                     ( { model | fileList = fileList }, Cmd.none )
 
-                Outside.GotFile file ->
-                    Helper.Load.load file model
-                        |> (\m -> { m | popupStatus = PopupClosed })
-                        -- |> (\m -> m |> withCmd (Helper.Server.updateDocument m.serverURL m.document))
-                        -- TODO: fix the above
+                Outside.GotDocument document ->
+                    Update.Document.load_ document model
                         |> withNoCmd
 
                 Outside.GotPreferences preferences ->
@@ -398,15 +398,7 @@ update msg model =
                 |> withCmd (Helper.Server.getDocument model.serverURL fileName)
 
         GotDocument result ->
-            case result of
-                Ok document ->
-                    Helper.Load.load document model
-                        |> withNoCmd
-
-                Err _ ->
-                    model
-                        |> Update.Helper.postMessage "Error getting remote document"
-                        |> withNoCmd
+            Update.Document.load result model |> withNoCmd
 
         AskForRemoteDocuments ->
             model |> withCmd (Helper.Server.getDocumentList model.serverURL)
@@ -548,6 +540,7 @@ mainColumn model =
                 , Element.inFront (FilePopup.view model)
                 , Element.inFront (RemoteFileListPopup.view model)
                 , Element.inFront (NewFilePopup.view model)
+                , Element.inFront (IndexPopup.view model)
                 ]
                 (viewEditorAndRenderedText model)
             , View.Footer.view model model.width 40

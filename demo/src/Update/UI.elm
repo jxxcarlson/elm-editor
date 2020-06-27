@@ -22,6 +22,10 @@ import View.Scroll
 
 managePopup : PopupStatus -> Model -> ( Model, Cmd Types.Msg )
 managePopup status model =
+    let
+        _ =
+            Debug.log "Popup Status" status
+    in
     case status of
         PopupOpen LocalStoragePopup ->
             -- TODO: needs to be eliminated
@@ -52,6 +56,9 @@ managePopup status model =
 
         PopupOpen FileListPopup ->
             Update.Document.listDocuments status model
+
+        PopupOpen IndexPopup ->
+            { model | popupStatus = status } |> withNoCmd
 
         PopupOpen _ ->
             { model | popupStatus = status } |> withNoCmd

@@ -50,6 +50,8 @@ type alias Model =
     , fileLocation : FileLocation
 
     -- document
+    , indexName : String
+    , index : List String
     , renderingData : RenderingData
     , docTitle : String
     , docType : DocType
@@ -110,6 +112,7 @@ type PopupStatus
 type PopupWindow
     = FilePopup
     | NewFilePopup
+    | IndexPopup
     | LocalStoragePopup
     | FileListPopup
     | AuthorPopup

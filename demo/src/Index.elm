@@ -1,24 +1,12 @@
-module IndexDocument exposing (render)
+module Index exposing (extensionBlock, get, testStr, view)
 
-import Element
-    exposing
-        ( Element
-        , alignRight
-        , column
-        , el
-        , height
-        , paddingXY
-        , px
-        , row
-        , scrollbarY
-        , spacing
-        , text
-        , width
-        )
+import Element exposing (Element, height, paddingXY, px, spacing, width)
 import Element.Background as Background
 import Element.Font as Font
+import Helper.Common
 import Parser.Advanced exposing (..)
 import Types exposing (Msg(..))
+import View.Widget as Widget
 
 
 type alias Parser a =
@@ -35,14 +23,31 @@ type Context
     | Record
 
 
-render : String -> String -> String -> Element Msg
-render userName currentFileName str =
-    case getIndexBlock str of
-        Ok fileList ->
-            renderBlock userName currentFileName (String.lines fileList)
+testStr =
+    """
+# Index test
 
-        Err _ ->
-            Element.el [] (Element.text "Error constructing file list")
+## Subsection
+
+@@index
+jxxcarlson.TUG_talk-2c8b-4072.md
+jxxcarlson.extended_markdown-cfeb-49bf.md
+jxxcarlson.test-3f7d-483d.tex
+
+
+"""
+
+
+view : Float -> String -> String -> List String -> Element Msg
+view height_ userName currentFileName list =
+    Element.column
+        [ width (px 500)
+        , height (px <| round <| Helper.Common.windowHeight height_ + 28)
+        , paddingXY 30 30
+        , Background.color (Element.rgba 1.0 0.75 0.75 0.8)
+        , spacing 16
+        ]
+        (List.map (viewFileName userName currentFileName) list)
 
 
 {-|
@@ -51,9 +56,16 @@ render userName currentFileName str =
     --> Ok "\none\ntwo"
 
 -}
-getIndexBlock : String -> Result (List (DeadEnd Context Problem)) String
-getIndexBlock str =
-    run extensionBlock str
+get : String -> List String
+get data =
+    case run extensionBlock data of
+        Ok indexAsString ->
+            indexAsString
+                |> String.lines
+                |> List.filter (\line -> line /= "")
+
+        Err _ ->
+            []
 
 
 extensionBlock : Parser String

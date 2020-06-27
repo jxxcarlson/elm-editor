@@ -35,6 +35,7 @@ view model width_ height_ =
         ]
         [ View.Widget.openPreferencesPopupButton model
         , View.Widget.openFileListPopupButton model
+        , View.Helpers.showIf (model.index /= []) (View.Widget.openIndexButton model)
         , View.Widget.toggleFileLocationButton model
         , View.Widget.saveFileToStorageButton model
         , View.Widget.openFilePopupButton model

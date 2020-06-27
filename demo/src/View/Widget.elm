@@ -15,6 +15,7 @@ module View.Widget exposing
     , newDocumentButton
     , openFileListPopupButton
     , openFilePopupButton
+    , openIndexButton
     , openNewFilePopupButton
     , openPreferencesPopupButton
     , plainButton
@@ -198,6 +199,22 @@ openFileListPopupButton model =
 
         PopupClosed ->
             button 60 "Files" (ManagePopup (PopupOpen FileListPopup)) []
+
+
+openIndexButton model =
+    case model.popupStatus of
+        PopupOpen IndexPopup ->
+            Button.make (ManagePopup PopupClosed) "Close"
+                |> Button.withWidth (Bounded 60)
+                |> Button.withSelected False
+                |> Button.withBackgroundColor Style.redColor
+                |> Button.toElement
+
+        PopupOpen _ ->
+            button 60 "Index" (ManagePopup (PopupOpen IndexPopup)) []
+
+        PopupClosed ->
+            button 60 "Index" (ManagePopup (PopupOpen IndexPopup)) []
 
 
 openFilePopupButton model =

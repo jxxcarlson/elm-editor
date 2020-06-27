@@ -9,7 +9,7 @@ import Types exposing (Msg(..))
 
 getDocumentList : Cmd msg
 getDocumentList =
-    Outside.sendInfo Outside.AskForFileList
+    Outside.sendInfo Outside.AskForDocumentList
 
 
 importFile : Cmd Msg

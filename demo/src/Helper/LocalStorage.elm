@@ -20,9 +20,9 @@ saveFileToLocalStorage model =
 
 saveFileToLocalStorage_ : Document -> Cmd msg
 saveFileToLocalStorage_ document =
-    Outside.sendInfo (Outside.WriteFile document)
+    Outside.sendInfo (Outside.WriteDocument document)
 
 
 getListOfFilesInLocalStorage : Cmd msg
 getListOfFilesInLocalStorage =
-    Outside.sendInfo Outside.AskForFileList
+    Outside.sendInfo Outside.AskForDocumentList
