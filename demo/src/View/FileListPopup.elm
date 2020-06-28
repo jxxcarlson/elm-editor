@@ -1,6 +1,6 @@
 module View.FileListPopup exposing (prettify, view)
 
-import Document exposing (Metadata)
+import Document exposing (DocType(..), Metadata)
 import Element
     exposing
         ( Element
@@ -19,7 +19,8 @@ import Element
 import Element.Background as Background
 import Element.Font as Font
 import Helper.Common
-import Types exposing (FileLocation(..), Model, Msg(..), PopupStatus(..), PopupWindow(..))
+import Types exposing (FileLocation(..), HandleIndex(..), Model, Msg(..), PopupStatus(..), PopupWindow(..))
+import View.Helpers
 import View.Widget as Widget
 
 
@@ -57,13 +58,13 @@ view model =
                     Document.toMetadata model.document
             in
             column
-                [ width (px 500)
+                [ width (px 570)
                 , height (px <| round <| Helper.Common.windowHeight model.height + 28)
                 , paddingXY 30 30
                 , Background.color (Element.rgba 1.0 0.75 0.75 0.8)
                 , spacing 16
                 ]
-                [ row [ width (px 450) ] [ text title, el [ alignRight ] (Widget.closePopupButton model) ]
+                [ row [ width (px 450) ] [ text title, el [ alignRight ] Widget.closePopupButton ]
                 , column
                     [ spacing 8
                     , height (px 400)
@@ -87,6 +88,8 @@ viewFileName : String -> Metadata -> Metadata -> Element Msg
 viewFileName userName metaDataOfCurrentDocument metadata =
     row [ spacing 8 ]
         [ documentLinkButton userName metaDataOfCurrentDocument metadata
+        , View.Helpers.showIf (metadata.docType == IndexDoc) (editIndexButton metadata)
+        , View.Helpers.showIf (metadata.docType /= IndexDoc) placeholder
         , deleteDocumentButton metadata
         ]
 
@@ -114,8 +117,21 @@ documentLinkButton userName metaDataOfCurrentDocument metadata =
     in
     Widget.plainButton 350
         (prettify userName metadata.fileName)
-        (GetDocument metadata.fileName)
+        (GetDocument UseIndex metadata.fileName)
         [ Font.color (Element.rgb 0 0 0.9), bgColor, Element.padding 2 ]
+
+
+editIndexButton : Metadata -> Element Msg
+editIndexButton metadata =
+    Widget.plainButton 90
+        "Edit index"
+        (GetDocument EditIndex metadata.fileName)
+        [ Font.color (Element.rgb 0 0 0.9), Element.padding 2 ]
+
+
+placeholder : Element Msg
+placeholder =
+    Element.el [ width (px 90) ] (text "")
 
 
 prettify : String -> String -> String

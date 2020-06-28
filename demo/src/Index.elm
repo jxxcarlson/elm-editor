@@ -5,7 +5,7 @@ import Element.Background as Background
 import Element.Font as Font
 import Helper.Common
 import Parser.Advanced exposing (..)
-import Types exposing (Msg(..))
+import Types exposing (HandleIndex(..), Msg(..))
 import View.Widget as Widget
 
 
@@ -47,7 +47,11 @@ view height_ userName currentFileName list =
         , Background.color (Element.rgba 1.0 0.75 0.75 0.8)
         , spacing 16
         ]
-        (List.map (viewFileName userName currentFileName) list)
+        (closePopup "Index" :: List.map (viewFileName userName currentFileName) list)
+
+
+closePopup title =
+    Element.row [ width (px 450) ] [ Element.text title, Element.el [ Element.alignRight ] Widget.closePopupButton ]
 
 
 {-|
@@ -101,7 +105,7 @@ viewFileName userName currentFileName fileName =
     in
     Widget.plainButton 350
         (prettify userName fileName)
-        (GetDocument fileName)
+        (GetDocument UseIndex fileName)
         [ Font.color (Element.rgb 0 0 0.9), bgColor, Element.padding 2 ]
 
 

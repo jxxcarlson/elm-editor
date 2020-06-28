@@ -47,7 +47,7 @@ view model =
 
 
 titleLine model =
-    row [ width (px 450) ] [ text "New File", el [ alignRight ] (Widget.closePopupButton model) ]
+    row [ width (px 450) ] [ text "New File", el [ alignRight ] Widget.closePopupButton ]
 
 
 fileInput msg text label =

@@ -299,8 +299,8 @@ update msg model =
             model
                 |> withCmd (Helper.Server.createDocument model.serverURL model.document)
 
-        GetDocument fileName ->
-            { model | popupStatus = PopupClosed } |> withCmd (Update.Document.readDocumentCmd fileName model)
+        GetDocument handleIndex fileName ->
+            { model | handleIndex = handleIndex, popupStatus = PopupClosed } |> withCmd (Update.Document.readDocumentCmd fileName model)
 
         SetViewPortForElement result ->
             Update.UI.setViewportForElement result model

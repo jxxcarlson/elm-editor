@@ -91,7 +91,7 @@ inputItem label msg inputText width_ =
 
 
 titleLine model =
-    row [ width (px 450) ] [ text ("File info: " ++ model.document.fileName), el [ alignRight ] (Widget.closePopupButton model) ]
+    row [ width (px 450) ] [ text ("File info: " ++ model.document.fileName), el [ alignRight ] Widget.closePopupButton ]
 
 
 fileInput : (String -> Msg) -> String -> String -> Int -> Element Msg

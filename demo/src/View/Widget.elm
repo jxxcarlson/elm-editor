@@ -169,7 +169,7 @@ saveFileToStorageButton model =
                 ]
 
 
-closePopupButton model =
+closePopupButton =
     altButton 20 "X" (ManagePopup PopupClosed) [ Font.size 14 ]
 
 

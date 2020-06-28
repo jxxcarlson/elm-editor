@@ -36,7 +36,7 @@ view model =
                 , Background.color (Element.rgba 1.0 0.75 0.75 0.8)
                 , spacing 16
                 ]
-                [ row [ width (px 450) ] [ text "Files", el [ alignRight ] (Widget.closePopupButton model) ]
+                [ row [ width (px 450) ] [ text "Files", el [ alignRight ] Widget.closePopupButton ]
                 , column
                     [ spacing 8
                     , height (px 400)

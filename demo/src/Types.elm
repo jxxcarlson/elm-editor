@@ -155,7 +155,7 @@ type Msg
     | DocumentLoaded String
     | ToggleDocType
     | CreateDocument
-    | GetDocument String
+    | GetDocument HandleIndex String
     | ChangeMetadata String
     | CancelChangeFileName
     | SoftDelete Metadata

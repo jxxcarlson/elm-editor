@@ -176,7 +176,7 @@ viewSignUp model =
 
 
 titleLine model =
-    row [ width (px 450) ] [ text "Preferences", el [ alignRight ] (Widget.closePopupButton model) ]
+    row [ width (px 450) ] [ text "Preferences", el [ alignRight ] Widget.closePopupButton ]
 
 
 authorInput msg text label =
