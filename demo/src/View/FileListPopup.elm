@@ -136,28 +136,36 @@ placeholder =
 
 prettify : String -> String -> String
 prettify userName str =
+    if List.length (String.split "-" str) > 2 then
+        prettify_ userName str
+
+    else
+        str |> String.replace userName ""
+
+
+prettify_ : String -> String -> String
+prettify_ userName str =
     let
         parts =
             String.split "-" str
+
+        n =
+            List.length parts
+
+        a =
+            List.take (n - 2) parts
+                |> String.join "-"
+
+        b_ =
+            List.drop (n - 1) parts
+                |> List.head
+                |> Maybe.withDefault "???"
+
+        b =
+            b_
+                |> String.split "."
+                |> List.drop 1
+                |> List.head
+                |> Maybe.withDefault "???"
     in
-    case List.length parts == 3 of
-        False ->
-            String.replace userName "" str
-
-        True ->
-            let
-                a =
-                    List.take 1 parts
-                        |> List.head
-                        |> Maybe.withDefault "???"
-
-                b =
-                    parts
-                        |> List.drop 2
-                        |> List.map (String.split ".")
-                        |> List.concat
-                        |> List.drop 1
-                        |> List.head
-                        |> Maybe.withDefault "???"
-            in
-            a ++ "." ++ b |> String.replace userName ""
+    a ++ "." ++ b |> String.replace userName ""

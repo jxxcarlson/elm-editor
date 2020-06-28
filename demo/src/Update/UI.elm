@@ -13,6 +13,7 @@ import Helper.Server
 import Helper.Sync
 import Markdown.Render exposing (MarkdownMsg(..))
 import MiniLatex.Edit
+import Outside
 import Render.Types exposing (RenderMsg(..))
 import Types exposing (DocumentStatus(..), FileLocation(..), Model, Msg(..), PopupStatus(..), PopupWindow(..))
 import Update.Document
@@ -49,7 +50,8 @@ managePopup status model =
                         , belongsTo_ = model.document.belongsTo
                     }
             in
-            { newModel | popupStatus = status } |> withNoCmd
+            { newModel | popupStatus = status }
+                |> withCmd Outside.getPreferences
 
         PopupOpen NewFilePopup ->
             { model | popupStatus = status, fileName_ = "" } |> withNoCmd

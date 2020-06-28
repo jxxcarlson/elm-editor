@@ -1,5 +1,6 @@
 module View.Style exposing
     ( blackColor
+    , blueColor
     , brightRedColor
     , grayColor
     , redColor
@@ -11,6 +12,10 @@ import Element
 
 redColor =
     Element.rgb255 120 30 30
+
+
+blueColor =
+    Element.rgb255 30 30 120
 
 
 brightRedColor =

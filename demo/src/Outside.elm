@@ -2,6 +2,7 @@ port module Outside exposing
     ( InfoForElm(..)
     , InfoForOutside(..)
     , getInfo
+    , getPreferences
     , sendInfo
     )
 
@@ -46,6 +47,11 @@ type InfoForOutside
     | AskForDocument String
     | SetUserName String
     | DeleteFileFromLocalStorage String
+
+
+getPreferences : Cmd msg
+getPreferences =
+    sendInfo (GetPreferences Encode.null)
 
 
 getInfo : (InfoForElm -> msg) -> (String -> msg) -> Sub msg

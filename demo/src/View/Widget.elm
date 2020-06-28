@@ -207,14 +207,23 @@ openIndexButton model =
             Button.make (ManagePopup PopupClosed) "Close"
                 |> Button.withWidth (Bounded 60)
                 |> Button.withSelected False
-                |> Button.withBackgroundColor Style.redColor
+                |> Button.withBackgroundColor Style.blueColor
                 |> Button.toElement
 
         PopupOpen _ ->
-            button 60 "Index" (ManagePopup (PopupOpen IndexPopup)) []
+            Button.make (ManagePopup (PopupOpen IndexPopup)) "Index"
+                |> Button.withWidth (Bounded 60)
+                |> Button.withSelected False
+                |> Button.withBackgroundColor Style.blueColor
+                |> Button.toElement
 
+        --   button 60 "Index" (ManagePopup (PopupOpen IndexPopup)) []
         PopupClosed ->
-            button 60 "Index" (ManagePopup (PopupOpen IndexPopup)) []
+            Button.make (ManagePopup (PopupOpen IndexPopup)) "Index"
+                |> Button.withWidth (Bounded 60)
+                |> Button.withSelected False
+                |> Button.withBackgroundColor Style.blueColor
+                |> Button.toElement
 
 
 openFilePopupButton model =
