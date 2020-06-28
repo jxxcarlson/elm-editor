@@ -85,6 +85,24 @@ prepareFileList fileList =
 
 viewFileName : String -> Metadata -> Metadata -> Element Msg
 viewFileName userName metaDataOfCurrentDocument metadata =
+    row [ spacing 8 ]
+        [ documentLinkButton userName metaDataOfCurrentDocument metadata
+        , deleteDocumentButton metadata
+        ]
+
+
+deleteDocumentButton : Metadata -> Element Msg
+deleteDocumentButton metadata =
+    el [ Element.padding 2, Background.color (Element.rgba 0.7 0.3 0.3 0.5) ]
+        (Widget.plainButton 55
+            "delete"
+            (SoftDelete metadata)
+            []
+        )
+
+
+documentLinkButton : String -> Metadata -> Metadata -> Element Msg
+documentLinkButton userName metaDataOfCurrentDocument metadata =
     let
         bgColor =
             case metaDataOfCurrentDocument.id == metadata.id of
@@ -94,18 +112,10 @@ viewFileName userName metaDataOfCurrentDocument metadata =
                 False ->
                     Background.color (Element.rgba 0 0 0 0)
     in
-    row [ spacing 8 ]
-        [ Widget.plainButton 350
-            (prettify userName metadata.fileName)
-            (GetDocument metadata.fileName)
-            [ Font.color (Element.rgb 0 0 0.9), bgColor, Element.padding 2 ]
-        , el [ Element.padding 2, Background.color (Element.rgba 0.7 0.3 0.3 0.5) ]
-            (Widget.plainButton 55
-                "delete"
-                (SoftDelete metadata)
-                []
-            )
-        ]
+    Widget.plainButton 350
+        (prettify userName metadata.fileName)
+        (GetDocument metadata.fileName)
+        [ Font.color (Element.rgb 0 0 0.9), bgColor, Element.padding 2 ]
 
 
 prettify : String -> String -> String

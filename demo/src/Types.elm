@@ -4,6 +4,7 @@ module Types exposing
     , ChangingFileNameState(..)
     , DocumentStatus(..)
     , FileLocation(..)
+    , HandleIndex(..)
     , Model
     , Msg(..)
     , PopupStatus(..)
@@ -52,6 +53,7 @@ type alias Model =
     -- document
     , indexName : String
     , index : List String
+    , handleIndex : HandleIndex
     , renderingData : RenderingData
     , docTitle : String
     , docType : DocType
@@ -85,6 +87,11 @@ type alias Model =
 type AppMode
     = Desktop
     | Webapp
+
+
+type HandleIndex
+    = EditIndex
+    | UseIndex
 
 
 type SignInMode

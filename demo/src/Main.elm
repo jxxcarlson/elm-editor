@@ -55,6 +55,7 @@ import Types
         , ChangingFileNameState(..)
         , DocumentStatus(..)
         , FileLocation(..)
+        , HandleIndex(..)
         , Model
         , Msg(..)
         , PopupStatus(..)
@@ -101,6 +102,7 @@ init flags =
     , renderingData = load 0 ( 0, 0 ) (OMarkdown ExtendedMath) Data.about.content
     , indexName = ""
     , index = []
+    , handleIndex = UseIndex
     , counter = 1
     , currentTime = Time.millisToPosix 0
     , preferences = Nothing
@@ -221,6 +223,7 @@ update msg model =
                         |> withNoCmd
 
                 Outside.GotPreferences preferences ->
+                    -- TODO
                     { model | preferences = Just preferences }
                         |> Update.Helper.postMessage ("username: " ++ preferences.userName)
                         |> withNoCmd

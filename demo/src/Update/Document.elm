@@ -23,7 +23,7 @@ import Helper.File
 import Helper.Sync
 import Outside
 import Types exposing (ChangingFileNameState(..)
-  , DocumentStatus(..), PopupWindow(..),
+  , DocumentStatus(..), PopupWindow(..), HandleIndex(..),
   FileLocation(..), Model, Msg, PopupStatus(..))
 import View.Scroll
 
@@ -51,8 +51,10 @@ load_ document model =
                 Helper.Load.load document model
 
             IndexDoc ->
-                model
-                    |> setIndex document
+                case model.handleIndex of
+                    EditIndex -> Helper.Load.load document model
+                    UseIndex ->  setIndex document model
+
 
 setIndex : Document -> Model -> Model
 setIndex document model =
