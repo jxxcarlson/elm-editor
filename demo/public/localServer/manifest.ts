@@ -16,7 +16,8 @@ export const readManifest = async (): Promise<Metadata[]> => {
 
   const decoder = new TextDecoder();
   const decodedData = decoder.decode(data);
-
+  console.log("MANIF", decodedData);
+  
   return load(decodedData);
 };
 
@@ -92,7 +93,7 @@ export const createDocument = async ({
     const doc_ = { id: id, fileName: fileName, author: author,
        timeCreated: timeCreated, timeUpdated: timeUpdated, tags: tags,
        categories: categories, title: title, subtitle: subtitle,
-       abstract: abstract, belongsTo: belongsTo, docType: docType
+       abstract: abstract, belongsTo: belongsTo, docType: docType,
        content: content };
 
     const metaData_ = { id: id, fileName: fileName, author: author,
@@ -142,14 +143,14 @@ export const updateDocument = async ({
 
     const sourceDoc: Document = { id: id, fileName: fileName, author: author,
        timeCreated: timeCreated, timeUpdated: timeUpdated, tags: tags,
-       categories: categories, title: title, subtitle: subtitle,
-       abstract: abstract, belongsTo: belongsTo, docType: string;
+       categories: categories, title: title, subtitle: subtitle, abstract: abstract,
+       belongsTo: belongsTo, docType: docType,
        content: content };
 
     const sourceMetadata: Metadata = { id: id, fileName: fileName, author: author,
        timeCreated: timeCreated, timeUpdated: timeUpdated, tags: tags,
        categories: categories, title: title, subtitle: subtitle,
-       abstract: abstract, belongsTo: belongsTo, docType: string; };
+       abstract: abstract, belongsTo: belongsTo, docType: docType };
 
     if (isNotPresent(sourceMetadata, manifest)) {
       manifest.push(sourceMetadata);

@@ -19,17 +19,12 @@ fileLocation =
     FilesOnDisk
 
 
-serverURL =
-    "http://161.35.125.40:80/api"
-
-
-
-{-
-   SERVERS:
-   "http://localhost:4000/api"
-   "http://161.35.125.40:80/api"
-
+{-| SERVERS:
+"<http://localhost:4000/api">
+"<http://161.35.125.40:80/api">
 -}
+serverURL =
+    "http://localhost:4000/api"
 
 
 testURL =

@@ -14,7 +14,7 @@ export interface Document {
   subtitle: string;
   abstract: string;
   belongsTo: string;
-  docType string;
+  docType: string;
   content: string;
 }
 
