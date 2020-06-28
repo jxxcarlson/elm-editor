@@ -120,6 +120,7 @@ init flags =
     , subtitle_ = ""
     , abstract_ = ""
     , belongsTo_ = ""
+    , searchText_ = ""
     , changingFileNameState = FileNameOK
     , fileList = []
     , fileLocation = Config.fileLocation
@@ -278,6 +279,10 @@ update msg model =
 
                         False ->
                             ( { model | editor = newEditor }, Cmd.map EditorMsg cmd )
+
+        -- SEARCH
+        InputSearch str ->
+            { model | searchText_ = str } |> withNoCmd
 
         -- DOCUMENT
         LoadAboutDocument ->

@@ -65,6 +65,7 @@ type alias Model =
     , subtitle_ : String
     , abstract_ : String
     , belongsTo_ : String
+    , searchText_ : String
     , changingFileNameState : ChangingFileNameState
     , fileList : List Metadata
     , documentStatus : DocumentStatus
@@ -145,6 +146,7 @@ type Msg
     | About
     | ToggleFileLocation FileLocation
       -- Document
+    | InputSearch String
     | InputFileName String
     | InputTags String
     | InputCategories String

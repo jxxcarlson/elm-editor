@@ -33,7 +33,7 @@ view model =
         PopupOpen FileListPopup ->
             let
                 filesToDisplay =
-                    model.fileList |> prepareFileList
+                    model.fileList |> prepareFileList model.searchText_
 
                 n =
                     List.length filesToDisplay |> String.fromInt
@@ -65,6 +65,7 @@ view model =
                 , spacing 16
                 ]
                 [ row [ width (px 450) ] [ text title, el [ alignRight ] Widget.closePopupButton ]
+                , Widget.searchInput model
                 , column
                     [ spacing 8
                     , height (px 400)
@@ -77,10 +78,11 @@ view model =
             Element.none
 
 
-prepareFileList : List Metadata -> List Metadata
-prepareFileList fileList =
+prepareFileList : String -> List Metadata -> List Metadata
+prepareFileList searchKey fileList =
     fileList
         |> List.filter (\r -> not (String.contains "deleted" r.fileName))
+        |> List.filter (\r -> String.contains searchKey r.fileName)
         |> List.sortBy .fileName
 
 

@@ -21,6 +21,7 @@ module View.Widget exposing
     , plainButton
     , publishFileButton
     , saveFileToStorageButton
+    , searchInput
     , setDocumentDirectoryButton
     , setUserNameButton
     , signInButton
@@ -61,6 +62,7 @@ import Types
         )
 import View.Style as Style
 import Widget.Button as Button exposing (Size(..))
+import Widget.TextField as TextField
 
 
 
@@ -325,6 +327,18 @@ button_ width str msg =
         |> Button.withWidth (Bounded width)
         |> Button.withSelected False
         |> Button.toElement
+
+
+searchInput model =
+    input InputSearch model.searchText_ "" 300 0
+
+
+input msg text label width labelWidth =
+    TextField.make msg text label
+        |> TextField.withHeight 30
+        |> TextField.withWidth width
+        |> TextField.withLabelWidth labelWidth
+        |> TextField.toElement
 
 
 button width str msg attr =
