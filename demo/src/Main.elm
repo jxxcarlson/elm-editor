@@ -422,22 +422,8 @@ update msg model =
                         |> withNoCmd
 
         ToggleFileLocation fileLocation ->
-            let
-                message =
-                    case fileLocation of
-                        FilesOnDisk ->
-                            "# Notice!\n\n*Changing storage to your computer's hard disk.*"
+            Update.Document.listDocuments (PopupOpen FileListPopup) { model | fileLocation = fileLocation }
 
-                        FilesOnServer ->
-                            "# Notice!\n\n*Changing storage to web server*\n\n> " ++ model.serverURL
-            in
-            { model
-                | fileLocation = fileLocation
-            }
-                |> Helper.Load.load (Data.tmp message)
-                |> withNoCmd
-
-        -- AUTHOR / USER
         InputUsername str ->
             { model | userName = str } |> withNoCmd
 
