@@ -123,7 +123,7 @@ type PopupWindow
     | IndexPopup
     | LocalStoragePopup
     | FileListPopup
-    | AuthorPopup
+    | PreferencesPopup
 
 
 type DocumentStatus

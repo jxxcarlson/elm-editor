@@ -177,14 +177,14 @@ closePopupButton =
 
 openPreferencesPopupButton model =
     case model.popupStatus of
-        PopupOpen AuthorPopup ->
+        PopupOpen PreferencesPopup ->
             button_ 60 "Close" (ManagePopup PopupClosed)
 
         PopupOpen _ ->
             button_ 90 "Preferences" (ManagePopup PopupClosed)
 
         PopupClosed ->
-            button_ 90 "Preferences" (ManagePopup (PopupOpen AuthorPopup))
+            button_ 90 "Preferences" (ManagePopup (PopupOpen PreferencesPopup))
 
 
 openFileListPopupButton model =

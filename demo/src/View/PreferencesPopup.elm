@@ -1,4 +1,4 @@
-module View.AuthorPopup exposing (..)
+module View.PreferencesPopup exposing (..)
 
 import Element
     exposing
@@ -50,7 +50,7 @@ viewSignedIn model =
                 PopupClosed ->
                     Element.none
 
-                PopupOpen AuthorPopup ->
+                PopupOpen PreferencesPopup ->
                     column
                         [ width (px 500)
                         , height (px <| round <| Helper.Common.windowHeight model.height + 28)
@@ -73,7 +73,7 @@ viewSetup model =
         PopupClosed ->
             Element.none
 
-        PopupOpen AuthorPopup ->
+        PopupOpen PreferencesPopup ->
             column
                 [ width (px 500)
                 , height (px <| round <| Helper.Common.windowHeight model.height + 28)
@@ -129,7 +129,7 @@ viewSignIn model =
         PopupClosed ->
             Element.none
 
-        PopupOpen AuthorPopup ->
+        PopupOpen PreferencesPopup ->
             column
                 [ width (px 500)
                 , height (px <| round <| Helper.Common.windowHeight model.height + 28)
@@ -154,7 +154,7 @@ viewSignUp model =
         PopupClosed ->
             Element.none
 
-        PopupOpen AuthorPopup ->
+        PopupOpen PreferencesPopup ->
             column
                 [ width (px 500)
                 , height (px <| round <| Helper.Common.windowHeight model.height + 28)

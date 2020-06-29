@@ -54,13 +54,21 @@ view model =
                         Just path ->
                             View.Helpers.shortPath 2 path
 
+                url =
+                    model.serverURL
+                        |> String.replace "https://" ""
+                        |> String.replace "http://" ""
+                        |> String.split ":"
+                        |> List.head
+                        |> Maybe.withDefault "Server"
+
                 title =
                     case model.fileLocation of
                         FilesOnDisk ->
                             documentDirectoryPhrase ++ " (" ++ n ++ ")"
 
                         FilesOnServer ->
-                            "Remote Files (" ++ n ++ ")"
+                            "Documents at " ++ url ++ " (" ++ n ++ ")"
 
                 metadataOfCurrentDocument =
                     Document.toMetadata model.document

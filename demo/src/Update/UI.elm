@@ -62,7 +62,7 @@ managePopup status model =
         PopupOpen IndexPopup ->
             { model | popupStatus = status } |> withNoCmd
 
-        PopupOpen AuthorPopup ->
+        PopupOpen PreferencesPopup ->
             { model | popupStatus = status } |> withCmd Outside.getPreferences
 
         PopupClosed ->

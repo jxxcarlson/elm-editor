@@ -68,13 +68,13 @@ import Update.System
 import Update.UI
 import Update.User
 import UuidHelper
-import View.AuthorPopup as AuthorPopup
 import View.FileListPopup as RemoteFileListPopup
 import View.FilePopup as FilePopup
 import View.Footer
 import View.Helpers
 import View.IndexPopup as IndexPopup
 import View.NewFilePopup as NewFilePopup
+import View.PreferencesPopup as AuthorPopup
 import View.Scroll
 
 

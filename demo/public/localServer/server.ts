@@ -59,6 +59,7 @@ router
 
 const app = new Application();
 
+// app.use(oakCors({origin: "http://localhost:8000"})); // Enable CORS for All Routes
 app.use(oakCors()); // Enable CORS for All Routes
 app.use(router.routes());
 app.use(router.allowedMethods());

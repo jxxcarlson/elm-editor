@@ -21,6 +21,8 @@
   align-items: baseline;
 }
 
+body { white-space: normal;}
+
 p {white-space: normal;}
 
 
