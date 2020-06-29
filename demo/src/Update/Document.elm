@@ -29,10 +29,6 @@ import View.Scroll
 
 load : Result error Document-> Model -> Model
 load result model =
-    let
-                    _ =
-                        Debug.log "GotDocument" "load"
-    in
     case result of
         Ok document ->
             load_ document model
@@ -58,7 +54,7 @@ load_ document model =
 
 setIndex : Document -> Model -> Model
 setIndex document model =
-    { model | index = Debug.log "INDEX" (Index.get  (Debug.log "CONT" document.content))
+    { model | index = Index.get  document.content
     , popupStatus = PopupOpen IndexPopup}
 
 

@@ -78,13 +78,6 @@ getInfo tagger onError =
                 "GotFile" ->
                     case D.decodeValue Codec.Document.documentDecoder outsideInfo.data of
                         Ok document ->
-                            let
-                                _ =
-                                    Debug.log "GotDocument" document.fileName
-
-                                _ =
-                                    Debug.log "DocType" document.docType
-                            in
                             tagger <| GotDocument document
 
                         Err _ ->
