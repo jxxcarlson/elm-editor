@@ -190,6 +190,7 @@ listDocuments status model =
                ]
              FilesOnServer ->
                [ Helper.Server.getDocumentList model.serverURL
+               , Outside.getPreferences
                -- , Helper.Server.updateDocument model.serverURL model.document
                ])
 

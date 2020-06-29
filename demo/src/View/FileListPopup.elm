@@ -46,10 +46,18 @@ view model =
                         Just prefs ->
                             prefs.userName ++ "."
 
+                documentDirectoryPhrase =
+                    case Maybe.map .documentDirectory model.preferences of
+                        Nothing ->
+                            "Local files"
+
+                        Just path ->
+                            View.Helpers.shortPath 2 path
+
                 title =
                     case model.fileLocation of
                         FilesOnDisk ->
-                            "Local Files (" ++ n ++ ")"
+                            documentDirectoryPhrase ++ " (" ++ n ++ ")"
 
                         FilesOnServer ->
                             "Remote Files (" ++ n ++ ")"

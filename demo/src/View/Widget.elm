@@ -100,10 +100,10 @@ getPreferencesButton =
 toggleFileLocationButton model =
     case model.fileLocation of
         FilesOnDisk ->
-            button_ 100 "Store: Disk" (ToggleFileLocation FilesOnServer)
+            button_ 120 "Storage: Disk" (ToggleFileLocation FilesOnServer)
 
         FilesOnServer ->
-            button_ 100 "Store: Server" (ToggleFileLocation FilesOnDisk)
+            button_ 120 "Storage: Server" (ToggleFileLocation FilesOnDisk)
 
 
 aboutButton =

@@ -4038,8 +4038,15 @@ const {open} = require('./api/dialog.cjs.min.js')
 const { load, safeDump } = require('js-yaml')
 
 const getPreferences = () => {
-   return readTextFile('.muEditPreferences.yaml', {dir: 11}).then(str => load(str))
+   return readTextFile('.muEditPreferences.yaml', {dir: 11}).then(str => load(str) || {})
 }
+
+const verifyManifest = (prefDir) =>  (
+       readTextFile(prefDir + '/manifest.yaml')
+        .catch(reason => writeFile(  {  file: prefDir + '/manifest.yaml', contents: "---\n"   } ))
+        .then(prefDir)
+       )
+
 
 const toMetadata = (doc) => (
        { fileName: doc.fileName,
@@ -4158,10 +4165,24 @@ app.ports.infoForOutside.subscribe(msg => {
 
                console.log("Getting preferences")
 
+               const verifyManifest2= (prefDir) =>  (
+                  readTextFile(prefDir + '/manifest.yaml')
+                   .catch(reason => writeFile(  {  file: prefDir + '/manifest.yaml', contents: "---\n"   } ))
+
+                  )
+
                readTextFile('.muEditPreferences.yaml', {dir: 11})
                     .then(str => load(str))
+                    .catch(reason =>
+                      writeFile( {file: '.muEditPreferences.yaml', contents: 'dummy: 0\n'},
+                        {dir: 11}).then('dummy: 0\n'))
                     .then(o => app.ports.infoForElm.send({tag: "GotPreferences", data:  o}))
                     .catch(reason => writeFile(  {  file: '.muEditPreferences.yaml', contents: "---\ndummy: 0\n"   }, {dir: 11}  ))
+
+              getPreferences()
+               .then(prefs => prefs.documentDirectory != null
+                    ? verifyManifest2(prefs.documentDirectory)
+                    : console.log("Document directory not defined"))
 
               break;
 
@@ -4179,9 +4200,17 @@ app.ports.infoForOutside.subscribe(msg => {
                     return Object.assign(p, {documentDirectory: s})
               }
 
+              const verifyManifest = (prefDir) =>  (
+                 readTextFile(prefDir + '/manifest.yaml')
+                  .catch(reason => writeFile(  {  file: prefDir + '/manifest.yaml', contents: "---\n"   } ))
+                  .then(prefDir)
+                 )
+
               preferredDirectory
-              .then(pd => preferences.then(pref => updatePreferences(pd, pref)))
-              .then(pref => safeDump(pref))
+              //.then(prefDir => verifyManifest(prefDir))
+              .then(prefDir => preferences.then(prefs => updatePreferences(prefDir, prefs)))
+              //.then(prefs => console.log("PREFS", prefs).then(prefs))
+              .then(prefs => safeDump(prefs))
               .then(data => writeFile(  {  file: '.muEditPreferences.yaml', contents: data   }, {dir: 11}  ))
 
               break;
@@ -4195,12 +4224,7 @@ app.ports.infoForOutside.subscribe(msg => {
               if (userName != null) {
 
                   const preferences = readTextFile('.muEditPreferences.yaml', {dir: 11})
-                                      .then(str => {
-                                         console.log("PREF (1)",str )
-                                         load(str)
-
-                                         })
-
+                                        .then(str => load(str))
 
                    const updatePreferences = (s, p) => {
                         return Object.assign(p, {userName: s})
@@ -4276,7 +4300,7 @@ app.ports.infoForOutside.subscribe(msg => {
           .then(p => (p.documentDirectory + '/manifest.yaml'))
           .then(pathToManifest => readTextFile(pathToManifest,  {}).then(value => sendManifest(value)))
 
-    }
+       }
 
     function writeMetadata(document) {
 
@@ -4321,7 +4345,7 @@ app.ports.infoForOutside.subscribe(msg => {
         const createFile_ = (pathToManifest) => (
            readTextFile(pathToManifest,  {})
              .then(value => load(value))
-             .then(m => append(metadata, m))
+             .then(m => append(metadata, (m || [])))
              .then(m => safeDump(m))
              .then(contents => writeFile({file: pathToManifest, contents: contents}))
            )

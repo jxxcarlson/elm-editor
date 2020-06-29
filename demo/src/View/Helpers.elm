@@ -1,6 +1,7 @@
 module View.Helpers exposing
     ( gray
     , pxFloat
+    , shortPath
     , showIf
     )
 
@@ -25,3 +26,18 @@ pxFloat p =
 
 gray g =
     rgb255 g g g
+
+
+shortPath : Int -> String -> String
+shortPath k path =
+    let
+        parts =
+            path
+                |> String.split "/"
+
+        n =
+            List.length parts
+    in
+    parts
+        |> List.drop (n - k)
+        |> String.join "/"

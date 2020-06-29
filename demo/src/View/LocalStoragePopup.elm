@@ -54,7 +54,7 @@ viewFileName record =
     row []
         [ Widget.plainButton 200 record.fileName (SendRequestForFile record.id) []
         , Widget.plainButton 55
-            "delete"
+            "delete!!"
             (DeleteFileFromLocalStorage record.id)
             [ Background.color (Element.rgba 0.7 0.7 1.0 0.9) ]
         ]
