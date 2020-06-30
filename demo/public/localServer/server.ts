@@ -45,6 +45,7 @@ router
   .get("/api", iAmAlive)
   .get("/api/text/:fileName", getDocumentText)
   .get("/api/list", list)
+  //.get('/api/f/:fileName, download)
 
   .post("/api/documents", createDocument)
   .put('/api/:fileName', updateDocument)

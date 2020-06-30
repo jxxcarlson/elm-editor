@@ -48,7 +48,11 @@ scripts:
       - browserify public/assets/outside_source.js -o dist/assets/outside.js
       - echo "Building ..."
       - npx tauri build
-      - open src-tauri/target/release/bundle/
+      - open
+
+  publish-bundle:
+    cmd: scp src-tauri/target/release/bundle/dmg/app.dmg root@161.35.125.40:/root/docserver/installers/
+    desc: Publish bundled tauri app on server
 
   publish:
     cmd: sh script/publish.sh
@@ -92,7 +96,7 @@ scripts:
     desc: List the data directory for the server
 
   upone:
-    cmd: scp $1 root@161.35.125.40:/root/docserver
+    cmd: scp $1 root@161.35.125.40:/root/docserver/
     desc: upload one file to Digital Ocean
 
   upmany:
