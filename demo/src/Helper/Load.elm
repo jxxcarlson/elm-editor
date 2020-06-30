@@ -81,6 +81,7 @@ createAndLoad time fileName_ content_ docType_ model =
             , author = author_
             , timeCreated = time
             , timeUpdated = time
+            , timeSynced = Nothing
             , tags = []
             , categories = []
             , content = content_

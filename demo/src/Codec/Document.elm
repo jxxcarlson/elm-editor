@@ -27,6 +27,7 @@ documentDecoder =
         |> required "author" string
         |> required "timeCreated" (int |> D.map Time.millisToPosix)
         |> required "timeUpdated" (int |> D.map Time.millisToPosix)
+        |> required "timeSynced" (nullable int |> D.map (Maybe.map Time.millisToPosix))
         |> required "tags" (list string)
         |> required "categories" (list string)
         |> required "title" string
@@ -45,6 +46,7 @@ documentEncoder doc =
         , ( "author", Encode.string doc.author )
         , ( "timeCreated", Encode.int (Time.posixToMillis doc.timeCreated) )
         , ( "timeUpdated", Encode.int (Time.posixToMillis doc.timeUpdated) )
+        , ( "timeSynced", encodeMaybeInt (Maybe.map Time.posixToMillis doc.timeSynced) )
         , ( "tags", Encode.list Encode.string doc.tags )
         , ( "categories", Encode.list Encode.string doc.categories )
         , ( "title", Encode.string (normalize doc.title) )
@@ -54,6 +56,16 @@ documentEncoder doc =
         , ( "docType", Encode.string (Document.stringOfDocType doc.docType) )
         , ( "content", Encode.string doc.content )
         ]
+
+
+encodeMaybeInt : Maybe Int -> Encode.Value
+encodeMaybeInt maybeInt =
+    case maybeInt of
+        Nothing ->
+            Encode.null
+
+        Just k ->
+            Encode.int k
 
 
 
@@ -87,6 +99,7 @@ metadataDecoder =
         |> required "author" string
         |> required "timeCreated" (int |> D.map Time.millisToPosix)
         |> required "timeUpdated" (int |> D.map Time.millisToPosix)
+        |> required "timeSynced" (nullable int |> D.map (Maybe.map Time.millisToPosix))
         |> required "tags" (list string)
         |> required "categories" (list string)
         |> required "title" string
@@ -104,6 +117,7 @@ metadataEncoder metadata =
         , ( "author", Encode.string metadata.author )
         , ( "timeCreated", Encode.int (Time.posixToMillis metadata.timeCreated) )
         , ( "timeUpdated", Encode.int (Time.posixToMillis metadata.timeUpdated) )
+        , ( "timeSynced", encodeMaybeInt (Maybe.map Time.posixToMillis metadata.timeSynced) )
         , ( "tags", Encode.list Encode.string metadata.tags )
         , ( "categories", Encode.list Encode.string metadata.categories )
         , ( "title", Encode.string (normalize metadata.title) )
