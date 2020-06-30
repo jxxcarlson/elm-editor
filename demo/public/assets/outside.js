@@ -4054,6 +4054,7 @@ const toMetadata = (doc) => (
         author: doc.author,
         timeCreated: doc.timeCreated,
         timeUpdated: doc.timeUpdated,
+        timeSynced: doc.timeSynced,
         tags: doc.tags,
         categories: doc.categories,
         title: doc.title,

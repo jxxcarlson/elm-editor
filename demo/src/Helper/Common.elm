@@ -2,6 +2,7 @@ module Helper.Common exposing
     ( addPostfix
     , dateStringFromPosix
     , listFromString
+    , maybeDateStringFromPosix
     , removePostfix
     , stringFromList
     , windowHeight
@@ -11,6 +12,16 @@ module Helper.Common exposing
 import Date
 import List.Extra
 import Time exposing (toHour, toMinute, toSecond)
+
+
+maybeDateStringFromPosix : Maybe Time.Posix -> String
+maybeDateStringFromPosix maybeTime =
+    case maybeTime of
+        Nothing ->
+            "never"
+
+        Just t ->
+            dateStringFromPosix t
 
 
 dateStringFromPosix : Time.Posix -> String
