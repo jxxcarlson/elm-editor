@@ -80,7 +80,7 @@ view model =
                 , Background.color (Element.rgba 1.0 0.75 0.75 0.8)
                 , spacing 16
                 ]
-                [ row [ width (px 450) ] [ text title, el [ alignRight ] Widget.closePopupButton ]
+                [ row [ width (px 450), spacing 8 ] [ text title, Widget.serverStatus model, el [ alignRight ] Widget.closePopupButton ]
                 , Widget.searchInput model
                 , column
                     [ spacing 8

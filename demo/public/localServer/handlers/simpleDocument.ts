@@ -34,7 +34,7 @@ export const  getDocumentText = async ({
 
 
 export const iAmAlive = ( { response }: { response: any }) => {
-  console.log("file list requested");
+  console.log("file list requested (3)");
   response.headers.set("Access-Control-Allow-Origin", "*");
   response.body = "I am alive. Thanks for asking!";
 };

@@ -12,7 +12,8 @@ export const readDocument = async (metaData: Metadata): Promise<Document> => {
   const decodedData = decoder.decode(data);
 
   const doc: Document = { id: metaData.id, fileName: metaData.fileName, author: metaData.author,
-     timeCreated: metaData.timeCreated, timeUpdated: metaData.timeUpdated, tags: metaData.tags,
+     timeCreated: metaData.timeCreated, timeUpdated: metaData.timeUpdated,  timeSynced: metaData.timeSynced,
+     tags: metaData.tags,
      categories: metaData.categories, title: metaData.title, subtitle: metaData.subtitle,
      abstract: metaData.abstract, belongsTo: metaData.belongsTo, docType: metaData.docType,
      content: decodedData }

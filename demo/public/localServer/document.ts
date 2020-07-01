@@ -8,6 +8,7 @@ export interface Document {
   author: string;
   timeCreated: number;
   timeUpdated: number;
+  timeSynced: number | null;
   tags: string[];
   categories:string[];
   title: string;
@@ -25,6 +26,7 @@ export interface Metadata {
   author: string;
   timeCreated: number;
   timeUpdated: number;
+  timeSynced: number | null;
   tags: string[];
   categories:string[];
   title: string;

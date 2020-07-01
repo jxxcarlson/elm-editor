@@ -9,6 +9,7 @@ module Types exposing
     , Msg(..)
     , PopupStatus(..)
     , PopupWindow(..)
+    , ServerStatus(..)
     , SignInMode(..)
     )
 
@@ -35,6 +36,7 @@ type alias Model =
     { -- system
       tickCount : Int
     , counter : Int
+    , serverStatus : ServerStatus
     , currentTime : Time.Posix
     , uuid : String
     , randomSeed : Random.Seed
@@ -90,6 +92,12 @@ type AppMode
     | Webapp
 
 
+type ServerStatus
+    = ServerOffline
+    | ServerOnline
+    | ServerStatusUnknown
+
+
 type HandleIndex
     = EditIndex
     | UseIndex
@@ -141,6 +149,7 @@ type Msg
     | Tick Time.Posix
     | WindowSize Int Int
     | GotAtmosphericRandomNumber (Result Http.Error String)
+    | ServerAliveReply (Result Http.Error String)
       -- UI
     | ManagePopup PopupStatus
     | About

@@ -60,6 +60,7 @@ import Types
         , Msg(..)
         , PopupStatus(..)
         , PopupWindow(..)
+        , ServerStatus(..)
         , SignInMode(..)
         )
 import Update.Document
@@ -104,6 +105,7 @@ init flags =
     , index = []
     , handleIndex = UseIndex
     , counter = 1
+    , serverStatus = ServerStatusUnknown
     , currentTime = Time.millisToPosix 0
     , preferences = Nothing
     , appMode = Config.appMode
@@ -191,6 +193,14 @@ update msg model =
         GotAtmosphericRandomNumber result ->
             UuidHelper.handleResponseFromRandomDotOrg model result
                 |> withNoCmd
+
+        ServerAliveReply result ->
+            case result of
+                Ok _ ->
+                    { model | serverStatus = ServerOnline } |> withNoCmd
+
+                Err _ ->
+                    { model | serverStatus = ServerOffline } |> withNoCmd
 
         WindowSize width height ->
             Update.System.windowSize width height model

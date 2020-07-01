@@ -3,6 +3,7 @@ module Helper.Server exposing
     , exportFile
     , getDocument
     , getDocumentList
+    , isServerAlive
     , saveFile
     , updateDocument
     , updateDocumentList
@@ -15,9 +16,18 @@ import Editor
 import File exposing (File)
 import File.Download as Download
 import Http
+import Json.Decode
 import MiniLatex.Export
 import Task exposing (Task)
 import Types exposing (Model, Msg(..))
+
+
+isServerAlive : String -> Cmd Msg
+isServerAlive serverUrl =
+    Http.get
+        { url = serverUrl
+        , expect = Http.expectString ServerAliveReply
+        }
 
 
 createDocument : String -> Document -> Cmd Msg

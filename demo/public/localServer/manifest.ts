@@ -17,7 +17,7 @@ export const readManifest = async (): Promise<Metadata[]> => {
   const decoder = new TextDecoder();
   const decodedData = decoder.decode(data);
   console.log("MANIF", decodedData);
-  
+
   return load(decodedData);
 };
 
@@ -78,7 +78,7 @@ export const createDocument = async ({
 }) => {
   console.log("processing POST request");
   const {
-    value : {token, fileName, id, author, timeCreated, timeUpdated, tags, categories,
+    value : {token, fileName, id, author, timeCreated, timeUpdated, timeSynced, tags, categories,
        title, subtitle, abstract, belongsTo, docType, content},
   } = await request.body();
   response.headers.set("Access-Control-Allow-Origin", "*");
@@ -91,13 +91,15 @@ export const createDocument = async ({
   if (true) {
 
     const doc_ = { id: id, fileName: fileName, author: author,
-       timeCreated: timeCreated, timeUpdated: timeUpdated, tags: tags,
+       timeCreated: timeCreated, timeUpdated: timeUpdated,  timeSynced: timeSynced,
+       tags: tags,
        categories: categories, title: title, subtitle: subtitle,
        abstract: abstract, belongsTo: belongsTo, docType: docType,
        content: content };
 
     const metaData_ = { id: id, fileName: fileName, author: author,
-       timeCreated: timeCreated, timeUpdated: timeUpdated, tags: tags,
+       timeCreated: timeCreated, timeUpdated: timeUpdated, timeSynced: timeSynced,
+       tags: tags,
        categories: categories, title: title, subtitle: subtitle,
        abstract: abstract, belongsTo: belongsTo, docType: docType};
 
@@ -131,7 +133,7 @@ export const updateDocument = async ({
   response: any;
 }) => {
   const {
-    value : {fileName, id, author, timeCreated, timeUpdated, tags, categories,
+    value : {fileName, id, author, timeCreated, timeUpdated, timeSynced, tags, categories,
        title, subtitle, abstract, belongsTo, docType, content},
   } = await request.body();
   response.headers.set("Access-Control-Allow-Origin", "*");
@@ -142,13 +144,13 @@ export const updateDocument = async ({
   );
 
     const sourceDoc: Document = { id: id, fileName: fileName, author: author,
-       timeCreated: timeCreated, timeUpdated: timeUpdated, tags: tags,
+       timeCreated: timeCreated, timeUpdated: timeUpdated, timeSynced: timeSynced, tags: tags,
        categories: categories, title: title, subtitle: subtitle, abstract: abstract,
        belongsTo: belongsTo, docType: docType,
        content: content };
 
     const sourceMetadata: Metadata = { id: id, fileName: fileName, author: author,
-       timeCreated: timeCreated, timeUpdated: timeUpdated, tags: tags,
+       timeCreated: timeCreated, timeUpdated: timeUpdated, timeSynced: timeSynced, tags: tags,
        categories: categories, title: title, subtitle: subtitle,
        abstract: abstract, belongsTo: belongsTo, docType: docType };
 
@@ -174,7 +176,7 @@ export const updateDocument = async ({
 
 
 export const getDocuments = ( { response }: { response: any }) => {
-  console.log("file list requested");
+  console.log("file list requested (1)");
   response.headers.set("Access-Control-Allow-Origin", "*");
   response.body = manifest;
 };

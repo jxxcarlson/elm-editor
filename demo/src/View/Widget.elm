@@ -22,6 +22,7 @@ module View.Widget exposing
     , publishFileButton
     , saveFileToStorageButton
     , searchInput
+    , serverStatus
     , setDocumentDirectoryButton
     , setUserNameButton
     , signInButton
@@ -59,7 +60,9 @@ import Types
         , Msg(..)
         , PopupStatus(..)
         , PopupWindow(..)
+        , ServerStatus(..)
         )
+import View.Helpers
 import View.Style as Style
 import Widget.Button as Button exposing (Size(..))
 import Widget.TextField as TextField
@@ -148,6 +151,25 @@ setDocumentDirectoryButton =
 
 setUserNameButton =
     button_ 170 "Set User Name" SetUserName_
+
+
+serverStatus model =
+    View.Helpers.showIf (model.fileLocation == FilesOnServer) (serverStatus_ model)
+
+
+serverStatus_ model =
+    case model.serverStatus of
+        ServerOffline ->
+            el [ width (px 20), height (px 20), Background.color (Element.rgb 0.55 0 0) ]
+                (text "")
+
+        ServerOnline ->
+            el [ width (px 10), height (px 10), Background.color (Element.rgb 0.2 0.55 0.2) ]
+                (text "")
+
+        ServerStatusUnknown ->
+            el [ width (px 20), height (px 20), Background.color (Element.rgb 0.55 0.55 0.55) ]
+                (text "")
 
 
 saveFileToStorageButton model =
