@@ -28,6 +28,7 @@ module View.Widget exposing
     , signInButton
     , signOutButton
     , signUpButton
+    , syncDocumentButton
     , textField
     , toggleFileLocationButton
     )
@@ -143,6 +144,10 @@ doNotChangeMetadataButton =
 
 
 -- [ Font.color (Element.rgb 0.7 0.7 0.7) ]
+
+
+syncDocumentButton =
+    button_ 90 "Sync" GetDocumentToSync
 
 
 setDocumentDirectoryButton =

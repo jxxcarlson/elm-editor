@@ -72,6 +72,7 @@ changePanel model =
         , row [ spacing 12 ]
             [ Widget.changeMetadataButton model.fileName_
             , Widget.cancelChangeMetadataButton
+            , Widget.syncDocumentButton
             ]
         ]
 

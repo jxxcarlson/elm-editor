@@ -193,6 +193,8 @@ type Msg
     | GotDocuments (Result Http.Error (List Metadata))
     | AskForDocument String
     | GotDocument (Result Http.Error Document)
+    | GetDocumentToSync
+    | SyncDocument (Result Http.Error Document)
     | Message (Result Http.Error String)
     | Publish
       -- Author

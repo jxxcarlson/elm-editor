@@ -418,6 +418,12 @@ update msg model =
         GotDocument result ->
             Update.Document.load result model |> withNoCmd
 
+        GetDocumentToSync ->
+            model |> withCmd (Helper.Server.getDocumentToSync model.serverURL model.fileName)
+
+        SyncDocument result ->
+            Update.Document.sync result model
+
         AskForRemoteDocuments ->
             model |> withCmd (Helper.Server.getDocumentList model.serverURL)
 

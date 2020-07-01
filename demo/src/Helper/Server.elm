@@ -3,6 +3,7 @@ module Helper.Server exposing
     , exportFile
     , getDocument
     , getDocumentList
+    , getDocumentToSync
     , isServerAlive
     , saveFile
     , updateDocument
@@ -57,6 +58,14 @@ getDocument serverUrl fileName =
     Http.get
         { url = serverUrl ++ "/document/" ++ fileName
         , expect = Http.expectJson GotDocument Codec.Document.documentDecoder
+        }
+
+
+getDocumentToSync : String -> String -> Cmd Msg
+getDocumentToSync serverUrl fileName =
+    Http.get
+        { url = serverUrl ++ "/document/" ++ fileName
+        , expect = Http.expectJson SyncDocument Codec.Document.documentDecoder
         }
 
 

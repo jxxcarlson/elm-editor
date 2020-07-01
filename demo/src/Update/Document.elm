@@ -5,6 +5,7 @@ module Update.Document exposing
     , setIndex
     , load
     , load_
+    , sync
     , updateDocument
     , listDocuments
     , loadDocument
@@ -26,6 +27,20 @@ import Types exposing (ChangingFileNameState(..)
   , DocumentStatus(..), PopupWindow(..), HandleIndex(..),
   FileLocation(..), Model, Msg, PopupStatus(..))
 import View.Scroll
+
+
+sync : Result error Document-> Model -> (Model, Cmd Msg)
+sync result model =
+   case result of
+           Ok document ->
+              model
+                |>Update.Helper.postMessage ("Sync: "  ++ document.fileName)
+                                 |> withNoCmd
+
+           Err _ ->
+               model
+                   |> Update.Helper.postMessage "Error getting remote document"
+                   |> withNoCmd
 
 load : Result error Document-> Model -> Model
 load result model =
