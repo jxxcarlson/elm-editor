@@ -104,10 +104,10 @@ getPreferencesButton =
 toggleFileLocationButton model =
     case model.fileLocation of
         FilesOnDisk ->
-            button_ 120 "Storage: Disk" (ToggleFileLocation FilesOnServer)
+            button_ 70 "Disk" (ToggleFileLocation FilesOnServer)
 
         FilesOnServer ->
-            button_ 120 "Storage: Server" (ToggleFileLocation FilesOnDisk)
+            button_ 70 "Server" (ToggleFileLocation FilesOnDisk)
 
 
 aboutButton =
@@ -147,7 +147,7 @@ doNotChangeMetadataButton =
 
 
 syncDocumentButton =
-    button_ 90 "Sync" GetDocumentToSync
+    button_ 30 "S" GetDocumentToSync
 
 
 setDocumentDirectoryButton =
@@ -191,7 +191,7 @@ saveFileToStorageButton model =
         DocumentSaved ->
             plainButton 20
                 ""
-                SaveFileToStorage
+                NoOp
                 [ height (px 20)
                 , Background.color (Element.rgb 0.0 0.7 0)
                 , Element.htmlAttribute (Attribute.title "Save file (its OK now)")

@@ -118,6 +118,10 @@ sendInfo info =
             infoForOutside { tag = "GetPreferences", data = Encode.null }
 
         WriteDocument document ->
+            let
+                _ =
+                    Debug.log "WriteDocument Outside (FS)" document.timeUpdated
+            in
             infoForOutside { tag = "WriteFile", data = Codec.Document.documentEncoder document }
 
         WriteMetadata metadata ->

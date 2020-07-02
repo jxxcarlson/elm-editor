@@ -74,6 +74,7 @@ changePanel model =
             , Widget.cancelChangeMetadataButton
             , Widget.syncDocumentButton
             ]
+        , item "Message" model.message
         ]
 
 

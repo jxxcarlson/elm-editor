@@ -42,6 +42,10 @@ createDocument serverUrl document =
 
 updateDocument : String -> Document -> Cmd Msg
 updateDocument serverUrl document =
+    let
+        _ =
+            Debug.log "WriteDocument server" document.timeUpdated
+    in
     Http.request
         { method = "PUT"
         , headers = []

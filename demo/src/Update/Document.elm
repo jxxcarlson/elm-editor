@@ -13,7 +13,7 @@ module Update.Document exposing
     )
 
 import Cmd.Extra exposing (withCmd, withCmds, withNoCmd)
-import Document exposing (DocType(..), Document)
+import Document exposing (DocType(..), Document, SyncOperation(..))
 import Helper.Common
 import Helper.Load
 import Update.Helper
@@ -27,20 +27,82 @@ import Types exposing (ChangingFileNameState(..)
   , DocumentStatus(..), PopupWindow(..), HandleIndex(..),
   FileLocation(..), Model, Msg, PopupStatus(..))
 import View.Scroll
+import Time
 
 
-sync : Result error Document-> Model -> (Model, Cmd Msg)
+
+updateDocsForSync : String -> SyncOperation -> Time.Posix -> Document -> Document -> (Document, Document)
+updateDocsForSync serverUrl op currentTime localDoc remoteDoc =
+    case op of
+       DocsIdentical -> makeSyncDataEqual currentTime localDoc remoteDoc
+
+       SyncConflict ->  pushDocument currentTime localDoc remoteDoc
+
+       PushDocument -> pushDocument currentTime localDoc remoteDoc
+
+       PullDocument -> pullDocument currentTime localDoc remoteDoc
+
+       NoSyncOp -> (localDoc, remoteDoc)
+
+makeSyncDataEqual : Time.Posix -> Document -> Document ->  (Document, Document)
+makeSyncDataEqual currentTime localDoc remoteDoc =
+    (Document.updateSyncTimes  currentTime localDoc
+  , Document.updateSyncTimes currentTime remoteDoc)
+
+pushDocument : Time.Posix -> Document -> Document ->  (Document, Document)
+pushDocument currentTime localDoc remoteDoc =
+    let
+      newDoc =  Document.updateSyncTimes  currentTime localDoc
+    in
+   -- (Document.updateSyncTimes  currentTime localDoc
+   --, Document.updateSyncTimes currentTime {remoteDoc | content = localDoc.content })
+   (newDoc, newDoc)
+
+pullDocument : Time.Posix -> Document -> Document ->  (Document, Document)
+pullDocument currentTime localDoc remoteDoc =
+    let
+      newDoc = Document.updateSyncTimes  currentTime remoteDoc
+    in
+   -- (Document.updateSyncTimes  currentTime {localDoc | content = remoteDoc.content}
+   --, Document.updateSyncTimes currentTime remoteDoc)
+   (newDoc, newDoc)
+
+syncCommands : String ->  SyncOperation  -> Document -> Document -> List (Cmd Msg)
+syncCommands serverUrl op localDoc remoteDoc  =
+          case op of
+                 DocsIdentical -> updateBothDocuments serverUrl localDoc remoteDoc
+                 SyncConflict -> updateBothDocuments serverUrl localDoc remoteDoc
+                 PushDocument -> updateBothDocuments serverUrl localDoc remoteDoc
+                 PullDocument -> updateBothDocuments serverUrl localDoc remoteDoc
+                 NoSyncOp -> []
+
+updateBothDocuments : String -> Document -> Document -> List (Cmd Msg)
+updateBothDocuments serverUrl localDoc remoteDoc =
+    [Outside.sendInfo (Outside.WriteDocument localDoc), Helper.Server.updateDocument  serverUrl remoteDoc ]
+
+sync : Result error Document -> Model -> (Model, Cmd Msg)
 sync result model =
    case result of
-           Ok document ->
-              model
-                |>Update.Helper.postMessage ("Sync: "  ++ document.fileName)
-                                 |> withNoCmd
+           Ok remoteDoc ->
+              let
+                    localDoc = model.document
+                    op = Debug.log "OP" (Document.syncOperation localDoc remoteDoc)
+                    message = op |>  Document.stringOfSyncOperation
+                    (localDoc_, remoteDoc_) = updateDocsForSync model.serverURL op model.currentTime localDoc remoteDoc
+
+              in
+                { model | document = localDoc_ }
+                  |> (Update.Helper.postMessage ("Sync: "  ++ message))
+                  |> withCmds (syncCommands model.serverURL op localDoc_ remoteDoc_ )
+
 
            Err _ ->
                model
                    |> Update.Helper.postMessage "Error getting remote document"
                    |> withNoCmd
+
+
+
 
 load : Result error Document-> Model -> Model
 load result model =
@@ -83,19 +145,20 @@ readDocumentCmd fileName model =
 updateDocument : Model -> ( Model, Cmd Msg )
 updateDocument model =
     let
-        document_ =
+        currentDocument =
             model.document
 
-        document =
-            { document_ | timeUpdated = model.currentTime }
+        updatedDocument =
+            { currentDocument | timeUpdated = model.currentTime }
     in
     case model.documentStatus of
         DocumentDirty ->
             { model
                 | tickCount = model.tickCount + 1
                 , documentStatus = DocumentSaved
+                , document = updatedDocument
             }
-                |> withCmd (updateDocumentCmd document model)
+                |> withCmd (updateDocumentCmd model.serverURL model.fileLocation updatedDocument)
 
         DocumentSaved ->
             ( { model | tickCount = model.tickCount + 1 }
@@ -103,14 +166,14 @@ updateDocument model =
             )
 
 
-updateDocumentCmd : Document -> Model -> Cmd Msg
-updateDocumentCmd document model =
-    case model.fileLocation of
+updateDocumentCmd : String -> FileLocation -> Document -> Cmd Msg
+updateDocumentCmd serverUrl fileLocation document =
+    case fileLocation of
         FilesOnDisk ->
             Outside.sendInfo (Outside.WriteDocument document)
 
         FilesOnServer ->
-            Helper.Server.updateDocument model.serverURL document
+            Helper.Server.updateDocument serverUrl document
 
 changeMetaData : Model -> ( Model, Cmd Msg )
 changeMetaData model =
@@ -198,12 +261,12 @@ listDocuments status model =
          (case model.fileLocation of
              FilesOnDisk ->
                [ Helper.File.getDocumentList
+               , Outside.getPreferences
                ]
              FilesOnServer ->
                [ Helper.Server.getDocumentList model.serverURL
                , Outside.getPreferences
-               , Helper.Server.isServerAlive model.serverURL
-               -- , Helper.Server.updateDocument model.serverURL model.document
+               , Helper.Server.getDocument model.serverURL model.document.fileName
                ])
 
 

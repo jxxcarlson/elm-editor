@@ -3,14 +3,18 @@ module Document exposing
     , Document
     , Metadata
     , NewDocumentData
+    , SyncOperation(..)
     , changeDocType
     , docType
     , extendFileName
     , extensionOfDocType
     , fileExtension
     , stringOfDocType
+    , stringOfSyncOperation
+    , syncOperation
     , titleFromFileName
     , toMetadata
+    , updateSyncTimes
     )
 
 import Time
@@ -20,6 +24,33 @@ type DocType
     = MarkdownDoc
     | MiniLaTeXDoc
     | IndexDoc
+
+
+type SyncOperation
+    = PushDocument
+    | PullDocument
+    | SyncConflict
+    | DocsIdentical
+    | NoSyncOp
+
+
+stringOfSyncOperation : SyncOperation -> String
+stringOfSyncOperation syncOp =
+    case syncOp of
+        PushDocument ->
+            "push"
+
+        PullDocument ->
+            "pull"
+
+        SyncConflict ->
+            "conflict"
+
+        DocsIdentical ->
+            "identical"
+
+        NoSyncOp ->
+            "noOp"
 
 
 type alias Document =
@@ -222,3 +253,81 @@ docType fileName =
 
         _ ->
             MarkdownDoc
+
+
+updateSyncTimes : Time.Posix -> Document -> Document
+updateSyncTimes t doc =
+    { doc | timeUpdated = t, timeSynced = Just t }
+
+
+prettyPosix : Time.Posix -> String
+prettyPosix t =
+    (Time.posixToMillis t |> toFloat) / 1000 |> String.fromFloat |> String.dropLeft 4 |> String.dropRight 0
+
+
+prettyMaybePosix : Maybe Time.Posix -> String
+prettyMaybePosix mt =
+    case mt of
+        Nothing ->
+            "nothing"
+
+        Just t ->
+            prettyPosix t
+
+
+syncOperation : Document -> Document -> SyncOperation
+syncOperation localDocument remoteDocument =
+    let
+        _ =
+            Debug.log "Local (synced, updated)" ( prettyMaybePosix localDocument.timeSynced, prettyPosix localDocument.timeUpdated )
+
+        _ =
+            Debug.log "Remote (synced, updated)" ( prettyMaybePosix remoteDocument.timeSynced, prettyPosix remoteDocument.timeUpdated )
+    in
+    case ( localDocument.timeSynced, remoteDocument.timeSynced ) of
+        ( Nothing, _ ) ->
+            if localDocument.content == remoteDocument.content then
+                DocsIdentical
+
+            else
+                SyncConflict
+
+        ( _, Nothing ) ->
+            if localDocument.content == remoteDocument.content then
+                DocsIdentical
+
+            else
+                SyncConflict
+
+        ( Just localSynctime, Just remoteSynctime ) ->
+            if localSynctime /= remoteSynctime then
+                SyncConflict
+                --else if Time.posixToMillis localDocument.timeUpdated == Time.posixToMillis remoteDocument.timeUpdated then
+                --    SyncConflict
+
+            else if
+                Time.posixToMillis localDocument.timeUpdated
+                    > Time.posixToMillis localSynctime
+                    && Time.posixToMillis remoteDocument.timeUpdated
+                    <= Time.posixToMillis remoteSynctime
+            then
+                PushDocument
+
+            else if
+                Time.posixToMillis remoteDocument.timeUpdated
+                    > Time.posixToMillis remoteSynctime
+                    && Time.posixToMillis localDocument.timeUpdated
+                    <= Time.posixToMillis localSynctime
+            then
+                PullDocument
+
+            else if
+                Time.posixToMillis remoteDocument.timeUpdated
+                    > Time.posixToMillis remoteSynctime
+                    && Time.posixToMillis localDocument.timeUpdated
+                    > Time.posixToMillis localSynctime
+            then
+                SyncConflict
+
+            else
+                NoSyncOp

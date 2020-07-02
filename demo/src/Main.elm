@@ -440,6 +440,7 @@ update msg model =
         ToggleFileLocation fileLocation ->
             Update.Document.listDocuments (PopupOpen FileListPopup) { model | fileLocation = fileLocation }
 
+        --|> (\( m, c ) -> ( m, Cmd.batch [ Update.Document.readDocumentCmd model.document.fileName model, c ] ))
         InputUsername str ->
             { model | userName = str } |> withNoCmd
 

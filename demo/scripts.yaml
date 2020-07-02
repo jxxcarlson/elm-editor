@@ -1,6 +1,6 @@
 env:
   APP_ROOT: /Users/jxxcarlson/dev/elm/projects/elm-editor/demo/public
-  DATA_ROOT: /Users/jxxcarlson/Documents/mudocs2
+  DATA_ROOT: /Users/jxxcarlson/Documents/mudocs
 
 scripts:
 
