@@ -80,18 +80,17 @@ updateBothDocuments : String -> Document -> Document -> List (Cmd Msg)
 updateBothDocuments serverUrl localDoc remoteDoc =
     [Outside.sendInfo (Outside.WriteDocument localDoc), Helper.Server.updateDocument  serverUrl remoteDoc ]
 
-sync : Result error Document -> Model -> (Model, Cmd Msg)
-sync result model =
+sync : Result error Document -> Document ->  Model -> (Model, Cmd Msg)
+sync result localDoc model =
    case result of
            Ok remoteDoc ->
               let
-                    localDoc = model.document
                     op = Debug.log "OP" (Document.syncOperation localDoc remoteDoc)
                     message = op |>  Document.stringOfSyncOperation
                     (localDoc_, remoteDoc_) = updateDocsForSync model.serverURL op model.currentTime localDoc remoteDoc
 
               in
-                { model | document = localDoc_ }
+                { model | currentDocument = Just localDoc_ }
                   |> (Update.Helper.postMessage ("Sync: "  ++ message))
                   |> withCmds (syncCommands model.serverURL op localDoc_ remoteDoc_ )
 
@@ -142,21 +141,28 @@ readDocumentCmd fileName model =
                  FilesOnServer ->
                     Helper.Server.getDocument model.serverURL fileName
 
+
 updateDocument : Model -> ( Model, Cmd Msg )
 updateDocument model =
+    case model.currentDocument of
+        Nothing -> (model, Cmd.none)
+        Just doc -> updateDocument_ doc model
+
+updateDocument_ : Document -> Model -> ( Model, Cmd Msg )
+updateDocument_ doc model =
     let
         currentDocument =
-            model.document
+            model.currentDocument
 
         updatedDocument =
-            { currentDocument | timeUpdated = model.currentTime }
+            { doc | timeUpdated = model.currentTime }
     in
     case model.documentStatus of
         DocumentDirty ->
             { model
                 | tickCount = model.tickCount + 1
                 , documentStatus = DocumentSaved
-                , document = updatedDocument
+                , currentDocument = Just updatedDocument
             }
                 |> withCmd (updateDocumentCmd model.serverURL model.fileLocation updatedDocument)
 
@@ -177,31 +183,33 @@ updateDocumentCmd serverUrl fileLocation document =
 
 changeMetaData : Model -> ( Model, Cmd Msg )
 changeMetaData model =
-    let
-        oldDocument =
-            model.document
+  case model.currentDocument of
+      Nothing -> (model, Cmd.none)
+      Just doc ->
+            let
 
-        newDocument =
-            { oldDocument
+
+                newDocument =
+                    { doc
+                        | fileName = model.fileName_
+                        , tags = Helper.Common.listFromString model.tags_
+                        , categories = Helper.Common.listFromString model.categories_
+                        , title = model.title_
+                        , subtitle = model.subtitle_
+                        , abstract = model.abstract_
+                        , belongsTo = model.belongsTo_
+                    }
+            in
+            ( { model
                 | fileName = model.fileName_
-                , tags = Helper.Common.listFromString model.tags_
-                , categories = Helper.Common.listFromString model.categories_
-                , title = model.title_
-                , subtitle = model.subtitle_
-                , abstract = model.abstract_
-                , belongsTo = model.belongsTo_
-            }
-    in
-    ( { model
-        | fileName = model.fileName_
-        , docType = Document.docType model.fileName_
-        , changingFileNameState = FileNameOK
-        , popupStatus = PopupClosed
-        , document = newDocument
-        , fileList = Helper.Server.updateFileList (Document.toMetadata newDocument) model.fileList
-      }
-    , Outside.sendInfo (Outside.WriteDocument newDocument)
-    )
+                , docType = Document.docType model.fileName_
+                , changingFileNameState = FileNameOK
+                , popupStatus = PopupClosed
+                , currentDocument = Just newDocument
+                , fileList = Helper.Server.updateFileList (Document.toMetadata newDocument) model.fileList
+              }
+            , Outside.sendInfo (Outside.WriteDocument newDocument)
+            )
 
 
 {-|
@@ -214,8 +222,6 @@ changeMetaData model =
 createDocument : Model -> ( Model, Cmd Msg )
 createDocument model =
     let
-
-
         fileName = case model.preferences of
            Nothing -> Document.extendFileName model.docType "" uuid model.fileName_
            Just pref  -> Document.extendFileName model.docType pref.userName uuid model.fileName_
@@ -224,7 +230,7 @@ createDocument model =
         ( uuid, seed ) =
             UuidHelper.generate model.randomSeed
 
-        newModel =
+        (newDoc, newModel) =
             case model.docType of
                 MarkdownDoc ->
                     Helper.Load.createAndLoad model.currentTime fileName  "" MarkdownDoc model
@@ -234,6 +240,7 @@ createDocument model =
 
                 IndexDoc ->
                     Helper.Load.createAndLoad model.currentTime fileName "" IndexDoc model
+
     in
     { newModel | popupStatus = PopupClosed, uuid = uuid, randomSeed = seed }
         |> Helper.Sync.syncModel2
@@ -241,7 +248,7 @@ createDocument model =
             (Cmd.batch
                 [ View.Scroll.toEditorTop
                 , View.Scroll.toRenderedTextTop
-                , createDocCmd newModel.document model
+                , createDocCmd newDoc model
                 ]
             )
 
@@ -256,6 +263,11 @@ createDocCmd doc model =
 
 listDocuments : PopupStatus -> Model -> ( Model, Cmd Msg )
 listDocuments status model =
+   let
+       remoteGetDocCmd = case model.currentDocument of
+           Nothing -> Cmd.none
+           Just doc -> Helper.Server.getDocument model.serverURL doc.fileName
+   in
    { model | popupStatus = status, documentStatus = DocumentSaved }
        |> withCmds
          (case model.fileLocation of
@@ -266,7 +278,7 @@ listDocuments status model =
              FilesOnServer ->
                [ Helper.Server.getDocumentList model.serverURL
                , Outside.getPreferences
-               , Helper.Server.getDocument model.serverURL model.document.fileName
+               , remoteGetDocCmd
                ])
 
 
@@ -294,7 +306,7 @@ loadDocument content model =
         ( uuid, seed ) =
                     UuidHelper.generate model.randomSeed
 
-        docType =
+        docType_=
             case Document.fileExtension fileName of
                 "md" ->
                     MarkdownDoc
@@ -308,16 +320,12 @@ loadDocument content model =
                 _ ->
                     MarkdownDoc
 
-        newModel =
-            Helper.Load.createAndLoad model.currentTime
-                fileName
-                content
-                docType
-                model
-                |> (\m -> { m | docType = docType, uuid = uuid, randomSeed = seed })
-                |> Helper.Sync.syncModel2
+        (newDocument, newModel_) =
+            -- createAndLoad time fileName_ content_ docType_ model
+            Helper.Load.createAndLoad model.currentTime fileName content docType_ model
 
-        newDocument =  newModel.document
+        newModel = newModel_ |> Helper.Sync.syncModel2
+
     in
     newModel
         |> withCmds

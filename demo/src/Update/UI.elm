@@ -30,24 +30,29 @@ managePopup status model =
                 |> withCmd (Helper.Server.getDocumentList model.serverURL)
 
         PopupOpen FilePopup ->
-            let
-                tags_ =
-                    Helper.Common.stringFromList model.document.tags
+            case model.currentDocument of
+                Nothing ->
+                    ( model, Cmd.none )
 
-                categories_ =
-                    Helper.Common.stringFromList model.document.categories
+                Just doc ->
+                    let
+                        tags_ =
+                            Helper.Common.stringFromList doc.tags
 
-                newModel =
-                    { model
-                        | tags_ = tags_
-                        , categories_ = categories_
-                        , title_ = model.document.title
-                        , subtitle_ = model.document.subtitle
-                        , belongsTo_ = model.document.belongsTo
-                    }
-            in
-            { newModel | popupStatus = status }
-                |> withCmd Outside.getPreferences
+                        categories_ =
+                            Helper.Common.stringFromList doc.categories
+
+                        newModel =
+                            { model
+                                | tags_ = tags_
+                                , categories_ = categories_
+                                , title_ = doc.title
+                                , subtitle_ = doc.subtitle
+                                , belongsTo_ = doc.belongsTo
+                            }
+                    in
+                    { newModel | popupStatus = status }
+                        |> withCmd Outside.getPreferences
 
         PopupOpen NewFilePopup ->
             { model | popupStatus = status, fileName_ = "" } |> withNoCmd

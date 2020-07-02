@@ -73,7 +73,7 @@ type alias Model =
     , documentStatus : DocumentStatus
     , selectedId : ( Int, Int )
     , selectedId_ : String
-    , document : Document
+    , currentDocument : Maybe Document
     , serverURL : String
 
     -- User

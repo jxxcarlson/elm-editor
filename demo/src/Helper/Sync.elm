@@ -51,14 +51,12 @@ syncModel2 model =
 
 updateDocument : Editor -> Model -> Model
 updateDocument editor model =
-    let
-        doc =
-            model.document
+    case model.currentDocument of
+        Nothing ->
+            model
 
-        newDoc =
-            { doc | content = Editor.getContent editor }
-    in
-    { model | document = newDoc }
+        Just doc ->
+            { model | currentDocument = Just { doc | content = Editor.getContent editor } }
 
 
 

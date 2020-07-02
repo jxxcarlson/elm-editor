@@ -58,7 +58,7 @@ load document model =
                 (config { width = model.width, height = model.height, wrapOption = DontWrap })
         , docTitle = document.fileName
         , docType = docType
-        , document = document
+        , currentDocument = Just document
     }
 
 
@@ -69,7 +69,7 @@ load document model =
     - Compute the rendered content and store it in the model.
 
 -}
-createAndLoad : Time.Posix -> String -> String -> DocType -> Model -> Model
+createAndLoad : Time.Posix -> String -> String -> DocType -> Model -> ( Document, Model )
 createAndLoad time fileName_ content_ docType_ model =
     let
         author_ =
@@ -92,8 +92,7 @@ createAndLoad time fileName_ content_ docType_ model =
             , docType = docType_
             }
     in
-    load doc model
-        |> UuidHelper.newUuid
+    ( doc, load doc model |> UuidHelper.newUuid )
 
 
 config flags =

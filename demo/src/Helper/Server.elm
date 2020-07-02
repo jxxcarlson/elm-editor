@@ -100,22 +100,27 @@ updateDocumentList serverUrl record =
 
 saveFile : Model -> Cmd msg
 saveFile model =
-    let
-        content =
-            "uuid: " ++ model.document.id ++ "\n\n" ++ model.document.content
+    case model.currentDocument of
+        Nothing ->
+            Cmd.none
 
-        fileName =
-            model.document.fileName
-    in
-    case model.docType of
-        MarkdownDoc ->
-            Download.string fileName "text/markdown" content
+        Just doc ->
+            let
+                content =
+                    "uuid: " ++ doc.id ++ "\n\n" ++ doc.content
 
-        MiniLaTeXDoc ->
-            Download.string fileName "text/x-tex" content
+                fileName =
+                    doc.fileName
+            in
+            case model.docType of
+                MarkdownDoc ->
+                    Download.string fileName "text/markdown" content
 
-        IndexDoc ->
-            Download.string fileName "text/plain " content
+                MiniLaTeXDoc ->
+                    Download.string fileName "text/x-tex" content
+
+                IndexDoc ->
+                    Download.string fileName "text/plain " content
 
 
 exportFile : Model -> Cmd msg

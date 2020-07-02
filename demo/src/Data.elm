@@ -1,7 +1,24 @@
-module Data exposing (about, tmp)
+module Data exposing (about, dummyMetaData, tmp)
 
 import Document exposing (DocType(..), Document)
 import Time
+
+
+dummyMetaData =
+    { fileName = "tmp.md"
+    , id = "tmp.1234"
+    , author = "jxxcarlson"
+    , timeCreated = Time.millisToPosix 1592511028000
+    , timeUpdated = Time.millisToPosix 1592511028000
+    , timeSynced = Nothing
+    , tags = []
+    , categories = []
+    , title = "System info"
+    , subtitle = ""
+    , abstract = ""
+    , belongsTo = ""
+    , docType = MarkdownDoc
+    }
 
 
 tmp : String -> Document

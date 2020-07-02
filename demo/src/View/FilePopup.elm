@@ -27,11 +27,14 @@ import Widget.TextField as TextField exposing (LabelPosition(..))
 
 view : Model -> Element Msg
 view model =
-    case model.popupStatus of
-        PopupClosed ->
+    case ( model.popupStatus, model.currentDocument ) of
+        ( PopupClosed, _ ) ->
             Element.none
 
-        PopupOpen FilePopup ->
+        ( _, Nothing ) ->
+            Element.none
+
+        ( PopupOpen FilePopup, Just doc ) ->
             column
                 [ width (px 500)
                 , height (px <| round <| Helper.Common.windowHeight model.height + 28)
@@ -39,25 +42,25 @@ view model =
                 , Background.color (Element.rgba 1.0 0.75 0.75 0.8)
                 , spacing 24
                 ]
-                [ titleLine model
+                [ titleLine doc
                 , column [ spacing 36 ]
-                    [ infoPanel model
+                    [ infoPanel doc
                     , changePanel model
                     ]
                 ]
 
-        PopupOpen _ ->
+        ( PopupOpen _, _ ) ->
             Element.none
 
 
-infoPanel model =
+infoPanel doc =
     column [ spacing 12 ]
-        [ item "id" model.document.id
-        , item "Author" model.document.author
-        , item "Created" (Helper.Common.dateStringFromPosix model.document.timeCreated)
-        , item "Modified" (Helper.Common.dateStringFromPosix model.document.timeUpdated)
-        , item "Synced" (Helper.Common.maybeDateStringFromPosix model.document.timeSynced)
-        , item "DocType" (Document.stringOfDocType model.document.docType)
+        [ item "id" doc.id
+        , item "Author" doc.author
+        , item "Created" (Helper.Common.dateStringFromPosix doc.timeCreated)
+        , item "Modified" (Helper.Common.dateStringFromPosix doc.timeUpdated)
+        , item "Synced" (Helper.Common.maybeDateStringFromPosix doc.timeSynced)
+        , item "DocType" (Document.stringOfDocType doc.docType)
         ]
 
 
@@ -93,8 +96,8 @@ inputItem label msg inputText width_ =
         ]
 
 
-titleLine model =
-    row [ width (px 450) ] [ text ("File info: " ++ model.document.fileName), el [ alignRight ] Widget.closePopupButton ]
+titleLine doc =
+    row [ width (px 450) ] [ text ("File info: " ++ doc.fileName), el [ alignRight ] Widget.closePopupButton ]
 
 
 fileInput : (String -> Msg) -> String -> String -> Int -> Element Msg

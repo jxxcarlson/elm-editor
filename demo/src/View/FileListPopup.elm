@@ -1,5 +1,6 @@
 module View.FileListPopup exposing (prettify, view)
 
+import Data
 import Document exposing (DocType(..), Metadata)
 import Element
     exposing
@@ -71,7 +72,12 @@ view model =
                             "Documents at " ++ url ++ " (" ++ n ++ ")"
 
                 metadataOfCurrentDocument =
-                    Document.toMetadata model.document
+                    case model.currentDocument of
+                        Nothing ->
+                            Data.dummyMetaData
+
+                        Just doc ->
+                            Document.toMetadata doc
             in
             column
                 [ width (px 570)

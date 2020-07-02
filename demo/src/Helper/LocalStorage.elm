@@ -15,7 +15,7 @@ import Types exposing (DocType(..), Model, Msg(..))
 
 saveFileToLocalStorage : Model -> Cmd msg
 saveFileToLocalStorage model =
-    saveFileToLocalStorage_ model.document
+    saveFileToLocalStorage_ model.currentDocument
 
 
 saveFileToLocalStorage_ : Document -> Cmd msg

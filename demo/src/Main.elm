@@ -133,7 +133,7 @@ init flags =
     , tickCount = 0
     , popupStatus = PopupClosed
     , authorName = ""
-    , document = Data.about
+    , currentDocument = Just Data.about
     , randomSeed = Random.initialSeed 1727485
     , uuid = ""
     , serverURL = Config.serverURL
@@ -311,8 +311,13 @@ update msg model =
             Update.Document.createDocument model
 
         Publish ->
-            model
-                |> withCmd (Helper.Server.createDocument model.serverURL model.document)
+            case model.currentDocument of
+                Nothing ->
+                    model |> withNoCmd
+
+                Just doc ->
+                    model
+                        |> withCmd (Helper.Server.createDocument model.serverURL doc)
 
         GetDocument handleIndex fileName ->
             { model | handleIndex = handleIndex, popupStatus = PopupClosed } |> withCmd (Update.Document.readDocumentCmd fileName model)
@@ -422,7 +427,12 @@ update msg model =
             model |> withCmd (Helper.Server.getDocumentToSync model.serverURL model.fileName)
 
         SyncDocument result ->
-            Update.Document.sync result model
+            case model.currentDocument of
+                Nothing ->
+                    model |> withNoCmd
+
+                Just localDoc ->
+                    Update.Document.sync result localDoc model
 
         AskForRemoteDocuments ->
             model |> withCmd (Helper.Server.getDocumentList model.serverURL)
