@@ -17,6 +17,7 @@ import Document exposing (DocType(..), Document, SyncOperation(..))
 import Helper.Common
 import Helper.Load
 import Update.Helper
+import Data
 import UuidHelper
 import Index
 import Helper.Server
@@ -97,7 +98,7 @@ sync result localDoc model =
 
            Err _ ->
                model
-                   |> Update.Helper.postMessage "Error getting remote document"
+                   |> Update.Helper.postMessage "(S) Error getting remote document"
                    |> withNoCmd
 
 
@@ -110,7 +111,7 @@ load result model =
             load_ document model
 
         Err _ ->
-            model
+            load_ (Data.template "Document not found") { model | currentDocument = Nothing }
                 |> Update.Helper.postMessage "Error getting remote document"
 
 load_ : Document -> Model -> Model
@@ -134,12 +135,13 @@ setIndex document model =
     , popupStatus = PopupOpen IndexPopup}
 
 
-readDocumentCmd fileName model =
-    case model.fileLocation of
+readDocumentCmd : FileLocation -> String -> String -> Cmd Msg
+readDocumentCmd fileLocation serverURL fileName  =
+    case fileLocation of
                  FilesOnDisk ->
                    Outside.sendInfo (Outside.AskForDocument fileName)
                  FilesOnServer ->
-                    Helper.Server.getDocument model.serverURL fileName
+                    Helper.Server.getDocument serverURL fileName
 
 
 updateDocument : Model -> ( Model, Cmd Msg )

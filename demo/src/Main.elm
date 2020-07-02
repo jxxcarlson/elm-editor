@@ -9,7 +9,7 @@ import Cmd.Extra exposing (withCmd, withCmds, withNoCmd)
 import Config
 import ContextMenu exposing (Item(..))
 import Data
-import Document exposing (DocType(..))
+import Document exposing (DocType(..), Document)
 import Editor exposing (Editor, EditorMsg)
 import EditorMsg exposing (EMsg(..))
 import Element
@@ -320,7 +320,7 @@ update msg model =
                         |> withCmd (Helper.Server.createDocument model.serverURL doc)
 
         GetDocument handleIndex fileName ->
-            { model | handleIndex = handleIndex, popupStatus = PopupClosed } |> withCmd (Update.Document.readDocumentCmd fileName model)
+            { model | handleIndex = handleIndex, popupStatus = PopupClosed } |> withCmd (Update.Document.readDocumentCmd model.fileLocation model.serverURL fileName)
 
         SetViewPortForElement result ->
             Update.UI.setViewportForElement result model
@@ -404,7 +404,10 @@ update msg model =
             in
             { model
                 | fileList = Helper.Server.updateFileList newRecord model.fileList
+                , currentDocument = Nothing
             }
+                |> Update.Document.load_ (Data.template ("Document " ++ record.fileName ++ " deleted"))
+                -- TODO: also soft delete on server
                 |> withCmd (Outside.sendInfo (Outside.WriteMetadata newRecord))
 
         CancelChangeFileName ->
@@ -448,9 +451,16 @@ update msg model =
                         |> withNoCmd
 
         ToggleFileLocation fileLocation ->
-            Update.Document.listDocuments (PopupOpen FileListPopup) { model | fileLocation = fileLocation }
+            let
+                getCurrentFileName maybeDoc =
+                    Maybe.map .fileName maybeDoc |> Maybe.withDefault "__unknown__"
 
-        --|> (\( m, c ) -> ( m, Cmd.batch [ Update.Document.readDocumentCmd model.document.fileName model, c ] ))
+                getCurrentDocument =
+                    Update.Document.readDocumentCmd (Debug.log "FLOC" fileLocation) model.serverURL (getCurrentFileName model.currentDocument)
+            in
+            Update.Document.listDocuments PopupClosed { model | fileLocation = fileLocation }
+                |> (\( m, c ) -> ( m, Cmd.batch [ c, getCurrentDocument ] ))
+
         InputUsername str ->
             { model | userName = str } |> withNoCmd
 

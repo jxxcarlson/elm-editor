@@ -16,7 +16,7 @@ import Element
 import Element.Background as Background
 import Element.Font as Font
 import Helper.Common
-import Types exposing (Model, Msg)
+import Types exposing (FileLocation(..), Model, Msg)
 import View.Helpers
 import View.Style as Style
 import View.Widget
@@ -56,7 +56,24 @@ view model width_ height_ =
 
 displayFilename : Model -> Element Msg
 displayFilename model =
-    el [] (text model.fileName)
+    let
+        fileName_ =
+            case model.currentDocument of
+                Nothing ->
+                    "No document"
+
+                Just doc ->
+                    doc.fileName
+
+        fileName =
+            case model.fileLocation of
+                FilesOnDisk ->
+                    fileName_
+
+                FilesOnServer ->
+                    "(" ++ fileName_ ++ ")"
+    in
+    el [] (text fileName)
 
 
 displayMessage model =

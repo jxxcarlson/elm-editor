@@ -1,4 +1,4 @@
-module Data exposing (about, dummyMetaData, tmp)
+module Data exposing (about, dummyMetaData, template)
 
 import Document exposing (DocType(..), Document)
 import Time
@@ -21,8 +21,8 @@ dummyMetaData =
     }
 
 
-tmp : String -> Document
-tmp content =
+template : String -> Document
+template content =
     { fileName = "tmp.md"
     , id = "tmp.1234"
     , author = "jxxcarlson"
