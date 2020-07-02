@@ -9,6 +9,7 @@ module Types exposing
     , Msg(..)
     , PopupStatus(..)
     , PopupWindow(..)
+    , SearchOptions(..)
     , ServerStatus(..)
     , SignInMode(..)
     )
@@ -75,6 +76,7 @@ type alias Model =
     , selectedId_ : String
     , currentDocument : Maybe Document
     , serverURL : String
+    , searchOptions : SearchOptions
 
     -- User
     , authorName : String
@@ -101,6 +103,12 @@ type ServerStatus
 type HandleIndex
     = EditIndex
     | UseIndex
+
+
+type SearchOptions
+    = ExcludeDeleted
+    | ShowDeleted
+    | ShowDeletedOnly
 
 
 type SignInMode
@@ -170,6 +178,7 @@ type Msg
     | ChangeMetadata String
     | CancelChangeFileName
     | SoftDelete Metadata
+    | CycleSearchOptions
       -- External Files
     | GetFileToImport
     | SendRequestForFile String

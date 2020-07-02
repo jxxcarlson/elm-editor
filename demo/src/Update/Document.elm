@@ -86,7 +86,8 @@ sync result localDoc model =
    case result of
            Ok remoteDoc ->
               let
-                    op = Debug.log "OP" (Document.syncOperation localDoc remoteDoc)
+                    op = Document.syncOperation localDoc remoteDoc
+                    -- op = Debug.log "OP" (Document.syncOperation localDoc remoteDoc)
                     message = op |>  Document.stringOfSyncOperation
                     (localDoc_, remoteDoc_) = updateDocsForSync model.serverURL op model.currentTime localDoc remoteDoc
 

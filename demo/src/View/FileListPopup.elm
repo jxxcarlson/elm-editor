@@ -9,6 +9,7 @@ import Element
         , column
         , el
         , height
+        , padding
         , paddingXY
         , px
         , row
@@ -18,9 +19,10 @@ import Element
         , width
         )
 import Element.Background as Background
+import Element.Border as Border
 import Element.Font as Font
 import Helper.Common
-import Types exposing (FileLocation(..), HandleIndex(..), Model, Msg(..), PopupStatus(..), PopupWindow(..))
+import Types exposing (FileLocation(..), HandleIndex(..), Model, Msg(..), PopupStatus(..), PopupWindow(..), SearchOptions(..))
 import View.Helpers
 import View.Widget as Widget
 
@@ -34,7 +36,15 @@ view model =
         PopupOpen FileListPopup ->
             let
                 filesToDisplay =
-                    model.fileList |> prepareFileList model.searchText_
+                    case model.searchOptions of
+                        ExcludeDeleted ->
+                            model.fileList |> prepareFileList model.searchText_ "deleted"
+
+                        ShowDeleted ->
+                            model.fileList |> prepareFileList model.searchText_ "___"
+
+                        ShowDeletedOnly ->
+                            model.fileList |> prepareFileList "deleted" "___"
 
                 n =
                     List.length filesToDisplay |> String.fromInt
@@ -92,20 +102,26 @@ view model =
                     [ spacing 8
                     , height (px 400)
                     , scrollbarY
+                    , padding 8
+                    , Border.width 1
                     ]
                     (filesToDisplay |> List.map (viewFileName userName metadataOfCurrentDocument))
+                , row [] [ Widget.searchOptionsButton model ]
                 ]
 
         PopupOpen _ ->
             Element.none
 
 
-prepareFileList : String -> List Metadata -> List Metadata
-prepareFileList searchKey fileList =
+prepareFileList : String -> String -> List Metadata -> List Metadata
+prepareFileList yesKey noKey fileList =
     fileList
-        |> List.filter (\r -> not (String.contains "deleted" r.fileName))
-        |> List.filter (\r -> String.contains searchKey r.fileName)
+        |> List.filter (\metadata -> predicate yesKey noKey metadata)
         |> List.sortBy .fileName
+
+
+predicate yesKey noKey metadata =
+    String.contains yesKey metadata.fileName && not (String.contains noKey metadata.fileName)
 
 
 viewFileName : String -> Metadata -> Metadata -> Element Msg

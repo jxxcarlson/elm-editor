@@ -22,6 +22,7 @@ module View.Widget exposing
     , publishFileButton
     , saveFileToStorageButton
     , searchInput
+    , searchOptionsButton
     , serverStatus
     , setDocumentDirectoryButton
     , setUserNameButton
@@ -61,12 +62,30 @@ import Types
         , Msg(..)
         , PopupStatus(..)
         , PopupWindow(..)
+        , SearchOptions(..)
         , ServerStatus(..)
         )
 import View.Helpers
 import View.Style as Style
 import Widget.Button as Button exposing (Size(..))
 import Widget.TextField as TextField
+
+
+searchOptionsButton model =
+    button_ 100 (stringOfSearchOption model.searchOptions) CycleSearchOptions
+
+
+stringOfSearchOption : SearchOptions -> String
+stringOfSearchOption searchOptions =
+    case searchOptions of
+        ShowDeleted ->
+            "Deleted"
+
+        ExcludeDeleted ->
+            "No deleted"
+
+        ShowDeletedOnly ->
+            "Deleted only"
 
 
 

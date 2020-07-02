@@ -60,6 +60,7 @@ import Types
         , Msg(..)
         , PopupStatus(..)
         , PopupWindow(..)
+        , SearchOptions(..)
         , ServerStatus(..)
         , SignInMode(..)
         )
@@ -137,6 +138,7 @@ init flags =
     , randomSeed = Random.initialSeed 1727485
     , uuid = ""
     , serverURL = Config.serverURL
+    , searchOptions = ExcludeDeleted
 
     -- Author
     , userName = ""
@@ -295,6 +297,22 @@ update msg model =
             { model | searchText_ = str } |> withNoCmd
 
         -- DOCUMENT
+        CycleSearchOptions ->
+            let
+                nextOption : SearchOptions
+                nextOption =
+                    case model.searchOptions of
+                        ExcludeDeleted ->
+                            ShowDeleted
+
+                        ShowDeleted ->
+                            ShowDeletedOnly
+
+                        ShowDeletedOnly ->
+                            ExcludeDeleted
+            in
+            { model | searchOptions = nextOption } |> withNoCmd
+
         LoadAboutDocument ->
             Helper.Load.loadAboutDocument model
                 |> withCmd
@@ -456,7 +474,7 @@ update msg model =
                     Maybe.map .fileName maybeDoc |> Maybe.withDefault "__unknown__"
 
                 getCurrentDocument =
-                    Update.Document.readDocumentCmd (Debug.log "FLOC" fileLocation) model.serverURL (getCurrentFileName model.currentDocument)
+                    Update.Document.readDocumentCmd fileLocation model.serverURL (getCurrentFileName model.currentDocument)
             in
             Update.Document.listDocuments PopupClosed { model | fileLocation = fileLocation }
                 |> (\( m, c ) -> ( m, Cmd.batch [ c, getCurrentDocument ] ))

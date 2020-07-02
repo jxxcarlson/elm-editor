@@ -51,8 +51,11 @@ scripts:
       - open
 
   publish-bundle:
-    cmd: scp src-tauri/target/release/bundle/dmg/app.dmg root@161.35.125.40:/root/docserver/installers/
-    desc: Publish bundled tauri app on server
+    cmd:
+      - scp src-tauri/target/release/bundle/dmg/app.dmg root@161.35.125.40:/root/file_server
+      - mv src-tauri/target/release/bundle/osx/app.app /Applications/muEdit.app
+      - open muEdit.app
+    desc: Publish bundled tauri app on server, copy the app to /Applications, and open it
 
   publish:
     cmd: sh script/publish.sh
@@ -71,19 +74,6 @@ scripts:
     cmd:
       desc: Run the editor app
       pll:
-        - file_server ${APP_ROOT}
-        - open -a /Applications/Google\ Chrome.app/  http://0.0.0.0:4507/index.html
-
-  app:
-    desc: run editor-app & start the server
-    cmd:
-      pll:
-        - cmd: ${APP_ROOT}/src2/server.ts
-          allow:
-            - net
-            - env
-            - write=${DATA_ROOT}
-            - read=${DATA_ROOT}
         - file_server ${APP_ROOT}
         - open -a /Applications/Google\ Chrome.app/  http://0.0.0.0:4507/index.html
 
