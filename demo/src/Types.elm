@@ -178,6 +178,7 @@ type Msg
     | ChangeMetadata String
     | CancelChangeFileName
     | SoftDelete Metadata
+    | HardDelete String
     | CycleSearchOptions
       -- External Files
     | GetFileToImport

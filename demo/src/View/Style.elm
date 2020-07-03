@@ -3,6 +3,7 @@ module View.Style exposing
     , blueColor
     , brightRedColor
     , grayColor
+    , lightGrayColor
     , redColor
     , whiteColor
     )
@@ -32,6 +33,10 @@ blackColor =
 
 grayColor =
     Element.rgb255 90 90 100
+
+
+lightGrayColor =
+    Element.rgb 0.5 0.5 0.5
 
 
 px : Float -> String

@@ -15,7 +15,7 @@ import Markdown.Render exposing (MarkdownMsg(..))
 import MiniLatex.Edit
 import Outside
 import Render.Types exposing (RenderMsg(..))
-import Types exposing (DocumentStatus(..), FileLocation(..), Model, Msg(..), PopupStatus(..), PopupWindow(..))
+import Types exposing (DocumentStatus(..), FileLocation(..), Model, Msg(..), PopupStatus(..), PopupWindow(..), SearchOptions(..))
 import Update.Document
 import Update.Helper
 import View.Scroll
@@ -58,7 +58,7 @@ managePopup status model =
             { model | popupStatus = status, fileName_ = "" } |> withNoCmd
 
         PopupOpen FileListPopup ->
-            Update.Document.listDocuments status model
+            Update.Document.listDocuments status { model | searchOptions = ExcludeDeleted }
 
         PopupOpen IndexPopup ->
             { model | popupStatus = status } |> withNoCmd

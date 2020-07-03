@@ -24,6 +24,7 @@ import Element.Font as Font
 import Helper.Common
 import Types exposing (FileLocation(..), HandleIndex(..), Model, Msg(..), PopupStatus(..), PopupWindow(..), SearchOptions(..))
 import View.Helpers
+import View.Style as Style
 import View.Widget as Widget
 
 
@@ -104,8 +105,9 @@ view model =
                     , scrollbarY
                     , padding 8
                     , Border.width 1
+                    , Border.color Style.lightGrayColor
                     ]
-                    (filesToDisplay |> List.map (viewFileName userName metadataOfCurrentDocument))
+                    (filesToDisplay |> List.map (viewFileName model.searchOptions userName metadataOfCurrentDocument))
                 , row [] [ Widget.searchOptionsButton model ]
                 ]
 
@@ -124,28 +126,37 @@ predicate yesKey noKey metadata =
     String.contains yesKey metadata.fileName && not (String.contains noKey metadata.fileName)
 
 
-viewFileName : String -> Metadata -> Metadata -> Element Msg
-viewFileName userName metaDataOfCurrentDocument metadata =
+viewFileName : SearchOptions -> String -> Metadata -> Metadata -> Element Msg
+viewFileName searchOptions userName metaDataOfCurrentDocument metadata =
     row [ spacing 8 ]
-        [ documentLinkButton userName metaDataOfCurrentDocument metadata
+        [ documentLinkButton searchOptions userName metaDataOfCurrentDocument metadata
         , View.Helpers.showIf (metadata.docType == IndexDoc) (editIndexButton metadata)
         , View.Helpers.showIf (metadata.docType /= IndexDoc) placeholder
-        , deleteDocumentButton metadata
+        , deleteDocumentButton searchOptions metadata
         ]
 
 
-deleteDocumentButton : Metadata -> Element Msg
-deleteDocumentButton metadata =
+deleteDocumentButton : SearchOptions -> Metadata -> Element Msg
+deleteDocumentButton searchOptions metadata =
+    let
+        msg =
+            case List.member searchOptions [ ShowDeletedOnly, ShowDeleted ] of
+                True ->
+                    HardDelete metadata.fileName
+
+                False ->
+                    SoftDelete metadata
+    in
     el [ Element.padding 2, Background.color (Element.rgba 0.7 0.3 0.3 0.5) ]
         (Widget.plainButton 55
             "delete"
-            (SoftDelete metadata)
+            msg
             []
         )
 
 
-documentLinkButton : String -> Metadata -> Metadata -> Element Msg
-documentLinkButton userName metaDataOfCurrentDocument metadata =
+documentLinkButton : SearchOptions -> String -> Metadata -> Metadata -> Element Msg
+documentLinkButton searchOptions userName metaDataOfCurrentDocument metadata =
     let
         bgColor =
             case metaDataOfCurrentDocument.id == metadata.id of
@@ -154,9 +165,17 @@ documentLinkButton userName metaDataOfCurrentDocument metadata =
 
                 False ->
                     Background.color (Element.rgba 0 0 0 0)
+
+        buttonTitle =
+            case searchOptions == ExcludeDeleted of
+                True ->
+                    prettify userName metadata.fileName
+
+                False ->
+                    metadata.fileName
     in
     Widget.plainButton 350
-        (prettify userName metadata.fileName)
+        buttonTitle
         (GetDocument UseIndex metadata.fileName)
         [ Font.color (Element.rgb 0 0 0.9), bgColor, Element.padding 2 ]
 

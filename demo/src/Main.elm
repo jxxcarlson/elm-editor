@@ -428,6 +428,11 @@ update msg model =
                 -- TODO: also soft delete on server
                 |> withCmd (Outside.sendInfo (Outside.WriteMetadata newRecord))
 
+        HardDelete fileName ->
+            model
+                |> Update.Helper.postMessage ("Deleted: " ++ fileName)
+                |> withCmd (Outside.sendInfo (Outside.DeleteDocument fileName))
+
         CancelChangeFileName ->
             ( { model | fileName_ = model.fileName, changingFileNameState = FileNameOK }, Cmd.none )
 

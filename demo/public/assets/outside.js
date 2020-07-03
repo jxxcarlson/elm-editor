@@ -4261,6 +4261,24 @@ app.ports.infoForOutside.subscribe(msg => {
 
           break;
 
+          case "DeleteFile":
+
+              var fileName = msg.data
+              console.log("DELETE FILE", fileName)
+
+              const deleteDocumentFromManifest = (fileName, pathToManifest) => (
+                    readTextFile(pathToManifest,  {})
+                   .then(value => load(value))
+                   .then(m => m.filter(r => r.fileName != fileName))
+                   .then(m => safeDump(m))
+                   .then(contents => writeFile({file: pathToManifest, contents: contents}))
+                )
+
+              getPreferences()
+              .then(p => deleteDocumentFromManifest(fileName, p.documentDirectory + '/manifest.yaml'))
+
+
+          break;
           case "WriteMetadata":
 
               var document = msg.data

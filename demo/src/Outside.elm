@@ -40,6 +40,7 @@ type InfoForOutside
     | Highlight ( Maybe String, String )
     | OpenFileDialog Encode.Value
     | WriteDocument Document
+    | DeleteDocument String
     | GetPreferences Encode.Value
     | WriteMetadata Metadata
     | CreateDocument Document
@@ -119,6 +120,9 @@ sendInfo info =
 
         WriteDocument document ->
             infoForOutside { tag = "WriteFile", data = Codec.Document.documentEncoder document }
+
+        DeleteDocument fileName ->
+            infoForOutside { tag = "DeleteFile", data = Encode.string fileName }
 
         WriteMetadata metadata ->
             infoForOutside { tag = "WriteMetadata", data = Codec.Document.metadataEncoder metadata }
