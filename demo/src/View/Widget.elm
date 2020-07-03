@@ -79,7 +79,7 @@ stringOfSearchOption : SearchOptions -> String
 stringOfSearchOption searchOptions =
     case searchOptions of
         ShowDeleted ->
-            "Deleted"
+            "Show deleted"
 
         ExcludeDeleted ->
             "Exclude deleted"
