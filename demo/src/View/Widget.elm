@@ -9,6 +9,7 @@ module View.Widget exposing
     , documentTypeButton
     , exportFileButton
     , exportLaTeXFileButton
+    , forcePushDocumentButton
     , getPreferencesButton
     , importFileButton
     , loadDocumentButton
@@ -166,7 +167,11 @@ doNotChangeMetadataButton =
 
 
 syncDocumentButton =
-    button_ 30 "S" GetDocumentToSync
+    buttonWithTitle 30 "S" GetDocumentToSync "Sync local and remote docs"
+
+
+forcePushDocumentButton =
+    buttonWithTitle 30 "FP" ForcePush "Force: local > remote"
 
 
 setDocumentDirectoryButton =
@@ -372,6 +377,14 @@ button_ width str msg =
     Button.make msg str
         |> Button.withWidth (Bounded width)
         |> Button.withSelected False
+        |> Button.toElement
+
+
+buttonWithTitle width str msg title =
+    Button.make msg str
+        |> Button.withWidth (Bounded width)
+        |> Button.withSelected False
+        |> Button.withTitle title
         |> Button.toElement
 
 

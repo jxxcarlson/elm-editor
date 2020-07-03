@@ -204,6 +204,7 @@ type Msg
     | AskForDocument String
     | GotDocument (Result Http.Error Document)
     | GetDocumentToSync
+    | ForcePush
     | SyncDocument (Result Http.Error Document)
     | Message (Result Http.Error String)
     | Publish

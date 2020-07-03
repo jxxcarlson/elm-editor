@@ -452,6 +452,9 @@ update msg model =
         GetDocumentToSync ->
             model |> withCmd (Helper.Server.getDocumentToSync model.serverURL model.fileName)
 
+        ForcePush ->
+            Update.Document.forcePush model
+
         SyncDocument result ->
             case model.currentDocument of
                 Nothing ->

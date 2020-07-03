@@ -5,6 +5,7 @@ module Update.Document exposing
     , setIndex
     , load
     , load_
+    , forcePush
     , sync
     , updateDocument
     , listDocuments
@@ -16,6 +17,7 @@ import Cmd.Extra exposing (withCmd, withCmds, withNoCmd)
 import Document exposing (DocType(..), Document, SyncOperation(..))
 import Helper.Common
 import Helper.Load
+import Helper.Diff
 import Update.Helper
 import Data
 import UuidHelper
@@ -24,20 +26,29 @@ import Helper.Server
 import Helper.File
 import Helper.Sync
 import Outside
-import Types exposing (ChangingFileNameState(..)
+import Types exposing ( ChangingFileNameState(..)
   , DocumentStatus(..), PopupWindow(..), HandleIndex(..),
   FileLocation(..), Model, Msg, PopupStatus(..))
 import View.Scroll
 import Time
 
-
+forcePush : Model -> (Model, Cmd Msg)
+forcePush model =
+    case model.currentDocument of
+        Nothing -> model |> withNoCmd
+        Just doc ->
+            let
+                newDoc = doc |> Document.updateSyncTimes model.currentTime
+            in
+            { model | currentDocument = Just newDoc}
+               |> withCmds (updateBothDocuments model.serverURL newDoc newDoc)
 
 updateDocsForSync : String -> SyncOperation -> Time.Posix -> Document -> Document -> (Document, Document)
 updateDocsForSync serverUrl op currentTime localDoc remoteDoc =
     case op of
        DocsIdentical -> makeSyncDataEqual currentTime localDoc remoteDoc
 
-       SyncConflict ->  pushDocument currentTime localDoc remoteDoc
+       SyncConflict ->  (Helper.Diff.compareDocuments localDoc remoteDoc, remoteDoc)
 
        PushDocument -> pushDocument currentTime localDoc remoteDoc
 
@@ -72,10 +83,11 @@ syncCommands : String ->  SyncOperation  -> Document -> Document -> List (Cmd Ms
 syncCommands serverUrl op localDoc remoteDoc  =
           case op of
                  DocsIdentical -> updateBothDocuments serverUrl localDoc remoteDoc
-                 SyncConflict -> updateBothDocuments serverUrl localDoc remoteDoc
+                 SyncConflict ->  [Outside.sendInfo (Outside.WriteDocument localDoc)]
                  PushDocument -> updateBothDocuments serverUrl localDoc remoteDoc
                  PullDocument -> updateBothDocuments serverUrl localDoc remoteDoc
                  NoSyncOp -> []
+
 
 updateBothDocuments : String -> Document -> Document -> List (Cmd Msg)
 updateBothDocuments serverUrl localDoc remoteDoc =
@@ -86,13 +98,13 @@ sync result localDoc model =
    case result of
            Ok remoteDoc ->
               let
-                    op = Document.syncOperation localDoc remoteDoc
-                    -- op = Debug.log "OP" (Document.syncOperation localDoc remoteDoc)
+                    op = Debug.log "OP" (Document.syncOperation localDoc remoteDoc)
                     message = op |>  Document.stringOfSyncOperation
                     (localDoc_, remoteDoc_) = updateDocsForSync model.serverURL op model.currentTime localDoc remoteDoc
 
               in
                 { model | currentDocument = Just localDoc_ }
+                  |> Helper.Load.load localDoc_
                   |> (Update.Helper.postMessage ("Sync: "  ++ message))
                   |> withCmds (syncCommands model.serverURL op localDoc_ remoteDoc_ )
 
