@@ -4031,7 +4031,7 @@ could be used to work around this.
 */
 
 // IMPORTS
-const {readTextFile, writeFile, Dir } = require('./api/fs/index.cjs.min.js')
+const {readTextFile, removeFile, writeFile, Dir } = require('./api/fs/index.cjs.min.js')
 
 const {open} = require('./api/dialog.cjs.min.js')
 
@@ -4261,6 +4261,26 @@ app.ports.infoForOutside.subscribe(msg => {
 
           break;
 
+          case "DeleteFile":
+
+              var fileName = msg.data
+              console.log("DELETE FILE", fileName)
+
+              const deleteDocumentFromManifest = (fileName, pathToManifest) => (
+                    readTextFile(pathToManifest,  {})
+                   .then(value => load(value))
+                   .then(m => m.filter(r => r.fileName != fileName))
+                   .then(m => safeDump(m))
+                   .then(contents => writeFile({file: pathToManifest, contents: contents}))
+                )
+
+              getPreferences()
+              .then(p => deleteDocumentFromManifest(fileName, p.documentDirectory + '/manifest.yaml'))
+
+              getPreferences()
+              .then(p => removeFile(p.documentDirectory + '/' + fileName.replace('.deleted', '')))
+
+          break;
           case "WriteMetadata":
 
               var document = msg.data

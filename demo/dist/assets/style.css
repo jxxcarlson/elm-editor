@@ -21,6 +21,8 @@
   align-items: baseline;
 }
 
+body { white-space: normal;}
+
 p {white-space: normal;}
 
 
@@ -29,10 +31,13 @@ p {white-space: normal;}
     line-height: 12px !important;
  }
 
-.red { color: red;}
-.green { color: green;}
-.blue {color: blue;}
-
+.red { color: red}
+.green { color: green}
+.blue { color: blue}
+.pale { color: #aaa; }
+.mark {background-color: yellow}
+.highlight { background-color: #8d9ffe; }
+.censored {background-color: black}
 
 .mm-paragraph {
 	white-space: normal;
@@ -74,31 +79,54 @@ p {white-space: normal;}
 
 
 
-.highlight {
-   background-color: #8d9ffe;
-  }
 
-.mm-block-0 {
+.mm-block-1 {
+   margin-left: 16px;
+ }
+
+ .mm-block-2 {
+   margin-left: 32px;
  }
 
 
+ .mm-block-3 {
+   margin-left: 48x;
+ }
 
-.mm-block-1 {
-  margin-left: 16px;
+ .mm-block-4 {
+   margin-left: 64px;
+ }
+
+.mm-ulist-item {
+	list-style: none;
+  margin-bottom: 8px;
+  padding-left: 18px;
+  text-indent: -12px;
+	white-space: normal;
 }
 
-.mm-block-2 {
-  margin-left: 32px;
-}
+
+.mm-ulist-item .mm-block-0 {
+   margin-left: 8px;
+ }
 
 
-.mm-block-3 {
-  margin-left: 48px;
-}
+li .mm-block-1 {
+   margin-left: 16px  !important;
+ }
 
-.mm-block-4 {
-  margin-left: 64px;
-}
+li .mm-block-2 {
+   margin-left: 32px  !important;
+ }
+
+
+li .mm-block-3 {
+   margin-left: 90px  !important;
+ }
+
+li .mm-block-4  {
+   margin-left: 122px  !important;
+ }
 
 
 .mm-olist-item {
@@ -117,17 +145,8 @@ p {white-space: normal;}
  }
 
 
-.mm-ulist-item {
-	list-style: none;
-  margin-bottom: 8px;
-  padding-left: 18px;
-  text-indent: -12px;
-	white-space: normal;
-}
 
-.mm-ulist-item.mm-block-0 {
-   margin-left: 8px;
- }
+
 
 .mm-quotation {
 	margin-top: 18px;

@@ -48,14 +48,14 @@ scripts:
       - browserify public/assets/outside_source.js -o dist/assets/outside.js
       - echo "Building ..."
       - npx tauri build
-      - open
-
-  publish-bundle:
-    cmd:
+      - echo "Copying dmg file to remote server ..."
       - scp src-tauri/target/release/bundle/dmg/app.dmg root@161.35.125.40:/root/file_server
-      - mv src-tauri/target/release/bundle/osx/app.app /Applications/muEdit.app
-      - open muEdit.app
-    desc: Publish bundled tauri app on server, copy the app to /Applications, and open it
+      - echo "Moving app to Applications folder as muEdit.app"
+      - mv src-tauri/target/release/bundle/osx/app.app src-tauri/target/release/bundle/osx/muEdit.app
+      - rm -rf  /Applications/muEdit.app
+      - mv src-tauri/target/release/bundle/osx/muEdit.app /Applications
+      - open -a /Applications/muEdit.app
+    desc: Bundle app, copy dmg to remote filesever, move app to /Applications/muEdit.app
 
   publish:
     cmd: sh script/publish.sh
