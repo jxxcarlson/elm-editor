@@ -72,7 +72,7 @@ import Widget.TextField as TextField
 
 
 searchOptionsButton model =
-    button_ 100 (stringOfSearchOption model.searchOptions) CycleSearchOptions
+    button_ 120 (stringOfSearchOption model.searchOptions) CycleSearchOptions
 
 
 stringOfSearchOption : SearchOptions -> String
@@ -82,7 +82,7 @@ stringOfSearchOption searchOptions =
             "Deleted"
 
         ExcludeDeleted ->
-            "No deleted"
+            "Exclude deleted"
 
         ShowDeletedOnly ->
             "Deleted only"

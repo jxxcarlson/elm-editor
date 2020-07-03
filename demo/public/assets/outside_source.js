@@ -277,7 +277,6 @@ app.ports.infoForOutside.subscribe(msg => {
               getPreferences()
               .then(p => deleteDocumentFromManifest(fileName, p.documentDirectory + '/manifest.yaml'))
 
-
           break;
           case "WriteMetadata":
 

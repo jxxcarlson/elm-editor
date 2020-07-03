@@ -429,7 +429,7 @@ update msg model =
                 |> withCmd (Outside.sendInfo (Outside.WriteMetadata newRecord))
 
         HardDelete fileName ->
-            model
+            { model | fileList = List.filter (\r -> r.fileName /= fileName) model.fileList }
                 |> Update.Helper.postMessage ("Deleted: " ++ fileName)
                 |> withCmd (Outside.sendInfo (Outside.DeleteDocument fileName))
 
