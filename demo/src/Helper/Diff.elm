@@ -1,7 +1,78 @@
-module Helper.Diff exposing (compareDocuments, conflictsResolved)
+module Helper.Diff exposing
+    ( acceptLocal
+    , acceptRemote
+    , compareDocuments
+    , conflictsResolved
+    , r1
+    )
 
 import Diff exposing (Change(..))
 import Document exposing (Document)
+import Maybe.Extra
+import Regex
+
+
+r1 =
+    regexFromString "@local\\[(.*?)\\]"
+
+
+rxLocal =
+    regexFromString "@local\\[(.*?)\\]"
+
+
+rxRemote =
+    regexFromString "@remote\\[(.*?)\\]"
+
+
+replacer match =
+    List.head match.submatches
+        |> Maybe.Extra.join
+        |> Maybe.withDefault ""
+
+
+acceptLocal : String -> String
+acceptLocal str =
+    str
+        |> acceptLocal_
+        |> rejectRemote_
+
+
+acceptRemote : String -> String
+acceptRemote str =
+    str
+        |> acceptRemote_
+        |> rejectLocal_
+
+
+acceptLocal_ : String -> String
+acceptLocal_ str =
+    Regex.replace rxLocal replacer str
+
+
+rejectLocal_ : String -> String
+rejectLocal_ str =
+    Regex.replace rxLocal (.match >> (\s -> "")) str
+
+
+acceptRemote_ : String -> String
+acceptRemote_ str =
+    Regex.replace rxRemote replacer str
+
+
+rejectRemote_ : String -> String
+rejectRemote_ str =
+    Regex.replace rxRemote (.match >> (\s -> "")) str
+
+
+regexFromString : String -> Regex.Regex
+regexFromString string =
+    Regex.fromStringWith { caseInsensitive = False, multiline = True } string
+        |> Maybe.withDefault Regex.never
+
+
+reject : String -> String -> String
+reject tag str =
+    str
 
 
 {-|
