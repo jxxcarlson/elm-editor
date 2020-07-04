@@ -19,6 +19,7 @@ module View.Widget exposing
     , openIndexButton
     , openNewFilePopupButton
     , openPreferencesPopupButton
+    , openSyncPopup
     , plainButton
     , publishFileButton
     , saveFileToStorageButton
@@ -166,12 +167,16 @@ doNotChangeMetadataButton =
 -- [ Font.color (Element.rgb 0.7 0.7 0.7) ]
 
 
+openSyncPopup =
+    buttonWithTitle 30 "S" (ManagePopup (PopupOpen SyncPopup)) "Sync local and remote docs"
+
+
 syncDocumentButton =
-    buttonWithTitle 30 "S" GetDocumentToSync "Sync local and remote docs"
+    altButtonWithTitle 110 "Sync" GetDocumentToSync "Sync local and remote docs"
 
 
 forcePushDocumentButton =
-    buttonWithTitle 30 "FP" ForcePush "Force: local > remote"
+    altButtonWithTitle 110 "Force Push" ForcePush "Force: local > remote"
 
 
 setDocumentDirectoryButton =
@@ -384,6 +389,15 @@ buttonWithTitle width str msg title =
     Button.make msg str
         |> Button.withWidth (Bounded width)
         |> Button.withSelected False
+        |> Button.withTitle title
+        |> Button.toElement
+
+
+altButtonWithTitle width str msg title =
+    Button.make msg str
+        |> Button.withWidth (Bounded width)
+        |> Button.withSelected False
+        |> Button.withBackgroundColor Style.blueColor
         |> Button.withTitle title
         |> Button.toElement
 

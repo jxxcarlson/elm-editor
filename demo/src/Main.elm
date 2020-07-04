@@ -78,6 +78,7 @@ import View.IndexPopup as IndexPopup
 import View.NewFilePopup as NewFilePopup
 import View.PreferencesPopup as AuthorPopup
 import View.Scroll
+import View.SyncPopup as SyncPopup
 
 
 type alias Flags =
@@ -598,6 +599,7 @@ mainColumn model =
                 , Element.inFront (RemoteFileListPopup.view model)
                 , Element.inFront (NewFilePopup.view model)
                 , Element.inFront (IndexPopup.view model)
+                , Element.inFront (SyncPopup.view model)
                 ]
                 (viewEditorAndRenderedText model)
             , View.Footer.view model model.width 40

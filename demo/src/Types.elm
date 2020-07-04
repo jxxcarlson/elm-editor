@@ -140,6 +140,7 @@ type PopupWindow
     | LocalStoragePopup
     | FileListPopup
     | PreferencesPopup
+    | SyncPopup
 
 
 type DocumentStatus

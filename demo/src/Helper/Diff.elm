@@ -29,10 +29,10 @@ loop s nextState_ =
 
 conflictsResolved : String -> Bool
 conflictsResolved str =
-    if String.contains "@added[" str then
+    if String.contains "@remote[" str then
         False
 
-    else if String.contains "@removed[" str then
+    else if String.contains "@local[" str then
         False
 
     else
@@ -131,7 +131,7 @@ stringValue change =
                     str
 
                 False ->
-                    "@added[" ++ str ++ "]"
+                    "@remote[" ++ str ++ "]"
 
         Removed str ->
             case str == "" of
@@ -139,7 +139,7 @@ stringValue change =
                     str
 
                 False ->
-                    "@removed[" ++ str ++ "]"
+                    "@local[" ++ str ++ "]"
 
         NoChange str ->
             str
