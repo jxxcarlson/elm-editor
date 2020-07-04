@@ -1,32 +1,14 @@
-module Helper.Diff exposing (coalesce, compareDocuments, conflictsResolved, d1, d2, d3, d4)
+module Helper.Diff exposing (compareDocuments, conflictsResolved)
 
 import Diff exposing (Change(..))
 import Document exposing (Document)
 
 
-type alias DiffDatum =
-    Change String
+{-|
 
+    Does the string represent a document with merge conflicts?
 
-type alias DiffData =
-    List (Change String)
-
-
-type Step state a
-    = Loop state
-    | Done a
-
-
-loop : state -> (state -> Step state a) -> a
-loop s nextState_ =
-    case nextState_ s of
-        Loop s_ ->
-            loop s_ nextState_
-
-        Done b ->
-            b
-
-
+-}
 conflictsResolved : String -> Bool
 conflictsResolved str =
     if String.contains "@remote[" str then
@@ -39,20 +21,55 @@ conflictsResolved str =
         True
 
 
-d1 =
-    [ NoChange "one", NoChange "two" ]
+
+-- COMPARISON
 
 
-d2 =
-    d1 ++ [ Added "three", Added "four" ]
+{-|
+
+    Compare the local and remote documents, flagging
+    insertions and deletions with @local[...] and
+    @remote[...]
+
+-}
+compareDocuments : Document -> Document -> Document
+compareDocuments localDoc remoteDoc =
+    { localDoc | content = compare localDoc.content remoteDoc.content }
 
 
-d3 =
-    d2 ++ [ NoChange "five" ]
+compare : String -> String -> String
+compare a b =
+    Diff.diffLines a b
+        |> coalesce
+        |> List.map stringValue
+        |> String.join "\n"
 
 
-d4 =
-    d3 ++ [ Added "six", Removed "seven" ]
+stringValue : Change String -> String
+stringValue change =
+    case change of
+        Added str ->
+            case str == "" of
+                True ->
+                    str
+
+                False ->
+                    "@remote[" ++ str ++ "]"
+
+        Removed str ->
+            case str == "" of
+                True ->
+                    str
+
+                False ->
+                    "@local[" ++ str ++ "]"
+
+        NoChange str ->
+            str
+
+
+
+-- COALESCING
 
 
 coalesce : List (Change String) -> List (Change String)
@@ -109,37 +126,40 @@ advance item st =
             { st | currentItem = Added (str2 ++ "\n" ++ str) }
 
 
-compareDocuments : Document -> Document -> Document
-compareDocuments localDoc remoteDoc =
-    { localDoc | content = compare localDoc.content remoteDoc.content }
+
+-- LOOP
 
 
-compare : String -> String -> String
-compare a b =
-    Diff.diffLines a b
-        |> coalesce
-        |> List.map stringValue
-        |> String.join "\n"
+type Step state a
+    = Loop state
+    | Done a
 
 
-stringValue : Change String -> String
-stringValue change =
-    case change of
-        Added str ->
-            case str == "" of
-                True ->
-                    str
+loop : state -> (state -> Step state a) -> a
+loop s nextState_ =
+    case nextState_ s of
+        Loop s_ ->
+            loop s_ nextState_
 
-                False ->
-                    "@remote[" ++ str ++ "]"
+        Done b ->
+            b
 
-        Removed str ->
-            case str == "" of
-                True ->
-                    str
 
-                False ->
-                    "@local[" ++ str ++ "]"
 
-        NoChange str ->
-            str
+-- TEST DATA
+
+
+d1 =
+    [ NoChange "one", NoChange "two" ]
+
+
+d2 =
+    d1 ++ [ Added "three", Added "four" ]
+
+
+d3 =
+    d2 ++ [ NoChange "five" ]
+
+
+d4 =
+    d3 ++ [ Added "six", Removed "seven" ]
