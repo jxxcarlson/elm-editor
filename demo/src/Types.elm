@@ -5,10 +5,12 @@ module Types exposing
     , DocumentStatus(..)
     , FileLocation(..)
     , HandleIndex(..)
+    , MergeSite(..)
     , Model
     , Msg(..)
     , PopupStatus(..)
     , PopupWindow(..)
+    , ResolveMergeConflict(..)
     , SearchOptions(..)
     , ServerStatus(..)
     , SignInMode(..)
@@ -92,6 +94,16 @@ type alias Model =
 type AppMode
     = Desktop
     | Webapp
+
+
+type ResolveMergeConflict
+    = ResolveOne
+    | ResolveAll
+
+
+type MergeSite
+    = LocalSite
+    | RemoteSite
 
 
 type ServerStatus
@@ -206,8 +218,9 @@ type Msg
     | GotDocument (Result Http.Error Document)
     | GetDocumentToSync
     | ForcePush
-    | AcceptLocal
-    | AcceptRemote
+    | AcceptLocal ResolveMergeConflict
+    | AcceptRemote ResolveMergeConflict
+    | RejectOne MergeSite
     | SyncDocument (Result Http.Error Document)
     | Message (Result Http.Error String)
     | Publish

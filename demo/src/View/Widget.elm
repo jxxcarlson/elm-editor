@@ -1,6 +1,8 @@
 module View.Widget exposing
     ( aboutButton
     , acceptLocalButton
+    , acceptOneLocalButton
+    , acceptOneRemoteButton
     , acceptRemoteButton
     , button
     , cancelChangeMetadataButton
@@ -24,6 +26,8 @@ module View.Widget exposing
     , openSyncPopup
     , plainButton
     , publishFileButton
+    , rejectOneLocalButton
+    , rejectOneRemoteButton
     , saveFileToStorageButton
     , searchInput
     , searchOptionsButton
@@ -62,10 +66,12 @@ import Types
     exposing
         ( DocumentStatus(..)
         , FileLocation(..)
+        , MergeSite(..)
         , Model
         , Msg(..)
         , PopupStatus(..)
         , PopupWindow(..)
+        , ResolveMergeConflict(..)
         , SearchOptions(..)
         , ServerStatus(..)
         )
@@ -153,6 +159,9 @@ changeMetadataButton fileName =
         ( "tex", True ) ->
             changeMetadataButton_ fileName
 
+        ( "index", True ) ->
+            changeMetadataButton_ fileName
+
         ( _, _ ) ->
             doNotChangeMetadataButton
 
@@ -182,11 +191,27 @@ forcePushDocumentButton =
 
 
 acceptLocalButton =
-    altButtonWithTitle 110 "Accept Local" AcceptLocal "Accept local revisions"
+    altButtonWithTitle 110 "Accept Local" (AcceptLocal ResolveAll) "Accept local revisions"
 
 
 acceptRemoteButton =
-    altButtonWithTitle 110 "Accept Remote" AcceptRemote "Accept remote revisions"
+    altButtonWithTitle 110 "Accept Remote" (AcceptRemote ResolveAll) "Accept remote revisions"
+
+
+acceptOneLocalButton =
+    altButtonWithTitle 140 "Accept One Local" (AcceptLocal ResolveOne) "Accept one local revision"
+
+
+acceptOneRemoteButton =
+    altButtonWithTitle 150 "Accept One Remote" (AcceptRemote ResolveOne) "Accept one remote revision"
+
+
+rejectOneLocalButton =
+    altButtonWithTitle 140 "Reject One Local" (RejectOne LocalSite) "Reject one local revision"
+
+
+rejectOneRemoteButton =
+    altButtonWithTitle 150 "Reject One Remote" (RejectOne RemoteSite) "Reject one remote revision"
 
 
 setDocumentDirectoryButton =
@@ -407,7 +432,7 @@ altButtonWithTitle width str msg title =
     Button.make msg str
         |> Button.withWidth (Bounded width)
         |> Button.withSelected False
-        |> Button.withBackgroundColor Style.blueColor
+        |> Button.withBackgroundColor Style.lightBlueColor
         |> Button.withTitle title
         |> Button.toElement
 

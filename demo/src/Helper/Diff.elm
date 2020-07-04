@@ -1,8 +1,12 @@
 module Helper.Diff exposing
     ( acceptLocal
+    , acceptOneLocal
+    , acceptOneRemote
     , acceptRemote
     , compareDocuments
     , conflictsResolved
+    , rejectOneLocal
+    , rejectOneRemote
     , rxLocal
     , rxRemote
     , t1
@@ -56,9 +60,19 @@ acceptLocal_ str =
     Regex.replace rxLocal replacer str
 
 
+acceptOneLocal : String -> String
+acceptOneLocal str =
+    Regex.replaceAtMost 1 rxLocal replacer str
+
+
 rejectLocal_ : String -> String
 rejectLocal_ str =
     Regex.replace rxLocal (.match >> (\s -> "")) str
+
+
+rejectOneLocal : String -> String
+rejectOneLocal str =
+    Regex.replaceAtMost 1 rxLocal (.match >> (\s -> "")) str
 
 
 acceptRemote_ : String -> String
@@ -66,9 +80,19 @@ acceptRemote_ str =
     Regex.replace rxRemote replacer str
 
 
+acceptOneRemote : String -> String
+acceptOneRemote str =
+    Regex.replaceAtMost 2 rxRemote replacer str
+
+
 rejectRemote_ : String -> String
 rejectRemote_ str =
     Regex.replace rxRemote (.match >> (\s -> "")) str
+
+
+rejectOneRemote : String -> String
+rejectOneRemote str =
+    Regex.replaceAtMost 1 rxRemote (.match >> (\s -> "")) str
 
 
 t1 =
@@ -86,6 +110,27 @@ j
 
 
 t2 =
+    """a
+b
+@local[c
+d
+e]
+t
+y
+@local[U
+V
+V]
+x
+y
+@remote[f
+g
+h]
+i
+j
+"""
+
+
+t3 =
     """# AAA
 
 a

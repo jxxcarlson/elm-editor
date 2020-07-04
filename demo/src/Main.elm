@@ -456,11 +456,14 @@ update msg model =
         ForcePush ->
             Update.Document.forcePush model
 
-        AcceptLocal ->
-            Update.Document.acceptLocal model
+        AcceptLocal mode ->
+            Update.Document.acceptLocal mode model
 
-        AcceptRemote ->
-            Update.Document.acceptRemote model
+        AcceptRemote mode ->
+            Update.Document.acceptRemote mode model
+
+        RejectOne mergeSite ->
+            Update.Document.rejectOne mergeSite model
 
         SyncDocument result ->
             case model.currentDocument of

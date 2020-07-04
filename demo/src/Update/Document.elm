@@ -8,6 +8,7 @@ module Update.Document exposing
     , forcePush
     , sync
     , updateDocument
+    , rejectOne
     , listDocuments
     , loadDocument
     , toggleDocType
@@ -30,7 +31,7 @@ import Helper.Sync
 import Outside
 import Types exposing ( ChangingFileNameState(..)
   , DocumentStatus(..), PopupWindow(..), HandleIndex(..),
-  FileLocation(..), Model, Msg, PopupStatus(..))
+  FileLocation(..), Model, Msg, PopupStatus(..), ResolveMergeConflict(..), MergeSite(..))
 import View.Scroll
 import Time
 
@@ -51,34 +52,60 @@ forcePush model =
                       |> Update.Helper.postMessage "You still have conflicts"
                       |> withNoCmd
 
-acceptLocal : Model -> (Model, Cmd Msg)
-acceptLocal model =
+acceptLocal : ResolveMergeConflict -> Model -> (Model, Cmd Msg)
+acceptLocal mode model =
     case model.currentDocument of
         Nothing -> model |> withNoCmd
         Just doc ->
                     let
+                        merger = case mode of
+                            ResolveOne -> Helper.Diff.acceptOneLocal
+                            ResolveAll -> Helper.Diff.acceptLocal
                         newDoc = doc
                           |> Document.updateSyncTimes model.currentTime
-                          |> (\doc_ -> {doc_ | content = Helper.Diff.acceptLocal doc.content})
+                          |> (\doc_ -> {doc_ | content = merger doc.content})
                     in
                     { model | currentDocument = Just newDoc}
                        |> Helper.Load.load newDoc
                        |> withCmds (updateBothDocuments model.serverURL newDoc newDoc)
 
-acceptRemote : Model -> (Model, Cmd Msg)
-acceptRemote model =
+acceptRemote : ResolveMergeConflict -> Model -> (Model, Cmd Msg)
+acceptRemote mode model =
     case model.currentDocument of
         Nothing -> model |> withNoCmd
         Just doc ->
                     let
+                        merger = case mode of
+                            ResolveOne -> Helper.Diff.acceptOneRemote
+                            ResolveAll -> Helper.Diff.acceptRemote
                         newDoc = doc
                           |> Document.updateSyncTimes model.currentTime
-                          |> (\doc_ -> {doc_ | content = Helper.Diff.acceptRemote doc.content})
+                          |> (\doc_ -> {doc_ | content = merger doc.content})
 
                     in
                     { model | currentDocument = Just newDoc}
                        |> Helper.Load.load newDoc
                        |> withCmds (updateBothDocuments model.serverURL newDoc newDoc)
+
+
+rejectOne : MergeSite -> Model -> (Model, Cmd Msg)
+rejectOne  mergeSite model =
+    case model.currentDocument of
+            Nothing -> model |> withNoCmd
+            Just doc ->
+                let
+                    merger = case mergeSite of
+                        LocalSite -> Helper.Diff.rejectOneLocal
+                        RemoteSite -> Helper.Diff.rejectOneRemote
+                    newDoc = doc
+                      |> Document.updateSyncTimes model.currentTime
+                      |> (\doc_ -> {doc_ | content = merger doc.content})
+
+                in
+                { model | currentDocument = Just newDoc}
+                   |> Helper.Load.load newDoc
+                   |> withCmds (updateBothDocuments model.serverURL newDoc newDoc)
+
 
 updateDocsForSync : String -> SyncOperation -> Time.Posix -> Document -> Document -> (Document, Document)
 updateDocsForSync serverUrl op currentTime localDoc remoteDoc =
@@ -238,12 +265,10 @@ changeMetaData : Model -> ( Model, Cmd Msg )
 changeMetaData model =
   case model.currentDocument of
       Nothing -> (model, Cmd.none)
-      Just doc ->
+      Just oldDocument ->
             let
-
-
                 newDocument =
-                    { doc
+                    { oldDocument
                         | fileName = model.fileName_
                         , tags = Helper.Common.listFromString model.tags_
                         , categories = Helper.Common.listFromString model.categories_
@@ -253,7 +278,7 @@ changeMetaData model =
                         , belongsTo = model.belongsTo_
                     }
             in
-            ( { model
+            { model
                 | fileName = model.fileName_
                 , docType = Document.docType model.fileName_
                 , changingFileNameState = FileNameOK
@@ -261,8 +286,11 @@ changeMetaData model =
                 , currentDocument = Just newDocument
                 , fileList = Helper.Server.updateFileList (Document.toMetadata newDocument) model.fileList
               }
-            , Outside.sendInfo (Outside.WriteDocument newDocument)
-            )
+              |> withCmds [
+                Outside.sendInfo (Outside.WriteDocument newDocument)
+                , Outside.sendInfo (Outside.DeleteDocument oldDocument.fileName)
+              ]
+
 
 
 {-|

@@ -37,7 +37,7 @@ view model =
         ( PopupOpen SyncPopup, Just doc ) ->
             column
                 [ width (px 550)
-                , height (px 200)
+                , height (px 260)
                 , paddingXY 30 30
                 , Background.color (Element.rgba 0.75 0.75 1.0 0.6)
                 , Element.alignBottom
@@ -49,6 +49,14 @@ view model =
                     , Widget.forcePushDocumentButton
                     , Widget.acceptLocalButton
                     , Widget.acceptRemoteButton
+                    ]
+                , row [ spacing 12 ]
+                    [ Widget.acceptOneLocalButton
+                    , Widget.rejectOneLocalButton
+                    ]
+                , row [ spacing 12 ]
+                    [ Widget.acceptOneRemoteButton
+                    , Widget.rejectOneRemoteButton
                     ]
                 , displayMessage model
                 ]

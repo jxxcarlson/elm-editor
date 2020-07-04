@@ -3,6 +3,7 @@ module View.Style exposing
     , blueColor
     , brightRedColor
     , grayColor
+    , lightBlueColor
     , lightGrayColor
     , redColor
     , whiteColor
@@ -17,6 +18,10 @@ redColor =
 
 blueColor =
     Element.rgb255 30 30 120
+
+
+lightBlueColor =
+    Element.rgba 0.1 0.1 1.0 0.7
 
 
 brightRedColor =

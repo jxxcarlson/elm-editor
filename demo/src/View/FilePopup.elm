@@ -66,7 +66,7 @@ infoPanel doc =
 
 changePanel model =
     column [ spacing 12 ]
-        [ inputItem "File name" InputFileName model.fileName_ 150
+        [ inputItem "File name" InputFileName model.fileName_ 300
         , inputItem "Tags" InputTags model.tags_ 300
         , inputItem "Categories" InputCategories model.categories_ 300
         , inputItem "Title" InputTitle model.title_ 300
@@ -75,7 +75,6 @@ changePanel model =
         , row [ spacing 12 ]
             [ Widget.changeMetadataButton model.fileName_
             , Widget.cancelChangeMetadataButton
-            , Widget.syncDocumentButton
             ]
         , item "Message" model.message
         ]
