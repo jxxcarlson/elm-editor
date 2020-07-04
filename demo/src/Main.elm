@@ -456,6 +456,12 @@ update msg model =
         ForcePush ->
             Update.Document.forcePush model
 
+        AcceptLocal ->
+            Update.Document.acceptLocal model
+
+        AcceptRemote ->
+            Update.Document.acceptRemote model
+
         SyncDocument result ->
             case model.currentDocument of
                 Nothing ->

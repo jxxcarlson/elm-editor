@@ -3,7 +3,10 @@ module Helper.Diff exposing
     , acceptRemote
     , compareDocuments
     , conflictsResolved
-    , r1
+    , rxLocal
+    , rxRemote
+    , t1
+    , t2
     )
 
 import Diff exposing (Change(..))
@@ -12,16 +15,20 @@ import Maybe.Extra
 import Regex
 
 
-r1 =
-    regexFromString "@local\\[(.*?)\\]"
-
-
 rxLocal =
-    regexFromString "@local\\[(.*?)\\]"
+    -- regexFromString "@local\\[(.*?)\\]"
+    regexFromString "@local\\[([^]+?)\\]"
 
 
 rxRemote =
-    regexFromString "@remote\\[(.*?)\\]"
+    -- regexFromString "@remote\\[(^*?)\\]"
+    regexFromString "@remote\\[([^]+?)\\]"
+
+
+regexFromString : String -> Regex.Regex
+regexFromString string =
+    Regex.fromStringWith { caseInsensitive = False, multiline = True } string
+        |> Maybe.withDefault Regex.never
 
 
 replacer match =
@@ -64,15 +71,35 @@ rejectRemote_ str =
     Regex.replace rxRemote (.match >> (\s -> "")) str
 
 
-regexFromString : String -> Regex.Regex
-regexFromString string =
-    Regex.fromStringWith { caseInsensitive = False, multiline = True } string
-        |> Maybe.withDefault Regex.never
+t1 =
+    """a
+b
+@local[c
+d
+e]
+@remote[f
+g
+h]
+i
+j
+"""
 
 
-reject : String -> String -> String
-reject tag str =
-    str
+t2 =
+    """# AAA
+
+a
+b
+@local[cL
+dL
+e
+f]
+@remote[c
+d
+eR
+fR]
+
+"""
 
 
 {-|

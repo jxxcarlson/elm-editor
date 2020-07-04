@@ -34,7 +34,7 @@ scripts:
      cmd: browserify public/assets/outside_source.js -o public/assets/outside.js
      desc: browserify outside.js
 
-  tauri:
+  dev:
     cmd:
       - browserify public/assets/outside_source.js -o public/assets/outside.js
       - npx tauri dev
@@ -55,7 +55,16 @@ scripts:
       - rm -rf  /Applications/muEdit.app
       - mv src-tauri/target/release/bundle/osx/muEdit.app /Applications
       - open -a /Applications/muEdit.app
+
     desc: Bundle app, copy dmg to remote filesever, move app to /Applications/muEdit.app
+
+  mu:
+    cmd: open -a /Applications/muEdit.app/
+    desc: Open muEdit.app
+
+  mu-debug:
+    cmd: open -a /Users/jxxcarlson/dev/elm/projects/elm-editor/demo/src-tauri/target/debug/bundle/osx/app.app
+    desc: Open debug version of muEdit.app
 
   publish:
     cmd: sh script/publish.sh
@@ -70,6 +79,7 @@ scripts:
       - env
       - write=${DATA_ROOT}
       - read=${DATA_ROOT}
+
   editor:
     cmd:
       desc: Run the editor app

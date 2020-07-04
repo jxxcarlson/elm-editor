@@ -11,6 +11,8 @@ module Update.Document exposing
     , listDocuments
     , loadDocument
     , toggleDocType
+    , acceptRemote
+    , acceptLocal
     )
 
 import Cmd.Extra exposing (withCmd, withCmds, withNoCmd)
@@ -48,6 +50,35 @@ forcePush model =
                     model
                       |> Update.Helper.postMessage "You still have conflicts"
                       |> withNoCmd
+
+acceptLocal : Model -> (Model, Cmd Msg)
+acceptLocal model =
+    case model.currentDocument of
+        Nothing -> model |> withNoCmd
+        Just doc ->
+                    let
+                        newDoc = doc
+                          |> Document.updateSyncTimes model.currentTime
+                          |> (\doc_ -> {doc_ | content = Helper.Diff.acceptLocal doc.content})
+                    in
+                    { model | currentDocument = Just newDoc}
+                       |> Helper.Load.load newDoc
+                       |> withCmds (updateBothDocuments model.serverURL newDoc newDoc)
+
+acceptRemote : Model -> (Model, Cmd Msg)
+acceptRemote model =
+    case model.currentDocument of
+        Nothing -> model |> withNoCmd
+        Just doc ->
+                    let
+                        newDoc = doc
+                          |> Document.updateSyncTimes model.currentTime
+                          |> (\doc_ -> {doc_ | content = Helper.Diff.acceptRemote doc.content})
+
+                    in
+                    { model | currentDocument = Just newDoc}
+                       |> Helper.Load.load newDoc
+                       |> withCmds (updateBothDocuments model.serverURL newDoc newDoc)
 
 updateDocsForSync : String -> SyncOperation -> Time.Posix -> Document -> Document -> (Document, Document)
 updateDocsForSync serverUrl op currentTime localDoc remoteDoc =

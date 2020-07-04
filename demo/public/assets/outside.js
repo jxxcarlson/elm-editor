@@ -4000,6 +4000,8 @@ module.exports = new Type('tag:yaml.org,2002:timestamp', {
 },{}],35:[function(require,module,exports){
 /*
 
+NOTE: ls node_modules/tauri/api
+
 i think this would be more modern:
 
 https://developer.mozilla.org/en-US/docs/Web/API/Selection

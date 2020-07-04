@@ -206,6 +206,8 @@ type Msg
     | GotDocument (Result Http.Error Document)
     | GetDocumentToSync
     | ForcePush
+    | AcceptLocal
+    | AcceptRemote
     | SyncDocument (Result Http.Error Document)
     | Message (Result Http.Error String)
     | Publish

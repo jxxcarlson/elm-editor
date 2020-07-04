@@ -47,6 +47,8 @@ view model =
                 , row [ spacing 12 ]
                     [ Widget.syncDocumentButton
                     , Widget.forcePushDocumentButton
+                    , Widget.acceptLocalButton
+                    , Widget.acceptRemoteButton
                     ]
                 , displayMessage model
                 ]

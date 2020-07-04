@@ -1,5 +1,7 @@
 module View.Widget exposing
     ( aboutButton
+    , acceptLocalButton
+    , acceptRemoteButton
     , button
     , cancelChangeMetadataButton
     , cancelSignInButton
@@ -177,6 +179,14 @@ syncDocumentButton =
 
 forcePushDocumentButton =
     altButtonWithTitle 110 "Force Push" ForcePush "Force: local > remote"
+
+
+acceptLocalButton =
+    altButtonWithTitle 110 "Accept Local" AcceptLocal "Accept local revisions"
+
+
+acceptRemoteButton =
+    altButtonWithTitle 110 "Accept Remote" AcceptRemote "Accept remote revisions"
 
 
 setDocumentDirectoryButton =
