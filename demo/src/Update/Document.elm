@@ -37,11 +37,17 @@ forcePush model =
     case model.currentDocument of
         Nothing -> model |> withNoCmd
         Just doc ->
-            let
-                newDoc = doc |> Document.updateSyncTimes model.currentTime
-            in
-            { model | currentDocument = Just newDoc}
-               |> withCmds (updateBothDocuments model.serverURL newDoc newDoc)
+            case  Helper.Diff.conflictsResolved  doc.content of
+                True ->
+                    let
+                        newDoc = doc |> Document.updateSyncTimes model.currentTime
+                    in
+                    { model | currentDocument = Just newDoc}
+                       |> withCmds (updateBothDocuments model.serverURL newDoc newDoc)
+                False ->
+                    model
+                      |> Update.Helper.postMessage "You still have conflicts"
+                      |> withNoCmd
 
 updateDocsForSync : String -> SyncOperation -> Time.Posix -> Document -> Document -> (Document, Document)
 updateDocsForSync serverUrl op currentTime localDoc remoteDoc =
