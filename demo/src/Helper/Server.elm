@@ -1,11 +1,9 @@
 module Helper.Server exposing
     ( createDocument
-    , exportFile
     , getDocument
     , getDocumentList
     , getDocumentToSync
     , isServerAlive
-    , saveFile
     , updateDocument
     , updateDocumentList
     , updateFileList
@@ -13,12 +11,8 @@ module Helper.Server exposing
 
 import Codec.Document
 import Document exposing (DocType(..), Document, Metadata)
-import Editor
-import File exposing (File)
-import File.Download as Download
 import Http
 import Json.Decode
-import MiniLatex.Export
 import Task exposing (Task)
 import Types exposing (Model, Msg(..))
 
@@ -88,52 +82,6 @@ updateDocumentList serverUrl record =
         , timeout = Nothing
         , tracker = Nothing
         }
-
-
-
--- FILE I/O
-
-
-saveFile : Model -> Cmd msg
-saveFile model =
-    case model.currentDocument of
-        Nothing ->
-            Cmd.none
-
-        Just doc ->
-            let
-                content =
-                    "uuid: " ++ doc.id ++ "\n\n" ++ doc.content
-
-                fileName =
-                    doc.fileName
-            in
-            case model.docType of
-                MarkdownDoc ->
-                    Download.string fileName "text/markdown" content
-
-                MiniLaTeXDoc ->
-                    Download.string fileName "text/x-tex" content
-
-                IndexDoc ->
-                    Download.string fileName "text/plain " content
-
-
-exportFile : Model -> Cmd msg
-exportFile model =
-    case model.docType of
-        MarkdownDoc ->
-            Cmd.none
-
-        MiniLaTeXDoc ->
-            let
-                contentForExport =
-                    Editor.getContent model.editor |> MiniLatex.Export.toLaTeX
-            in
-            Download.string model.fileName "text/x-tex" contentForExport
-
-        IndexDoc ->
-            Cmd.none
 
 
 

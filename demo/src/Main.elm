@@ -355,10 +355,10 @@ update msg model =
             Update.Document.loadDocument content model
 
         SaveFile ->
-            ( model, Helper.Server.saveFile model )
+            ( model, Helper.File.save model )
 
         ExportFile ->
-            ( model, Helper.Server.exportFile model )
+            ( model, Helper.File.export model )
 
         -- DOCUMENT SYNC
         SyncLR ->
