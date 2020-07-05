@@ -38,8 +38,8 @@ jxxcarlson.test-3f7d-483d.tex
 """
 
 
-view : Float -> String -> String -> List String -> Element Msg
-view height_ userName currentFileName list =
+view : Float -> String -> String -> String -> List String -> Element Msg
+view height_ userName currentFileName indexName list =
     Element.column
         [ width (px 500)
         , height (px <| round <| Helper.Common.windowHeight height_ + 28)
@@ -47,11 +47,19 @@ view height_ userName currentFileName list =
         , Background.color (Element.rgba 1.0 0.75 0.75 0.8)
         , spacing 16
         ]
-        (closePopup "Index" :: List.map (viewFileName userName currentFileName) list)
+        (closePopup "Index" indexName :: List.map (viewFileName userName currentFileName) list)
 
 
-closePopup title =
-    Element.row [ width (px 450) ] [ Element.text title, Element.el [ Element.alignRight ] Widget.closePopupButton ]
+editIndexButton : String -> Element Msg
+editIndexButton fileName =
+    Widget.plainButton 90
+        "edit"
+        (GetDocument EditIndex fileName)
+        [ Font.color (Element.rgb 0 0 0.9), Element.padding 2 ]
+
+
+closePopup title indexName =
+    Element.row [ width (px 450), spacing 24 ] [ Element.text title, editIndexButton indexName, Element.el [ Element.alignRight ] Widget.closePopupButton ]
 
 
 {-|

@@ -72,7 +72,7 @@ const fetchDocumentByFileName = (fileName) => {
 
   const getMetadata = (fileName, manifest) => (manifest.filter(r => r.fileName == fileName)[0])
 
-  const sendFile = (str, metadata) => app.ports.infoForElm.send({tag: "GotFile", data: merge(str, metadata)})
+  const sendFile = (str, metadata) => app.ports.infoForElm.send({tag: "GotDocument", data: merge(str, metadata)})
 
   const merge = (str, metadata) => Object.assign(metadata, {content: str})
 
@@ -133,9 +133,9 @@ app.ports.infoForOutside.subscribe(msg => {
 
            break;
 
-        case "AskForFile":
+        case "AskForDocument":
 
-            console.log("AskForFile")
+            console.log("AskForDocument")
 
             var fileName = msg.data
 

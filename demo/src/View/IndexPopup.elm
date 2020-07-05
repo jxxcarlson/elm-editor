@@ -40,7 +40,7 @@ view model =
                         Just prefs ->
                             prefs.userName ++ "."
             in
-            Index.view model.height userName model.fileName model.index
+            Index.view model.height userName model.fileName model.indexName model.index
 
         PopupOpen _ ->
             Element.none

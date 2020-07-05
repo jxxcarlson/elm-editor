@@ -203,8 +203,8 @@ load_ document model =
 
             IndexDoc ->
                 case model.handleIndex of
-                    EditIndex -> Helper.Load.load document model
-                    UseIndex ->  setIndex document model
+                    EditIndex -> Helper.Load.load document {model | indexName = document.fileName}
+                    UseIndex ->  setIndex document {model | indexName = document.fileName}
 
 
 setIndex : Document -> Model -> Model
@@ -231,9 +231,6 @@ updateDocument model =
 updateDocument_ : Document -> Model -> ( Model, Cmd Msg )
 updateDocument_ doc model =
     let
-        currentDocument =
-            model.currentDocument
-
         updatedDocument =
             { doc | timeUpdated = model.currentTime }
     in

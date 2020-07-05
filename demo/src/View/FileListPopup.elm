@@ -130,7 +130,7 @@ viewFileName : SearchOptions -> String -> Metadata -> Metadata -> Element Msg
 viewFileName searchOptions userName metaDataOfCurrentDocument metadata =
     row [ spacing 8 ]
         [ documentLinkButton searchOptions userName metaDataOfCurrentDocument metadata
-        , View.Helpers.showIf (metadata.docType == IndexDoc) (editIndexButton metadata)
+        , View.Helpers.showIf (metadata.docType == IndexDoc) (editIndexButton metadata.fileName)
         , View.Helpers.showIf (metadata.docType /= IndexDoc) placeholder
         , deleteDocumentButton searchOptions metadata
         ]
@@ -180,11 +180,11 @@ documentLinkButton searchOptions userName metaDataOfCurrentDocument metadata =
         [ Font.color (Element.rgb 0 0 0.9), bgColor, Element.padding 2 ]
 
 
-editIndexButton : Metadata -> Element Msg
-editIndexButton metadata =
+editIndexButton : String -> Element Msg
+editIndexButton fileName =
     Widget.plainButton 90
         "Edit index"
-        (GetDocument EditIndex metadata.fileName)
+        (GetDocument EditIndex fileName)
         [ Font.color (Element.rgb 0 0 0.9), Element.padding 2 ]
 
 

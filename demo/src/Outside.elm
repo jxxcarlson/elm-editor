@@ -77,7 +77,7 @@ getInfo tagger onError =
                         Err e ->
                             onError <| "GotFileList: error"
 
-                "GotFile" ->
+                "GotDocument" ->
                     case D.decodeValue Codec.Document.documentDecoder outsideInfo.data of
                         Ok document ->
                             tagger <| GotDocument document
@@ -138,7 +138,7 @@ sendInfo info =
             infoForOutside { tag = "AskForFileList", data = Encode.null }
 
         AskForDocument fileName ->
-            infoForOutside { tag = "AskForFile", data = Encode.string fileName }
+            infoForOutside { tag = "AskForDocument", data = Encode.string fileName }
 
         DeleteFileFromLocalStorage fileName ->
             infoForOutside { tag = "DeleteFileFromLocalStorage", data = Encode.string fileName }

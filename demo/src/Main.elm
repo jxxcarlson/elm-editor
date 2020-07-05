@@ -379,7 +379,7 @@ update msg model =
             { model
                 | fileName = fileName
             }
-                --, Outside.sendInfo (Outside.AskForFile fileName)
+                --, Outside.sendInfo (Outside.AskForDocument fileName)
                 |> withNoCmd
 
         DeleteFileFromLocalStorage fileName ->
