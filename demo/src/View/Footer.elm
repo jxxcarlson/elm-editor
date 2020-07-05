@@ -48,8 +48,7 @@ view model width_ height_ =
         , View.Widget.publishFileButton model
         , displayFilename model
         , row [ alignRight, spacing 12 ]
-            [ displayMessage model
-            , View.Widget.aboutButton
+            [ View.Widget.aboutButton
             ]
         ]
 
@@ -73,7 +72,7 @@ displayFilename model =
                 FilesOnServer ->
                     "(" ++ fileName_ ++ ")"
     in
-    el [] (text fileName)
+    el [ Element.inFront (displayMessage model) ] (text fileName)
 
 
 displayMessage model =
@@ -81,7 +80,8 @@ displayMessage model =
         (el
             [ width (px 250)
             , paddingXY 8 8
-            , Background.color Style.whiteColor
+            , Element.moveUp 8
+            , Background.color Style.paleBlueColor
             , Font.color Style.blackColor
             ]
             (text model.message)

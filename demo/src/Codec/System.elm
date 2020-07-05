@@ -1,4 +1,4 @@
-module Codec.System exposing (Preferences, preferencesDecoder)
+module Codec.System exposing (Preferences, messageDecoder, preferencesDecoder)
 
 import Json.Decode as D exposing (Decoder, string)
 import Json.Decode.Pipeline as JP exposing (required)
@@ -17,3 +17,8 @@ preferencesDecoder =
         |> required "userName" string
         |> required "documentDirectory" string
         |> required "downloadDirectory" string
+
+
+messageDecoder : Decoder String
+messageDecoder =
+    D.string

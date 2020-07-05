@@ -288,7 +288,7 @@ app.ports.infoForOutside.subscribe(msg => {
 
               getPreferences()
               .then(p => writeFile({file: (p.downloadDirectory + '/' + document.fileName), contents: document.content}))
-
+              .then(app.ports.infoForElm.send({tag: "Message", data:  "Document downloaded"}))
               break;
 
           case "DeleteFile":

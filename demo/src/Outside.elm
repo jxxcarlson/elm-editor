@@ -32,6 +32,7 @@ type InfoForElm
     | GotDocumentList (List Metadata)
     | GotDocument Document
     | GotPreferences Preferences
+    | GotMessage String
 
 
 type InfoForOutside
@@ -93,6 +94,14 @@ getInfo tagger onError =
 
                         Err _ ->
                             onError <| "Error decoding preferences"
+
+                "Message" ->
+                    case D.decodeValue Codec.System.messageDecoder outsideInfo.data of
+                        Ok m ->
+                            tagger <| GotMessage m
+
+                        Err _ ->
+                            onError <| "Error decoding message"
 
                 _ ->
                     onError <| "Unexpected info from outside"

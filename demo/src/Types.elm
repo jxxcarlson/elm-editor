@@ -239,6 +239,7 @@ type Msg
     | GotSigninReply (Result Http.Error Authorization)
     | GetPreferences
     | GotPreferences Preferences
+    | GotMessage (Result Http.Error String)
 
 
 type Authorization

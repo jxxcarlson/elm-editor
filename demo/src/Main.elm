@@ -219,6 +219,14 @@ update msg model =
                 |> Update.Helper.postMessage ("username: " ++ preferences.userName)
                 |> withNoCmd
 
+        GotMessage result ->
+            case result of
+                Ok message ->
+                    model |> Update.Helper.postMessage message |> withNoCmd
+
+                Err _ ->
+                    model |> Update.Helper.postMessage "Error decoding message" |> withNoCmd
+
         -- OUTSIDE (JAVASCRIPT INTEROP)
         OutsideInfo msg_ ->
             model
@@ -240,6 +248,11 @@ update msg model =
                     -- TODO
                     { model | preferences = Just preferences }
                         |> Update.Helper.postMessage ("username: " ++ preferences.userName)
+                        |> withNoCmd
+
+                Outside.GotMessage message ->
+                    model
+                        |> Update.Helper.postMessage message
                         |> withNoCmd
 
         -- EDITOR
