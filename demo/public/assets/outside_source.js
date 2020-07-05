@@ -190,9 +190,9 @@ app.ports.infoForOutside.subscribe(msg => {
               break;
 
 
-          case "OpenFileDialog":
+          case "SetManifest":
 
-              console.log("OpenFileDialog")
+              console.log("SetManifest")
 
               const preferredDirectory = open({directory: true})
 
@@ -210,13 +210,32 @@ app.ports.infoForOutside.subscribe(msg => {
                  )
 
               preferredDirectory
-              //.then(prefDir => verifyManifest(prefDir))
               .then(prefDir => preferences.then(prefs => updatePreferences(prefDir, prefs)))
-              //.then(prefs => console.log("PREFS", prefs).then(prefs))
               .then(prefs => safeDump(prefs))
               .then(data => writeFile(  {  file: '.muEditPreferences.yaml', contents: data   }, {dir: 11}  ))
 
               break;
+
+            case "SetDownloadFolder":
+
+                  console.log("SetDownloadFolder")
+
+                  const downloadDirectory = open({directory: true})
+
+                  const preferences_ = readTextFile('.muEditPreferences.yaml', {dir: 11})
+                                        .then(str => load(str))
+
+                  const updatePreferences_ = (s, p) => {
+                          return Object.assign(p, {downloadDirectory: s})
+                      }
+
+
+                  downloadDirectory
+                  .then(prefDir => preferences_.then(prefs => updatePreferences_(prefDir, prefs)))
+                  .then(prefs => safeDump(prefs))
+                  .then(data => writeFile(  {  file: '.muEditPreferences.yaml', contents: data   }, {dir: 11}  ))
+
+                  break;
 
           case "SetUserName":
 

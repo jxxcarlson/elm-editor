@@ -84,9 +84,13 @@ viewSetup model =
                 [ titleLine model
                 , userNameInput model
                 , Widget.setUserNameButton
-                , Widget.setDocumentDirectoryButton
+                , row [ spacing 12 ]
+                    [ Widget.setDocumentDirectoryButton
+                    , Widget.setDownloadDirectoryButton
+                    ]
                 , displayUserName model
                 , displayDocumentDirectory model
+                , displayDownloadDirectory model
                 , el [ Font.size 14 ] (text "Preferences are in HOME/.muEditPreferences.yaml")
                 , Widget.getPreferencesButton
                 ]
@@ -115,12 +119,26 @@ getDocumentDirectory model =
             pref.documentDirectory
 
 
+getDownloadDirectory : Model -> String
+getDownloadDirectory model =
+    case model.preferences of
+        Nothing ->
+            "Not set"
+
+        Just pref ->
+            pref.downloadDirectory
+
+
 displayUserName model =
     el [ Font.size 14 ] (text ("User name: " ++ getUserName model))
 
 
 displayDocumentDirectory model =
     el [ Font.size 14 ] (text ("Document directory: " ++ getDocumentDirectory model))
+
+
+displayDownloadDirectory model =
+    el [ Font.size 14 ] (text ("Download directory: " ++ getDownloadDirectory model))
 
 
 viewSignIn : Model -> Element Msg

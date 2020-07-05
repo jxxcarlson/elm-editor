@@ -38,7 +38,8 @@ type InfoForOutside
     = AskForClipBoard Encode.Value
     | WriteToClipBoard String
     | Highlight ( Maybe String, String )
-    | OpenFileDialog Encode.Value
+    | SetManifest Encode.Value
+    | SetDownloadFolder Encode.Value
     | WriteDocument Document
     | DeleteDocument String
     | GetPreferences Encode.Value
@@ -109,8 +110,11 @@ sendInfo info =
         Highlight idPair ->
             infoForOutside { tag = "Highlight", data = encodeSelectedIdData idPair }
 
-        OpenFileDialog _ ->
-            infoForOutside { tag = "OpenFileDialog", data = Encode.null }
+        SetManifest _ ->
+            infoForOutside { tag = "SetManifest", data = Encode.null }
+
+        SetDownloadFolder _ ->
+            infoForOutside { tag = "SetDownloadFolder", data = Encode.null }
 
         SetUserName userName ->
             infoForOutside { tag = "SetUserName", data = Encode.string userName }

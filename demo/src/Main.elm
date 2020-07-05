@@ -413,7 +413,11 @@ update msg model =
 
         SetDocumentDirectory ->
             model
-                |> withCmd (Outside.sendInfo (Outside.OpenFileDialog Json.Encode.null))
+                |> withCmd (Outside.sendInfo (Outside.SetManifest Json.Encode.null))
+
+        SetDownloadDirectory ->
+            model
+                |> withCmd (Outside.sendInfo (Outside.SetDownloadFolder Json.Encode.null))
 
         SoftDelete record ->
             let

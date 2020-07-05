@@ -33,6 +33,7 @@ module View.Widget exposing
     , searchOptionsButton
     , serverStatus
     , setDocumentDirectoryButton
+    , setDownloadDirectoryButton
     , setUserNameButton
     , signInButton
     , signOutButton
@@ -216,6 +217,10 @@ rejectOneRemoteButton =
 
 setDocumentDirectoryButton =
     button_ 170 "Set Document Directory" SetDocumentDirectory
+
+
+setDownloadDirectoryButton =
+    button_ 170 "Set Download Directory" SetDownloadDirectory
 
 
 setUserNameButton =

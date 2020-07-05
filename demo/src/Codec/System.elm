@@ -7,6 +7,7 @@ import Json.Decode.Pipeline as JP exposing (required)
 type alias Preferences =
     { userName : String
     , documentDirectory : String
+    , downloadDirectory : String
     }
 
 
@@ -15,3 +16,4 @@ preferencesDecoder =
     D.succeed Preferences
         |> required "userName" string
         |> required "documentDirectory" string
+        |> required "downloadDirectory" string

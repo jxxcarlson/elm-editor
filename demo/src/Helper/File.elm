@@ -33,6 +33,19 @@ load file =
 -- FILE I/O
 
 
+mimeType : DocType -> String
+mimeType docType =
+    case docType of
+        MarkdownDoc ->
+            "text/markdown"
+
+        MiniLaTeXDoc ->
+            "text/x-tex"
+
+        IndexDoc ->
+            "text/plain"
+
+
 save : Model -> Cmd msg
 save model =
     case model.currentDocument of
@@ -40,22 +53,7 @@ save model =
             Cmd.none
 
         Just doc ->
-            let
-                content =
-                    "uuid: " ++ doc.id ++ "\n\n" ++ doc.content
-
-                fileName =
-                    doc.fileName
-            in
-            case model.docType of
-                MarkdownDoc ->
-                    Download.string fileName "text/markdown" content
-
-                MiniLaTeXDoc ->
-                    Download.string fileName "text/x-tex" content
-
-                IndexDoc ->
-                    Download.string fileName "text/plain " content
+            Download.string doc.fileName (mimeType doc.docType) doc.content
 
 
 export : Model -> Cmd msg

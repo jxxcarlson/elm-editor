@@ -212,6 +212,7 @@ type Msg
     | SaveFileToStorage
       -- File storage
     | SetDocumentDirectory
+    | SetDownloadDirectory
     | AskForRemoteDocuments
     | GotDocuments (Result Http.Error (List Metadata))
     | AskForDocument String
