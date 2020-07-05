@@ -72,7 +72,7 @@ const fetchDocumentByFileName = (fileName) => {
 
   const getMetadata = (fileName, manifest) => (manifest.filter(r => r.fileName == fileName)[0])
 
-  const sendFile = (str, metadata) => app.ports.infoForElm.send({tag: "GotDocument", data: merge(str, metadata)})
+  const sendFile = (str, metadata) => app.ports.infoForElm.send({tag: "fWrit", data: merge(str, metadata)})
 
   const merge = (str, metadata) => Object.assign(metadata, {content: str})
 
@@ -139,7 +139,7 @@ app.ports.infoForOutside.subscribe(msg => {
 
             var fileName = msg.data
 
-            console.log("File name", fileName)
+            console.log("Document.fileName", fileName)
 
             fetchDocumentByFileName(fileName)
 
@@ -280,7 +280,14 @@ app.ports.infoForOutside.subscribe(msg => {
 
                writeMetadata(document)
 
-          break;
+            break;
+
+          case "WriteFileToDownloadDirectory":
+
+              var document = msg.data
+
+              getPreferences()
+              .then(p => writeFile({file: (p.downloadDirectory + '/' + document.fileName), contents: document.content}))
 
           case "DeleteFile":
 

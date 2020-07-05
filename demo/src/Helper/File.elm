@@ -1,5 +1,6 @@
 module Helper.File exposing (export, getDocumentList, importFile, load, save)
 
+import Config
 import Document exposing (DocType(..), Document, Metadata)
 import Editor
 import File exposing (File)
@@ -8,7 +9,7 @@ import File.Select as Select
 import MiniLatex.Export
 import Outside
 import Task
-import Types exposing (Model, Msg(..))
+import Types exposing (AppMode(..), Model, Msg(..))
 
 
 getDocumentList : Cmd msg
@@ -53,21 +54,39 @@ save model =
             Cmd.none
 
         Just doc ->
-            Download.string doc.fileName (mimeType doc.docType) doc.content
+            case Config.appMode of
+                Webapp ->
+                    Download.string doc.fileName (mimeType doc.docType) doc.content
+
+                Desktop ->
+                    Outside.sendInfo (Outside.WriteDocumentToDownloadDirectory doc)
 
 
 export : Model -> Cmd msg
 export model =
-    case model.docType of
-        MarkdownDoc ->
+    case model.currentDocument of
+        Nothing ->
             Cmd.none
 
-        MiniLaTeXDoc ->
-            let
-                contentForExport =
-                    Editor.getContent model.editor |> MiniLatex.Export.toLaTeX
-            in
-            Download.string model.fileName "text/x-tex" contentForExport
+        Just document ->
+            case document.docType of
+                MarkdownDoc ->
+                    Cmd.none
 
-        IndexDoc ->
-            Cmd.none
+                MiniLaTeXDoc ->
+                    let
+                        contentForExport =
+                            Editor.getContent model.editor |> MiniLatex.Export.toLaTeX
+
+                        exportDoc =
+                            { document | content = contentForExport }
+                    in
+                    case Config.appMode of
+                        Webapp ->
+                            Download.string model.fileName "text/x-tex" contentForExport
+
+                        Desktop ->
+                            Outside.sendInfo (Outside.WriteDocumentToDownloadDirectory exportDoc)
+
+                IndexDoc ->
+                    Cmd.none

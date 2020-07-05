@@ -41,6 +41,7 @@ type InfoForOutside
     | SetManifest Encode.Value
     | SetDownloadFolder Encode.Value
     | WriteDocument Document
+    | WriteDocumentToDownloadDirectory Document
     | DeleteDocument String
     | GetPreferences Encode.Value
     | WriteMetadata Metadata
@@ -124,6 +125,9 @@ sendInfo info =
 
         WriteDocument document ->
             infoForOutside { tag = "WriteFile", data = Codec.Document.documentEncoder document }
+
+        WriteDocumentToDownloadDirectory document ->
+            infoForOutside { tag = "WriteFileToDownloadDirectory", data = Codec.Document.documentEncoder document }
 
         DeleteDocument fileName ->
             infoForOutside { tag = "DeleteFile", data = Encode.string fileName }
