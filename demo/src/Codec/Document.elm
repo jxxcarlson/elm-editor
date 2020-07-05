@@ -34,7 +34,7 @@ documentDecoder =
         |> required "subtitle" string
         |> required "abstract" string
         |> required "belongsTo" string
-        |> required "docType" (string |> D.map Document.docType)
+        |> required "docType" (string |> D.map Document.docTypeOfString)
         |> required "content" string
 
 

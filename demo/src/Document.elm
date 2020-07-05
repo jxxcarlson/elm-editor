@@ -6,6 +6,7 @@ module Document exposing
     , SyncOperation(..)
     , changeDocType
     , docType
+    , docTypeOfString
     , extendFileName
     , extensionOfDocType
     , fileExtension
@@ -246,6 +247,22 @@ docType fileName =
             MiniLaTeXDoc
 
         "latex" ->
+            MiniLaTeXDoc
+
+        "index" ->
+            IndexDoc
+
+        _ ->
+            MarkdownDoc
+
+
+docTypeOfString : String -> DocType
+docTypeOfString str =
+    case str of
+        "markdown" ->
+            MarkdownDoc
+
+        "minilatex" ->
             MiniLaTeXDoc
 
         "index" ->
