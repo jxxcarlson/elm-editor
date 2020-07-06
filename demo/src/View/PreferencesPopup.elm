@@ -29,7 +29,7 @@ view model =
         SigningIn ->
             viewSignIn model
 
-        SetupAuthor ->
+        SetupDesktopApp ->
             viewSetup model
 
         SignedIn ->
@@ -82,8 +82,10 @@ viewSetup model =
                 , spacing 16
                 ]
                 [ titleLine model
-                , userNameInput model
-                , Widget.setUserNameButton
+                , row [ spacing 12 ]
+                    [ Widget.setUserNameButton
+                    , el [ Element.moveUp 2 ] (userNameInput model)
+                    ]
                 , row [ spacing 12 ]
                     [ Widget.setDocumentDirectoryButton
                     , Widget.setDownloadDirectoryButton
@@ -92,7 +94,6 @@ viewSetup model =
                 , displayDocumentDirectory model
                 , displayDownloadDirectory model
                 , el [ Font.size 14 ] (text "Preferences are in HOME/.muEditPreferences.yaml")
-                , Widget.getPreferencesButton
                 ]
 
         PopupOpen _ ->
@@ -211,7 +212,7 @@ authorNameInput model =
 
 
 userNameInput model =
-    authorInput InputUsername model.userName "User Name"
+    authorInput InputUsername model.userName ""
 
 
 emailInput model =

@@ -146,7 +146,7 @@ init flags =
     , email = ""
     , password = ""
     , passwordAgain = ""
-    , signInMode = SetupAuthor
+    , signInMode = SetupDesktopApp
     , currentUser = Nothing
     }
         |> Helper.Sync.syncModel newEditor
@@ -215,7 +215,7 @@ update msg model =
             model |> withCmd (Outside.sendInfo (Outside.GetPreferences Json.Encode.null))
 
         GotPreferences preferences ->
-            { model | preferences = Just preferences }
+            { model | preferences = Just preferences, userName = preferences.userName }
                 |> Update.Helper.postMessage ("username: " ++ preferences.userName)
                 |> withNoCmd
 

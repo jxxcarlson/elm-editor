@@ -125,7 +125,7 @@ type SearchOptions
 
 type SignInMode
     = SigningIn
-    | SetupAuthor
+    | SetupDesktopApp
     | SignedIn
     | SigningUp
 
