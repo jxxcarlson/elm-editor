@@ -1,15 +1,10 @@
 module View.Help exposing (data, view)
 
-import Array exposing (Array)
-import Common exposing (..)
+
 import EditorModel exposing (EditorModel, HelpState(..))
-import Html exposing (Attribute, Html)
+import Html exposing (Html)
 import Html.Attributes as HA
-import Html.Events as HE
-import Html.Lazy
-import Json.Decode as JD exposing (Decoder)
-import Keymap
-import Markdown.Option exposing (..)
+import Markdown.Option exposing (MarkdownOption(..), OutputOption(..))
 import Markdown.Render exposing (MarkdownMsg(..))
 
 
@@ -19,6 +14,7 @@ import Markdown.Render exposing (MarkdownMsg(..))
 --  ]
 
 
+data : String
 data =
     """
 

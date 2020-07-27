@@ -19,7 +19,7 @@ do str model =
         Nothing ->
             { model | searchResults = RollingList.fromList [], searchTerm = str, selection = NoSelection }
 
-        Just ((Selection first last) as selection) ->
+        Just ((Selection first _) as selection) ->
             { model
                 | cursor = first
                 , selection = selection

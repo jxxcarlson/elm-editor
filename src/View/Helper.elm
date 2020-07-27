@@ -6,9 +6,7 @@ import Html exposing (Html)
 
 showIf : Bool -> Html EMsg -> Html EMsg
 showIf flag el =
-    case flag of
-        True ->
-            el
-
-        False ->
-            Html.div [] []
+    if flag then
+        el
+    else
+        Html.div [] []

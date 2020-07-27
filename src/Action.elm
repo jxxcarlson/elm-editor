@@ -27,7 +27,7 @@ import Browser.Dom as Dom
 import Common
 import EditorModel exposing (EditorModel)
 import EditorMsg exposing (EMsg(..), Selection(..))
-import Task exposing (Task)
+import Task
 
 
 

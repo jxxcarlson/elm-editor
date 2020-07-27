@@ -131,28 +131,22 @@ extendFileName docType_ prefix uuid fileName =
                     ".index"
 
         removeMDSuffix s =
-            case String.right 3 s == ".md" of
-                True ->
-                    String.dropRight 3 s
-
-                False ->
-                    s
+            if String.right 3 s == ".md" then
+                String.dropRight 3 s
+            else
+                s
 
         removeTeXSuffix s =
-            case String.right 4 s == ".tex" of
-                True ->
-                    String.dropRight 4 s
-
-                False ->
-                    s
+            if String.right 4 s == ".tex" then
+                String.dropRight 4 s
+            else
+                s
 
         removeIndexSuffix s =
-            case String.right 6 s == ".index" of
-                True ->
-                    String.dropRight 6 s
-
-                False ->
-                    s
+            if String.right 6 s == ".index" then
+                String.dropRight 6 s
+            else
+                s
 
         fileName_ =
             fileName |> removeMDSuffix |> removeTeXSuffix |> removeIndexSuffix
@@ -275,21 +269,6 @@ docTypeOfString str =
 updateSyncTimes : Time.Posix -> Document -> Document
 updateSyncTimes t doc =
     { doc | timeUpdated = t, timeSynced = Just t }
-
-
-prettyPosix : Time.Posix -> String
-prettyPosix t =
-    (Time.posixToMillis t |> toFloat) / 1000 |> String.fromFloat |> String.dropLeft 4 |> String.dropRight 0
-
-
-prettyMaybePosix : Maybe Time.Posix -> String
-prettyMaybePosix mt =
-    case mt of
-        Nothing ->
-            "nothing"
-
-        Just t ->
-            prettyPosix t
 
 
 syncOperation : Document -> Document -> SyncOperation

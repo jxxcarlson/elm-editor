@@ -202,12 +202,8 @@ given content : String
 initWithContent : String -> Config -> Editor
 initWithContent content config =
     let
-        ( contextMenu, msg ) =
+        ( contextMenu, _ ) =
             ContextMenu.init
-
-        cmd : Cmd EMsg
-        cmd =
-            Cmd.map ContextMenuMsg msg
     in
     ( config, contextMenu )
         |> EditorModel.init

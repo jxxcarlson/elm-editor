@@ -9,7 +9,9 @@ indexes
 
 
 type alias InternalHistory a =
-    { past : List a, future : List a }
+    { past : List a
+    , future : List a
+    }
 
 
 type History a

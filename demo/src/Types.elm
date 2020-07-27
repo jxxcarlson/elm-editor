@@ -23,7 +23,6 @@ import Document exposing (DocType(..), Document, Metadata)
 import Editor exposing (Editor)
 import File exposing (File)
 import Http
-import Json.Decode
 import Outside
 import Random
 import Render exposing (RenderingData)

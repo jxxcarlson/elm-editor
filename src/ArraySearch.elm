@@ -29,7 +29,7 @@ filterWithKey : String -> Array String -> List ( Int, String )
 filterWithKey key array =
     array
         |> Array.indexedMap (\index line -> ( index, line ))
-        |> Array.filter (\( index, line ) -> String.contains key line)
+        |> Array.filter (\( _, line ) -> String.contains key line)
         |> Array.toList
 
 
@@ -75,12 +75,10 @@ filter keywords array =
         indices =
             getIndices initialState
     in
-    case List.length indices < 2 of
-        True ->
-            indices
-
-        False ->
-            loop initialState (nextState array)
+    if List.length indices < 2 then
+        indices
+    else
+        loop initialState (nextState array)
 
 
 nextState : Array String -> State -> Step State (List Int)
@@ -110,7 +108,3 @@ nextState array state =
 filterPairs : String -> List ( Int, String ) -> List ( Int, String )
 filterPairs key pairs =
     List.filter (\( _, str ) -> String.contains key str) pairs
-
-
-testData =
-    Array.fromList [ "one, two, three aces", "a", "b", "c", "four, five six ones" ]

@@ -1,7 +1,7 @@
 module View.Search exposing (replacePanel, searchPanel)
 
-import EditorModel exposing (AutoLineBreak(..), Config, EditorModel)
-import EditorMsg exposing (Context(..), EMsg(..), Hover(..), Position, Selection(..))
+import EditorModel exposing (AutoLineBreak(..), EditorModel)
+import EditorMsg exposing (Context(..), EMsg(..), Hover(..), Selection(..))
 import EditorStyle
 import Html as H exposing (Attribute, Html)
 import Html.Attributes as HA
@@ -33,9 +33,6 @@ searchPanel_ model =
         , numberOfHitsDisplay model
         , searchForwardButton
         , searchBackwardButton
-
-        -- , dismissSearchPanel
-        -- , openReplaceField
         ]
 
 
@@ -66,27 +63,6 @@ replacePanel_ model =
 
         -- , dismissReplacePanel
         ]
-
-
-dismissSearchPanel =
-    Widget.lightRowButton 25
-        ToggleSearchPanel
-        "X"
-        [ HA.style "float" "left", HA.style "float" "left" ]
-
-
-dismissReplacePanel =
-    Widget.lightRowButton 25
-        ToggleReplacePanel
-        "X"
-        [ HA.style "float" "left", HA.style "float" "left" ]
-
-
-openReplaceField =
-    Widget.rowButton 25
-        OpenReplaceField
-        "R"
-        []
 
 
 numberOfHitsDisplay : EditorModel -> Html EMsg
@@ -134,14 +110,6 @@ replaceTextButton =
         ]
 
 
-acceptLineNumber =
-    Widget.textField 30
-        AcceptLineNumber
-        ""
-        [ HA.style "margin-top" "5px", HA.style "float" "left" ]
-        [ setHtmlId "line-number-input" ]
-
-
 acceptSearchText =
     Widget.textField 220
         AcceptSearchText
@@ -162,12 +130,10 @@ setHtmlId id =
 
 showIf : Bool -> Html EMsg -> Html EMsg
 showIf flag el =
-    case flag of
-        True ->
-            el
-
-        False ->
-            H.div [] []
+    if flag then
+        el
+    else
+        H.div [] []
 
 
 px : Float -> String

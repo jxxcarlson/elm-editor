@@ -32,15 +32,14 @@ getId text_ dict_ =
         idSet =
             BiDict.getReverse text_ dict_
     in
-    case BiDict.getReverse text_ dict_ |> Set.isEmpty of
-        False ->
-            idSet
-                |> Set.toList
-                |> List.head
+    if BiDict.getReverse text_ dict_ |> Set.isEmpty then
+        fuzzyGetOne text_ dict_
+            |> List.head
 
-        True ->
-            fuzzyGetOne text_ dict_
-                |> List.head
+    else
+        idSet
+            |> Set.toList
+            |> List.head
 
 
 
@@ -74,14 +73,6 @@ parseId =
 getText : String -> BiDict String String -> Maybe String
 getText id dict_ =
     BiDict.get id dict_
-
-
-clean : String -> String
-clean str =
-    str
-        |> String.replace "}" " "
-        |> String.replace "{" " "
-        |> String.replace "\\" ""
 
 
 {-|
@@ -131,7 +122,9 @@ makePredicate a =
 
 
 type alias SearchState =
-    { keywords : List String, pairs : List ( String, String ) }
+    { keywords : List String
+    , pairs : List ( String, String )
+    }
 
 
 nextSearchState : SearchState -> Step SearchState (List String)
@@ -194,7 +187,9 @@ loop s nextState =
 
 
 type alias ST =
-    { counter : Int, value : Int }
+    { counter : Int
+    , value : Int
+    }
 
 
 {-|

@@ -4,7 +4,11 @@ import Element exposing (Element, height, paddingXY, px, spacing, width)
 import Element.Background as Background
 import Element.Font as Font
 import Helper.Common
-import Parser.Advanced exposing (..)
+import Parser.Advanced exposing (Parser, run, Token(..), symbol
+  , succeed, (|=), (|.), map
+  , Trailing(..), Step(..)
+  , Nestable(..)
+  , getChompedString, chompWhile, chompUntil)
 import Types exposing (HandleIndex(..), Msg(..))
 import View.Widget as Widget
 
@@ -23,6 +27,7 @@ type Context
     | Record
 
 
+testStr : String
 testStr =
     """
 # Index test
@@ -94,22 +99,14 @@ restOfBlock =
         succeed ()
             |. chompUntil (Token "\n\n" (Expecting "expecting blank line"))
 
-
-renderBlock : String -> String -> List String -> Element Msg
-renderBlock userName currentFileName list =
-    Element.column [] (List.map (viewFileName userName currentFileName) list)
-
-
 viewFileName : String -> String -> String -> Element Msg
 viewFileName userName currentFileName fileName =
     let
         bgColor =
-            case currentFileName == fileName of
-                True ->
-                    Background.color (Element.rgba 0.7 0.7 1.0 0.5)
-
-                False ->
-                    Background.color (Element.rgba 0 0 0 0)
+            if currentFileName == fileName then
+                Background.color (Element.rgba 0.7 0.7 1.0 0.5)
+            else
+                Background.color (Element.rgba 0 0 0 0)
     in
     Widget.plainButton 350
         (prettify userName fileName)
@@ -123,24 +120,23 @@ prettify userName str =
         parts =
             String.split "-" str
     in
-    case List.length parts == 3 of
-        False ->
-            String.replace userName "" str
+    if List.length parts == 3 then
+        let
+            a =
+                List.take 1 parts
+                    |> List.head
+                    |> Maybe.withDefault "???"
 
-        True ->
-            let
-                a =
-                    List.take 1 parts
-                        |> List.head
-                        |> Maybe.withDefault "???"
-
-                b =
-                    parts
-                        |> List.drop 2
-                        |> List.map (String.split ".")
-                        |> List.concat
-                        |> List.drop 1
-                        |> List.head
-                        |> Maybe.withDefault "???"
-            in
+            b =
+                parts
+                    |> List.drop 2
+                    |> List.map (String.split ".")
+                    |> List.concat
+                    |> List.drop 1
+                    |> List.head
+                    |> Maybe.withDefault "???"
+        in
             a ++ "." ++ b |> String.replace userName ""
+    else
+        String.replace userName "" str
+            

@@ -1,22 +1,30 @@
 module Update exposing (update)
 
 import Action
-import Array exposing (Array)
+import Array
 import ArrayUtil
 import Browser.Dom as Dom
-import Cmd.Extra exposing (withCmd, withCmds, withNoCmd)
-import Common exposing (..)
-import ContextMenu exposing (ContextMenu)
-import Debounce exposing (Debounce)
-import EditorModel exposing (AutoLineBreak(..), EditMode(..), EditorModel, Snapshot, VimMode(..))
-import EditorMsg exposing (EMsg(..), Hover(..), Position, Selection(..))
+import Cmd.Extra exposing (withCmd, withNoCmd)
+import Common exposing (
+    hoversToPositions
+    , lastColumn
+    , lastLine
+    , recordHistory
+    , recordHistoryWithCmd
+    , recordHistory_
+    , removeCharAfter
+    , sanitizeHover
+    , stateToSnapshot)
+import ContextMenu
+import Debounce
+import EditorModel exposing (AutoLineBreak(..), EditMode(..), EditorModel, VimMode(..))
+import EditorMsg exposing (EMsg(..), Hover(..), Selection(..))
 import History
 import Search
-import Task exposing (Task)
+import Task
 import Update.File
 import Update.Function as Function
 import Update.Group
-import Update.Line
 import Update.Scroll
 import Update.Wrap
 
@@ -321,7 +329,7 @@ update msg model =
             , Cmd.map ContextMenuMsg cmd
             )
 
-        Item k ->
+        Item _ ->
             ( model, Cmd.none )
 
         WrapSelection ->
@@ -360,7 +368,7 @@ update msg model =
             {- DOC scroll LR entry point (1) -}
             Update.Scroll.sendLine model
 
-        GotViewportForSync str selection result ->
+        GotViewportForSync _ selection result ->
             case result of
                 Ok vp ->
                     let
@@ -428,7 +436,7 @@ update msg model =
 
         ReplaceCurrentSelection ->
             case model.selection of
-                Selection from to ->
+                Selection _ to ->
                     let
                         newLines =
                             ArrayUtil.replace model.cursor to model.replacementText model.lines

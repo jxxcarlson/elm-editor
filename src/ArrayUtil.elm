@@ -24,12 +24,13 @@ module ArrayUtil exposing
     )
 
 import Array exposing (Array)
-import List.Extra
 import String.Extra
 
 
 type alias Position =
-    { line : Int, column : Int }
+    { line : Int
+    , column : Int
+    }
 
 
 type alias StringZipper =
@@ -76,7 +77,9 @@ fuzzyGetOne key list =
 
 
 type alias SearchState =
-    { predicates : List (( Int, String ) -> Bool), pairs : List ( Int, String ) }
+    { predicates : List (( Int, String ) -> Bool)
+    , pairs : List ( Int, String )
+    }
 
 
 nextSearchState : SearchState -> Step SearchState (Maybe ( Int, String ))
@@ -180,12 +183,11 @@ split position array =
                     String.slice position.column focusLength focus
 
                 firstPart =
-                    case beforeSuffix == "" of
-                        True ->
-                            before
+                    if beforeSuffix == "" then
+                        before
 
-                        False ->
-                            Array.push beforeSuffix before
+                    else
+                        Array.push beforeSuffix before
 
                 secondPart =
                     put afterPrefix after
@@ -233,86 +235,81 @@ cut pos1 pos2 array =
         before_ =
             Array.slice 0 pos1.line array
 
-        middle_ : Array String
-        middle_ =
-            Array.slice pos1.line (pos2.line + 1) array
-
         after_ : Array String
         after_ =
             Array.slice (pos2.line + 1) n array
 
         ( before, middle, after ) =
-            case pos1.line == pos2.line of
-                True ->
-                    let
-                        middleLine =
-                            Array.get pos1.line array |> Maybe.withDefault ""
+            if pos1.line == pos2.line then
+                let
+                    middleLine =
+                        Array.get pos1.line array |> Maybe.withDefault ""
 
-                        ( a_, part ) =
-                            splitStringAt pos1.column middleLine
+                    ( a_, part ) =
+                        splitStringAt pos1.column middleLine
 
-                        ( _, c_ ) =
-                            splitStringAt (pos2.column - String.length a_ + 1) part
+                    ( _, c_ ) =
+                        splitStringAt (pos2.column - String.length a_ + 1) part
 
-                        middle__ =
-                            String.slice pos1.column (pos2.column + 1) middleLine
+                    middle__ =
+                        String.slice pos1.column (pos2.column + 1) middleLine
 
-                        before__ =
-                            case a_ ++ c_ of
-                                "" ->
-                                    before_
+                    before__ =
+                        case a_ ++ c_ of
+                            "" ->
+                                before_
 
-                                _ ->
-                                    Array.push (a_ ++ c_) before_
+                            _ ->
+                                Array.push (a_ ++ c_) before_
 
-                        after__ =
-                            case a_ of
-                                "" ->
-                                    after_
+                    after__ =
+                        case a_ of
+                            "" ->
+                                after_
 
-                                _ ->
-                                    after_
-                    in
-                    ( before__, Array.fromList [ middle__ ], after__ )
+                            _ ->
+                                after_
+                in
+                ( before__, Array.fromList [ middle__ ], after__ )
 
-                False ->
-                    let
-                        firstLine =
-                            Array.get pos1.line array |> Maybe.withDefault ""
+            else
+                let
+                    firstLine =
+                        Array.get pos1.line array |> Maybe.withDefault ""
 
-                        lastLine =
-                            Array.get pos2.line array
-                                |> Maybe.withDefault ""
+                    lastLine =
+                        Array.get pos2.line array
+                            |> Maybe.withDefault ""
 
-                        middle__ =
-                            Array.slice (pos1.line + 1) pos2.line array
+                    middle__ =
+                        Array.slice (pos1.line + 1) pos2.line array
 
-                        ( a_, part_1 ) =
-                            splitStringAt pos1.column firstLine
+                    ( a_, part_1 ) =
+                        splitStringAt pos1.column firstLine
 
-                        before__ =
-                            case a_ of
-                                "" ->
-                                    before_
+                    before__ =
+                        case a_ of
+                            "" ->
+                                before_
 
-                                _ ->
-                                    Array.push a_ before_
+                            _ ->
+                                Array.push a_ before_
 
-                        ( part_2, c_ ) =
-                            splitStringAt (pos2.column + 0) lastLine
+                    ( part_2, c_ ) =
+                        splitStringAt (pos2.column + 0) lastLine
 
-                        after__ =
-                            case c_ of
-                                "" ->
-                                    after_
+                    after__ =
+                        case c_ of
+                            "" ->
+                                after_
 
-                                _ ->
-                                    put c_ after_
+                            _ ->
+                                put c_ after_
 
-                        b__ =
-                            joinThree (Array.fromList [ part_1 ]) middle__ (Array.fromList [ part_2 ])
-                    in
-                    ( before__, b__, after__ )
+                    b__ =
+                        joinThree (Array.fromList [ part_1 ]) middle__ (Array.fromList [ part_2 ])
+                in
+                ( before__, b__, after__ )
     in
     { before = before
     , middle = middle
@@ -405,11 +402,6 @@ cutString line col1 col2 array =
     }
 
 
-mapTriple : (a -> b) -> ( a, a, a ) -> ( b, b, b )
-mapTriple f ( x, y, z ) =
-    ( f x, f y, f z )
-
-
 {-|
 
     arr =
@@ -433,43 +425,41 @@ cutOut pos1 pos2 array =
 -}
 replace : Position -> Position -> String -> Array String -> Array String
 replace pos1 pos2 str array =
-    case pos1.line == pos2.line of
-        True ->
-            case Array.get pos1.line array of
-                Nothing ->
-                    array
+    if pos1.line == pos2.line then
+        case Array.get pos1.line array of
+            Nothing ->
+                array
 
-                Just line ->
-                    let
-                        newLine =
-                            String.Extra.replaceSlice str pos1.column pos2.column line
-                    in
-                    Array.set pos1.line newLine array
+            Just line ->
+                let
+                    newLine =
+                        String.Extra.replaceSlice str pos1.column pos2.column line
+                in
+                Array.set pos1.line newLine array
 
-        False ->
-            let
-                sz =
-                    cut pos1 pos2 array
-            in
-            Array.append (Array.push str sz.before) sz.after
+    else
+        let
+            sz =
+                cut pos1 pos2 array
+        in
+        Array.append (Array.push str sz.before) sz.after
 
 
 replaceLines : Position -> Position -> Array String -> Array String -> Array String
 replaceLines pos1 pos2 newLines targetLines =
-    case pos1.line == pos2.line of
-        True ->
-            let
-                sz =
-                    cutString pos1.line pos1.column pos2.column targetLines
-            in
-            join { sz | middle = newLines }
+    if pos1.line == pos2.line then
+        let
+            sz =
+                cutString pos1.line pos1.column pos2.column targetLines
+        in
+        join { sz | middle = newLines }
 
-        False ->
-            let
-                sz =
-                    cut pos1 pos2 targetLines
-            in
-            join { sz | middle = newLines }
+    else
+        let
+            sz =
+                cut pos1 pos2 targetLines
+        in
+        join { sz | middle = newLines }
 
 
 put : String -> Array String -> Array String
@@ -522,12 +512,11 @@ indent offset first last lines =
 
 indentLine : Int -> String -> String
 indentLine offset line =
-    case offset >= 0 of
-        True ->
-            indentLinePos offset line
+    if offset >= 0 then
+        indentLinePos offset line
 
-        False ->
-            indentLineNeg -offset line
+    else
+        indentLineNeg -offset line
 
 
 indentLinePos : Int -> String -> String
@@ -541,12 +530,11 @@ indentLineNeg offset line =
         leadingBlanks =
             String.repeat offset " "
     in
-    case String.left offset line == leadingBlanks of
-        True ->
-            String.dropLeft offset line
+    if String.left offset line == leadingBlanks then
+        String.dropLeft offset line
 
-        False ->
-            line
+    else
+        line
 
 
 paragraphStart : Position -> Array String -> Int
@@ -555,12 +543,11 @@ paragraphStart position lines =
         start =
             paragraphBoundary BeginParagraph position lines
     in
-    case start == position.line of
-        True ->
-            start
+    if start == position.line then
+        start
 
-        False ->
-            start + 1
+    else
+        start + 1
 
 
 paragraphEnd : Position -> Array String -> Int
@@ -569,27 +556,18 @@ paragraphEnd position lines =
         start =
             paragraphBoundary EndParagraph position lines
     in
-    case start == position.line of
-        True ->
-            start
+    if start == position.line then
+        start
 
-        False ->
-            start - 1
-
-
-
---paragraphEnd : Position -> Array String -> Maybe Int
---paragraphEnd position lines =
---    lines
---        |> Array.indexedMap (\i line -> ( i, line ))
---        |> Array.filter (\( i, line ) -> i > position.line && line == "")
---        |> Array.toList
---        |> List.head
---        |> Maybe.map Tuple.first
+    else
+        start - 1
 
 
 type alias ST =
-    { lastIndex : Int, lines : Array String, currentLine : Int }
+    { lastIndex : Int
+    , lines : Array String
+    , currentLine : Int
+    }
 
 
 type Direction
@@ -618,47 +596,18 @@ paragraphBoundary boundary position lines =
 
 next : Direction -> ST -> Step ST Int
 next direction st =
-    case Array.get st.currentLine st.lines == Just "" of
-        True ->
-            Done st.currentLine
+    if Array.get st.currentLine st.lines == Just "" then
+        Done st.currentLine
+    else
+        case direction of
+            Forward ->
+                if st.currentLine < st.lastIndex then
+                    Loop { st | currentLine = st.currentLine + 1 }
+                else
+                    Done st.lastIndex
 
-        False ->
-            case direction of
-                Forward ->
-                    case st.currentLine < st.lastIndex of
-                        True ->
-                            Loop { st | currentLine = st.currentLine + 1 }
-
-                        False ->
-                            Done st.lastIndex
-
-                Backward ->
-                    case st.currentLine == 0 of
-                        True ->
-                            Done 0
-
-                        False ->
-                            Loop { st | currentLine = st.currentLine - 1 }
-
-
-
---
---type alias STX =
---    { counter : Int, value : Int }
---
---
---{-|
---
---    Add integers 1 .. 5
---    > loop {counter = 5, value = 0} f
---    15
---
----}
---f : STX -> Step STX Int
---f st =
---    case st.counter of
---        0 ->
---            Done st.value
---
---        _ ->
---            Loop { st | counter = st.counter - 1, value = st.value + st.counter }
+            Backward ->
+                if st.currentLine == 0 then
+                    Done 0
+                else
+                    Loop { st | currentLine = st.currentLine - 1 }

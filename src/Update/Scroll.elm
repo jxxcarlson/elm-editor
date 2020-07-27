@@ -15,7 +15,7 @@ import EditorModel exposing (EditorModel)
 import EditorMsg exposing (EMsg(..), Position, Selection(..))
 import RollingList
 import Search
-import Task exposing (Task)
+import Task
 
 
 setEditorViewportForLine : Float -> Int -> Cmd EMsg
@@ -24,14 +24,12 @@ setEditorViewportForLine lineHeight lineNumber =
         y =
             toFloat lineNumber * lineHeight
     in
-    case y >= 0 of
-        True ->
-            Dom.setViewportOf "__editor__" 0 y
-                |> Task.andThen (\_ -> Dom.getViewportOf "__editor__")
-                |> Task.attempt (\info -> GotViewport info)
-
-        False ->
-            Cmd.none
+    if y >= 0 then
+        Dom.setViewportOf "__editor__" 0 y
+            |> Task.andThen (\_ -> Dom.getViewportOf "__editor__")
+            |> Task.attempt (\info -> GotViewport info)
+    else
+        Cmd.none
 
 
 {-| Search for str and scroll to first hit. Used internally.
@@ -61,8 +59,8 @@ toString str model =
             ( { model | searchResults = RollingList.fromList [], searchTerm = str, selection = NoSelection }, Cmd.none )
 
 
-jumpToHeightForSync : Maybe String -> Position -> Selection -> Float -> Cmd EMsg
-jumpToHeightForSync currentLine cursor selection y =
+jumpToHeightForSync : Maybe String -> Selection -> Float -> Cmd EMsg
+jumpToHeightForSync currentLine selection y =
     Dom.setViewportOf "__editor__" 0 (y - 80)
         |> Task.andThen (\_ -> Dom.getViewportOf "__editor__")
         |> Task.attempt (\info -> GotViewportForSync currentLine selection info)
@@ -70,30 +68,12 @@ jumpToHeightForSync currentLine cursor selection y =
 
 jumpToBottom : EditorModel -> Cmd EMsg
 jumpToBottom model =
-    case model.cursor.line == (Array.length model.lines - 1) of
-        False ->
-            Cmd.none
-
-        True ->
-            Dom.getViewportOf "__editor__"
+    if model.cursor.line == (Array.length model.lines - 1) then
+        Dom.getViewportOf "__editor__"
                 |> Task.andThen (\info -> Dom.setViewportOf "__editor__" 0 info.scene.height)
                 |> Task.attempt (\_ -> EditorNoOp)
-
-
-
---
---setViewportForElement : String -> Cmd Msg
---setViewportForElement id =
---    Dom.getViewportOf "__RENDERED_TEXT__"
---        |> Task.andThen (\vp -> getElementWithViewPort vp id)
---        |> Task.attempt SetViewPortForElement
---
-
-
-getElementWithViewPort : Dom.Viewport -> String -> Task Dom.Error ( Dom.Element, Dom.Viewport )
-getElementWithViewPort vp id =
-    Dom.getElement id
-        |> Task.map (\el -> ( el, vp ))
+    else
+        Cmd.none 
 
 
 rollSearchSelectionForward : EditorModel -> ( EditorModel, Cmd EMsg )
@@ -182,9 +162,6 @@ sendLine model =
         paragraphStart =
             ArrayUtil.paragraphStart newCursor model.lines
 
-        firstLine : Maybe String
-        firstLine =
-            Array.get paragraphStart model.lines
 
         paragraphEnd : Int
         paragraphEnd =
@@ -206,8 +183,9 @@ sendLine model =
                 Nothing ->
                     NoSelection
     in
-    ( { model | cursor = newCursor, selection = selection }, jumpToHeightForSync currentLine newCursor selection y )
+    ( { model | cursor = newCursor, selection = selection }, jumpToHeightForSync currentLine selection y )
 
 
+verticalOffsetInSourceText : Float
 verticalOffsetInSourceText =
     4

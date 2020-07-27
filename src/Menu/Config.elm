@@ -1,6 +1,6 @@
 module Menu.Config exposing (deepBlue, googleSpreadsheet, gray, lightBlue, lightGray, mac, white, winChrome, winDesktop, winEdge, winFirefox)
 
-import ContextMenu exposing (..)
+import ContextMenu exposing (Direction(..), Overflow(..), Cursor(..), defaultConfig)
 
 
 type alias Color =

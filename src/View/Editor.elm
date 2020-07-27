@@ -1,17 +1,18 @@
 module View.Editor exposing (viewDebug, viewEditor, viewHeader)
 
 import Array exposing (Array)
-import Common exposing (..)
+import Common exposing ( hoversToPositions, isLastColumn, lineContent)
 import EditorModel exposing (AutoLineBreak(..), EditMode(..), EditorModel, ViewMode(..), VimMode(..))
 import EditorMsg exposing (Context(..), EMsg(..), Hover(..), Position, Selection(..))
 import Html as H exposing (Attribute, Html)
 import Html.Attributes as HA
 import Html.Events as HE
 import Html.Lazy
-import Json.Decode as JD exposing (Decoder)
+import Json.Decode as JD
 import Keymap
 import View.Helper
 import Widget
+import String exposing (String)
 
 
 statisticsDisplay : EditorModel -> Html EMsg
@@ -41,18 +42,16 @@ displayStyle =
 
 viewDebug : EditorModel -> Html EMsg
 viewDebug model =
-    case model.debugOn of
-        False ->
-            H.div [] []
-
-        True ->
-            H.div
+    if model.debugOn then
+        H.div
                 [ HA.style "max-width" (px model.width), HA.style "padding" "8px" ]
                 [ H.pre [] [ H.text <| "cursor: " ++ stringFromPosition model.cursor ]
                 , H.pre [] [ H.text <| "hover: " ++ stringFromHover model.hover ]
                 , H.pre [] [ H.text (stringFromSelection model.selection) ]
                 , H.pre [] [ H.text <| "selected text:\n" ++ selectedText model.selection model.hover model.lines ]
                 ]
+    else
+        H.div [] []
 
 
 selectedText : Selection -> Hover -> Array String -> String
@@ -405,6 +404,7 @@ selectedColor viewMode_ =
             HA.style "background-color" "#44a"
 
 
+highlightColorLight : String
 highlightColorLight =
     "#d7d6ff"
 
@@ -430,7 +430,7 @@ px f =
 
 rowButton width str msg attr =
     H.div (rowButtonStyle ++ attr)
-        [ H.button ([ HE.onClick msg ] ++ rowButtonLabelStyle width) [ H.text str ] ]
+        [ H.button (HE.onClick msg :: rowButtonLabelStyle width) [ H.text str ] ]
 
 
 textField width str msg attr innerAttr =
@@ -471,31 +471,7 @@ nbsp =
 
 
 
--- HEADER AND FOOTER
-
-
-viewFooter : EditorModel -> Html EMsg
-viewFooter model =
-    H.div
-        [ HA.style "display" "flex"
-        , HA.style "flex-direction" "column"
-        , HA.style "margin-top" "20px"
-        ]
-        [ H.p [ HA.style "margin-top" "0px" ]
-            [ H.text "This demo is an Elm 0.19 version of"
-            , H.a [ HA.href "https://janiczek.github.io/elm-editor/" ] [ H.text " Martin Janiczek's elm-editor" ]
-            , H.span [] [ H.text ". See also his " ]
-            , H.a [ HA.href "https://discourse.elm-lang.org/t/text-editor-done-in-pure-elm/1365/" ] [ H.text " Discourse article" ]
-            , H.span [] [ H.text ". " ]
-            ]
-        , H.p [ HA.style "margin-top" "0px" ]
-            [ H.a [ HA.href "https://github.com/jxxcarlson/elm-editor" ] [ H.text "Github repo" ]
-            , H.span [] [ H.text " forked from " ]
-            , H.a [ HA.href "https://janiczek.github.io/elm-editor/" ] [ H.text " Martin Janiczek. " ]
-            ]
-        ]
-
-
+-- HEADER
 viewHeader : EditorModel -> Html EMsg
 viewHeader model =
     H.div

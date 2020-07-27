@@ -9,7 +9,7 @@ module Widget exposing
     )
 
 import EditorStyle
-import Html exposing (Attribute, Html, button, div, input, text)
+import Html exposing (button, div, input, text)
 import Html.Attributes exposing (placeholder, style, type_)
 import Html.Events exposing (onClick, onInput)
 
@@ -70,26 +70,26 @@ rowButtonLabelStyle width =
 
 columnButton width msg str attr =
     div (columnButtonStyle ++ attr)
-        [ button ([ onClick msg ] ++ buttonLabelStyle width) [ text str ] ]
+        [ button (onClick msg :: buttonLabelStyle width) [ text str ] ]
 
 
 lightColumnButton width msg str attr =
     div (columnButtonStyle ++ attr)
-        [ button ([ onClick msg ] ++ lightButtonLabelStyle width) [ text str ] ]
+        [ button ( onClick msg :: lightButtonLabelStyle width) [ text str ] ]
 
 
 lightRowButton width msg str attr =
     div (rowButtonStyle ++ attr)
-        [ button ([ onClick msg ] ++ lightButtonLabelStyle width) [ text str ] ]
+        [ button ( onClick msg :: lightButtonLabelStyle width) [ text str ] ]
 
 
 rowButton width msg str attr =
     div (rowButtonStyle ++ attr)
-        [ button ([ onClick msg ] ++ rowButtonLabelStyle width) [ text str ] ]
+        [ button (onClick msg :: rowButtonLabelStyle width) [ text str ] ]
 
 
 textField width msg str attr innerAttr =
-    div ([ style "margin-bottom" "10px" ] ++ attr)
+    div (style "margin-bottom" "10px" :: attr)
         [ input
             ([ -- style "height" "18px"
                style "width" (String.fromInt width ++ "px")

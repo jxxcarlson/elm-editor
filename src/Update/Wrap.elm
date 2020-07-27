@@ -5,7 +5,7 @@ import Array
 import EditorModel exposing (EditorModel)
 import EditorMsg exposing (Selection(..))
 import Update.Function as Function
-import Wrap exposing (WrapParams)
+import Wrap
 
 
 all : EditorModel -> EditorModel
@@ -23,7 +23,7 @@ all model =
 selection : EditorModel -> EditorModel
 selection model =
     case model.selection of
-        Selection p1 p2 ->
+        Selection p1 _ ->
             let
                 params =
                     { maximumWidth = maxWrapWidth model
