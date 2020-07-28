@@ -7,12 +7,9 @@ module Render.Markdown exposing
     , render
     )
 
--- import Cmd.Document
-
-import Html
-import Markdown.Option exposing (..)
+import Markdown.Option exposing (MarkdownOption(..), OutputOption(..))
 import Markdown.Parse as Parse
-import Markdown.Render exposing (DocumentParts, MarkdownMsg, MarkdownOutput)
+import Markdown.Render exposing (MarkdownOutput)
 import Render.Types exposing (RenderMsg(..))
 import Tree exposing (Tree)
 import Tree.Diff as Diff
@@ -48,42 +45,7 @@ diffUpdateAst option counter text lastAst =
 
 render : ( Int, Int ) -> Tree Parse.MDBlockWithId -> MarkdownOutput
 render selectedId ast =
-    -- Markdown.Render.fromASTWithOptions ExtendedMath (ExternalTOC "Topics") selectedId ast
-    -- Markdown.Render.fromASTWithOptions ExtendedMath (ExternalTOC "Topics") ( 5, 0 ) ast
     Markdown.Render.fromASTWithOptions ExtendedMath (ExternalTOC "Topics") selectedId ast
-
-
-
--- |> fix
--- MarkdownOption -> OutputOption -> Id -> Int -> String
-
-
-fix :
-    { a | title : Html.Html MarkdownMsg, toc : Html.Html MarkdownMsg, document : Html.Html MarkdownMsg }
-    -> { title : Html.Html RenderMsg, toc : Html.Html RenderMsg, document : Html.Html RenderMsg }
-fix r =
-    { title = r.title |> Html.map MarkdownMsg
-    , toc = r.toc |> Html.map MarkdownMsg
-    , document = r.document |> Html.map MarkdownMsg
-    }
-
-
-
---{ document : Html.Html MarkdownMsg
---, title : Html.Html MarkdownMsg
---, toc : Html.Html MarkdownMsg
---}
-
-
-
---
---type RenderMsg
---    = LaTeXMsg LaTeXMsg
---    | MarkdownMsg MarkdownMsg
---
---
---type alias DocumentParts =
---    { title : Html RenderMsg, toc : Html RenderMsg, document : Html RenderMsg }
 
 
 getFirstPart : String -> String

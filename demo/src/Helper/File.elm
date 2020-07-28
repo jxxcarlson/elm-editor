@@ -1,7 +1,7 @@
 module Helper.File exposing (export, getDocumentList, importFile, load, save)
 
 import Config
-import Document exposing (DocType(..), Document, Metadata)
+import Document exposing (DocType(..))
 import Editor
 import File exposing (File)
 import File.Download as Download

@@ -33,6 +33,7 @@ statisticsDisplay model =
         [ H.text <| "(" ++ l ++ ", " ++ w ++ ")" ]
 
 
+displayStyle : List (Attribute msg)
 displayStyle =
     [ HA.style "margin-left" "24px"
     , HA.style "font-size" "16px"
@@ -103,6 +104,7 @@ selectedText selection currentHover lines =
             positionsToString from to
 
 
+editorBackgroundColor : ViewMode -> Attribute msg
 editorBackgroundColor viewMode_ =
     case viewMode_ of
         Light ->
@@ -112,6 +114,7 @@ editorBackgroundColor viewMode_ =
             HA.style "background-color" "#444"
 
 
+editorFontColor : ViewMode -> Attribute msg
 editorFontColor viewMode_ =
     case viewMode_ of
         Light ->
@@ -121,6 +124,7 @@ editorFontColor viewMode_ =
             HA.style "color" "#f0f0f0"
 
 
+borderBackgroundColor : ViewMode -> Attribute msg
 borderBackgroundColor viewMode_ =
     case viewMode_ of
         Light ->
@@ -130,6 +134,7 @@ borderBackgroundColor viewMode_ =
             HA.style "background-color" "#252525"
 
 
+borderFontColor : ViewMode -> Attribute msg
 borderFontColor viewMode_ =
     case viewMode_ of
         Light ->
@@ -357,6 +362,7 @@ stringFromHover hover =
             "HoverChar: " ++ stringFromPosition p
 
 
+stringFromSelection : Selection -> String
 stringFromSelection sel =
     case sel of
         NoSelection ->
@@ -395,6 +401,7 @@ viewSelectedChar viewMode_ position char =
         [ H.text char ]
 
 
+selectedColor : ViewMode -> Attribute msg
 selectedColor viewMode_ =
     case viewMode_ of
         Light ->
@@ -428,11 +435,13 @@ px f =
     String.fromFloat f ++ "px"
 
 
+rowButton : Int -> String -> c -> List (Attribute msg) -> Html a
 rowButton width str msg attr =
     H.div (rowButtonStyle ++ attr)
         [ H.button (HE.onClick msg :: rowButtonLabelStyle width) [ H.text str ] ]
 
 
+textField : Int -> String -> (String -> msg) -> List (Attribute a) -> List (Attribute b) -> Html a
 textField width str msg attr innerAttr =
     H.div attr
         [ H.input
@@ -449,12 +458,14 @@ textField width str msg attr innerAttr =
         ]
 
 
+rowButtonStyle : List (Attribute msg)
 rowButtonStyle =
     [ HA.style "font-size" "12px"
     , HA.style "border" "none"
     ]
 
 
+rowButtonLabelStyle : Int -> List (Attribute msg)
 rowButtonLabelStyle width =
     [ HA.style "font-size" "12px"
     , HA.style "background-color" "#666"
@@ -498,6 +509,7 @@ viewHeader model =
         ]
 
 
+toggleReplacePanel : Html a
 toggleReplacePanel =
     Widget.lightRowButton 25
         ToggleReplacePanel
@@ -505,6 +517,7 @@ toggleReplacePanel =
         [ HA.style "float" "left", HA.style "float" "left", HA.title "Toggle replace text panel" ]
 
 
+editModeDisplay : EditorModel -> Html msg
 editModeDisplay model =
     let
         message =
@@ -521,6 +534,7 @@ editModeDisplay model =
     H.span [ HA.style "font-style" "bold", HA.style "font-size" "12px", HA.style "margin-left" "25px", HA.style "color" "#a44" ] [ H.text message ]
 
 
+textFieldBackgroundColor : EditorModel -> Attribute msg
 textFieldBackgroundColor model =
     case model.viewMode of
         Light ->
@@ -530,6 +544,7 @@ textFieldBackgroundColor model =
             HA.style "background-color" "#999"
 
 
+textFieldFontColor : EditorModel -> Attribute msg
 textFieldFontColor model =
     case model.viewMode of
         Light ->

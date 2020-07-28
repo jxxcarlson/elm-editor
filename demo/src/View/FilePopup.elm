@@ -1,6 +1,5 @@
-module View.FilePopup exposing (..)
+module View.FilePopup exposing (view, infoPanel, changePanel, item, inputItem, titleLine, fileInput, fileNameInput)
 
-import Date
 import Document
 import Element
     exposing
@@ -12,7 +11,6 @@ import Element
         , paddingXY
         , px
         , row
-        , scrollbarY
         , spacing
         , text
         , width

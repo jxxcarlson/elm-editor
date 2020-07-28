@@ -14,6 +14,7 @@ import Html.Attributes exposing (placeholder, style, type_)
 import Html.Events exposing (onClick, onInput)
 
 
+columnButtonStyle : List (Html.Attribute msg)
 columnButtonStyle =
     [ style "margin-top" "10px"
     , style "font-size" "12px"
@@ -22,6 +23,7 @@ columnButtonStyle =
     ]
 
 
+headingStyle : List (Html.Attribute msg)
 headingStyle =
     [ style "font-size" "14px"
     , style "margin-right" "12px"
@@ -29,6 +31,7 @@ headingStyle =
     ]
 
 
+rowButtonStyle : List (Html.Attribute msg)
 rowButtonStyle =
     [ style "font-size" "12px"
     , style "border" "none"
@@ -37,6 +40,7 @@ rowButtonStyle =
     ]
 
 
+buttonLabelStyle : Int -> List (Html.Attribute msg)
 buttonLabelStyle width =
     [ style "font-size" "12px"
     , style "background-color" EditorStyle.darkGray
@@ -48,6 +52,7 @@ buttonLabelStyle width =
     ]
 
 
+lightButtonLabelStyle : Int -> List (Html.Attribute msg)
 lightButtonLabelStyle width =
     [ style "font-size" "12px"
     , style "color" "#444"
@@ -58,6 +63,7 @@ lightButtonLabelStyle width =
     ]
 
 
+rowButtonLabelStyle : Int -> List (Html.Attribute msg)
 rowButtonLabelStyle width =
     [ style "font-size" "12px"
     , style "background-color" EditorStyle.darkGray
@@ -68,26 +74,31 @@ rowButtonLabelStyle width =
     ]
 
 
+columnButton : Int -> b -> String -> List (Html.Attribute msg) -> Html.Html a
 columnButton width msg str attr =
     div (columnButtonStyle ++ attr)
         [ button (onClick msg :: buttonLabelStyle width) [ text str ] ]
 
 
+lightColumnButton : Int -> b -> String -> List (Html.Attribute msg) -> Html.Html a
 lightColumnButton width msg str attr =
     div (columnButtonStyle ++ attr)
         [ button ( onClick msg :: lightButtonLabelStyle width) [ text str ] ]
 
 
+lightRowButton : Int -> b -> String -> List (Html.Attribute msg) -> Html.Html a
 lightRowButton width msg str attr =
     div (rowButtonStyle ++ attr)
         [ button ( onClick msg :: lightButtonLabelStyle width) [ text str ] ]
 
 
+rowButton : Int -> b -> String -> List (Html.Attribute msg) -> Html.Html a
 rowButton width msg str attr =
     div (rowButtonStyle ++ attr)
         [ button (onClick msg :: rowButtonLabelStyle width) [ text str ] ]
 
 
+textField : Int -> (String -> msg) -> String -> List (Html.Attribute a) -> List (Html.Attribute b) -> Html.Html c
 textField width msg str attr innerAttr =
     div (style "margin-bottom" "10px" :: attr)
         [ input

@@ -47,8 +47,3 @@ grayColor =
 
 lightGrayColor =
     Element.rgb 0.5 0.5 0.5
-
-
-px : Float -> String
-px p =
-    String.fromFloat p ++ "px"

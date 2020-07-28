@@ -10,8 +10,6 @@ import Document exposing (DocType(..), Document)
 import Editor
 import EditorMsg exposing (WrapOption(..))
 import Helper.Common
-import Helper.Server
-import List.Extra
 import Markdown.Option exposing (MarkdownOption(..))
 import Render exposing (RenderingOption(..))
 import Time

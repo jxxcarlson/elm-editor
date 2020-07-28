@@ -46,11 +46,8 @@ module View.Widget exposing
 import Document exposing (DocType(..))
 import Element
     exposing
-        ( Element
-        , alignRight
-        , el
+        ( el
         , height
-        , padding
         , paddingXY
         , px
         , text
@@ -59,8 +56,7 @@ import Element
 import Element.Background as Background
 import Element.Font as Font
 import Element.Input as Input
-import Helper.Server
-import Html exposing (Attribute, Html)
+import Html
 import Html.Attributes as Attribute
 import Html.Events as HE
 import Types
@@ -68,7 +64,6 @@ import Types
         ( DocumentStatus(..)
         , FileLocation(..)
         , MergeSite(..)
-        , Model
         , Msg(..)
         , PopupStatus(..)
         , PopupWindow(..)
@@ -268,7 +263,7 @@ saveFileToStorageButton model =
 
 
 closePopupButton =
-    altButton 20 "X" (ManagePopup PopupClosed) [ Font.size 14 ]
+    altButton "X" (ManagePopup PopupClosed) [ Font.size 14 ]
 
 
 openPreferencesPopupButton model =
@@ -293,10 +288,10 @@ openFileListPopupButton model =
                 |> Button.toElement
 
         PopupOpen _ ->
-            button 60 "Files" (ManagePopup (PopupOpen FileListPopup)) []
+            button "Files" (ManagePopup (PopupOpen FileListPopup)) []
 
         PopupClosed ->
-            button 60 "Files" (ManagePopup (PopupOpen FileListPopup)) []
+            button "Files" (ManagePopup (PopupOpen FileListPopup)) []
 
 
 openIndexButton model =
@@ -334,10 +329,10 @@ openFilePopupButton model =
                 |> Button.toElement
 
         PopupOpen _ ->
-            button 60 "info" (ManagePopup (PopupOpen FilePopup)) []
+            button "info" (ManagePopup (PopupOpen FilePopup)) []
 
         PopupClosed ->
-            button 60 "Info " (ManagePopup (PopupOpen FilePopup)) []
+            button "Info " (ManagePopup (PopupOpen FilePopup)) []
 
 
 openNewFilePopupButton model =
@@ -350,21 +345,21 @@ openNewFilePopupButton model =
                 |> Button.toElement
 
         PopupOpen _ ->
-            button 90 "New" (ManagePopup (PopupOpen NewFilePopup)) []
+            button "New" (ManagePopup (PopupOpen NewFilePopup)) []
 
         PopupClosed ->
-            button 90 "New" (ManagePopup (PopupOpen NewFilePopup)) []
+            button "New" (ManagePopup (PopupOpen NewFilePopup)) []
 
 
-importFileButton model =
+importFileButton =
     button_ 60 "Import" GetFileToImport
 
 
-exportFileButton model =
+exportFileButton =
     button_ 60 "Export" SaveFile
 
 
-publishFileButton model =
+publishFileButton =
     button_ 60 "Publish" Publish
 
 
@@ -380,7 +375,7 @@ exportLaTeXFileButton model =
             Element.none
 
 
-newDocumentButton model =
+newDocumentButton =
     button_ 70 "Create" CreateDocument
 
 
@@ -397,7 +392,7 @@ documentTypeButton model =
                 IndexDoc ->
                     "Index"
     in
-    button width
+    button
         title
         ToggleDocType
         [ Background.color Style.redColor
@@ -405,17 +400,15 @@ documentTypeButton model =
         ]
 
 
-loadDocumentButton model width docTitle buttonLabel =
+loadDocumentButton model docTitle buttonLabel =
     let
         bgColor =
-            case model.docTitle == docTitle of
-                True ->
-                    Style.redColor
-
-                False ->
-                    Style.grayColor
+            if model.docTitle == docTitle then
+                Style.redColor
+            else
+                Style.grayColor
     in
-    button width buttonLabel LoadAboutDocument [ Background.color bgColor ]
+    button buttonLabel LoadAboutDocument [ Background.color bgColor ]
 
 
 button_ width str msg =
@@ -454,7 +447,7 @@ input msg text label width labelWidth =
         |> TextField.toElement
 
 
-button width str msg attr =
+button str msg attr =
     Input.button
         ([ paddingXY 8 8
          , Background.color (Element.rgb255 90 90 100)
@@ -466,7 +459,7 @@ button width str msg attr =
         }
 
 
-altButton width str msg attr =
+altButton str msg attr =
     Input.button
         ([ paddingXY 8 8
          , Font.color (Element.rgb255 30 30 30)
@@ -493,7 +486,7 @@ plainButton width_ str msg attr =
 
 
 textField width str msg attr innerAttr =
-    Html.div ([ Attribute.style "margin-bottom" "10px" ] ++ attr)
+    Html.div (Attribute.style "margin-bottom" "10px" :: attr)
         [ Html.input
             ([ Attribute.style "height" "18px"
              , Attribute.style "width" (String.fromInt width ++ "px")

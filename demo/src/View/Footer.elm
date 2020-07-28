@@ -42,10 +42,10 @@ view model width_ height_ =
         , View.Widget.openFilePopupButton model
         , View.Widget.documentTypeButton model
         , View.Widget.openNewFilePopupButton model
-        , View.Widget.importFileButton model
-        , View.Widget.exportFileButton model
+        , View.Widget.importFileButton
+        , View.Widget.exportFileButton
         , View.Widget.exportLaTeXFileButton model
-        , View.Widget.publishFileButton model
+        , View.Widget.publishFileButton
         , displayFilename model
         , row [ alignRight, spacing 12 ]
             [ View.Widget.aboutButton

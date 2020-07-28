@@ -273,13 +273,7 @@ updateSyncTimes t doc =
 
 syncOperation : Document -> Document -> SyncOperation
 syncOperation localDocument remoteDocument =
-    --let
-    --    _ =
-    --        Debug.log "Local (synced, updated)" ( prettyMaybePosix localDocument.timeSynced, prettyPosix localDocument.timeUpdated )
-    --
-    --    _ =
-    --        Debug.log "Remote (synced, updated)" ( prettyMaybePosix remoteDocument.timeSynced, prettyPosix remoteDocument.timeUpdated )
-    --in
+
     case ( localDocument.timeSynced, remoteDocument.timeSynced ) of
         ( Nothing, _ ) ->
             if localDocument.content == remoteDocument.content then
@@ -298,8 +292,6 @@ syncOperation localDocument remoteDocument =
         ( Just localSynctime, Just remoteSynctime ) ->
             if localSynctime /= remoteSynctime then
                 SyncConflict
-                --else if Time.posixToMillis localDocument.timeUpdated == Time.posixToMillis remoteDocument.timeUpdated then
-                --    SyncConflict
 
             else if
                 Time.posixToMillis localDocument.timeUpdated

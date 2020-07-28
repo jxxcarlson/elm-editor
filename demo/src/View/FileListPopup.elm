@@ -140,12 +140,10 @@ deleteDocumentButton : SearchOptions -> Metadata -> Element Msg
 deleteDocumentButton searchOptions metadata =
     let
         msg =
-            case List.member searchOptions [ ShowDeletedOnly, ShowDeleted ] of
-                True ->
-                    HardDelete metadata.fileName
-
-                False ->
-                    SoftDelete metadata
+            if List.member searchOptions [ ShowDeletedOnly, ShowDeleted ] then
+                HardDelete metadata.fileName
+            else
+                SoftDelete metadata
     in
     el [ Element.padding 2, Background.color (Element.rgba 0.7 0.3 0.3 0.5) ]
         (Widget.plainButton 55
@@ -159,20 +157,16 @@ documentLinkButton : SearchOptions -> String -> Metadata -> Metadata -> Element 
 documentLinkButton searchOptions userName metaDataOfCurrentDocument metadata =
     let
         bgColor =
-            case metaDataOfCurrentDocument.id == metadata.id of
-                True ->
-                    Background.color (Element.rgba 0.7 0.7 1.0 0.5)
-
-                False ->
-                    Background.color (Element.rgba 0 0 0 0)
+            if metaDataOfCurrentDocument.id == metadata.id then
+                Background.color (Element.rgba 0.7 0.7 1.0 0.5)
+            else
+                Background.color (Element.rgba 0 0 0 0)
 
         buttonTitle =
-            case searchOptions == ExcludeDeleted of
-                True ->
-                    prettify userName metadata.fileName
-
-                False ->
-                    metadata.fileName
+            if searchOptions == ExcludeDeleted then
+                prettify userName metadata.fileName
+            else
+                metadata.fileName
     in
     Widget.plainButton 350
         buttonTitle

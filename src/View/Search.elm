@@ -9,10 +9,12 @@ import RollingList
 import Widget
 
 
+searchPanel : EditorModel -> Html EMsg
 searchPanel model =
     showIf model.showSearchPanel (searchPanel_ model)
 
 
+searchPanel_ : EditorModel -> Html msg
 searchPanel_ model =
     H.div
         [ HA.style "width" (px model.width)
@@ -36,10 +38,12 @@ searchPanel_ model =
         ]
 
 
+replacePanel : EditorModel -> Html EMsg
 replacePanel model =
     showIf (model.canReplace && model.showSearchPanel) (replacePanel_ model)
 
 
+replacePanel_ : EditorModel -> Html msg
 replacePanel_ model =
     H.div
         [ HA.style "width" (px model.width)
@@ -79,6 +83,7 @@ numberOfHitsDisplay model =
     Widget.rowButton 40 EditorNoOp txt [ HA.style "float" "left" ]
 
 
+searchForwardButton : Html a
 searchForwardButton =
     Widget.rowButton 30
         RollSearchSelectionForward
@@ -88,6 +93,7 @@ searchForwardButton =
         ]
 
 
+searchBackwardButton : Html a
 searchBackwardButton =
     Widget.rowButton 30
         RollSearchSelectionBackward
@@ -97,10 +103,7 @@ searchBackwardButton =
         ]
 
 
-searchTextButton =
-    Widget.rowButton 60 EditorNoOp "Search" [ HA.style "float" "left" ]
-
-
+replaceTextButton : Html a
 replaceTextButton =
     Widget.rowButton 70
         ReplaceCurrentSelection
@@ -110,6 +113,7 @@ replaceTextButton =
         ]
 
 
+acceptSearchText : Html c
 acceptSearchText =
     Widget.textField 220
         AcceptSearchText
@@ -119,6 +123,7 @@ acceptSearchText =
         [ setHtmlId "editor-search-box" ]
 
 
+acceptReplaceText : Html c
 acceptReplaceText =
     Widget.textField 267 AcceptReplacementText "" [ HA.style "float" "left" ] [ setHtmlId "replacement-box" ]
 

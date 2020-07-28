@@ -630,24 +630,8 @@ viewRenderedText model width_ height_ =
         , Element.paddingEach { left = 14, top = 0, right = 14, bottom = 24 }
         , Border.width 1
         , Background.color <| View.Helpers.gray 255
-
-        -- , Element.htmlAttribute (Attribute.id model.selectedId_ (Html.style "background-color" "#cce"))
         ]
         [ View.Helpers.showIf (model.docType == MarkdownDoc)
             ((Render.get model.selectedId_ model.renderingData).title |> Html.map RenderMsg |> Element.html)
         , (Render.get model.selectedId_ model.renderingData).document |> Html.map RenderMsg |> Element.html
         ]
-
-
-
--- VIEW HELPERS
-
-
-setHtmlId : String -> Html.Attribute msg
-setHtmlId id =
-    Attribute.attribute "id" id
-
-
-setElementId : String -> Element.Attribute msg
-setElementId id =
-    Element.htmlAttribute (setHtmlId id)

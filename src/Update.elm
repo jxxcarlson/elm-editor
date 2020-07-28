@@ -448,7 +448,7 @@ update msg model =
                 _ ->
                     ( model, Cmd.none )
 
-        AcceptLineNumber str ->
+        AcceptLineNumber _ ->
             model |> withNoCmd
 
         AcceptSearchText str ->

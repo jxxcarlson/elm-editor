@@ -20,12 +20,10 @@ import Regex
 
 
 rxLocal =
-    -- regexFromString "@local\\[(.*?)\\]"
     regexFromString "@local\\[([^]+?)\\]"
 
 
 rxRemote =
-    -- regexFromString "@remote\\[(^*?)\\]"
     regexFromString "@remote\\[([^]+?)\\]"
 
 
@@ -156,12 +154,8 @@ conflictsResolved : String -> Bool
 conflictsResolved str =
     if String.contains "@remote[" str then
         False
-
-    else if String.contains "@local[" str then
-        False
-
-    else
-        True
+    else 
+        not <| String.contains "@local[" str
 
 
 
@@ -192,20 +186,16 @@ stringValue : Change String -> String
 stringValue change =
     case change of
         Added str ->
-            case str == "" of
-                True ->
-                    str
-
-                False ->
-                    "@remote[" ++ str ++ "]"
+            if str == "" then
+                str
+            else
+                "@remote[" ++ str ++ "]"
 
         Removed str ->
-            case str == "" of
-                True ->
-                    str
-
-                False ->
-                    "@local[" ++ str ++ "]"
+            if str == "" then
+                str
+            else
+                "@local[" ++ str ++ "]"
 
         NoChange str ->
             str
@@ -302,7 +292,3 @@ d2 =
 
 d3 =
     d2 ++ [ NoChange "five" ]
-
-
-d4 =
-    d3 ++ [ Added "six", Removed "seven" ]

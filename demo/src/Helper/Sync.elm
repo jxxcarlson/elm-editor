@@ -8,7 +8,7 @@ module Helper.Sync exposing
 
 import Array exposing (Array)
 import Cmd.Extra exposing (withCmd)
-import Document exposing (DocType(..), Document)
+import Document exposing (DocType(..))
 import Editor exposing (Editor, EditorMsg)
 import Markdown.Option exposing (MarkdownOption(..))
 import Markdown.Parse
@@ -21,7 +21,6 @@ import Render
 import Sync
 import Tree.Diff
 import Types exposing (DocumentStatus(..), Model, Msg(..))
-import UuidHelper
 import View.Scroll
 
 
@@ -57,23 +56,6 @@ updateDocument editor model =
 
         Just doc ->
             { model | currentDocument = Just { doc | content = Editor.getContent editor } }
-
-
-
---case model.document.id == "1234" || model.document.id == "" of
---    False ->
---        { model | document = updateDocument_ editor model.document }
---
---    True ->
---        { model | document = updateDocumentWithUuid_ model.uuid editor model.document }
---            |> UuidHelper.newUuid
---updateDocumentWithUuid_ : String -> Editor -> Document -> Document
---updateDocumentWithUuid_ uuid editor document =
---    { document | content = Editor.getContent editor, id = uuid }
---
---updateDocument_ : Editor -> Document -> Document
---updateDocument_ editor document =
---    { document | content = Editor.getContent editor }
 
 
 syncAndHighlightRenderedText : String -> Cmd Msg -> Model -> ( Model, Cmd Msg )
@@ -137,20 +119,6 @@ syncAndHighlightRenderedMiniLaTeXText str cmd model data =
     ( { model | selectedId_ = idString }
     , Cmd.batch [ cmd, View.Scroll.setViewportForElementInRenderedText idStringSelected ]
     )
-
-
-processMarkdownContentForHighlighting : String -> MDData -> Model -> Model
-processMarkdownContentForHighlighting str data model =
-    let
-        newAst_ =
-            Markdown.Parse.toMDBlockTree model.counter ExtendedMath str
-
-        newAst =
-            Tree.Diff.mergeWith Markdown.Parse.equalIds data.fullAst newAst_
-    in
-    { model
-        | counter = model.counter + 1
-    }
 
 
 updateRenderingData : Array String -> Model -> Model

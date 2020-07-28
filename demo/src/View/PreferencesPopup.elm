@@ -10,7 +10,6 @@ import Element
         , paddingXY
         , px
         , row
-        , scrollbarY
         , spacing
         , text
         , width
@@ -58,7 +57,7 @@ viewSignedIn model =
                         , Background.color (Element.rgba 1.0 0.75 0.75 0.8)
                         , spacing 16
                         ]
-                        [ titleLine model
+                        [ titleLine
                         , el [ Font.size 18 ] (text author.userName)
                         , Widget.signOutButton
                         ]
@@ -81,7 +80,7 @@ viewSetup model =
                 , Background.color (Element.rgba 1.0 0.75 0.75 0.8)
                 , spacing 16
                 ]
-                [ titleLine model
+                [ titleLine
                 , row [ spacing 12 ]
                     [ Widget.setUserNameButton
                     , el [ Element.moveUp 2 ] (userNameInput model)
@@ -156,7 +155,7 @@ viewSignIn model =
                 , Background.color (Element.rgba 1.0 0.75 0.75 0.8)
                 , spacing 16
                 ]
-                [ titleLine model
+                [ titleLine
                 , userNameInput model
                 , passwordInput model
                 , row [ spacing 8 ] [ Widget.signInButton, Widget.signUpButton ]
@@ -181,7 +180,7 @@ viewSignUp model =
                 , Background.color (Element.rgba 1.0 0.75 0.75 0.8)
                 , spacing 16
                 ]
-                [ titleLine model
+                [ titleLine
                 , authorNameInput model
                 , userNameInput model
                 , emailInput model
@@ -194,7 +193,7 @@ viewSignUp model =
             Element.none
 
 
-titleLine model =
+titleLine =
     row [ width (px 450) ] [ text "Preferences", el [ alignRight ] Widget.closePopupButton ]
 
 

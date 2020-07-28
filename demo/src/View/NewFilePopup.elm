@@ -10,13 +10,11 @@ import Element
         , paddingXY
         , px
         , row
-        , scrollbarY
         , spacing
         , text
         , width
         )
 import Element.Background as Background
-import Element.Font as Font
 import Helper.Common
 import Types exposing (Model, Msg(..), PopupStatus(..), PopupWindow(..))
 import View.Widget as Widget
@@ -37,16 +35,16 @@ view model =
                 , Background.color (Element.rgba 1.0 0.75 0.75 0.8)
                 , spacing 16
                 ]
-                [ titleLine model
+                [ titleLine
                 , fileNameInput model
-                , Widget.newDocumentButton model
+                , Widget.newDocumentButton
                 ]
 
         PopupOpen _ ->
             Element.none
 
 
-titleLine model =
+titleLine =
     row [ width (px 450) ] [ text "New File", el [ alignRight ] Widget.closePopupButton ]
 
 

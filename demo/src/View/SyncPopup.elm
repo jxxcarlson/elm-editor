@@ -1,6 +1,5 @@
 module View.SyncPopup exposing (view)
 
-import Document
 import Element
     exposing
         ( Element
@@ -11,14 +10,12 @@ import Element
         , paddingXY
         , px
         , row
-        , scrollbarY
         , spacing
         , text
         , width
         )
 import Element.Background as Background
 import Element.Font as Font
-import Helper.Common
 import Types exposing (Model, Msg(..), PopupStatus(..), PopupWindow(..))
 import View.Helpers
 import View.Style as Style

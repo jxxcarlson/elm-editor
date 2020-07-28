@@ -11,7 +11,9 @@ type RenderMsg
 
 
 type alias RenderedText =
-    { title : Html RenderMsg, toc : Html RenderMsg, document : Html RenderMsg }
+    { title : Html RenderMsg
+    , toc : Html RenderMsg
+    , document : Html RenderMsg }
 
 
 type DocType

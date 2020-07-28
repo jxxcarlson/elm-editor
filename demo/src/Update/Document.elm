@@ -40,14 +40,13 @@ forcePush model =
     case model.currentDocument of
         Nothing -> model |> withNoCmd
         Just doc ->
-            case  Helper.Diff.conflictsResolved  doc.content of
-                True ->
+            if  Helper.Diff.conflictsResolved  doc.content then
                     let
                         newDoc = doc |> Document.updateSyncTimes model.currentTime
                     in
                     { model | currentDocument = Just newDoc}
                        |> withCmds (updateBothDocuments model.serverURL newDoc newDoc)
-                False ->
+                else
                     model
                       |> Update.Helper.postMessage "You still have conflicts"
                       |> withNoCmd
@@ -107,16 +106,16 @@ rejectOne  mergeSite model =
                    |> withCmds (updateBothDocuments model.serverURL newDoc newDoc)
 
 
-updateDocsForSync : String -> SyncOperation -> Time.Posix -> Document -> Document -> (Document, Document)
-updateDocsForSync serverUrl op currentTime localDoc remoteDoc =
+updateDocsForSync : SyncOperation -> Time.Posix -> Document -> Document -> (Document, Document)
+updateDocsForSync op currentTime localDoc remoteDoc =
     case op of
        DocsIdentical -> makeSyncDataEqual currentTime localDoc remoteDoc
 
        SyncConflict ->  (Helper.Diff.compareDocuments localDoc remoteDoc, remoteDoc)
 
-       PushDocument -> pushDocument currentTime localDoc remoteDoc
+       PushDocument -> pushDocument currentTime localDoc
 
-       PullDocument -> pullDocument currentTime localDoc remoteDoc
+       PullDocument -> pullDocument currentTime remoteDoc
 
        NoSyncOp -> (localDoc, remoteDoc)
 
@@ -125,8 +124,8 @@ makeSyncDataEqual currentTime localDoc remoteDoc =
     (Document.updateSyncTimes  currentTime localDoc
   , Document.updateSyncTimes currentTime remoteDoc)
 
-pushDocument : Time.Posix -> Document -> Document ->  (Document, Document)
-pushDocument currentTime localDoc remoteDoc =
+pushDocument : Time.Posix -> Document ->  (Document, Document)
+pushDocument currentTime localDoc =
     let
       newDoc =  Document.updateSyncTimes  currentTime localDoc
     in
@@ -134,8 +133,8 @@ pushDocument currentTime localDoc remoteDoc =
    --, Document.updateSyncTimes currentTime {remoteDoc | content = localDoc.content })
    (newDoc, newDoc)
 
-pullDocument : Time.Posix -> Document -> Document ->  (Document, Document)
-pullDocument currentTime localDoc remoteDoc =
+pullDocument : Time.Posix -> Document ->  (Document, Document)
+pullDocument currentTime remoteDoc =
     let
       newDoc = Document.updateSyncTimes  currentTime remoteDoc
     in
@@ -165,12 +164,12 @@ sync result localDoc model =
                     -- op = Debug.log "OP" (Document.syncOperation localDoc remoteDoc)
                     op = Document.syncOperation localDoc remoteDoc
                     message = op |>  Document.stringOfSyncOperation
-                    (localDoc_, remoteDoc_) = updateDocsForSync model.serverURL op model.currentTime localDoc remoteDoc
+                    (localDoc_, remoteDoc_) = updateDocsForSync op model.currentTime localDoc remoteDoc
 
               in
                 { model | currentDocument = Just localDoc_ }
                   |> Helper.Load.load localDoc_
-                  |> (Update.Helper.postMessage ("Sync: "  ++ message))
+                  |> Update.Helper.postMessage ("Sync: "  ++ message)
                   |> withCmds (syncCommands model.serverURL op localDoc_ remoteDoc_ )
 
 
@@ -381,7 +380,7 @@ loadDocument content model =
                    Just pref  -> Document.extendFileName model.docType pref.userName uuid model.fileName
 
 
-        ( uuid, seed ) =
+        ( uuid, _ ) =
                     UuidHelper.generate model.randomSeed
 
         docType_=
