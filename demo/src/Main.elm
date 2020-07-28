@@ -582,6 +582,7 @@ view model =
         (mainColumn model)
 
 
+myFocusStyle : { borderColor : Maybe a, backgroundColor : Maybe b, shadow : Maybe c }
 myFocusStyle =
     { borderColor = Nothing
     , backgroundColor = Nothing
@@ -589,6 +590,7 @@ myFocusStyle =
     }
 
 
+mainColumn : Model -> Element Msg
 mainColumn model =
     column [ centerX, centerY ]
         [ column [ Background.color <| View.Helpers.gray 55 ]
@@ -606,6 +608,7 @@ mainColumn model =
         ]
 
 
+viewEditorAndRenderedText : Model -> Element Msg
 viewEditorAndRenderedText model =
     row [ Background.color <| View.Helpers.gray 255 ]
         [ viewEditor model
@@ -616,6 +619,7 @@ viewEditorAndRenderedText model =
         ]
 
 
+viewEditor : Model -> Element msg
 viewEditor model =
     Editor.view model.editor |> Html.map EditorMsg |> Element.html
 

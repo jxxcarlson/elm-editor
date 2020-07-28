@@ -22,8 +22,9 @@ pxFloat p =
     px (round p)
 
 
-gray g =
-    rgb255 g g g
+gray : Int -> Element.Color
+gray lightness =
+    rgb255 lightness lightness lightness
 
 
 shortPath : Int -> String -> String

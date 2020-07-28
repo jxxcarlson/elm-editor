@@ -122,6 +122,7 @@ prepareFileList yesKey noKey fileList =
         |> List.sortBy .fileName
 
 
+predicate : String -> String -> Metadata -> Bool
 predicate yesKey noKey metadata =
     String.contains yesKey metadata.fileName && not (String.contains noKey metadata.fileName)
 

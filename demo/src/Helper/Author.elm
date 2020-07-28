@@ -81,6 +81,7 @@ passwordsMatch password1 password2 errorList =
         "Passwords don't match" :: errorList
 
 
+userNameLongEnough : String -> List String -> List String
 userNameLongEnough username errorList =
     if String.length username < 6 then
         "Username must have at least six characters" :: errorList
@@ -88,6 +89,7 @@ userNameLongEnough username errorList =
         errorList
 
 
+passwordLongEnough : String -> List String -> List String
 passwordLongEnough password errorList =
     if String.length password < 6 then
             "Password must have at least six characters" :: errorList
@@ -95,6 +97,7 @@ passwordLongEnough password errorList =
         errorList
 
 
+emailValid : String -> List String -> List String
 emailValid email errorList =
     if String.contains "@" email && String.length email > 3 then
         errorList

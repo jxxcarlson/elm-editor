@@ -1,4 +1,4 @@
-module View.PreferencesPopup exposing (..)
+module View.PreferencesPopup exposing (view, viewSignedIn, viewSetup, getUserName, getDocumentDirectory, getDownloadDirectory, displayUserName, displayDocumentDirectory, displayDownloadDirectory, viewSignIn, viewSignUp, titleLine, authorInput, authorNameInput, userNameInput, emailInput, passwordInput, passwordAgainInput)
 
 import Element
     exposing
@@ -129,14 +129,17 @@ getDownloadDirectory model =
             pref.downloadDirectory
 
 
+displayUserName : Model -> Element msg
 displayUserName model =
     el [ Font.size 14 ] (text ("User name: " ++ getUserName model))
 
 
+displayDocumentDirectory : Model -> Element msg
 displayDocumentDirectory model =
     el [ Font.size 14 ] (text ("Document directory: " ++ getDocumentDirectory model))
 
 
+displayDownloadDirectory : Model -> Element msg
 displayDownloadDirectory model =
     el [ Font.size 14 ] (text ("Download directory: " ++ getDownloadDirectory model))
 
@@ -193,10 +196,12 @@ viewSignUp model =
             Element.none
 
 
+titleLine : Element msg
 titleLine =
     row [ width (px 450) ] [ text "Preferences", el [ alignRight ] Widget.closePopupButton ]
 
 
+authorInput : (String -> msg) -> String -> String -> Element msg
 authorInput msg text label =
     TextField.make msg text label
         |> TextField.withHeight 30
@@ -206,21 +211,26 @@ authorInput msg text label =
         |> TextField.toElement
 
 
+authorNameInput : Model -> Element Msg
 authorNameInput model =
     authorInput InputAuthorname model.authorName "Name"
 
 
+userNameInput : Model -> Element Msg
 userNameInput model =
     authorInput InputUsername model.userName ""
 
 
+emailInput : Model -> Element Msg
 emailInput model =
     authorInput InputEmail model.email "Email"
 
 
+passwordInput : Model -> Element Msg
 passwordInput model =
     authorInput InputPassword model.password "Password"
 
 
+passwordAgainInput : Model -> Element Msg
 passwordAgainInput model =
     authorInput InputPasswordAgain model.passwordAgain "Password again"

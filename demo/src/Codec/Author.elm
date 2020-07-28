@@ -16,6 +16,7 @@ import Time
 import Types exposing (Authorization(..))
 
 
+encodeSignUpInfo : String -> String -> Encode.Value
 encodeSignUpInfo userName passwordHash =
     Encode.object
         [ ( "userName", Encode.string userName )
@@ -70,6 +71,7 @@ decodeSigninReply =
         |> required "authorized" bool
 
 
+testAuthor : AuthorWithPasswordHash
 testAuthor =
     { name = "Joan Doe"
     , userName = "jdoe"

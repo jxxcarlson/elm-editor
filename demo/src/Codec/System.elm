@@ -1,7 +1,7 @@
 module Codec.System exposing (Preferences, messageDecoder, preferencesDecoder)
 
 import Json.Decode as D exposing (Decoder, string)
-import Json.Decode.Pipeline as JP exposing (required)
+import Json.Decode.Pipeline exposing (required)
 
 
 type alias Preferences =

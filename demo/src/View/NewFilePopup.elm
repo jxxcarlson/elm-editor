@@ -1,4 +1,4 @@
-module View.NewFilePopup exposing (..)
+module View.NewFilePopup exposing (view, titleLine, fileInput, fileNameInput)
 
 import Element
     exposing
@@ -44,10 +44,12 @@ view model =
             Element.none
 
 
+titleLine : Element msg
 titleLine =
     row [ width (px 450) ] [ text "New File", el [ alignRight ] Widget.closePopupButton ]
 
 
+fileInput : (String -> msg) -> String -> String -> Element msg
 fileInput msg text label =
     TextField.make msg text label
         |> TextField.withHeight 30
@@ -57,5 +59,6 @@ fileInput msg text label =
         |> TextField.toElement
 
 
+fileNameInput : Model -> Element Msg
 fileNameInput model =
     fileInput InputFileName model.fileName_ "File name"

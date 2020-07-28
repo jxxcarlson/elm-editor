@@ -19,7 +19,6 @@ import Render
         , RenderingData(..)
         )
 import Sync
-import Tree.Diff
 import Types exposing (DocumentStatus(..), Model, Msg(..))
 import View.Scroll
 
@@ -197,6 +196,7 @@ leadingLine str =
         |> List.head
 
 
+goodLine : String -> Bool
 goodLine str =
     not
         (String.contains "$$" str

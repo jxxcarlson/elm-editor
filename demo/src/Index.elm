@@ -14,17 +14,11 @@ import View.Widget as Widget
 
 
 type alias Parser a =
-    Parser.Advanced.Parser Context Problem a
+    Parser.Advanced.Parser String Problem a
 
 
 type Problem
     = Expecting String
-
-
-type Context
-    = Definition String
-    | List
-    | Record
 
 
 testStr : String
@@ -63,6 +57,7 @@ editIndexButton fileName =
         [ Font.color (Element.rgb 0 0 0.9), Element.padding 2 ]
 
 
+closePopup : String -> String -> Element Msg
 closePopup title indexName =
     Element.row [ width (px 450), spacing 24 ] [ Element.text title, editIndexButton indexName, Element.el [ Element.alignRight ] Widget.closePopupButton ]
 

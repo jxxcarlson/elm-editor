@@ -7,7 +7,6 @@
     "elm-version": "0.19.1",
     "dependencies": {
         "direct": {
-            "Garados007/elm-svg-parser": "1.0.0",
             "Janiczek/cmd-extra": "1.1.0",
             "Janiczek/elm-bidict": "2.0.1",
             "NoRedInk/elm-json-decode-pipeline": "1.0.0",
@@ -24,7 +23,6 @@
             "elm/time": "1.0.0",
             "elm-community/list-extra": "8.2.4",
             "elm-community/maybe-extra": "5.2.0",
-            "elm-community/result-extra": "2.4.0",
             "elm-community/string-extra": "4.0.1",
             "folkertdev/elm-paragraph": "1.0.0",
             "jinjor/elm-contextmenu": "2.0.0",
@@ -33,12 +31,10 @@
             "justinmimbs/date": "3.2.1",
             "jxxcarlson/elm-markdown": "9.2.16",
             "jxxcarlson/elm-widget": "3.1.0",
-            "jxxcarlson/htree": "2.0.1",
             "jxxcarlson/meenylatex": "11.0.2",
             "ktonon/elm-crypto": "1.1.2",
             "lovasoa/elm-rolling-list": "1.1.4",
             "mdgriffith/elm-ui": "1.1.7",
-            "pablohirafuji/elm-syntax-highlight": "3.3.0",
             "zwilias/elm-rosetree": "1.5.0"
         },
         "indirect": {
