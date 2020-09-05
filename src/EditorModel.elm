@@ -22,6 +22,7 @@ import RollingList exposing (RollingList)
 type alias EditorModel =
     { lines : Array String
     , cursor : Position
+    , foreignCursors : List (ForeignCursor String)
     , hover : Hover
     , selection : Selection
     , selectedText : Array String
@@ -51,6 +52,14 @@ type alias EditorModel =
     , helpState : HelpState
     , editMode : EditMode
     }
+
+
+type alias ForeignCursor comparable =
+    ( comparable, Position, Color )
+
+
+type alias Color =
+    String
 
 
 type ViewMode
@@ -92,6 +101,7 @@ init : ( Config, ContextMenu Context ) -> EditorModel
 init ( config, contextMenu ) =
     { lines = Array.fromList [ "" ]
     , cursor = Position 0 0
+    , foreignCursors = []
     , hover = NoHover
     , selection = NoSelection
     , selectedText = Array.fromList [ "" ]
