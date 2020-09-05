@@ -15,6 +15,7 @@ import Array exposing (Array)
 import ContextMenu exposing (ContextMenu)
 import Debounce exposing (Debounce)
 import EditorMsg exposing (Context(..), EMsg(..), Hover(..), Position, Selection(..), WrapOption(..))
+import ForeignCursor exposing (CursorId, ForeignCursor)
 import History exposing (History)
 import RollingList exposing (RollingList)
 
@@ -22,7 +23,7 @@ import RollingList exposing (RollingList)
 type alias EditorModel =
     { lines : Array String
     , cursor : Position
-    , foreignCursors : List (ForeignCursor String)
+    , foreignCursors : List (ForeignCursor CursorId)
     , hover : Hover
     , selection : Selection
     , selectedText : Array String
@@ -52,14 +53,6 @@ type alias EditorModel =
     , helpState : HelpState
     , editMode : EditMode
     }
-
-
-type alias ForeignCursor comparable =
-    ( comparable, Position, Color )
-
-
-type alias Color =
-    String
 
 
 type ViewMode

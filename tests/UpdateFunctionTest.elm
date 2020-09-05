@@ -2,12 +2,14 @@ module UpdateFunctionTest exposing (ex1, stringFromArray, suite)
 
 import Action
 import Array exposing (Array)
-import ArrayUtil
-import EditorModel exposing (Position, Selection(..))
+import ArrayUtil exposing (Position)
+import EditorModel
+import EditorMsg exposing (Selection(..))
 import Expect exposing (Expectation)
 import Fuzz exposing (Fuzzer, int, list, string)
 import Test exposing (..)
 import Update.Function as UF
+import Update.Line as UL
 
 
 ex1 =
@@ -28,27 +30,27 @@ suite =
             [ test "breakStringAt (no break)" <|
                 \_ ->
                     "aaa bbb"
-                        |> UF.breakLineBefore 30
+                        |> UL.breakLineBefore 30
                         |> Expect.equal ( "aaa bbb", Nothing )
             , test "breakStringAt, two words" <|
                 \_ ->
                     "aaa bbb"
-                        |> UF.breakLineBefore 4
+                        |> UL.breakLineBefore 4
                         |> Expect.equal ( "aaa", Just "bbb" )
             , test "breakStringAt, three words" <|
                 \_ ->
                     "aaa bbb ccc"
-                        |> UF.breakLineBefore 7
+                        |> UL.breakLineBefore 7
                         |> Expect.equal ( "aaa ", Just "bbb ccc" )
             , test "breakStringAt, three words, extra space" <|
                 \_ ->
                     "aaa  bbb ccc"
-                        |> UF.breakLineBefore 7
+                        |> UL.breakLineBefore 7
                         |> Expect.equal ( "aaa  ", Just "bbb ccc" )
             , test "breakStringAfter (1))" <|
                 \_ ->
                     "aaa bbb ccc"
-                        |> UF.breakLineAfter 2
+                        |> UL.breakLineAfter 2
                         |> Expect.equal ( "aaa ", Just "bbb ccc" )
             ]
         ]
