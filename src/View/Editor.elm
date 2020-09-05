@@ -169,7 +169,7 @@ editorHeight : EditorModel -> Float
 editorHeight model =
     let
         defaultHeight =
-            model.height
+            model.height - 40
 
         barHeight =
             35
