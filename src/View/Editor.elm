@@ -12,6 +12,7 @@ import Json.Decode as JD exposing (Decoder)
 import Keymap
 import View.Helper
 import Widget
+import CursorData exposing(CursorData, CursorId)
 
 
 statisticsDisplay : EditorModel -> Html EMsg
@@ -48,7 +49,7 @@ viewDebug model =
         True ->
             H.div
                 [ HA.style "max-width" (px model.width), HA.style "padding" "8px" ]
-                [ H.pre [] [ H.text <| "cursor: " ++ stringFromPosition model.cursor ]
+                [ H.pre [] [ H.text <| "cursor: " ++ stringFromPosition model.cursor.native ]
                 , H.pre [] [ H.text <| "hover: " ++ stringFromHover model.hover ]
                 , H.pre [] [ H.text (stringFromSelection model.selection) ]
                 , H.pre [] [ H.text <| "selected text:\n" ++ selectedText model.selection model.hover model.lines ]
@@ -244,23 +245,26 @@ viewContent model =
         [ viewLines model.viewMode model.lineHeight model.cursor model.hover model.selection model.lines ]
 
 
-viewLines : ViewMode -> Float -> Position -> Hover -> Selection -> Array String -> Html EMsg
-viewLines viewMode_ lineHeight position hover selection lines =
+viewLines : ViewMode -> Float -> CursorData CursorId -> Hover -> Selection -> Array String -> Html EMsg
+viewLines viewMode_ lineHeight cursorData hover selection lines =
     H.div
         []
         (lines
-            |> Array.indexedMap (viewLine viewMode_ lineHeight position hover selection lines)
+            |> Array.indexedMap (viewLine viewMode_ lineHeight cursorData hover selection lines)
             |> Array.toList
         )
 
 
-viewLine : ViewMode -> Float -> Position -> Hover -> Selection -> Array String -> Int -> String -> Html EMsg
-viewLine viewMode_ lineHeight position hover selection lines line content =
-    Html.Lazy.lazy8 viewLine_ viewMode_ lineHeight position hover selection lines line content
+viewLine : ViewMode -> Float -> CursorData CursorId -> Hover -> Selection -> Array String -> Int -> String -> Html EMsg
+viewLine viewMode_ lineHeight cursorData hover selection lines line content =
+    Html.Lazy.lazy8 viewLine_ viewMode_ lineHeight cursorData hover selection lines line content
 
 
-viewLine_ : ViewMode -> Float -> Position -> Hover -> Selection -> Array String -> Int -> String -> Html EMsg
-viewLine_ viewMode_ lineHeight position hover selection lines line content =
+viewLine_ : ViewMode -> Float ->  CursorData CursorId -> Hover -> Selection -> Array String -> Int -> String -> Html EMsg
+viewLine_ viewMode_ lineHeight cursorData hover selection lines line content =
+    let
+      position = cursorData.native
+    in
     H.div
         [ HA.style "position" "absolute"
         , HA.style "position" "absolute"
@@ -276,23 +280,26 @@ viewLine_ viewMode_ lineHeight position hover selection lines line content =
         , HE.onMouseOver (Hover (HoverLine line))
         ]
         (if position.line == line && isLastColumn lines line position.column then
-            viewChars viewMode_ position hover selection lines line content
-                ++ [ viewCursor position nbsp ]
+            viewChars viewMode_ cursorData hover selection lines line content
+                ++ [ viewCursor cursorData.native nbsp ]
 
          else
-            viewChars viewMode_ position hover selection lines line content
+            viewChars viewMode_ cursorData hover selection lines line content
         )
 
 
-viewChars : ViewMode -> Position -> Hover -> Selection -> Array String -> Int -> String -> List (Html EMsg)
-viewChars viewMode_ position hover selection lines line content =
+viewChars : ViewMode -> CursorData CursorId -> Hover -> Selection -> Array String -> Int -> String -> List (Html EMsg)
+viewChars viewMode_ cursorData hover selection lines line content =
     content
         |> String.toList
-        |> List.indexedMap (viewChar viewMode_ position hover selection lines line)
+        |> List.indexedMap (viewChar viewMode_ cursorData hover selection lines line)
 
 
-viewChar : ViewMode -> Position -> Hover -> Selection -> Array String -> Int -> Int -> Char -> Html EMsg
-viewChar viewMode_ position hover selection lines line column char =
+viewChar : ViewMode -> CursorData CursorId -> Hover -> Selection -> Array String -> Int -> Int -> Char -> Html EMsg
+viewChar viewMode_ cursorData hover selection lines line column char =
+    let
+      position = cursorData.native
+    in
     if position.line == line && position.column == column then
         viewCursor
             position

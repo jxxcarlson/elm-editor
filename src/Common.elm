@@ -33,6 +33,7 @@ module Common exposing
     )
 
 import Array exposing (Array)
+import CursorData
 import Cmd.Extra exposing (withNoCmd)
 import EditorModel exposing (EditorModel, Snapshot)
 import EditorMsg exposing (EMsg(..), Hover(..), Position)
@@ -106,13 +107,13 @@ comparePositions from to =
 
 removeCharBefore : EditorModel -> EditorModel
 removeCharBefore ({ cursor, lines } as model) =
-    if isStartOfDocument cursor then
+    if isStartOfDocument cursor.native then
         model
 
     else
         let
             { line, column } =
-                cursor
+                cursor.native
 
             lineIsEmpty : Bool
             lineIsEmpty =
@@ -149,19 +150,19 @@ removeCharBefore ({ cursor, lines } as model) =
         in
         { model
             | lines = newLines
-            , cursor = moveLeft cursor lines
+            , cursor = CursorData.updateNative (moveLeft cursor.native lines) model.cursor
         }
 
 
 removeCharAfter : EditorModel -> EditorModel
 removeCharAfter ({ cursor, lines } as model) =
-    if isEndOfDocument lines cursor then
+    if isEndOfDocument lines cursor.native then
         model
 
     else
         let
             { line, column } =
-                cursor
+                cursor.native
 
             isOnLastColumn : Bool
             isOnLastColumn =
@@ -199,6 +200,7 @@ removeCharAfter ({ cursor, lines } as model) =
             | lines = newLines
             , cursor = cursor
         }
+
 
 
 moveUp : Position -> Array String -> Position

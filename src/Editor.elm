@@ -91,30 +91,29 @@ insertAtCursor str (Editor data) =
             str |> String.lines |> List.length
 
         newLines =
-            ArrayUtil.insert data.cursor str data.lines
+            ArrayUtil.insert data.cursor.native str data.lines
 
-        newCursor =
-            { line = data.cursor.line + n, column = data.cursor.column }
+        native =
+            { line = data.cursor.native.line + n, column = data.cursor.native.column }
     in
     Editor
         { data
             | lines = newLines
             , clipboard = str
-            , cursor = newCursor
+            , cursor = {native = native, foreign = data.cursor.foreign}
         }
 
 
 {-| -}
 getCursor : Editor -> { line : Int, column : Int }
 getCursor (Editor model) =
-    model.cursor
-
+    model.cursor.native
 
 {-| Set the editor's cursor to a given position
 -}
 setCursor : { line : Int, column : Int } -> Editor -> Editor
-setCursor cursor (Editor data) =
-    Editor { data | cursor = cursor }
+setCursor position (Editor model) =
+    Editor { model | cursor = {native = position, foreign = model.cursor.foreign}}
 
 
 {-| -}
@@ -143,7 +142,7 @@ sendLine (Editor model) =
 -}
 lineAtCursor : Editor -> String
 lineAtCursor (Editor data) =
-    Array.get data.cursor.line data.lines
+    Array.get data.cursor.native.line data.lines
         |> Maybe.withDefault "invalid cursor"
 
 

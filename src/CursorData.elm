@@ -1,20 +1,21 @@
-module ForeignCursor exposing (CursorId, ForeignCursor, set)
+module CursorData exposing (CursorData, updateNative, CursorId, ForeignCursor, set)
 
 import EditorMsg exposing (Position)
 import List.Extra
 
 
 type alias ForeignCursor comparable =
-    { id : comparable, position : Position }
-
-
-type alias Color =
-    String
+    { id : comparable, position : Position, color : String }
 
 
 type alias CursorId =
     String
 
+type alias CursorData comparable = { native : Position, foreign : List (ForeignCursor comparable)}
+
+updateNative : Position -> CursorData comparable -> CursorData comparable
+updateNative position cursorData =
+    { native = position, foreign = cursorData.foreign}
 
 set : ForeignCursor comparable -> List (ForeignCursor comparable) -> List (ForeignCursor comparable)
 set fc list =

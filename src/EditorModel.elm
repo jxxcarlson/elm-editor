@@ -15,15 +15,14 @@ import Array exposing (Array)
 import ContextMenu exposing (ContextMenu)
 import Debounce exposing (Debounce)
 import EditorMsg exposing (Context(..), EMsg(..), Hover(..), Position, Selection(..), WrapOption(..))
-import ForeignCursor exposing (CursorId, ForeignCursor)
+import CursorData exposing (CursorId, CursorData)
 import History exposing (History)
 import RollingList exposing (RollingList)
 
 
 type alias EditorModel =
     { lines : Array String
-    , cursor : Position
-    , foreignCursors : List (ForeignCursor CursorId)
+    , cursor : CursorData CursorId
     , hover : Hover
     , selection : Selection
     , selectedText : Array String
@@ -67,7 +66,7 @@ type HelpState
 
 type alias Snapshot =
     { lines : Array String
-    , cursor : Position
+    , cursor : CursorData CursorId
     , selection : Selection
     }
 
@@ -75,7 +74,7 @@ type alias Snapshot =
 emptySnapshot : Snapshot
 emptySnapshot =
     { lines = Array.fromList [ "" ]
-    , cursor = { line = 0, column = 0 }
+    , cursor = {native = { line = 0, column = 0 }, foreign = []}
     , selection = NoSelection
     }
 
@@ -93,8 +92,7 @@ type alias Config =
 init : ( Config, ContextMenu Context ) -> EditorModel
 init ( config, contextMenu ) =
     { lines = Array.fromList [ "" ]
-    , cursor = Position 0 0
-    , foreignCursors = []
+    , cursor = {native = Position 0 0, foreign = [{id = "one", position = Position 5 5, color = "red"}]}
     , hover = NoHover
     , selection = NoSelection
     , selectedText = Array.fromList [ "" ]

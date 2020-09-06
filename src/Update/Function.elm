@@ -47,9 +47,10 @@ copySelection model =
             let
                 ( _, selectedText ) =
                     Action.deleteSelection sel model.lines
+                native = { endSel | column = endSel.column + 1 }
             in
             ( { model
-                | cursor = { endSel | column = endSel.column + 1 }
+                | cursor = { native = native, foreign = model.cursor.foreign }
                 , selection = NoSelection
                 , selectedText = selectedText
               }
@@ -65,12 +66,12 @@ copySelection model =
 pasteSelection : EditorModel -> EditorModel
 pasteSelection model =
     let
-        newCursor =
-            { line = model.cursor.line + Array.length model.selectedText, column = model.cursor.column }
+        native =
+            { line = model.cursor.native.line + Array.length model.selectedText, column = model.cursor.native.column }
     in
     { model
-        | lines = ArrayUtil.replaceLines model.cursor model.cursor model.selectedText model.lines
-        , cursor = newCursor
+        | lines = ArrayUtil.replaceLines model.cursor.native model.cursor.native model.selectedText model.lines
+        , cursor = {native = native, foreign = model.cursor.foreign}
     }
 
 
@@ -81,7 +82,7 @@ replaceLines model strings =
             Array.length strings
 
         newCursor =
-            { line = model.cursor.line + n, column = model.cursor.column }
+            { line = model.cursor.native.line + n, column = model.cursor.native.column }
     in
     case model.selection of
         Selection p1 p2 ->
@@ -116,7 +117,7 @@ deleteSelection model =
             in
             ( { model
                 | lines = newLines
-                , cursor = beginSel
+                , cursor = {native = beginSel, foreign = model.cursor.foreign}
                 , selection = NoSelection
                 , selectedText = selectedText
               }
@@ -148,7 +149,7 @@ newLine : EditorModel -> EditorModel
 newLine ({ cursor, lines } as model) =
     let
         { line, column } =
-            cursor
+            cursor.native
 
         linesList : List String
         linesList =
@@ -187,15 +188,15 @@ newLine ({ cursor, lines } as model) =
             )
                 |> Array.fromList
 
-        newCursor : Position
-        newCursor =
+        native : Position
+        native =
             { line = line_
             , column = 0
             }
     in
     { model
         | lines = newLines
-        , cursor = newCursor
+        , cursor = {native = native, foreign = model.cursor.foreign }
     }
 
 
@@ -234,25 +235,25 @@ insertWithMatching selection closing str model =
                     ( a, b )
 
                 _ ->
-                    ( model.cursor, model.cursor )
+                    ( model.cursor.native, model.cursor.native )
 
         insertion =
             str ++ ArrayUtil.between start end model.lines ++ closing
 
-        newCursor =
-            { line = model.cursor.line, column = model.cursor.column + String.length insertion - 1 }
+        native =
+            { line = model.cursor.native.line, column = model.cursor.native.column + String.length insertion - 1 }
 
         newLines =
             ArrayUtil.replace start end insertion model.lines
     in
-    { model | lines = newLines, cursor = newCursor }
+    { model | lines = newLines, cursor = {native = native, foreign = model.cursor.foreign} }
 
 
 insertSimple : String -> EditorModel -> EditorModel
 insertSimple char ({ cursor, lines } as model) =
     let
         { line, column } =
-            cursor
+            cursor.native
 
         maxLineLength =
             20
@@ -275,15 +276,15 @@ insertSimple char ({ cursor, lines } as model) =
                             content
                     )
 
-        newCursor : Position
-        newCursor =
+        native : Position
+        native =
             { line = line
             , column = column + 1
             }
     in
     { model
         | lines = newLines
-        , cursor = newCursor
+        , cursor = {native = native, foreign = model.cursor.foreign}
     }
 
 

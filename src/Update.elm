@@ -96,7 +96,7 @@ update msg model =
         KillLine ->
             let
                 lineNumber =
-                    model.cursor.line
+                    model.cursor.native.line
 
                 lastColumnOfLine =
                     Array.get lineNumber model.lines
@@ -108,7 +108,7 @@ update msg model =
                     { line = lineNumber, column = lastColumnOfLine }
 
                 newSelection =
-                    Selection model.cursor lineEnd
+                    Selection model.cursor.native lineEnd
 
                 ( newLines, selectedText ) =
                     Action.deleteSelection newSelection model.lines
@@ -119,10 +119,10 @@ update msg model =
         DeleteLine ->
             let
                 lineNumber =
-                    model.cursor.line
+                    model.cursor.native.line
 
                 newCursor =
-                    { line = lineNumber, column = 0 }
+                    {native = { line = lineNumber, column = 0 }, foreign = model.cursor.foreign}
 
                 lastColumnOfLine =
                     Array.get lineNumber model.lines
@@ -134,7 +134,7 @@ update msg model =
                     { line = lineNumber, column = lastColumnOfLine }
 
                 newSelection =
-                    Selection newCursor lineEnd
+                    Selection newCursor.native lineEnd
 
                 ( newLines, selectedText ) =
                     Action.deleteSelection newSelection model.lines
@@ -174,12 +174,10 @@ update msg model =
                             model.cursor
 
                         HoverLine line ->
-                            { line = line
-                            , column = lastColumn model.lines line
-                            }
+                            { native = { line = line , column = lastColumn model.lines line }, foreign = model.cursor.foreign}
 
                         HoverChar position ->
-                            position
+                           {native = position, foreign = model.cursor.foreign}
               }
             , Cmd.none
             )
@@ -431,7 +429,7 @@ update msg model =
                 Selection from to ->
                     let
                         newLines =
-                            ArrayUtil.replace model.cursor to model.replacementText model.lines
+                            ArrayUtil.replace model.cursor.native to model.replacementText model.lines
                     in
                     Update.Scroll.rollSearchSelectionForward { model | lines = newLines }
 
@@ -476,15 +474,20 @@ update msg model =
         SelectGroup ->
             let
                 range =
-                    Update.Group.groupRange model.cursor model.lines
+                    Update.Group.groupRange model.cursor.native model.lines
 
                 line =
-                    model.cursor.line
+                    model.cursor.native.line
+
+
             in
             case range of
                 Just ( start, end ) ->
+                    let
+                        native =  {line = line, column = end }
+                    in
                     ( { model
-                        | cursor = { line = line, column = end }
+                        | cursor = { native = native, foreign = model.cursor.foreign }
                         , selection = Selection { line = line, column = start } { line = line, column = end }
                       }
                     , Cmd.none

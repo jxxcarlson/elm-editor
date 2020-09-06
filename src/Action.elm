@@ -28,7 +28,7 @@ import Common
 import EditorModel exposing (EditorModel)
 import EditorMsg exposing (EMsg(..), Selection(..))
 import Task exposing (Task)
-
+import CursorData
 
 
 -- INDENT
@@ -68,7 +68,7 @@ deIndent model =
 
 firstLine : EditorModel -> ( EditorModel, Cmd EMsg )
 firstLine model =
-    ( { model | cursor = { line = 0, column = 0 } }, scrollToTopForElement "__editor__" )
+    ( { model | cursor = CursorData.updateNative { line = 0, column = 0 } model.cursor} , scrollToTopForElement "__editor__" )
 
 
 goToLine : Int -> EditorModel -> ( EditorModel, Cmd EMsg )
@@ -81,7 +81,7 @@ goToLine line model =
             min (length - 1) (line - 1)
                 |> max 0
     in
-    ( { model | cursor = { line = index, column = 0 } }, scrollToLine model.lineHeight (index - model.verticalScrollOffset) )
+    ( { model | cursor = CursorData.updateNative { line = index, column = 0 } model.cursor }, scrollToLine model.lineHeight (index - model.verticalScrollOffset) )
 
 
 lastLine : EditorModel -> ( EditorModel, Cmd EMsg )
@@ -90,17 +90,23 @@ lastLine model =
         lastLineIndex =
             Array.length model.lines - 1
     in
-    ( { model | cursor = { line = lastLineIndex, column = 0 } }, scrollToLine model.lineHeight lastLineIndex )
+    ( { model | cursor = CursorData.updateNative { line = lastLineIndex, column = 0 } model.cursor }, scrollToLine model.lineHeight lastLineIndex )
 
 
 moveToLineEnd : EditorModel -> ( EditorModel, Cmd EMsg )
 moveToLineEnd model =
-    ( { model | cursor = { line = model.cursor.line, column = lineEnd model.cursor.line model + 1 } }, Cmd.none )
+    let
+      native =   { line = model.cursor.native.line, column = lineEnd model.cursor.native.line model + 1 }
+    in
+    ( { model | cursor = {native = native, foreign = model.cursor.foreign} }, Cmd.none )
 
 
 moveToLineStart : EditorModel -> ( EditorModel, Cmd EMsg )
 moveToLineStart model =
-    ( { model | cursor = { line = model.cursor.line, column = 0 } }, Cmd.none )
+    let
+        native =   { line = model.cursor.native.line, column = 0 }
+    in
+    ( { model | cursor = {native = native, foreign = model.cursor.foreign} }, Cmd.none )
 
 
 pageDown : EditorModel -> ( EditorModel, Cmd EMsg )
@@ -113,13 +119,13 @@ pageDown model =
             Array.length model.lines - 1
 
         newLine =
-            min lastIndex (model.cursor.line + lpp)
+            min lastIndex (model.cursor.native.line + lpp)
 
         newCursor =
-            { line = newLine, column = 0 }
+           {native = { line = newLine, column = 0 }, foreign = model.cursor.foreign}
 
         newY =
-            yValueOfLine model.lineHeight model.cursor.line + model.height - 3 * model.lineHeight
+            yValueOfLine model.lineHeight model.cursor.native.line + model.height - 3 * model.lineHeight
     in
     ( { model | cursor = newCursor }, scrollToYCoordinate newY )
 
@@ -131,13 +137,13 @@ pageUp model =
             linesPerPage model
 
         newLine =
-            max 0 (model.cursor.line - lpp)
+            max 0 (model.cursor.native.line - lpp)
 
         newCursor =
-            { line = newLine, column = 0 }
+            {native = { line = newLine, column = 0 }, foreign = model.cursor.foreign}
 
         newY =
-            yValueOfLine model.lineHeight model.cursor.line - model.height - 1 * model.lineHeight
+            yValueOfLine model.lineHeight model.cursor.native.line - model.height - 1 * model.lineHeight
     in
     ( { model | cursor = newCursor }, scrollToYCoordinate newY )
 
@@ -150,7 +156,7 @@ selectLine : EditorModel -> ( EditorModel, Cmd EMsg )
 selectLine model =
     let
         line =
-            model.cursor.line
+            model.cursor.native.line
 
         lineEnd_ =
             Array.get line model.lines
@@ -159,7 +165,7 @@ selectLine model =
                 |> (\x -> x - 1)
     in
     ( { model
-        | cursor = { line = line, column = lineEnd_ + 1 }
+        | cursor = CursorData.updateNative { line = line, column = lineEnd_ + 1 } model.cursor
         , selection = Selection { line = line, column = 0 } { line = line, column = lineEnd_ }
       }
     , Cmd.none
@@ -224,22 +230,35 @@ linesPerPage model =
 
 cursorRight : EditorModel -> EditorModel
 cursorRight model =
-    { model | cursor = Common.moveRight model.cursor model.lines }
+     let
+              native = Common.moveRight model.cursor.native model.lines
+      in
+          { model | cursor = {native = native, foreign = model.cursor.foreign} }
 
 
 cursorLeft : EditorModel -> EditorModel
 cursorLeft model =
-    { model | cursor = Common.moveLeft model.cursor model.lines }
+    let
+            native = Common.moveLeft model.cursor.native model.lines
+    in
+        { model | cursor = {native = native, foreign = model.cursor.foreign} }
+
 
 
 cursorUp : EditorModel -> EditorModel
 cursorUp model =
-    { model | cursor = Common.moveUp model.cursor model.lines }
+    let
+        native = Common.moveUp model.cursor.native model.lines
+    in
+    { model | cursor = {native = native, foreign = model.cursor.foreign} }
 
 
 cursorDown : EditorModel -> EditorModel
 cursorDown model =
-    { model | cursor = Common.moveDown model.cursor model.lines }
+    let
+            native = Common.moveDown model.cursor.native model.lines
+        in
+        { model | cursor = {native = native, foreign = model.cursor.foreign} }
 
 
 selectUp : EditorModel -> EditorModel
@@ -254,7 +273,7 @@ selectUp model =
                     extendSelection a b
 
                 _ ->
-                    extendSelection model.cursor model.cursor
+                    extendSelection model.cursor.native model.cursor.native
     in
     { model | selection = newSelection }
 
@@ -271,7 +290,7 @@ selectDown model =
                     extendSelection a b
 
                 _ ->
-                    extendSelection model.cursor model.cursor
+                    extendSelection model.cursor.native model.cursor.native
     in
     { model | selection = newSelection }
 
@@ -288,7 +307,7 @@ selectLeft model =
                     extendSelection a b
 
                 _ ->
-                    extendSelection model.cursor model.cursor
+                    extendSelection model.cursor.native model.cursor.native
     in
     { model | selection = newSelection }
 
@@ -305,6 +324,6 @@ selectRight model =
                     extendSelection a b
 
                 _ ->
-                    extendSelection model.cursor model.cursor
+                    extendSelection model.cursor.native model.cursor.native
     in
     { model | selection = newSelection }

@@ -18,7 +18,7 @@ break model =
                     optimumWrapWidth model
 
                 line =
-                    model.cursor.line
+                    model.cursor.native.line
             in
             case Array.get line model.lines of
                 Nothing ->
@@ -34,7 +34,7 @@ break model =
                             model
 
                         False ->
-                            case currentLineLength == model.cursor.column of
+                            case currentLineLength == model.cursor.native.column of
                                 True ->
                                     case breakLineBefore k currentLine of
                                         ( _, Nothing ) ->
@@ -51,7 +51,7 @@ break model =
                                                 |> putCursorAt newCursor
 
                                 False ->
-                                    case breakLineAfter model.cursor.column currentLine of
+                                    case breakLineAfter model.cursor.native.column currentLine of
                                         ( _, Nothing ) ->
                                             model
 
@@ -63,7 +63,7 @@ break model =
                                             model
                                                 |> replaceLineAt line adjustedLine
                                                 |> insertLineAfter line extraLine
-                                                |> putCursorAt newCursor
+                                                |> putCursorAt newCursor.native
 
 
 
@@ -84,7 +84,7 @@ charactersPerLine screenWidth fontSize =
 
 putCursorAt : Position -> EditorModel -> EditorModel
 putCursorAt position model =
-    { model | cursor = position }
+    { model | cursor = {native = position, foreign = model.cursor.foreign }}
 
 
 replaceLineAt : Int -> String -> EditorModel -> EditorModel

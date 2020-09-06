@@ -45,10 +45,10 @@ selection model =
                         |> Maybe.map String.length
                         |> Maybe.withDefault 0
 
-                newCursor =
+                native =
                     { line = p1.line + n - 1, column = c }
             in
-            Function.replaceLines { model | cursor = newCursor } newLines
+            Function.replaceLines { model | cursor = { native = native, foreign = model.cursor.foreign} } newLines
 
         _ ->
             model

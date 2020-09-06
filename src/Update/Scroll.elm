@@ -16,6 +16,7 @@ import EditorMsg exposing (EMsg(..), Position, Selection(..))
 import RollingList
 import Search
 import Task exposing (Task)
+import CursorData
 
 
 setEditorViewportForLine : Float -> Int -> Cmd EMsg
@@ -48,7 +49,7 @@ toString str model =
 
         Just (Selection cursor end) ->
             ( { model
-                | cursor = cursor
+                | cursor = CursorData.updateNative cursor model.cursor
                 , selection = Selection cursor end
                 , searchResults = RollingList.fromList searchResults
                 , searchTerm = str
@@ -70,7 +71,7 @@ jumpToHeightForSync currentLine cursor selection y =
 
 jumpToBottom : EditorModel -> Cmd EMsg
 jumpToBottom model =
-    case model.cursor.line == (Array.length model.lines - 1) of
+    case model.cursor.native.line == (Array.length model.lines - 1) of
         False ->
             Cmd.none
 
@@ -118,7 +119,7 @@ rollSearchSelectionForward model =
     case RollingList.current searchResults_ of
         Just (Selection cursor end) ->
             ( { model
-                | cursor = cursor
+                | cursor = CursorData.updateNative cursor model.cursor
                 , selection = Selection cursor end
                 , searchResults = searchResults_
                 , searchResultIndex = newSearchResultIndex
@@ -152,7 +153,7 @@ rollSearchSelectionBackward model =
     case RollingList.current searchResults_ of
         Just (Selection cursor end) ->
             ( { model
-                | cursor = cursor
+                | cursor = CursorData.updateNative cursor model.cursor
                 , selection = Selection cursor end
                 , searchResults = searchResults_
                 , searchResultIndex = newSearchResultIndex
@@ -169,18 +170,18 @@ sendLine model =
     {- DOC sync RL and LR: scroll line (2) -}
     let
         y =
-            max 0 (model.lineHeight * toFloat model.cursor.line - verticalOffsetInSourceText)
+            max 0 (model.lineHeight * toFloat model.cursor.native.line - verticalOffsetInSourceText)
 
         newCursor =
-            { line = model.cursor.line, column = 0 }
+           CursorData.updateNative { line = model.cursor.native.line, column = 0 } model.cursor
 
         currentLine : Maybe String
         currentLine =
-            Array.get newCursor.line model.lines
+            Array.get newCursor.native.line model.lines
 
         paragraphStart : Int
         paragraphStart =
-            ArrayUtil.paragraphStart newCursor model.lines
+            ArrayUtil.paragraphStart newCursor.native model.lines
 
         firstLine : Maybe String
         firstLine =
@@ -188,7 +189,7 @@ sendLine model =
 
         paragraphEnd : Int
         paragraphEnd =
-            ArrayUtil.paragraphEnd newCursor model.lines
+            ArrayUtil.paragraphEnd newCursor.native model.lines
 
         lastLine : Maybe String
         lastLine =
@@ -206,7 +207,7 @@ sendLine model =
                 Nothing ->
                     NoSelection
     in
-    ( { model | cursor = newCursor, selection = selection }, jumpToHeightForSync currentLine newCursor selection y )
+    ( { model | cursor = newCursor, selection = selection }, jumpToHeightForSync currentLine newCursor.native selection y )
 
 
 verticalOffsetInSourceText =
