@@ -38,6 +38,7 @@
             "ktonon/elm-crypto": "1.1.2",
             "lovasoa/elm-rolling-list": "1.1.4",
             "mdgriffith/elm-ui": "1.1.7",
+            "mgold/elm-nonempty-list": "4.1.0",
             "pablohirafuji/elm-syntax-highlight": "3.3.0",
             "zwilias/elm-rosetree": "1.5.0"
         },

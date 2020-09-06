@@ -5,7 +5,7 @@ import ArrayUtil exposing (Position)
 import EditorModel exposing (EditorModel)
 import EditorMsg exposing (Selection(..))
 import RollingList
-import CursorData
+import Cursor
 
 
 {-| Search for str and scroll to first hit. Used internally.
@@ -22,7 +22,7 @@ do str model =
 
         Just ((Selection first last) as selection) ->
             { model
-                | cursor = CursorData.updateNative first model.cursor
+                | cursor = Cursor.updateHeadWithPosition first model.cursor
                 , selection = selection
                 , searchResults = RollingList.fromList searchResults
                 , searchTerm = str

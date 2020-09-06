@@ -16,7 +16,7 @@ import EditorMsg exposing (EMsg(..), Position, Selection(..))
 import RollingList
 import Search
 import Task exposing (Task)
-import CursorData
+import Cursor
 
 
 setEditorViewportForLine : Float -> Int -> Cmd EMsg
@@ -47,15 +47,15 @@ toString str model =
         Nothing ->
             ( { model | searchResults = RollingList.fromList [], searchTerm = str, selection = NoSelection }, Cmd.none )
 
-        Just (Selection cursor end) ->
+        Just (Selection pos end) ->
             ( { model
-                | cursor = CursorData.updateNative cursor model.cursor
-                , selection = Selection cursor end
+                | cursor = Cursor.updateHeadWithPosition pos model.cursor
+                , selection = Selection pos end
                 , searchResults = RollingList.fromList searchResults
                 , searchTerm = str
                 , searchResultIndex = 0
               }
-            , setEditorViewportForLine model.lineHeight (max 0 (cursor.line - 5))
+            , setEditorViewportForLine model.lineHeight (max 0 (pos.line - 5))
             )
 
         _ ->
@@ -71,7 +71,7 @@ jumpToHeightForSync currentLine cursor selection y =
 
 jumpToBottom : EditorModel -> Cmd EMsg
 jumpToBottom model =
-    case model.cursor.native.line == (Array.length model.lines - 1) of
+    case (Cursor.position model.cursor).line == (Array.length model.lines - 1) of
         False ->
             Cmd.none
 
@@ -117,14 +117,14 @@ rollSearchSelectionForward model =
                 model.searchResultIndex + 1
     in
     case RollingList.current searchResults_ of
-        Just (Selection cursor end) ->
+        Just (Selection pos end) ->
             ( { model
-                | cursor = CursorData.updateNative cursor model.cursor
-                , selection = Selection cursor end
+                | cursor = Cursor.updateHeadWithPosition pos model.cursor
+                , selection = Selection pos end
                 , searchResults = searchResults_
                 , searchResultIndex = newSearchResultIndex
               }
-            , setEditorViewportForLine model.lineHeight (max 0 (cursor.line - 5))
+            , setEditorViewportForLine model.lineHeight (max 0 (pos.line - 5))
             )
 
         _ ->
@@ -151,14 +151,14 @@ rollSearchSelectionBackward model =
                 model.searchResultIndex - 1
     in
     case RollingList.current searchResults_ of
-        Just (Selection cursor end) ->
+        Just (Selection pos end) ->
             ( { model
-                | cursor = CursorData.updateNative cursor model.cursor
-                , selection = Selection cursor end
+                | cursor = Cursor.updateHeadWithPosition pos model.cursor
+                , selection = Selection pos end
                 , searchResults = searchResults_
                 , searchResultIndex = newSearchResultIndex
               }
-            , setEditorViewportForLine model.lineHeight (max 0 (cursor.line - 5))
+            , setEditorViewportForLine model.lineHeight (max 0 (pos.line - 5))
             )
 
         _ ->
@@ -169,19 +169,22 @@ sendLine : EditorModel -> ( EditorModel, Cmd EMsg )
 sendLine model =
     {- DOC sync RL and LR: scroll line (2) -}
     let
+        pos = Cursor.position model.cursor
+        newPos = { line = pos.line, column = 0 }
+
         y =
-            max 0 (model.lineHeight * toFloat model.cursor.native.line - verticalOffsetInSourceText)
+            max 0 (model.lineHeight * toFloat pos.line - verticalOffsetInSourceText)
 
         newCursor =
-           CursorData.updateNative { line = model.cursor.native.line, column = 0 } model.cursor
+           Cursor.updateHeadWithPosition newPos model.cursor
 
         currentLine : Maybe String
         currentLine =
-            Array.get newCursor.native.line model.lines
+            Array.get newPos.line model.lines
 
         paragraphStart : Int
         paragraphStart =
-            ArrayUtil.paragraphStart newCursor.native model.lines
+            ArrayUtil.paragraphStart newPos model.lines
 
         firstLine : Maybe String
         firstLine =
@@ -189,7 +192,7 @@ sendLine model =
 
         paragraphEnd : Int
         paragraphEnd =
-            ArrayUtil.paragraphEnd newCursor.native model.lines
+            ArrayUtil.paragraphEnd newPos model.lines
 
         lastLine : Maybe String
         lastLine =
@@ -207,7 +210,7 @@ sendLine model =
                 Nothing ->
                     NoSelection
     in
-    ( { model | cursor = newCursor, selection = selection }, jumpToHeightForSync currentLine newCursor.native selection y )
+    ( { model | cursor = newCursor, selection = selection }, jumpToHeightForSync currentLine newPos selection y )
 
 
 verticalOffsetInSourceText =

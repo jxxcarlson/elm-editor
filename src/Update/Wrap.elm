@@ -6,6 +6,7 @@ import EditorModel exposing (EditorModel)
 import EditorMsg exposing (Selection(..))
 import Update.Function as Function
 import Wrap exposing (WrapParams)
+import Cursor
 
 
 all : EditorModel -> EditorModel
@@ -45,10 +46,10 @@ selection model =
                         |> Maybe.map String.length
                         |> Maybe.withDefault 0
 
-                native =
+                pos =
                     { line = p1.line + n - 1, column = c }
             in
-            Function.replaceLines { model | cursor = { native = native, foreign = model.cursor.foreign} } newLines
+            Function.replaceLines { model | cursor = Cursor.updateHeadWithPosition pos model.cursor } newLines
 
         _ ->
             model

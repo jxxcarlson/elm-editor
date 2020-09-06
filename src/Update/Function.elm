@@ -14,6 +14,7 @@ module Update.Function exposing
 import Action
 import Array exposing (Array)
 import ArrayUtil
+import Cursor
 import Common
 import Debounce exposing (Debounce)
 import Dict exposing (Dict)
@@ -47,10 +48,10 @@ copySelection model =
             let
                 ( _, selectedText ) =
                     Action.deleteSelection sel model.lines
-                native = { endSel | column = endSel.column + 1 }
+                pos = { endSel | column = endSel.column + 1 }
             in
             ( { model
-                | cursor = { native = native, foreign = model.cursor.foreign }
+                | cursor = Cursor.updateHeadWithPosition pos model.cursor
                 , selection = NoSelection
                 , selectedText = selectedText
               }
@@ -66,23 +67,27 @@ copySelection model =
 pasteSelection : EditorModel -> EditorModel
 pasteSelection model =
     let
-        native =
-            { line = model.cursor.native.line + Array.length model.selectedText, column = model.cursor.native.column }
+        pos = Cursor.position model.cursor
+        newPos =
+            { line = pos.line + Array.length model.selectedText, column = pos.column }
     in
     { model
-        | lines = ArrayUtil.replaceLines model.cursor.native model.cursor.native model.selectedText model.lines
-        , cursor = {native = native, foreign = model.cursor.foreign}
+        | lines = ArrayUtil.replaceLines pos pos model.selectedText model.lines
+         -- TODO: Can the above (pos pos) be correct?
+        , cursor = Cursor.updateHeadWithPosition newPos model.cursor
     }
 
 
 replaceLines : EditorModel -> Array String -> EditorModel
 replaceLines model strings =
     let
+        pos = Cursor.position model.cursor
+
         n =
             Array.length strings
 
         newCursor =
-            { line = model.cursor.native.line + n, column = model.cursor.native.column }
+            { line = pos.line + n, column = pos.column }
     in
     case model.selection of
         Selection p1 p2 ->
@@ -117,7 +122,7 @@ deleteSelection model =
             in
             ( { model
                 | lines = newLines
-                , cursor = {native = beginSel, foreign = model.cursor.foreign}
+                , cursor = Cursor.updateHeadWithPosition beginSel model.cursor
                 , selection = NoSelection
                 , selectedText = selectedText
               }
@@ -149,7 +154,7 @@ newLine : EditorModel -> EditorModel
 newLine ({ cursor, lines } as model) =
     let
         { line, column } =
-            cursor.native
+            Cursor.position cursor
 
         linesList : List String
         linesList =
@@ -188,15 +193,15 @@ newLine ({ cursor, lines } as model) =
             )
                 |> Array.fromList
 
-        native : Position
-        native =
+        pos : Position
+        pos =
             { line = line_
             , column = 0
             }
     in
     { model
         | lines = newLines
-        , cursor = {native = native, foreign = model.cursor.foreign }
+        , cursor = Cursor.updateHeadWithPosition pos model.cursor
     }
 
 
@@ -229,31 +234,33 @@ insertWithMatching : Selection -> String -> String -> EditorModel -> EditorModel
 insertWithMatching selection closing str model =
     -- TODO: working on this
     let
+        pos = Cursor.position model.cursor
+
         ( start, end ) =
             case selection of
                 Selection a b ->
                     ( a, b )
 
                 _ ->
-                    ( model.cursor.native, model.cursor.native )
+                    ( pos, pos )
 
         insertion =
             str ++ ArrayUtil.between start end model.lines ++ closing
 
-        native =
-            { line = model.cursor.native.line, column = model.cursor.native.column + String.length insertion - 1 }
+        newPos =
+            { line = pos.line, column = pos.column + String.length insertion - 1 }
 
         newLines =
             ArrayUtil.replace start end insertion model.lines
     in
-    { model | lines = newLines, cursor = {native = native, foreign = model.cursor.foreign} }
+    { model | lines = newLines, cursor = Cursor.updateHeadWithPosition newPos  model.cursor }
 
 
 insertSimple : String -> EditorModel -> EditorModel
 insertSimple char ({ cursor, lines } as model) =
     let
         { line, column } =
-            cursor.native
+            Cursor.position model.cursor
 
         maxLineLength =
             20
@@ -276,15 +283,15 @@ insertSimple char ({ cursor, lines } as model) =
                             content
                     )
 
-        native : Position
-        native =
+        newPos : Position
+        newPos =
             { line = line
             , column = column + 1
             }
     in
     { model
         | lines = newLines
-        , cursor = {native = native, foreign = model.cursor.foreign}
+        , cursor = Cursor.updateHeadWithPosition newPos model.cursor
     }
 
 

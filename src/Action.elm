@@ -28,7 +28,7 @@ import Common
 import EditorModel exposing (EditorModel)
 import EditorMsg exposing (EMsg(..), Selection(..))
 import Task exposing (Task)
-import CursorData
+import Cursor
 
 
 -- INDENT
@@ -68,7 +68,7 @@ deIndent model =
 
 firstLine : EditorModel -> ( EditorModel, Cmd EMsg )
 firstLine model =
-    ( { model | cursor = CursorData.updateNative { line = 0, column = 0 } model.cursor} , scrollToTopForElement "__editor__" )
+    ( { model | cursor = Cursor.updateHeadWithPosition { line = 0, column = 0 } model.cursor} , scrollToTopForElement "__editor__" )
 
 
 goToLine : Int -> EditorModel -> ( EditorModel, Cmd EMsg )
@@ -81,7 +81,7 @@ goToLine line model =
             min (length - 1) (line - 1)
                 |> max 0
     in
-    ( { model | cursor = CursorData.updateNative { line = index, column = 0 } model.cursor }, scrollToLine model.lineHeight (index - model.verticalScrollOffset) )
+    ( { model | cursor = Cursor.updateHeadWithPosition { line = index, column = 0 } model.cursor }, scrollToLine model.lineHeight (index - model.verticalScrollOffset) )
 
 
 lastLine : EditorModel -> ( EditorModel, Cmd EMsg )
@@ -90,28 +90,33 @@ lastLine model =
         lastLineIndex =
             Array.length model.lines - 1
     in
-    ( { model | cursor = CursorData.updateNative { line = lastLineIndex, column = 0 } model.cursor }, scrollToLine model.lineHeight lastLineIndex )
+    ( { model | cursor = Cursor.updateHeadWithPosition { line = lastLineIndex, column = 0 } model.cursor }, scrollToLine model.lineHeight lastLineIndex )
 
 
 moveToLineEnd : EditorModel -> ( EditorModel, Cmd EMsg )
 moveToLineEnd model =
     let
-      native =   { line = model.cursor.native.line, column = lineEnd model.cursor.native.line model + 1 }
+      pos = Cursor.position model.cursor
+      newPos =   { pos | column = lineEnd pos.line model + 1 }
     in
-    ( { model | cursor = {native = native, foreign = model.cursor.foreign} }, Cmd.none )
+    ( { model | cursor = Cursor.updateHeadWithPosition newPos model.cursor }, Cmd.none )
 
 
 moveToLineStart : EditorModel -> ( EditorModel, Cmd EMsg )
 moveToLineStart model =
     let
-        native =   { line = model.cursor.native.line, column = 0 }
+        pos = Cursor.position model.cursor
+        newPos =   { pos | column = 0 }
     in
-    ( { model | cursor = {native = native, foreign = model.cursor.foreign} }, Cmd.none )
+    ( { model | cursor = Cursor.updateHeadWithPosition newPos model.cursor }, Cmd.none )
 
 
 pageDown : EditorModel -> ( EditorModel, Cmd EMsg )
 pageDown model =
     let
+        pos = Cursor.position model.cursor
+
+
         lpp =
             linesPerPage model
 
@@ -119,13 +124,13 @@ pageDown model =
             Array.length model.lines - 1
 
         newLine =
-            min lastIndex (model.cursor.native.line + lpp)
+            min lastIndex (pos.line + lpp)
 
         newCursor =
-           {native = { line = newLine, column = 0 }, foreign = model.cursor.foreign}
+           Cursor.updateHeadWithPosition { line = newLine, column = 0 } model.cursor
 
         newY =
-            yValueOfLine model.lineHeight model.cursor.native.line + model.height - 3 * model.lineHeight
+            yValueOfLine model.lineHeight pos.line + model.height - 3 * model.lineHeight
     in
     ( { model | cursor = newCursor }, scrollToYCoordinate newY )
 
@@ -133,17 +138,19 @@ pageDown model =
 pageUp : EditorModel -> ( EditorModel, Cmd EMsg )
 pageUp model =
     let
+        pos = Cursor.position model.cursor
+
         lpp =
             linesPerPage model
 
         newLine =
-            max 0 (model.cursor.native.line - lpp)
+            max 0 (pos.line - lpp)
 
         newCursor =
-            {native = { line = newLine, column = 0 }, foreign = model.cursor.foreign}
+            Cursor.updateHeadWithPosition { line = newLine, column = 0 } model.cursor
 
         newY =
-            yValueOfLine model.lineHeight model.cursor.native.line - model.height - 1 * model.lineHeight
+            yValueOfLine model.lineHeight pos.line - model.height - 1 * model.lineHeight
     in
     ( { model | cursor = newCursor }, scrollToYCoordinate newY )
 
@@ -155,8 +162,10 @@ pageUp model =
 selectLine : EditorModel -> ( EditorModel, Cmd EMsg )
 selectLine model =
     let
+        pos = Cursor.position model.cursor
+
         line =
-            model.cursor.native.line
+            pos.line
 
         lineEnd_ =
             Array.get line model.lines
@@ -165,7 +174,7 @@ selectLine model =
                 |> (\x -> x - 1)
     in
     ( { model
-        | cursor = CursorData.updateNative { line = line, column = lineEnd_ + 1 } model.cursor
+        | cursor = Cursor.updateHeadWithPosition { line = line, column = lineEnd_ + 1 } model.cursor
         , selection = Selection { line = line, column = 0 } { line = line, column = lineEnd_ }
       }
     , Cmd.none
@@ -231,39 +240,45 @@ linesPerPage model =
 cursorRight : EditorModel -> EditorModel
 cursorRight model =
      let
-              native = Common.moveRight model.cursor.native model.lines
+         pos = Cursor.position model.cursor
+         newPos = Common.moveRight pos model.lines
       in
-          { model | cursor = {native = native, foreign = model.cursor.foreign} }
+          { model | cursor = Cursor.updateHeadWithPosition newPos model.cursor}
 
 
 cursorLeft : EditorModel -> EditorModel
 cursorLeft model =
-    let
-            native = Common.moveLeft model.cursor.native model.lines
-    in
-        { model | cursor = {native = native, foreign = model.cursor.foreign} }
+     let
+         pos = Cursor.position model.cursor
+         newPos = Common.moveLeft pos model.lines
+      in
+          { model | cursor = Cursor.updateHeadWithPosition newPos model.cursor}
 
 
 
 cursorUp : EditorModel -> EditorModel
 cursorUp model =
     let
-        native = Common.moveUp model.cursor.native model.lines
-    in
-    { model | cursor = {native = native, foreign = model.cursor.foreign} }
+         pos = Cursor.position model.cursor
+         newPos = Common.moveUp pos model.lines
+      in
+          { model | cursor = Cursor.updateHeadWithPosition newPos model.cursor}
 
 
 cursorDown : EditorModel -> EditorModel
 cursorDown model =
     let
-            native = Common.moveDown model.cursor.native model.lines
-        in
-        { model | cursor = {native = native, foreign = model.cursor.foreign} }
+         pos = Cursor.position model.cursor
+         newPos = Common.moveDown pos model.lines
+      in
+          { model | cursor = Cursor.updateHeadWithPosition newPos model.cursor}
 
 
 selectUp : EditorModel -> EditorModel
 selectUp model =
     let
+        pos = Cursor.position model.cursor
+
         extendSelection a_ b =
             Selection (Common.moveUp a_ model.lines) b
 
@@ -273,7 +288,7 @@ selectUp model =
                     extendSelection a b
 
                 _ ->
-                    extendSelection model.cursor.native model.cursor.native
+                    extendSelection pos pos
     in
     { model | selection = newSelection }
 
@@ -281,6 +296,8 @@ selectUp model =
 selectDown : EditorModel -> EditorModel
 selectDown model =
     let
+        pos = Cursor.position model.cursor
+
         extendSelection a b_ =
             Selection a (Common.moveDown b_ model.lines)
 
@@ -290,7 +307,7 @@ selectDown model =
                     extendSelection a b
 
                 _ ->
-                    extendSelection model.cursor.native model.cursor.native
+                    extendSelection pos pos
     in
     { model | selection = newSelection }
 
@@ -298,6 +315,8 @@ selectDown model =
 selectLeft : EditorModel -> EditorModel
 selectLeft model =
     let
+        pos = Cursor.position model.cursor
+
         extendSelection a_ b =
             Selection (Common.moveLeft a_ model.lines) b
 
@@ -307,7 +326,7 @@ selectLeft model =
                     extendSelection a b
 
                 _ ->
-                    extendSelection model.cursor.native model.cursor.native
+                    extendSelection pos pos
     in
     { model | selection = newSelection }
 
@@ -315,6 +334,8 @@ selectLeft model =
 selectRight : EditorModel -> EditorModel
 selectRight model =
     let
+        pos = Cursor.position model.cursor
+
         extendSelection a b_ =
             Selection a (Common.moveRight b_ model.lines)
 
@@ -324,6 +345,6 @@ selectRight model =
                     extendSelection a b
 
                 _ ->
-                    extendSelection model.cursor.native model.cursor.native
+                    extendSelection pos pos
     in
     { model | selection = newSelection }

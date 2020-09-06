@@ -4,7 +4,8 @@ import Array
 import ArrayUtil
 import EditorModel exposing (AutoLineBreak(..), EditorModel)
 import EditorMsg exposing (Position)
-
+import List.Nonempty
+import Cursor
 
 break : EditorModel -> EditorModel
 break model =
@@ -18,7 +19,7 @@ break model =
                     optimumWrapWidth model
 
                 line =
-                    model.cursor.native.line
+                    (Cursor.position model.cursor).line
             in
             case Array.get line model.lines of
                 Nothing ->
@@ -34,7 +35,7 @@ break model =
                             model
 
                         False ->
-                            case currentLineLength == model.cursor.native.column of
+                            case currentLineLength == (Cursor.position model.cursor).column of
                                 True ->
                                     case breakLineBefore k currentLine of
                                         ( _, Nothing ) ->
@@ -51,19 +52,15 @@ break model =
                                                 |> putCursorAt newCursor
 
                                 False ->
-                                    case breakLineAfter model.cursor.native.column currentLine of
+                                    case breakLineAfter (Cursor.position model.cursor).column currentLine of
                                         ( _, Nothing ) ->
                                             model
 
                                         ( adjustedLine, Just extraLine ) ->
-                                            let
-                                                newCursor =
-                                                    model.cursor
-                                            in
                                             model
                                                 |> replaceLineAt line adjustedLine
                                                 |> insertLineAfter line extraLine
-                                                |> putCursorAt newCursor.native
+                                                |> putCursorAt (Cursor.position model.cursor)
 
 
 
@@ -84,7 +81,8 @@ charactersPerLine screenWidth fontSize =
 
 putCursorAt : Position -> EditorModel -> EditorModel
 putCursorAt position model =
-    { model | cursor = {native = position, foreign = model.cursor.foreign }}
+    -- { model | cursor = {native = position, foreign = model.cursor.foreign }}
+    { model | cursor = Cursor.updateHeadWithPosition position model.cursor}
 
 
 replaceLineAt : Int -> String -> EditorModel -> EditorModel

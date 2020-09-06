@@ -15,14 +15,15 @@ import Array exposing (Array)
 import ContextMenu exposing (ContextMenu)
 import Debounce exposing (Debounce)
 import EditorMsg exposing (Context(..), EMsg(..), Hover(..), Position, Selection(..), WrapOption(..))
-import CursorData exposing (CursorId, CursorData)
+import Cursor exposing (CursorId, CursorList)
 import History exposing (History)
 import RollingList exposing (RollingList)
+import List.Nonempty
 
 
 type alias EditorModel =
     { lines : Array String
-    , cursor : CursorData CursorId
+    , cursor : CursorList String
     , hover : Hover
     , selection : Selection
     , selectedText : Array String
@@ -66,7 +67,7 @@ type HelpState
 
 type alias Snapshot =
     { lines : Array String
-    , cursor : CursorData CursorId
+    , cursor : CursorList CursorId
     , selection : Selection
     }
 
@@ -74,7 +75,7 @@ type alias Snapshot =
 emptySnapshot : Snapshot
 emptySnapshot =
     { lines = Array.fromList [ "" ]
-    , cursor = {native = { line = 0, column = 0 }, foreign = []}
+    , cursor = initialCursor
     , selection = NoSelection
     }
 
@@ -88,16 +89,15 @@ type alias Config =
     , wrapOption : WrapOption
     }
 
+initialCursor = Cursor.init
+                        |> List.Nonempty.cons {id = "one", position = Position 5 5, color = "#e85154"}
+                        |> List.Nonempty.cons {id = "two", position = Position 7 39, color = "#6b8bff"}
+                        |> List.Nonempty.reverse
 
 init : ( Config, ContextMenu Context ) -> EditorModel
 init ( config, contextMenu ) =
     { lines = Array.fromList [ "" ]
-    , cursor = {native = Position 0 0
-       , foreign = [
-         {id = "one", position = Position 5 5, color = "#e85154"}
-         , {id = "two", position = Position 7 39, color = "#6b8bff"}
-         ]
-      }
+    , cursor = initialCursor
     , hover = NoHover
     , selection = NoSelection
     , selectedText = Array.fromList [ "" ]

@@ -19,6 +19,7 @@ import Update.Group
 import Update.Line
 import Update.Scroll
 import Update.Wrap
+import Cursor
 
 
 update : EMsg -> EditorModel -> ( EditorModel, Cmd EMsg )
@@ -95,8 +96,10 @@ update msg model =
 
         KillLine ->
             let
+                pos = Cursor.position model.cursor
+
                 lineNumber =
-                    model.cursor.native.line
+                    pos.line
 
                 lastColumnOfLine =
                     Array.get lineNumber model.lines
@@ -108,7 +111,7 @@ update msg model =
                     { line = lineNumber, column = lastColumnOfLine }
 
                 newSelection =
-                    Selection model.cursor.native lineEnd
+                    Selection pos lineEnd
 
                 ( newLines, selectedText ) =
                     Action.deleteSelection newSelection model.lines
@@ -118,11 +121,14 @@ update msg model =
 
         DeleteLine ->
             let
+                pos = Cursor.position model.cursor
+
                 lineNumber =
-                    model.cursor.native.line
+                    pos.line
 
                 newCursor =
-                    {native = { line = lineNumber, column = 0 }, foreign = model.cursor.foreign}
+                    Cursor.updateHeadWithPosition pos model.cursor
+
 
                 lastColumnOfLine =
                     Array.get lineNumber model.lines
@@ -134,7 +140,7 @@ update msg model =
                     { line = lineNumber, column = lastColumnOfLine }
 
                 newSelection =
-                    Selection newCursor.native lineEnd
+                    Selection pos lineEnd
 
                 ( newLines, selectedText ) =
                     Action.deleteSelection newSelection model.lines
@@ -174,10 +180,10 @@ update msg model =
                             model.cursor
 
                         HoverLine line ->
-                            { native = { line = line , column = lastColumn model.lines line }, foreign = model.cursor.foreign}
+                            Cursor.updateHeadWithPosition { line = line , column = lastColumn model.lines line } model.cursor
 
                         HoverChar position ->
-                           {native = position, foreign = model.cursor.foreign}
+                           Cursor.updateHeadWithPosition position model.cursor
               }
             , Cmd.none
             )
@@ -429,7 +435,7 @@ update msg model =
                 Selection from to ->
                     let
                         newLines =
-                            ArrayUtil.replace model.cursor.native to model.replacementText model.lines
+                            ArrayUtil.replace (Cursor.position model.cursor) to model.replacementText model.lines
                     in
                     Update.Scroll.rollSearchSelectionForward { model | lines = newLines }
 
@@ -473,21 +479,23 @@ update msg model =
 
         SelectGroup ->
             let
+                pos = Cursor.position model.cursor
+
                 range =
-                    Update.Group.groupRange model.cursor.native model.lines
+                    Update.Group.groupRange pos model.lines
 
                 line =
-                    model.cursor.native.line
+                    pos.line
 
 
             in
             case range of
                 Just ( start, end ) ->
                     let
-                        native =  {line = line, column = end }
+                        pos2 =  {line = line, column = end }
                     in
                     ( { model
-                        | cursor = { native = native, foreign = model.cursor.foreign }
+                        | cursor = Cursor.updateHeadWithPosition pos2  model.cursor
                         , selection = Selection { line = line, column = start } { line = line, column = end }
                       }
                     , Cmd.none

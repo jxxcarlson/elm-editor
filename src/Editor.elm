@@ -39,6 +39,7 @@ code for an example.
 
 import Array exposing (Array)
 import ArraySearch
+import Cursor
 import ArrayUtil
 import Cmd.Extra
 import ContextMenu exposing (ContextMenu)
@@ -87,33 +88,34 @@ given cursor location
 insertAtCursor : String -> Editor -> Editor
 insertAtCursor str (Editor data) =
     let
+        pos = Cursor.position data.cursor
         n =
             str |> String.lines |> List.length
 
         newLines =
-            ArrayUtil.insert data.cursor.native str data.lines
+            ArrayUtil.insert pos str data.lines
 
-        native =
-            { line = data.cursor.native.line + n, column = data.cursor.native.column }
+        newPos =
+            { line = pos.line + n, column = pos.column }
     in
     Editor
         { data
             | lines = newLines
             , clipboard = str
-            , cursor = {native = native, foreign = data.cursor.foreign}
+            , cursor = Cursor.updateHeadWithPosition  newPos data.cursor
         }
 
 
 {-| -}
 getCursor : Editor -> { line : Int, column : Int }
 getCursor (Editor model) =
-    model.cursor.native
+    Cursor.position model.cursor
 
 {-| Set the editor's cursor to a given position
 -}
 setCursor : { line : Int, column : Int } -> Editor -> Editor
 setCursor position (Editor model) =
-    Editor { model | cursor = {native = position, foreign = model.cursor.foreign}}
+    Editor { model | cursor = Cursor.updateHeadWithPosition position model.cursor}
 
 
 {-| -}
@@ -142,7 +144,7 @@ sendLine (Editor model) =
 -}
 lineAtCursor : Editor -> String
 lineAtCursor (Editor data) =
-    Array.get data.cursor.native.line data.lines
+    Array.get (Cursor.position data.cursor).line data.lines
         |> Maybe.withDefault "invalid cursor"
 
 
