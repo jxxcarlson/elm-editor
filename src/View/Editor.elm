@@ -12,7 +12,7 @@ import Json.Decode as JD exposing (Decoder)
 import Keymap
 import View.Helper
 import Widget
-import CursorData exposing(CursorData, CursorId)
+import CursorData exposing(CursorData, CursorId, ForeignCursor)
 
 
 statisticsDisplay : EditorModel -> Html EMsg
@@ -281,7 +281,8 @@ viewLine_ viewMode_ lineHeight cursorData hover selection lines line content =
         ]
         (if position.line == line && isLastColumn lines line position.column then
             viewChars viewMode_ cursorData hover selection lines line content
-                ++ [ viewCursor cursorData.native nbsp ]
+                -- TODO: accomodate multiple cursor
+                ++ [ viewNativeCursor cursorData.native nbsp ]
 
          else
             viewChars viewMode_ cursorData hover selection lines line content
@@ -299,21 +300,27 @@ viewChar : ViewMode -> CursorData CursorId -> Hover -> Selection -> Array String
 viewChar viewMode_ cursorData hover selection lines line column char =
     let
       position = cursorData.native
+
+      maybeFC : Maybe { id : CursorId, position : Position, color : String }
+      maybeFC = List.head (List.filter (\fc -> fc.position.line == line && fc.position.column == column)  cursorData.foreign)
+
     in
-    if position.line == line && position.column == column then
-        viewCursor
-            position
-            (String.fromChar char)
+    case maybeFC of
+        Just fc -> viewForeignCursor fc (String.fromChar char)
+        Nothing ->
+            if position.line == line && position.column == column then
+                -- TODO: accomodate multiple cursors
+                viewNativeCursor position (String.fromChar char)
 
-    else if selection /= NoSelection && isSelected lines selection hover line column then
-        viewSelectedChar viewMode_
-            { line = line, column = column }
-            (String.fromChar char)
+            else if selection /= NoSelection && isSelected lines selection hover line column then
+                viewSelectedChar viewMode_
+                    { line = line, column = column }
+                    (String.fromChar char)
 
-    else
-        H.span
-            [ onHover { line = line, column = column } ]
-            [ H.text (String.fromChar char) ]
+            else
+                H.span
+                    [ onHover { line = line, column = column } ]
+                    [ H.text (String.fromChar char) ]
 
 
 isSelected : Array String -> Selection -> Hover -> Int -> Int -> Bool
@@ -385,14 +392,21 @@ stringFromPosition p =
     "(" ++ String.fromInt p.line ++ ", " ++ String.fromInt p.column ++ ")"
 
 
-viewCursor : Position -> String -> Html EMsg
-viewCursor position char =
+viewNativeCursor : Position -> String -> Html EMsg
+viewNativeCursor position char =
     H.span
         [ HA.style "background-color" "orange"
         , onHover position
         ]
         [ H.text char ]
 
+viewForeignCursor : ForeignCursor CursorId-> String -> Html EMsg
+viewForeignCursor fc char =
+    H.span
+        [ HA.style "background-color" fc.color
+        , onHover fc.position
+        ]
+        [ H.text char ]
 
 viewSelectedChar : ViewMode -> Position -> String -> Html EMsg
 viewSelectedChar viewMode_ position char =

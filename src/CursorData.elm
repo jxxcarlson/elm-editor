@@ -13,6 +13,9 @@ type alias CursorId =
 
 type alias CursorData comparable = { native : Position, foreign : List (ForeignCursor comparable)}
 
+-- (1, current) cursorData.native : Position
+-- (2, proposed) cursorData.native.position : Position
+
 updateNative : Position -> CursorData comparable -> CursorData comparable
 updateNative position cursorData =
     { native = position, foreign = cursorData.foreign}
