@@ -279,14 +279,21 @@ viewLine_ viewMode_ lineHeight cursorData hover selection lines line content =
         , HA.style "top" (px (toFloat line * lineHeight))
         , HE.onMouseOver (Hover (HoverLine line))
         ]
-        (if position.line == line && isLastColumn lines line position.column then
-            viewChars viewMode_ cursorData hover selection lines line content
-                -- TODO: accomodate multiple cursor
-                ++ [ viewNativeCursor cursorData.native nbsp ]
+        (let
+           ff = \fc -> fc.position.line == line && isLastColumn lines line fc.position.column
+           maybeFC = List.head (List.filter ff  cursorData.foreign)
+        in
+        case maybeFC of
+            Just fc -> viewChars viewMode_ cursorData hover selection lines line content
+               ++ [viewForeignCursor fc nbsp]
+            Nothing ->
+                if position.line == line && isLastColumn lines line position.column then
+                    viewChars viewMode_ cursorData hover selection lines line content
+                        ++ [ viewNativeCursor cursorData.native nbsp ]
 
-         else
-            viewChars viewMode_ cursorData hover selection lines line content
-        )
+                 else
+                    viewChars viewMode_ cursorData hover selection lines line content
+                )
 
 
 viewChars : ViewMode -> CursorData CursorId -> Hover -> Selection -> Array String -> Int -> String -> List (Html EMsg)
@@ -301,7 +308,6 @@ viewChar viewMode_ cursorData hover selection lines line column char =
     let
       position = cursorData.native
 
-      maybeFC : Maybe { id : CursorId, position : Position, color : String }
       maybeFC = List.head (List.filter (\fc -> fc.position.line == line && fc.position.column == column)  cursorData.foreign)
 
     in
@@ -309,7 +315,6 @@ viewChar viewMode_ cursorData hover selection lines line column char =
         Just fc -> viewForeignCursor fc (String.fromChar char)
         Nothing ->
             if position.line == line && position.column == column then
-                -- TODO: accomodate multiple cursors
                 viewNativeCursor position (String.fromChar char)
 
             else if selection /= NoSelection && isSelected lines selection hover line column then
@@ -431,7 +436,6 @@ highlightColorLight =
 
 
 
--- TODO: background color
 
 
 onHover : Position -> Attribute EMsg

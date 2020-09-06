@@ -92,7 +92,12 @@ type alias Config =
 init : ( Config, ContextMenu Context ) -> EditorModel
 init ( config, contextMenu ) =
     { lines = Array.fromList [ "" ]
-    , cursor = {native = Position 0 0, foreign = [{id = "one", position = Position 5 5, color = "red"}]}
+    , cursor = {native = Position 0 0
+       , foreign = [
+         {id = "one", position = Position 5 5, color = "#e85154"}
+         , {id = "two", position = Position 7 39, color = "#6b8bff"}
+         ]
+      }
     , hover = NoHover
     , selection = NoSelection
     , selectedText = Array.fromList [ "" ]
