@@ -1,6 +1,7 @@
 env:
   APP_ROOT: /Users/jxxcarlson/dev/elm/projects/elm-editor/demo/public
   DATA_ROOT: /Users/jxxcarlson/Documents/mudocs
+  GH: /Users/jxxcarlson/dev/github_pages/app/editor
 
 scripts:
 
@@ -67,8 +68,17 @@ scripts:
     desc: Open debug version of muEdit.app
 
   publish:
-    cmd: sh script/publish.sh
     desc: publish editor to github pages
+    cmd:
+      - elm make --optimize src/Main.elm --output=public/Main.js
+      - npx uglify-js public/Main.js -mc 'pure_funcs="F2,F3,F4,F5,F6,F7,F8,F9"' -o public/Main.min.js
+      - cp public/index-min.html ${GH}/index.html
+      - cp public/Main.min.js ${GH}
+      - cp public/assets/elm-katex.js ${GH}/assets
+      - cp public/assets/outside.js ${GH}/assets
+      - cp public/assets/style.css ${GH}/assets
+
+  go: open -a /Applications/Firefox.app/ https://jxxcarlson.github.io/app/editor
 
   server:
     desc: Run the local server
@@ -111,6 +121,10 @@ scripts:
     cmd: scp -r ${DATA_ROOT} root@161.35.125.40:/root/docserver
     desc : Upload the server data to Digital Ocean
 
-  ssh:
+  ssh_rose:
+    cmd: ssh root@161.35.125.40
+    desc: ssh to Digital Ocean
+
+  ssh_nyc:
     cmd: ssh root@161.35.125.40
     desc: ssh to Digital Ocean
