@@ -1,4 +1,4 @@
-module Update.Line exposing (break)
+module Update.Line exposing (break, breakLineBefore, breakLineAfter)
 
 import Array
 import ArrayUtil

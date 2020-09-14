@@ -435,13 +435,13 @@ px f =
     String.fromFloat f ++ "px"
 
 
-rowButton : Int -> String -> c -> List (Attribute msg) -> Html a
+rowButton : Int -> String -> msg -> List (Attribute msg) -> Html msg
 rowButton width str msg attr =
     H.div (rowButtonStyle ++ attr)
         [ H.button (HE.onClick msg :: rowButtonLabelStyle width) [ H.text str ] ]
 
 
-textField : Int -> String -> (String -> msg) -> List (Attribute a) -> List (Attribute b) -> Html a
+textField : Int -> String -> (String -> msg) -> List (Attribute msg) -> List (Attribute msg) -> Html msg
 textField width str msg attr innerAttr =
     H.div attr
         [ H.input
@@ -509,7 +509,7 @@ viewHeader model =
         ]
 
 
-toggleReplacePanel : Html a
+toggleReplacePanel : Html EMsg
 toggleReplacePanel =
     Widget.lightRowButton 25
         ToggleReplacePanel

@@ -14,7 +14,7 @@ searchPanel model =
     showIf model.showSearchPanel (searchPanel_ model)
 
 
-searchPanel_ : EditorModel -> Html msg
+searchPanel_ : EditorModel -> Html EMsg
 searchPanel_ model =
     H.div
         [ HA.style "width" (px model.width)
@@ -43,7 +43,7 @@ replacePanel model =
     showIf (model.canReplace && model.showSearchPanel) (replacePanel_ model)
 
 
-replacePanel_ : EditorModel -> Html msg
+replacePanel_ : EditorModel -> Html EMsg
 replacePanel_ model =
     H.div
         [ HA.style "width" (px model.width)
@@ -83,7 +83,7 @@ numberOfHitsDisplay model =
     Widget.rowButton 40 EditorNoOp txt [ HA.style "float" "left" ]
 
 
-searchForwardButton : Html a
+searchForwardButton : Html EMsg
 searchForwardButton =
     Widget.rowButton 30
         RollSearchSelectionForward
@@ -93,7 +93,7 @@ searchForwardButton =
         ]
 
 
-searchBackwardButton : Html a
+searchBackwardButton : Html EMsg
 searchBackwardButton =
     Widget.rowButton 30
         RollSearchSelectionBackward
@@ -103,7 +103,7 @@ searchBackwardButton =
         ]
 
 
-replaceTextButton : Html a
+replaceTextButton : Html EMsg
 replaceTextButton =
     Widget.rowButton 70
         ReplaceCurrentSelection
@@ -113,7 +113,7 @@ replaceTextButton =
         ]
 
 
-acceptSearchText : Html c
+acceptSearchText : Html EMsg
 acceptSearchText =
     Widget.textField 220
         AcceptSearchText
@@ -123,7 +123,7 @@ acceptSearchText =
         [ setHtmlId "editor-search-box" ]
 
 
-acceptReplaceText : Html c
+acceptReplaceText : Html EMsg
 acceptReplaceText =
     Widget.textField 267 AcceptReplacementText "" [ HA.style "float" "left" ] [ setHtmlId "replacement-box" ]
 

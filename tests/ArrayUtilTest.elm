@@ -3,32 +3,9 @@ module ArrayUtilTest exposing (suite)
 import Action
 import Array exposing (Array)
 import ArrayUtil
-import EditorModel exposing (Position, Selection(..))
-import Expect exposing (Expectation)
-import Fuzz exposing (Fuzzer, int, list, string)
-import Test exposing (..)
-
-
-ex1 =
-    Array.fromList [ "abcde", "01234", "pqrst" ]
-
-
-ex2str =
-    """
-aaa
-
-$$
-\\omega = \\frac{360}(365/25} = 0.9856 \\text{ degrees/day }
-$$
-
-bbb
-"""
-
-
-ex2array =
-    ex2str
-        |> String.lines
-        |> Array.fromList
+import EditorMsg exposing (Position, Selection(..))
+import Test exposing (Test, describe, test, only)
+import Expect
 
 
 stringFromArray : Array String -> String
@@ -171,10 +148,6 @@ suite =
             , test "Cut passes rejoin test" <|
                 \_ ->
                     let
-                        result =
-                            ( Array.fromList [ "abcde", "01", "ou", "pqrst" ]
-                            , Array.fromList [ "234", "56789", "aei" ]
-                            )
 
                         input =
                             Array.fromList [ "abcde", "01234", "56789", "aeiou", "pqrst" ]
@@ -192,12 +165,11 @@ suite =
                     Array.fromList [ "abcdef" ]
                         |> ArrayUtil.split (Position 0 2)
                         |> Expect.equal ( Array.fromList [ "abc", "def" ], Array.fromList [ "" ] )
-            , only <|
-                test "split (2)" <|
-                    \_ ->
-                        Array.fromList [ "abc", "def", "hij" ]
-                            |> ArrayUtil.split (Position 1 0)
-                            |> Expect.equal ( Array.fromList [ "abc" ], Array.fromList [ "def", "hij" ] )
+            , test "split (2)" <|
+                \_ ->
+                    Array.fromList [ "abc", "def", "hij" ]
+                        |> ArrayUtil.split (Position 1 0)
+                        |> Expect.equal ( Array.fromList [ "abc" ], Array.fromList [ "def", "hij" ] )
             , test "paste one line" <|
                 \_ ->
                     let
