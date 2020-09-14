@@ -28,6 +28,7 @@
     "elm": "latest-0.19.1",
     "elm-format": "~0.8.3",
     "elm-test": "latest-0.19.1",
-    "elm-review": "^1.0.2"
+    "elm-review": "^1.0.2",
+    "elm-analyse": "0.16.5"
   }
 }
