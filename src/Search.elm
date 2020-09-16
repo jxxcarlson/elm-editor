@@ -41,7 +41,7 @@ do str model =
 hits : String -> Array String -> List Selection
 hits key lines =
     let
-        width =
+        keyLen =
             String.length key
 
         expand : ( Int, List Int ) -> List ( Int, Int )
@@ -50,7 +50,7 @@ hits key lines =
 
         makePositions : ( Int, Int ) -> Selection
         makePositions ( line, column ) =
-            Selection (Position line column) (Position line (column + width))
+            Selection (Position line column) (Position line (column + (keyLen - 1)))
     in
     Array.indexedMap
         (\i line -> ( i, String.indexes key line ))

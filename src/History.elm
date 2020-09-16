@@ -7,6 +7,8 @@ Past entries are older at higher indexes, future entries are newer at higher
 indexes
 -}
 
+import List.Extra as ListX
+
 
 type alias InternalHistory a =
     { past : List a
@@ -25,7 +27,16 @@ empty =
 
 push : a -> History a -> History a
 push entry (History history) =
-    History { past = entry :: history.past, future = [] }
+    case ListX.last history.past of -- don't save history if nothing changed
+
+        Just nextToLastEntry ->
+            if entry == nextToLastEntry then
+                History history
+            else
+                History { past = entry :: history.past, future = [] }
+
+        Nothing ->
+            History { past = entry :: history.past, future = [] }
 
 
 undo : a -> History a -> Maybe ( History a, a )
