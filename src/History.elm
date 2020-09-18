@@ -27,16 +27,7 @@ empty =
 
 push : a -> History a -> History a
 push entry (History history) =
-    case ListX.last history.past of -- don't save history if nothing changed
-
-        Just nextToLastEntry ->
-            if entry == nextToLastEntry then
-                History history
-            else
-                History { past = entry :: history.past, future = [] }
-
-        Nothing ->
-            History { past = entry :: history.past, future = [] }
+    History { past = entry :: history.past, future = [] }
 
 
 undo : a -> History a -> Maybe ( History a, a )

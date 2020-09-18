@@ -97,7 +97,6 @@ deleteSelection model =
                 |> Common.sanitizeHover
             , debounceCmd
             )
-                |> Common.recordHistoryWithCmd model
 
         (Selection beginSel _) as sel ->
             let
@@ -113,21 +112,18 @@ deleteSelection model =
                 |> Common.sanitizeHover
             , debounceCmd
             )
-                |> Common.recordHistoryWithCmd model
 
         SelectedChar _ ->
             ( Common.removeCharBefore { model | debounce = debounce }
                 |> Common.sanitizeHover
             , debounceCmd
             )
-                |> Common.recordHistoryWithCmd model
 
         _ ->
             ( Common.removeCharBefore { model | debounce = debounce }
                 |> Common.sanitizeHover
             , debounceCmd
             )
-                |> Common.recordHistoryWithCmd model
 
 
 

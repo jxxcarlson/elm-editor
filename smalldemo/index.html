@@ -12539,42 +12539,14 @@ var $jinjor$elm_debounce$Debounce$push = F3(
 			newDebounce,
 			A2($elm$core$Platform$Cmd$map, config.transform, selfCmd));
 	});
-var $elm_community$list_extra$List$Extra$last = function (items) {
-	last:
-	while (true) {
-		if (!items.b) {
-			return $elm$core$Maybe$Nothing;
-		} else {
-			if (!items.b.b) {
-				var x = items.a;
-				return $elm$core$Maybe$Just(x);
-			} else {
-				var rest = items.b;
-				var $temp$items = rest;
-				items = $temp$items;
-				continue last;
-			}
-		}
-	}
-};
 var $author$project$History$push = F2(
 	function (entry, _v0) {
 		var history = _v0.a;
-		var _v1 = $elm_community$list_extra$List$Extra$last(history.past);
-		if (_v1.$ === 'Just') {
-			var nextToLastEntry = _v1.a;
-			return _Utils_eq(entry, nextToLastEntry) ? $author$project$History$History(history) : $author$project$History$History(
-				{
-					future: _List_Nil,
-					past: A2($elm$core$List$cons, entry, history.past)
-				});
-		} else {
-			return $author$project$History$History(
-				{
-					future: _List_Nil,
-					past: A2($elm$core$List$cons, entry, history.past)
-				});
-		}
+		return $author$project$History$History(
+			{
+				future: _List_Nil,
+				past: A2($elm$core$List$cons, entry, history.past)
+			});
 	});
 var $author$project$Common$stateToSnapshot = function (model) {
 	return {cursor: model.cursor, lines: model.lines, selection: model.selection};
@@ -12985,53 +12957,41 @@ var $author$project$Update$Function$deleteSelection = function (model) {
 	var _v1 = model.selection;
 	switch (_v1.$) {
 		case 'NoSelection':
-			return A2(
-				$author$project$Common$recordHistoryWithCmd,
-				model,
-				_Utils_Tuple2(
-					$author$project$Common$sanitizeHover(
-						$author$project$Common$removeCharBefore(
-							_Utils_update(
-								model,
-								{debounce: debounce}))),
-					debounceCmd));
+			return _Utils_Tuple2(
+				$author$project$Common$sanitizeHover(
+					$author$project$Common$removeCharBefore(
+						_Utils_update(
+							model,
+							{debounce: debounce}))),
+				debounceCmd);
 		case 'Selection':
 			var sel = _v1;
 			var beginSel = sel.a;
 			var _v2 = A2($author$project$Action$deleteSelection, sel, model.lines);
 			var newLines = _v2.a;
 			var selectedText = _v2.b;
-			return A2(
-				$author$project$Common$recordHistoryWithCmd,
-				model,
-				_Utils_Tuple2(
-					$author$project$Common$sanitizeHover(
+			return _Utils_Tuple2(
+				$author$project$Common$sanitizeHover(
+					_Utils_update(
+						model,
+						{cursor: beginSel, lines: newLines, selectedText: selectedText, selection: $author$project$EditorMsg$NoSelection})),
+				debounceCmd);
+		case 'SelectedChar':
+			return _Utils_Tuple2(
+				$author$project$Common$sanitizeHover(
+					$author$project$Common$removeCharBefore(
 						_Utils_update(
 							model,
-							{cursor: beginSel, lines: newLines, selectedText: selectedText, selection: $author$project$EditorMsg$NoSelection})),
-					debounceCmd));
-		case 'SelectedChar':
-			return A2(
-				$author$project$Common$recordHistoryWithCmd,
-				model,
-				_Utils_Tuple2(
-					$author$project$Common$sanitizeHover(
-						$author$project$Common$removeCharBefore(
-							_Utils_update(
-								model,
-								{debounce: debounce}))),
-					debounceCmd));
+							{debounce: debounce}))),
+				debounceCmd);
 		default:
-			return A2(
-				$author$project$Common$recordHistoryWithCmd,
-				model,
-				_Utils_Tuple2(
-					$author$project$Common$sanitizeHover(
-						$author$project$Common$removeCharBefore(
-							_Utils_update(
-								model,
-								{debounce: debounce}))),
-					debounceCmd));
+			return _Utils_Tuple2(
+				$author$project$Common$sanitizeHover(
+					$author$project$Common$removeCharBefore(
+						_Utils_update(
+							model,
+							{debounce: debounce}))),
+				debounceCmd);
 	}
 };
 var $author$project$ArrayUtil$Position = F2(
