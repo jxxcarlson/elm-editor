@@ -114,11 +114,6 @@ removeCharBefore ({ cursor, lines } as model) =
             { line, column } =
                 cursor
 
-            lineIsEmpty : Bool
-            lineIsEmpty =
-                lineContent lines line
-                    |> String.isEmpty
-
             removeCharFromLine : ( Int, String ) -> List String
             removeCharFromLine ( lineNum, content ) =
                 if lineNum == line - 1 then

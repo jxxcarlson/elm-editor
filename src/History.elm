@@ -7,9 +7,13 @@ Past entries are older at higher indexes, future entries are newer at higher
 indexes
 -}
 
+import List.Extra as ListX
+
 
 type alias InternalHistory a =
-    { past : List a, future : List a }
+    { past : List a
+    , future : List a
+    }
 
 
 type History a

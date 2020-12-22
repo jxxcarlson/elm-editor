@@ -1,6 +1,7 @@
 module TextString exposing (help)
 
 
+help : String
 help =
     """
 

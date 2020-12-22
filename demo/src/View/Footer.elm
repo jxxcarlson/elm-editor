@@ -22,6 +22,7 @@ import View.Style as Style
 import View.Widget
 
 
+view : Model -> Float -> Float -> Element Msg
 view model width_ height_ =
     row
         [ width (View.Helpers.pxFloat (2 * Helper.Common.windowWidth width_ - 40))
@@ -42,10 +43,10 @@ view model width_ height_ =
         , View.Widget.openFilePopupButton model
         , View.Widget.documentTypeButton model
         , View.Widget.openNewFilePopupButton model
-        , View.Widget.importFileButton model
-        , View.Widget.exportFileButton model
+        , View.Widget.importFileButton
+        , View.Widget.exportFileButton
         , View.Widget.exportLaTeXFileButton model
-        , View.Widget.publishFileButton model
+        , View.Widget.publishFileButton
         , displayFilename model
         , row [ alignRight, spacing 12 ]
             [ View.Widget.aboutButton
@@ -75,6 +76,7 @@ displayFilename model =
     el [ Element.inFront (displayMessage model) ] (text fileName)
 
 
+displayMessage : Model -> Element Msg
 displayMessage model =
     View.Helpers.showIf (model.messageLife > 0)
         (el

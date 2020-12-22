@@ -1,4 +1,4 @@
-module Update.Line exposing (break)
+module Update.Line exposing (break, breakLineBefore, breakLineAfter)
 
 import Array
 import ArrayUtil
@@ -29,41 +29,38 @@ break model =
                         currentLineLength =
                             String.length currentLine
                     in
-                    case currentLineLength <= k of
-                        True ->
-                            model
+                    if currentLineLength <= k then
+                        model
+                    else
+                        if currentLineLength == model.cursor.column then
+                            case breakLineBefore k currentLine of
+                                ( _, Nothing ) ->
+                                    model
 
-                        False ->
-                            case currentLineLength == model.cursor.column of
-                                True ->
-                                    case breakLineBefore k currentLine of
-                                        ( _, Nothing ) ->
-                                            model
+                                ( adjustedLine, Just extraLine ) ->
+                                    let
+                                        newCursor =
+                                            { line = line + 1, column = String.length extraLine }
+                                    in
+                                    model
+                                        |> replaceLineAt line adjustedLine
+                                        |> insertLineAfter line extraLine
+                                        |> putCursorAt newCursor
 
-                                        ( adjustedLine, Just extraLine ) ->
-                                            let
-                                                newCursor =
-                                                    { line = line + 1, column = String.length extraLine }
-                                            in
-                                            model
-                                                |> replaceLineAt line adjustedLine
-                                                |> insertLineAfter line extraLine
-                                                |> putCursorAt newCursor
+                        else
+                            case breakLineAfter model.cursor.column currentLine of
+                                ( _, Nothing ) ->
+                                    model
 
-                                False ->
-                                    case breakLineAfter model.cursor.column currentLine of
-                                        ( _, Nothing ) ->
-                                            model
-
-                                        ( adjustedLine, Just extraLine ) ->
-                                            let
-                                                newCursor =
-                                                    model.cursor
-                                            in
-                                            model
-                                                |> replaceLineAt line adjustedLine
-                                                |> insertLineAfter line extraLine
-                                                |> putCursorAt newCursor
+                                ( adjustedLine, Just extraLine ) ->
+                                    let
+                                        newCursor =
+                                            model.cursor
+                                    in
+                                    model
+                                        |> replaceLineAt line adjustedLine
+                                        |> insertLineAfter line extraLine
+                                        |> putCursorAt newCursor
 
 
 
@@ -99,21 +96,19 @@ insertLineAfter k str model =
 
 breakLineAfter : Int -> String -> ( String, Maybe String )
 breakLineAfter k str =
-    case String.length str > k of
-        False ->
-            ( str, Nothing )
-
-        True ->
-            let
-                indexOfSucceedingBlank =
-                    str
-                        |> String.indexes " "
-                        |> List.filter (\i -> i > k)
-                        |> List.head
-                        |> Maybe.withDefault k
-            in
-            splitStringAt (indexOfSucceedingBlank + 1) str
-                |> (\( a, b ) -> ( a, Just b ))
+    if String.length str > k then
+        let
+            indexOfSucceedingBlank =
+                str
+                    |> String.indexes " "
+                    |> List.filter (\i -> i > k)
+                    |> List.head
+                    |> Maybe.withDefault k
+        in
+        splitStringAt (indexOfSucceedingBlank + 1) str
+            |> (\( a, b ) -> ( a, Just b ))
+    else
+        ( str, Nothing )
 
 
 splitStringAt : Int -> String -> ( String, String )
@@ -131,24 +126,21 @@ splitStringAt k str =
 
 breakLineBefore : Int -> String -> ( String, Maybe String )
 breakLineBefore k str =
-    case String.length str > k of
-        False ->
+    if String.length str > k then
+        let
+            indexOfPrecedingBlank =
+                str
+                    |> String.indexes " "
+                    |> List.filter (\i -> i < k)
+                    |> List.reverse
+                    |> List.head
+                    |> Maybe.withDefault k
+        in
+        if indexOfPrecedingBlank <= k then
+            splitStringAt (indexOfPrecedingBlank + 1) str
+                    |> (\( a, b ) -> ( a, Just b ))
+        else
             ( str, Nothing )
-
-        True ->
-            let
-                indexOfPrecedingBlank =
-                    str
-                        |> String.indexes " "
-                        |> List.filter (\i -> i < k)
-                        |> List.reverse
-                        |> List.head
-                        |> Maybe.withDefault k
-            in
-            case indexOfPrecedingBlank <= k of
-                False ->
-                    ( str, Nothing )
-
-                True ->
-                    splitStringAt (indexOfPrecedingBlank + 1) str
-                        |> (\( a, b ) -> ( a, Just b ))
+                
+    else
+        ( str, Nothing )

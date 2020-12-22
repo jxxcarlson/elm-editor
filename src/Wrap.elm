@@ -13,7 +13,7 @@ stringArray wrapParams stringArray_ =
     Array.push "\n" stringArray_
         |> Array.toList
         |> runFSM
-        |> List.filter (\( t, s ) -> s /= "")
+        |> List.filter (\( _, s ) -> s /= "")
         |> List.map (wrapParagraph wrapParams >> String.lines >> appendBlankLine)
         |> List.concat
         |> Array.fromList
@@ -99,12 +99,12 @@ of the finite-state machine.
 opDict : Dict String (String -> Data -> Data)
 opDict =
     Dict.fromList
-        [ ( "NoOp", \s d -> d )
+        [ ( "NoOp", \_ d -> d )
 
         --
         , ( "StartParagraph", \s d -> { d | currentParagraph = [ s ], tick = d.tick + 1 } )
         , ( "AddToParagraph", \s d -> { d | currentParagraph = s :: d.currentParagraph, tick = d.tick + 1 } )
-        , ( "EndParagraph", \s d -> { d | currentParagraph = [], paragraphList = ( TextParagraph, joinLines d.currentParagraph ) :: d.paragraphList } )
+        , ( "EndParagraph", \_ d -> { d | currentParagraph = [], paragraphList = ( TextParagraph, joinLines d.currentParagraph ) :: d.paragraphList } )
 
         --
         , ( "StartCodeFromBlank", \s d -> { d | currentParagraph = [ s ], paragraphList = ( TextParagraph, joinLines d.currentParagraph ) :: d.paragraphList, tick = d.tick + 1 } )

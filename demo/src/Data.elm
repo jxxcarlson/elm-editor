@@ -1,9 +1,10 @@
-module Data exposing (about, dummyMetaData, template)
+module Data exposing (about, dummyMetaData, template, onTheHorizon, markdownExample, mathExample, astro, aboutMiniLaTeX, aboutMiniLaTeX2, miniLaTeXExample)
 
-import Document exposing (DocType(..), Document)
+import Document exposing (DocType(..), Document, Metadata)
 import Time
 
 
+dummyMetaData : Metadata
 dummyMetaData =
     { fileName = "tmp.md"
     , id = "tmp.1234"
@@ -59,6 +60,7 @@ about =
     }
 
 
+aboutContent : String
 aboutContent =
     """
 # A Pure Elm Text Editor
@@ -208,6 +210,7 @@ This editor supersedes
 """
 
 
+onTheHorizon : String
 onTheHorizon =
     """
 ## On the Horizon
@@ -430,6 +433,7 @@ Then open `index.html` to run the app.
 """
 
 
+mathExample : String
 mathExample =
     """
 
@@ -565,6 +569,7 @@ plt.title('Free particle propagator, t=4');
 """
 
 
+astro : String
 astro =
     """
 # Greek Period ___
@@ -1025,6 +1030,7 @@ Astronomy](http://users.clas.ufl.edu/ufhatch/pages/02-TeachingResources/HIS-SCI-
 """
 
 
+aboutMiniLaTeX : String
 aboutMiniLaTeX =
     """
 
@@ -1153,6 +1159,7 @@ You can also contact me via gmail at jxxcarlson.
 """
 
 
+aboutMiniLaTeX2 : String
 aboutMiniLaTeX2 =
     """
 
@@ -1490,6 +1497,7 @@ is used inside dollar signs, and Elm is used outside.
 """
 
 
+miniLaTeXExample : String
 miniLaTeXExample =
     """
 \\setcounter{section}{6}

@@ -6,7 +6,7 @@ module Update.UI exposing
     )
 
 import Browser.Dom
-import Cmd.Extra exposing (withCmd, withCmds, withNoCmd)
+import Cmd.Extra exposing (withCmd, withNoCmd)
 import Editor
 import Helper.Common
 import Helper.Server

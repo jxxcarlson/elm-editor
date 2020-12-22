@@ -7,8 +7,8 @@ module EditorMsg exposing (EMsg(..), Context(..), Hover(..), Position, Selection
 -}
 
 import Browser.Dom as Dom
-import ContextMenu exposing (ContextMenu)
-import Debounce exposing (Debounce)
+import ContextMenu
+import Debounce
 import File exposing (File)
 import Markdown.Render exposing (MarkdownMsg(..))
 

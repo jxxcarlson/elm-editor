@@ -11,12 +11,10 @@ import Types exposing (Msg)
 
 showIf : Bool -> Element Msg -> Element Msg
 showIf flag el =
-    case flag of
-        True ->
-            el
-
-        False ->
-            Element.none
+    if flag then
+        el
+    else
+        Element.none
 
 
 pxFloat : Float -> Element.Length
@@ -24,8 +22,9 @@ pxFloat p =
     px (round p)
 
 
-gray g =
-    rgb255 g g g
+gray : Int -> Element.Color
+gray lightness =
+    rgb255 lightness lightness lightness
 
 
 shortPath : Int -> String -> String

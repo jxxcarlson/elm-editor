@@ -9,13 +9,14 @@ module Codec.Author exposing
     )
 
 import Author exposing (Author, AuthorWithPasswordHash)
-import Json.Decode as D exposing (Decoder, bool, int, list, nullable, string)
-import Json.Decode.Pipeline as JP exposing (required)
+import Json.Decode as D exposing (Decoder, bool, int, string)
+import Json.Decode.Pipeline exposing (required)
 import Json.Encode as Encode
 import Time
 import Types exposing (Authorization(..))
 
 
+encodeSignUpInfo : String -> String -> Encode.Value
 encodeSignUpInfo userName passwordHash =
     Encode.object
         [ ( "userName", Encode.string userName )
@@ -70,6 +71,7 @@ decodeSigninReply =
         |> required "authorized" bool
 
 
+testAuthor : AuthorWithPasswordHash
 testAuthor =
     { name = "Joan Doe"
     , userName = "jdoe"

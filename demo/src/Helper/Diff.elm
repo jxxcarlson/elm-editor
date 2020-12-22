@@ -16,16 +16,16 @@ module Helper.Diff exposing
 import Diff exposing (Change(..))
 import Document exposing (Document)
 import Maybe.Extra
-import Regex
+import Regex exposing (Regex, Match)
 
 
+rxLocal : Regex
 rxLocal =
-    -- regexFromString "@local\\[(.*?)\\]"
     regexFromString "@local\\[([^]+?)\\]"
 
 
+rxRemote : Regex
 rxRemote =
-    -- regexFromString "@remote\\[(^*?)\\]"
     regexFromString "@remote\\[([^]+?)\\]"
 
 
@@ -35,6 +35,7 @@ regexFromString string =
         |> Maybe.withDefault Regex.never
 
 
+replacer : Match -> String
 replacer match =
     List.head match.submatches
         |> Maybe.Extra.join
@@ -67,12 +68,12 @@ acceptOneLocal str =
 
 rejectLocal_ : String -> String
 rejectLocal_ str =
-    Regex.replace rxLocal (.match >> (\s -> "")) str
+    Regex.replace rxLocal (.match >> (\_ -> "")) str
 
 
 rejectOneLocal : String -> String
 rejectOneLocal str =
-    Regex.replaceAtMost 1 rxLocal (.match >> (\s -> "")) str
+    Regex.replaceAtMost 1 rxLocal (.match >> (\_ -> "")) str
 
 
 acceptRemote_ : String -> String
@@ -87,14 +88,15 @@ acceptOneRemote str =
 
 rejectRemote_ : String -> String
 rejectRemote_ str =
-    Regex.replace rxRemote (.match >> (\s -> "")) str
+    Regex.replace rxRemote (.match >> (\_ -> "")) str
 
 
 rejectOneRemote : String -> String
 rejectOneRemote str =
-    Regex.replaceAtMost 1 rxRemote (.match >> (\s -> "")) str
+    Regex.replaceAtMost 1 rxRemote (.match >> (\_ -> "")) str
 
 
+t1 : String
 t1 =
     """a
 b
@@ -109,6 +111,7 @@ j
 """
 
 
+t2 : String
 t2 =
     """a
 b
@@ -130,23 +133,6 @@ j
 """
 
 
-t3 =
-    """# AAA
-
-a
-b
-@local[cL
-dL
-e
-f]
-@remote[c
-d
-eR
-fR]
-
-"""
-
-
 {-|
 
     Does the string represent a document with merge conflicts?
@@ -156,12 +142,8 @@ conflictsResolved : String -> Bool
 conflictsResolved str =
     if String.contains "@remote[" str then
         False
-
-    else if String.contains "@local[" str then
-        False
-
-    else
-        True
+    else 
+        not <| String.contains "@local[" str
 
 
 
@@ -192,20 +174,16 @@ stringValue : Change String -> String
 stringValue change =
     case change of
         Added str ->
-            case str == "" of
-                True ->
-                    str
-
-                False ->
-                    "@remote[" ++ str ++ "]"
+            if str == "" then
+                str
+            else
+                "@remote[" ++ str ++ "]"
 
         Removed str ->
-            case str == "" of
-                True ->
-                    str
-
-                False ->
-                    "@local[" ++ str ++ "]"
+            if str == "" then
+                str
+            else
+                "@local[" ++ str ++ "]"
 
         NoChange str ->
             str
@@ -286,23 +264,3 @@ loop s nextState_ =
 
         Done b ->
             b
-
-
-
--- TEST DATA
-
-
-d1 =
-    [ NoChange "one", NoChange "two" ]
-
-
-d2 =
-    d1 ++ [ Added "three", Added "four" ]
-
-
-d3 =
-    d2 ++ [ NoChange "five" ]
-
-
-d4 =
-    d3 ++ [ Added "six", Removed "seven" ]

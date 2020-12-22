@@ -9,45 +9,39 @@ import Cmd.Extra exposing (withCmd, withCmds, withNoCmd)
 import Config
 import ContextMenu exposing (Item(..))
 import Data
-import Document exposing (DocType(..), Document)
-import Editor exposing (Editor, EditorMsg)
+import Document exposing (DocType(..))
+import Editor exposing (EditorMsg)
 import EditorMsg exposing (EMsg(..))
 import Element
     exposing
         ( Element
-        , alignRight
         , centerX
         , centerY
         , column
         , el
         , height
-        , paddingXY
-        , px
-        , rgb255
         , row
-        , spacing
-        , text
         , width
         )
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
-import File exposing (File)
+import File
 import Helper.Author
 import Helper.Common
 import Helper.File
 import Helper.Load
 import Helper.Server
 import Helper.Sync
-import Html exposing (Attribute, Html)
+import Html exposing (Html)
 import Html.Attributes as Attribute
 import Json.Encode
-import Markdown.Option exposing (..)
+import Markdown.Option exposing (MarkdownOption(..), OutputOption(..))
 import Outside
 import Random
-import Render exposing (MDData, MLData, RenderingData(..), RenderingOption(..))
+import Render exposing (RenderingData(..), RenderingOption(..))
 import Render.Types exposing (RenderMsg(..))
-import Task exposing (Task)
+import Task
 import Time
 import Types
     exposing
@@ -82,7 +76,9 @@ import View.SyncPopup as SyncPopup
 
 
 type alias Flags =
-    { width : Float, height : Float }
+    { width : Float
+    , height : Float
+    }
 
 
 main : Program Flags Model Msg
@@ -299,12 +295,10 @@ update msg model =
 
                 _ ->
                     -- Handle the default cases
-                    case List.member msg (List.map EditorMsg Editor.syncMessages) of
-                        True ->
-                            Helper.Sync.sync newEditor cmd model
-
-                        False ->
-                            ( { model | editor = newEditor }, Cmd.map EditorMsg cmd )
+                    if List.member msg (List.map EditorMsg Editor.syncMessages) then
+                        Helper.Sync.sync newEditor cmd model
+                    else
+                        ( { model | editor = newEditor }, Cmd.map EditorMsg cmd )
 
         -- SEARCH
         InputSearch str ->
@@ -396,7 +390,7 @@ update msg model =
                 --, Outside.sendInfo (Outside.AskForDocument fileName)
                 |> withNoCmd
 
-        DeleteFileFromLocalStorage fileName ->
+        DeleteFileFromLocalStorage _ ->
             model
                 -- Outside.sendInfo (Outside.DeleteFileFromLocalStorage fileName)
                 |> withNoCmd
@@ -422,7 +416,7 @@ update msg model =
         InputBelongsTo str ->
             ( { model | belongsTo_ = str, changingFileNameState = ChangingMetadata }, Cmd.none )
 
-        ChangeMetadata fileName ->
+        ChangeMetadata _ ->
             Update.Document.changeMetaData model
 
         SetDocumentDirectory ->
@@ -499,7 +493,7 @@ update msg model =
                 Ok documents ->
                     { model | fileList = documents } |> withNoCmd
 
-                Err e ->
+                Err _ ->
                     model
                         |> Update.Helper.postMessage "GotDocuments: error"
                         |> withNoCmd
@@ -556,43 +550,21 @@ update msg model =
 
 saveFileToStorage : Model -> ( Model, Cmd Msg )
 saveFileToStorage model =
-    case modBy 15 model.tickCount == 14 of
-        True ->
-            Update.Document.updateDocument model
-
-        False ->
-            ( { model | tickCount = model.tickCount + 1 }
-            , Cmd.none
-            )
+    if modBy 15 model.tickCount == 14 then
+        Update.Document.updateDocument model
+    else
+        ( { model | tickCount = model.tickCount + 1 }
+        , Cmd.none
+        )
 
 
 pasteToEditorAndClipboard : Model -> String -> ( Model, Cmd msg )
 pasteToEditorAndClipboard model str =
     let
-        cursor =
-            Editor.getCursor model.editor
-
-        wrapOption =
-            Editor.getWrapOption model.editor
-
         editor2 =
             Editor.placeInClipboard str model.editor
     in
     { model | editor = Editor.insertAtCursor str editor2 } |> withCmd Cmd.none
-
-
-loadRenderingData : String -> Model -> Model
-loadRenderingData source model =
-    let
-        counter =
-            model.counter + 1
-
-        newRenderingData : RenderingData
-        newRenderingData =
-            Render.update ( 0, 0 ) counter source model.renderingData
-    in
-    { model | renderingData = newRenderingData, counter = counter }
-
 
 load : Int -> ( Int, Int ) -> RenderingOption -> String -> RenderingData
 load counter selectedId renderingOption str =
@@ -610,6 +582,7 @@ view model =
         (mainColumn model)
 
 
+myFocusStyle : { borderColor : Maybe a, backgroundColor : Maybe b, shadow : Maybe c }
 myFocusStyle =
     { borderColor = Nothing
     , backgroundColor = Nothing
@@ -617,6 +590,7 @@ myFocusStyle =
     }
 
 
+mainColumn : Model -> Element Msg
 mainColumn model =
     column [ centerX, centerY ]
         [ column [ Background.color <| View.Helpers.gray 55 ]
@@ -634,6 +608,7 @@ mainColumn model =
         ]
 
 
+viewEditorAndRenderedText : Model -> Element Msg
 viewEditorAndRenderedText model =
     row [ Background.color <| View.Helpers.gray 255 ]
         [ viewEditor model
@@ -644,6 +619,7 @@ viewEditorAndRenderedText model =
         ]
 
 
+viewEditor : Model -> Element msg
 viewEditor model =
     Editor.view model.editor |> Html.map EditorMsg |> Element.html
 
@@ -658,24 +634,8 @@ viewRenderedText model width_ height_ =
         , Element.paddingEach { left = 14, top = 0, right = 14, bottom = 24 }
         , Border.width 1
         , Background.color <| View.Helpers.gray 255
-
-        -- , Element.htmlAttribute (Attribute.id model.selectedId_ (Html.style "background-color" "#cce"))
         ]
         [ View.Helpers.showIf (model.docType == MarkdownDoc)
             ((Render.get model.selectedId_ model.renderingData).title |> Html.map RenderMsg |> Element.html)
         , (Render.get model.selectedId_ model.renderingData).document |> Html.map RenderMsg |> Element.html
         ]
-
-
-
--- VIEW HELPERS
-
-
-setHtmlId : String -> Html.Attribute msg
-setHtmlId id =
-    Attribute.attribute "id" id
-
-
-setElementId : String -> Element.Attribute msg
-setElementId id =
-    Element.htmlAttribute (setHtmlId id)

@@ -13,7 +13,7 @@ At the moment, there is just one: external copy-paste.
 import Codec.Document
 import Codec.System exposing (Preferences)
 import Document exposing (Document, Metadata)
-import Json.Decode as D exposing (Decoder, bool, int, list, nullable, string)
+import Json.Decode as D exposing (string)
 import Json.Encode as Encode
 
 
@@ -24,7 +24,9 @@ port infoForElm : (GenericOutsideData -> msg) -> Sub msg
 
 
 type alias GenericOutsideData =
-    { tag : String, data : Encode.Value }
+    { tag : String
+    , data : Encode.Value
+    }
 
 
 type InfoForElm
@@ -68,7 +70,7 @@ getInfo tagger onError =
                         Ok result ->
                             tagger <| GotClipboard result
 
-                        Err e ->
+                        Err _ ->
                             onError <| ""
 
                 "GotFileList" ->
@@ -76,7 +78,7 @@ getInfo tagger onError =
                         Ok fileList ->
                             tagger <| GotDocumentList fileList
 
-                        Err e ->
+                        Err _ ->
                             onError <| "GotFileList: error"
 
                 "GotDocument" ->
@@ -163,15 +165,6 @@ encodeSelectedIdData ( maybeLastId, id ) =
         [ ( "lastId", Encode.string (maybeLastId |> Maybe.withDefault "nonexistent") )
         , ( "id", Encode.string id )
         ]
-
-
-encodeFile : ( String, String ) -> Encode.Value
-encodeFile ( fileName, fileContents ) =
-    Encode.object
-        [ ( "fileName", Encode.string fileName )
-        , ( "fileContents", Encode.string fileContents )
-        ]
-
 
 
 -- DECODERS --

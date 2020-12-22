@@ -82,6 +82,9 @@ stringFromDocType docType =
         MiniLaTeXDoc ->
             "minilatex"
 
+        IndexDoc ->
+            "TODO" -- TODO implement
+
 
 type alias Uuid =
     String

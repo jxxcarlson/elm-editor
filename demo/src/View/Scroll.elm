@@ -26,10 +26,12 @@ setViewportForElementInRenderedText id =
         |> Task.attempt SetViewPortForElement
 
 
+toEditorTop : Cmd Msg
 toEditorTop =
     scrollToTopForElement "__editor__"
 
 
+toRenderedTextTop : Cmd Msg
 toRenderedTextTop =
     scrollToTopForElement "__RENDERED_TEXT__"
 
@@ -63,5 +65,6 @@ scrollEditorToLine model line =
     Task.attempt (\_ -> NoOp) (Dom.setViewportOf "__editor__" 0 y)
 
 
+verticalOffsetInRenderedText : number
 verticalOffsetInRenderedText =
     140

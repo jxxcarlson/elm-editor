@@ -11,7 +11,7 @@ module Helper.Common exposing
 
 import Date
 import List.Extra
-import Time exposing (toHour, toMinute, toSecond)
+import Time exposing (toHour, toMinute)
 
 
 maybeDateStringFromPosix : Maybe Time.Posix -> String
@@ -68,7 +68,7 @@ addPostfix postfix fileName =
             List.take (n - 1) parts
 
         newParts =
-            initialParts ++ [ postfix ] ++ extension
+            initialParts ++ postfix :: extension
     in
     String.join "." newParts
 
@@ -94,12 +94,10 @@ removePostfix postfix fileName =
         newParts =
             initialParts ++ extension
     in
-    case postfix == postfix_ of
-        True ->
-            String.join "." newParts
-
-        False ->
-            fileName
+    if postfix == postfix_ then
+        String.join "." newParts
+    else
+        fileName
 
 
 stringFromList : List String -> String

@@ -1,4 +1,4 @@
-module Author exposing (..)
+module Author exposing (AuthorWithPasswordHash, Author)
 
 import Time
 

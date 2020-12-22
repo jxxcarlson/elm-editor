@@ -9,8 +9,8 @@ module Codec.Document exposing
     )
 
 import Document exposing (Document, Metadata)
-import Json.Decode as D exposing (Decoder, bool, int, list, nullable, string)
-import Json.Decode.Pipeline as JP exposing (required)
+import Json.Decode as D exposing (Decoder, int, list, nullable, string)
+import Json.Decode.Pipeline exposing (required)
 import Json.Encode as Encode
 import Time
 
@@ -130,25 +130,16 @@ metadataEncoder metadata =
 
 normalize : String -> String
 normalize str =
-    case str == "" of
-        True ->
-            "none"
-
-        False ->
-            str
+    if str == "" then
+        "none"
+    else
+        str
 
 
 
 --  MESSAGE
 
 
-type alias MessageContainer =
-    { msg : String }
-
-
 messageDecoder : Decoder String
 messageDecoder =
-    (D.succeed MessageContainer
-        |> required "msg" string
-    )
-        |> D.map .msg
+    D.field "msg" D.string

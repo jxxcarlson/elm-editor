@@ -4,25 +4,24 @@ import Element exposing (Element, height, paddingXY, px, spacing, width)
 import Element.Background as Background
 import Element.Font as Font
 import Helper.Common
-import Parser.Advanced exposing (..)
+import Parser.Advanced exposing (Parser, run, Token(..), symbol
+  , succeed, (|=), (|.), map
+  , Trailing(..), Step(..)
+  , Nestable(..)
+  , getChompedString, chompWhile, chompUntil)
 import Types exposing (HandleIndex(..), Msg(..))
 import View.Widget as Widget
 
 
 type alias Parser a =
-    Parser.Advanced.Parser Context Problem a
+    Parser.Advanced.Parser String Problem a
 
 
 type Problem
     = Expecting String
 
 
-type Context
-    = Definition String
-    | List
-    | Record
-
-
+testStr : String
 testStr =
     """
 # Index test
@@ -58,6 +57,7 @@ editIndexButton fileName =
         [ Font.color (Element.rgb 0 0 0.9), Element.padding 2 ]
 
 
+closePopup : String -> String -> Element Msg
 closePopup title indexName =
     Element.row [ width (px 450), spacing 24 ] [ Element.text title, editIndexButton indexName, Element.el [ Element.alignRight ] Widget.closePopupButton ]
 
@@ -94,22 +94,14 @@ restOfBlock =
         succeed ()
             |. chompUntil (Token "\n\n" (Expecting "expecting blank line"))
 
-
-renderBlock : String -> String -> List String -> Element Msg
-renderBlock userName currentFileName list =
-    Element.column [] (List.map (viewFileName userName currentFileName) list)
-
-
 viewFileName : String -> String -> String -> Element Msg
 viewFileName userName currentFileName fileName =
     let
         bgColor =
-            case currentFileName == fileName of
-                True ->
-                    Background.color (Element.rgba 0.7 0.7 1.0 0.5)
-
-                False ->
-                    Background.color (Element.rgba 0 0 0 0)
+            if currentFileName == fileName then
+                Background.color (Element.rgba 0.7 0.7 1.0 0.5)
+            else
+                Background.color (Element.rgba 0 0 0 0)
     in
     Widget.plainButton 350
         (prettify userName fileName)
@@ -123,24 +115,23 @@ prettify userName str =
         parts =
             String.split "-" str
     in
-    case List.length parts == 3 of
-        False ->
-            String.replace userName "" str
+    if List.length parts == 3 then
+        let
+            a =
+                List.take 1 parts
+                    |> List.head
+                    |> Maybe.withDefault "???"
 
-        True ->
-            let
-                a =
-                    List.take 1 parts
-                        |> List.head
-                        |> Maybe.withDefault "???"
-
-                b =
-                    parts
-                        |> List.drop 2
-                        |> List.map (String.split ".")
-                        |> List.concat
-                        |> List.drop 1
-                        |> List.head
-                        |> Maybe.withDefault "???"
-            in
+            b =
+                parts
+                    |> List.drop 2
+                    |> List.map (String.split ".")
+                    |> List.concat
+                    |> List.drop 1
+                    |> List.head
+                    |> Maybe.withDefault "???"
+        in
             a ++ "." ++ b |> String.replace userName ""
+    else
+        String.replace userName "" str
+            

@@ -17,11 +17,6 @@ transformMsg msg =
     { message = msg, stopPropagation = True, preventDefault = True }
 
 
-alwaysMsg : msg -> ( msg, Bool )
-alwaysMsg msg =
-    ( msg, True )
-
-
 type alias Keydown =
     { char : Maybe String
     , key : String

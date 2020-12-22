@@ -9,9 +9,8 @@ import Data
 import Document exposing (DocType(..), Document)
 import Editor
 import EditorMsg exposing (WrapOption(..))
+import EditorModel exposing (EditorModel)
 import Helper.Common
-import Helper.Server
-import List.Extra
 import Markdown.Option exposing (MarkdownOption(..))
 import Render exposing (RenderingOption(..))
 import Time
@@ -95,6 +94,7 @@ createAndLoad time fileName_ content_ docType_ model =
     ( doc, load doc model |> UuidHelper.newUuid )
 
 
+config : { a | width : Float, height : Float } -> EditorModel
 config flags =
     { width = Helper.Common.windowWidth flags.width
     , height = Helper.Common.windowHeight (flags.height - 10)

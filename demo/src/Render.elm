@@ -18,7 +18,7 @@ module Render exposing
 import BiDict exposing (BiDict)
 import Html exposing (Html)
 import Html.Attributes as Attribute
-import Markdown.Option exposing (..)
+import Markdown.Option exposing (MarkdownOption(..), OutputOption(..))
 import Markdown.Parse
 import Markdown.Render exposing (MarkdownMsg(..), MarkdownOutput(..))
 import MiniLatex

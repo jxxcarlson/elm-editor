@@ -1,7 +1,7 @@
 module View.Search exposing (replacePanel, searchPanel)
 
-import EditorModel exposing (AutoLineBreak(..), Config, EditorModel)
-import EditorMsg exposing (Context(..), EMsg(..), Hover(..), Position, Selection(..))
+import EditorModel exposing (AutoLineBreak(..), EditorModel)
+import EditorMsg exposing (Context(..), EMsg(..), Hover(..), Selection(..))
 import EditorStyle
 import Html as H exposing (Attribute, Html)
 import Html.Attributes as HA
@@ -9,10 +9,12 @@ import RollingList
 import Widget
 
 
+searchPanel : EditorModel -> Html EMsg
 searchPanel model =
     showIf model.showSearchPanel (searchPanel_ model)
 
 
+searchPanel_ : EditorModel -> Html EMsg
 searchPanel_ model =
     H.div
         [ HA.style "width" (px model.width)
@@ -33,16 +35,15 @@ searchPanel_ model =
         , numberOfHitsDisplay model
         , searchForwardButton
         , searchBackwardButton
-
-        -- , dismissSearchPanel
-        -- , openReplaceField
         ]
 
 
+replacePanel : EditorModel -> Html EMsg
 replacePanel model =
     showIf (model.canReplace && model.showSearchPanel) (replacePanel_ model)
 
 
+replacePanel_ : EditorModel -> Html EMsg
 replacePanel_ model =
     H.div
         [ HA.style "width" (px model.width)
@@ -68,27 +69,6 @@ replacePanel_ model =
         ]
 
 
-dismissSearchPanel =
-    Widget.lightRowButton 25
-        ToggleSearchPanel
-        "X"
-        [ HA.style "float" "left", HA.style "float" "left" ]
-
-
-dismissReplacePanel =
-    Widget.lightRowButton 25
-        ToggleReplacePanel
-        "X"
-        [ HA.style "float" "left", HA.style "float" "left" ]
-
-
-openReplaceField =
-    Widget.rowButton 25
-        OpenReplaceField
-        "R"
-        []
-
-
 numberOfHitsDisplay : EditorModel -> Html EMsg
 numberOfHitsDisplay model =
     let
@@ -103,6 +83,7 @@ numberOfHitsDisplay model =
     Widget.rowButton 40 EditorNoOp txt [ HA.style "float" "left" ]
 
 
+searchForwardButton : Html EMsg
 searchForwardButton =
     Widget.rowButton 30
         RollSearchSelectionForward
@@ -112,6 +93,7 @@ searchForwardButton =
         ]
 
 
+searchBackwardButton : Html EMsg
 searchBackwardButton =
     Widget.rowButton 30
         RollSearchSelectionBackward
@@ -121,10 +103,7 @@ searchBackwardButton =
         ]
 
 
-searchTextButton =
-    Widget.rowButton 60 EditorNoOp "Search" [ HA.style "float" "left" ]
-
-
+replaceTextButton : Html EMsg
 replaceTextButton =
     Widget.rowButton 70
         ReplaceCurrentSelection
@@ -134,14 +113,7 @@ replaceTextButton =
         ]
 
 
-acceptLineNumber =
-    Widget.textField 30
-        AcceptLineNumber
-        ""
-        [ HA.style "margin-top" "5px", HA.style "float" "left" ]
-        [ setHtmlId "line-number-input" ]
-
-
+acceptSearchText : Html EMsg
 acceptSearchText =
     Widget.textField 220
         AcceptSearchText
@@ -151,6 +123,7 @@ acceptSearchText =
         [ setHtmlId "editor-search-box" ]
 
 
+acceptReplaceText : Html EMsg
 acceptReplaceText =
     Widget.textField 267 AcceptReplacementText "" [ HA.style "float" "left" ] [ setHtmlId "replacement-box" ]
 
@@ -162,12 +135,10 @@ setHtmlId id =
 
 showIf : Bool -> Html EMsg -> Html EMsg
 showIf flag el =
-    case flag of
-        True ->
-            el
-
-        False ->
-            H.div [] []
+    if flag then
+        el
+    else
+        H.div [] []
 
 
 px : Float -> String

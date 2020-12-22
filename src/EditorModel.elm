@@ -70,14 +70,6 @@ type alias Snapshot =
     }
 
 
-emptySnapshot : Snapshot
-emptySnapshot =
-    { lines = Array.fromList [ "" ]
-    , cursor = { line = 0, column = 0 }
-    , selection = NoSelection
-    }
-
-
 type alias Config =
     { width : Float
     , height : Float

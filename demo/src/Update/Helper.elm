@@ -14,9 +14,7 @@ postMessage msg model =
 
 updateMessageLife : Model -> Model
 updateMessageLife model =
-    case model.messageLife > 0 of
-        True ->
-            { model | messageLife = model.messageLife - 1 }
-
-        False ->
-            model
+    if model.messageLife > 0 then
+        { model | messageLife = model.messageLife - 1 }
+    else
+        model

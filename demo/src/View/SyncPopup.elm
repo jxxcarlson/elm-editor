@@ -1,6 +1,5 @@
 module View.SyncPopup exposing (view)
 
-import Document
 import Element
     exposing
         ( Element
@@ -11,14 +10,12 @@ import Element
         , paddingXY
         , px
         , row
-        , scrollbarY
         , spacing
         , text
         , width
         )
 import Element.Background as Background
 import Element.Font as Font
-import Helper.Common
 import Types exposing (Model, Msg(..), PopupStatus(..), PopupWindow(..))
 import View.Helpers
 import View.Style as Style
@@ -65,10 +62,12 @@ view model =
             Element.none
 
 
+titleLine : Model -> Element msg
 titleLine doc =
     row [ width (px 450), Font.size 14, Font.color Style.blackColor ] [ text doc.fileName, el [ alignRight ] Widget.closePopupButton ]
 
 
+displayMessage : Model -> Element Msg
 displayMessage model =
     View.Helpers.showIf (model.messageLife > 0)
         (el

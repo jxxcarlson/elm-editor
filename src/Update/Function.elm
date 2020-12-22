@@ -15,7 +15,7 @@ import Action
 import Array exposing (Array)
 import ArrayUtil
 import Common
-import Debounce exposing (Debounce)
+import Debounce
 import Dict exposing (Dict)
 import EditorModel exposing (EditMode(..), EditorModel, HelpState(..), ViewMode(..), VimMode(..))
 import EditorMsg exposing (EMsg(..), Position, Selection(..))
@@ -31,7 +31,6 @@ autoclose =
         , ( "{", "}" )
         , ( "(", ")" )
         , ( "\"", "\"" )
-        , ( "'", "'" )
         , ( "`", "`" )
         ]
 
@@ -39,11 +38,11 @@ autoclose =
 copySelection : EditorModel -> ( EditorModel, Cmd EMsg )
 copySelection model =
     let
-        ( debounce, debounceCmd ) =
+        ( _, debounceCmd ) =
             Debounce.push EditorModel.debounceConfig "RCB" model.debounce
     in
     case model.selection of
-        (Selection beginSel endSel) as sel ->
+        (Selection _ endSel) as sel ->
             let
                 ( _, selectedText ) =
                     Action.deleteSelection sel model.lines
@@ -76,19 +75,10 @@ pasteSelection model =
 
 replaceLines : EditorModel -> Array String -> EditorModel
 replaceLines model strings =
-    let
-        n =
-            Array.length strings
-
-        newCursor =
-            { line = model.cursor.line + n, column = model.cursor.column }
-    in
     case model.selection of
         Selection p1 p2 ->
             { model
                 | lines = ArrayUtil.replaceLines p1 p2 strings model.lines
-
-                -- , cursor = newCursor
             }
 
         _ ->
@@ -107,9 +97,8 @@ deleteSelection model =
                 |> Common.sanitizeHover
             , debounceCmd
             )
-                |> Common.recordHistoryWithCmd model
 
-        (Selection beginSel endSel) as sel ->
+        (Selection beginSel _) as sel ->
             let
                 ( newLines, selectedText ) =
                     Action.deleteSelection sel model.lines
@@ -123,21 +112,18 @@ deleteSelection model =
                 |> Common.sanitizeHover
             , debounceCmd
             )
-                |> Common.recordHistoryWithCmd model
 
         SelectedChar _ ->
             ( Common.removeCharBefore { model | debounce = debounce }
                 |> Common.sanitizeHover
             , debounceCmd
             )
-                |> Common.recordHistoryWithCmd model
 
         _ ->
             ( Common.removeCharBefore { model | debounce = debounce }
                 |> Common.sanitizeHover
             , debounceCmd
             )
-                |> Common.recordHistoryWithCmd model
 
 
 
@@ -182,8 +168,8 @@ newLine ({ cursor, lines } as model) =
         newLines : Array String
         newLines =
             (contentUntilCursor
-                ++ [ restOfLineAfterCursor ]
-                ++ restOfLines
+                ++ restOfLineAfterCursor
+                :: restOfLines
             )
                 |> Array.fromList
 
@@ -253,9 +239,6 @@ insertSimple char ({ cursor, lines } as model) =
     let
         { line, column } =
             cursor
-
-        maxLineLength =
-            20
 
         lineWithCharAdded : String -> String
         lineWithCharAdded content =

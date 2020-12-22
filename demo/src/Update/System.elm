@@ -3,7 +3,7 @@ module Update.System exposing
     , windowSize
     )
 
-import Cmd.Extra exposing (withCmd, withCmds, withNoCmd)
+import Cmd.Extra exposing (withNoCmd)
 import Editor
 import Helper.Common
 import Types exposing (Model)

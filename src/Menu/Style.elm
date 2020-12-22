@@ -105,8 +105,8 @@ text lineHeight =
     ]
 
 
-annotation : Color -> Float -> Float -> Bool -> Style msg
-annotation color annotationHeight fontSize disabled =
+annotation : Color -> Float -> Float -> Style msg
+annotation color annotationHeight fontSize =
     [ style "margin-top" "-2px"
     , style "line-height" (px annotationHeight)
     , style "font-size" (px fontSize)
@@ -127,8 +127,8 @@ shortcut color lineHeight hovered =
     ]
 
 
-partition : Float -> Float -> Style msg
-partition borderWidth margin =
+partition : Float -> Style msg
+partition margin =
     [ style "border-bottom-style" "solid"
     , style "border-bottom-width" (px 1)
     , style "border-bottom-color" borderColor

@@ -12,9 +12,7 @@ module Helper.Server exposing
 import Codec.Document
 import Document exposing (DocType(..), Document, Metadata)
 import Http
-import Json.Decode
-import Task exposing (Task)
-import Types exposing (Model, Msg(..))
+import Types exposing (Msg(..))
 
 
 isServerAlive : String -> Cmd Msg
@@ -92,11 +90,9 @@ updateFileList : Metadata -> List Metadata -> List Metadata
 updateFileList rec fileList =
     let
         mapper r =
-            case r.id == rec.id of
-                False ->
-                    r
-
-                True ->
-                    rec
+            if r.id == rec.id then
+                rec
+            else
+                r
     in
     List.map mapper fileList

@@ -1,17 +1,18 @@
 module View.Editor exposing (viewDebug, viewEditor, viewHeader)
 
 import Array exposing (Array)
-import Common exposing (..)
+import Common exposing ( hoversToPositions, isLastColumn, lineContent)
 import EditorModel exposing (AutoLineBreak(..), EditMode(..), EditorModel, ViewMode(..), VimMode(..))
 import EditorMsg exposing (Context(..), EMsg(..), Hover(..), Position, Selection(..))
 import Html as H exposing (Attribute, Html)
 import Html.Attributes as HA
 import Html.Events as HE
 import Html.Lazy
-import Json.Decode as JD exposing (Decoder)
+import Json.Decode as JD
 import Keymap
 import View.Helper
 import Widget
+import String exposing (String)
 
 
 statisticsDisplay : EditorModel -> Html EMsg
@@ -32,6 +33,7 @@ statisticsDisplay model =
         [ H.text <| "(" ++ l ++ ", " ++ w ++ ")" ]
 
 
+displayStyle : List (Attribute msg)
 displayStyle =
     [ HA.style "margin-left" "24px"
     , HA.style "font-size" "16px"
@@ -41,18 +43,16 @@ displayStyle =
 
 viewDebug : EditorModel -> Html EMsg
 viewDebug model =
-    case model.debugOn of
-        False ->
-            H.div [] []
-
-        True ->
-            H.div
+    if model.debugOn then
+        H.div
                 [ HA.style "max-width" (px model.width), HA.style "padding" "8px" ]
                 [ H.pre [] [ H.text <| "cursor: " ++ stringFromPosition model.cursor ]
                 , H.pre [] [ H.text <| "hover: " ++ stringFromHover model.hover ]
                 , H.pre [] [ H.text (stringFromSelection model.selection) ]
                 , H.pre [] [ H.text <| "selected text:\n" ++ selectedText model.selection model.hover model.lines ]
                 ]
+    else
+        H.div [] []
 
 
 selectedText : Selection -> Hover -> Array String -> String
@@ -104,6 +104,7 @@ selectedText selection currentHover lines =
             positionsToString from to
 
 
+editorBackgroundColor : ViewMode -> Attribute msg
 editorBackgroundColor viewMode_ =
     case viewMode_ of
         Light ->
@@ -113,6 +114,7 @@ editorBackgroundColor viewMode_ =
             HA.style "background-color" "#444"
 
 
+editorFontColor : ViewMode -> Attribute msg
 editorFontColor viewMode_ =
     case viewMode_ of
         Light ->
@@ -122,6 +124,7 @@ editorFontColor viewMode_ =
             HA.style "color" "#f0f0f0"
 
 
+borderBackgroundColor : ViewMode -> Attribute msg
 borderBackgroundColor viewMode_ =
     case viewMode_ of
         Light ->
@@ -131,6 +134,7 @@ borderBackgroundColor viewMode_ =
             HA.style "background-color" "#252525"
 
 
+borderFontColor : ViewMode -> Attribute msg
 borderFontColor viewMode_ =
     case viewMode_ of
         Light ->
@@ -358,6 +362,7 @@ stringFromHover hover =
             "HoverChar: " ++ stringFromPosition p
 
 
+stringFromSelection : Selection -> String
 stringFromSelection sel =
     case sel of
         NoSelection ->
@@ -396,6 +401,7 @@ viewSelectedChar viewMode_ position char =
         [ H.text char ]
 
 
+selectedColor : ViewMode -> Attribute msg
 selectedColor viewMode_ =
     case viewMode_ of
         Light ->
@@ -405,6 +411,7 @@ selectedColor viewMode_ =
             HA.style "background-color" "#44a"
 
 
+highlightColorLight : String
 highlightColorLight =
     "#d7d6ff"
 
@@ -428,11 +435,13 @@ px f =
     String.fromFloat f ++ "px"
 
 
+rowButton : Int -> String -> msg -> List (Attribute msg) -> Html msg
 rowButton width str msg attr =
     H.div (rowButtonStyle ++ attr)
-        [ H.button ([ HE.onClick msg ] ++ rowButtonLabelStyle width) [ H.text str ] ]
+        [ H.button (HE.onClick msg :: rowButtonLabelStyle width) [ H.text str ] ]
 
 
+textField : Int -> String -> (String -> msg) -> List (Attribute msg) -> List (Attribute msg) -> Html msg
 textField width str msg attr innerAttr =
     H.div attr
         [ H.input
@@ -449,12 +458,14 @@ textField width str msg attr innerAttr =
         ]
 
 
+rowButtonStyle : List (Attribute msg)
 rowButtonStyle =
     [ HA.style "font-size" "12px"
     , HA.style "border" "none"
     ]
 
 
+rowButtonLabelStyle : Int -> List (Attribute msg)
 rowButtonLabelStyle width =
     [ HA.style "font-size" "12px"
     , HA.style "background-color" "#666"
@@ -471,31 +482,7 @@ nbsp =
 
 
 
--- HEADER AND FOOTER
-
-
-viewFooter : EditorModel -> Html EMsg
-viewFooter model =
-    H.div
-        [ HA.style "display" "flex"
-        , HA.style "flex-direction" "column"
-        , HA.style "margin-top" "20px"
-        ]
-        [ H.p [ HA.style "margin-top" "0px" ]
-            [ H.text "This demo is an Elm 0.19 version of"
-            , H.a [ HA.href "https://janiczek.github.io/elm-editor/" ] [ H.text " Martin Janiczek's elm-editor" ]
-            , H.span [] [ H.text ". See also his " ]
-            , H.a [ HA.href "https://discourse.elm-lang.org/t/text-editor-done-in-pure-elm/1365/" ] [ H.text " Discourse article" ]
-            , H.span [] [ H.text ". " ]
-            ]
-        , H.p [ HA.style "margin-top" "0px" ]
-            [ H.a [ HA.href "https://github.com/jxxcarlson/elm-editor" ] [ H.text "Github repo" ]
-            , H.span [] [ H.text " forked from " ]
-            , H.a [ HA.href "https://janiczek.github.io/elm-editor/" ] [ H.text " Martin Janiczek. " ]
-            ]
-        ]
-
-
+-- HEADER
 viewHeader : EditorModel -> Html EMsg
 viewHeader model =
     H.div
@@ -522,6 +509,7 @@ viewHeader model =
         ]
 
 
+toggleReplacePanel : Html EMsg
 toggleReplacePanel =
     Widget.lightRowButton 25
         ToggleReplacePanel
@@ -529,6 +517,7 @@ toggleReplacePanel =
         [ HA.style "float" "left", HA.style "float" "left", HA.title "Toggle replace text panel" ]
 
 
+editModeDisplay : EditorModel -> Html msg
 editModeDisplay model =
     let
         message =
@@ -545,6 +534,7 @@ editModeDisplay model =
     H.span [ HA.style "font-style" "bold", HA.style "font-size" "12px", HA.style "margin-left" "25px", HA.style "color" "#a44" ] [ H.text message ]
 
 
+textFieldBackgroundColor : EditorModel -> Attribute msg
 textFieldBackgroundColor model =
     case model.viewMode of
         Light ->
@@ -554,6 +544,7 @@ textFieldBackgroundColor model =
             HA.style "background-color" "#999"
 
 
+textFieldFontColor : EditorModel -> Attribute msg
 textFieldFontColor model =
     case model.viewMode of
         Light ->

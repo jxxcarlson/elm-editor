@@ -1,11 +1,10 @@
-module Helper.Author exposing (..)
+module Helper.Author exposing (persist, createAuthor, signInAuthor, encrypt, encryptForTransmission, validatePassword, validateSignUpInfo, validateChangePassword, passwordsMatch, userNameLongEnough, passwordLongEnough, emailValid)
 
 import Author exposing (AuthorWithPasswordHash)
 import Codec.Author
 import Codec.Document
 import Crypto.HMAC exposing (sha512)
 import Http
-import Json.Decode as D
 import Time
 import Types exposing (Msg(..))
 
@@ -76,36 +75,32 @@ validateChangePassword password1 password2 =
 
 passwordsMatch : String -> String -> List String -> List String
 passwordsMatch password1 password2 errorList =
-    case password1 == password2 of
-        True ->
-            errorList
-
-        False ->
-            "Passwords don't match" :: errorList
+    if password1 == password2 then
+        errorList
+    else
+        "Passwords don't match" :: errorList
 
 
+userNameLongEnough : String -> List String -> List String
 userNameLongEnough username errorList =
-    case String.length username < 6 of
-        True ->
-            "Username must have at least six characters" :: errorList
-
-        False ->
-            errorList
+    if String.length username < 6 then
+        "Username must have at least six characters" :: errorList
+    else
+        errorList
 
 
+passwordLongEnough : String -> List String -> List String
 passwordLongEnough password errorList =
-    case String.length password < 6 of
-        True ->
+    if String.length password < 6 then
             "Password must have at least six characters" :: errorList
+    else
+        errorList
 
-        False ->
-            errorList
 
-
+emailValid : String -> List String -> List String
 emailValid email errorList =
-    case String.contains "@" email && String.length email > 3 of
-        False ->
-            "Email is not valid" :: errorList
-
-        True ->
-            errorList
+    if String.contains "@" email && String.length email > 3 then
+        errorList
+    else
+        "Email is not valid" :: errorList
+            

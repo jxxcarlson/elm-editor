@@ -1,4 +1,4 @@
-module View.NewFilePopup exposing (..)
+module View.NewFilePopup exposing (view, titleLine, fileInput, fileNameInput)
 
 import Element
     exposing
@@ -10,13 +10,11 @@ import Element
         , paddingXY
         , px
         , row
-        , scrollbarY
         , spacing
         , text
         , width
         )
 import Element.Background as Background
-import Element.Font as Font
 import Helper.Common
 import Types exposing (Model, Msg(..), PopupStatus(..), PopupWindow(..))
 import View.Widget as Widget
@@ -37,19 +35,21 @@ view model =
                 , Background.color (Element.rgba 1.0 0.75 0.75 0.8)
                 , spacing 16
                 ]
-                [ titleLine model
+                [ titleLine
                 , fileNameInput model
-                , Widget.newDocumentButton model
+                , Widget.newDocumentButton
                 ]
 
         PopupOpen _ ->
             Element.none
 
 
-titleLine model =
+titleLine : Element msg
+titleLine =
     row [ width (px 450) ] [ text "New File", el [ alignRight ] Widget.closePopupButton ]
 
 
+fileInput : (String -> msg) -> String -> String -> Element msg
 fileInput msg text label =
     TextField.make msg text label
         |> TextField.withHeight 30
@@ -59,5 +59,6 @@ fileInput msg text label =
         |> TextField.toElement
 
 
+fileNameInput : Model -> Element Msg
 fileNameInput model =
     fileInput InputFileName model.fileName_ "File name"

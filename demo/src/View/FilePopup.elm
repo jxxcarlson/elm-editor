@@ -1,7 +1,6 @@
-module View.FilePopup exposing (..)
+module View.FilePopup exposing (view, infoPanel, changePanel, item, inputItem, titleLine, fileInput, fileNameInput)
 
-import Date
-import Document
+import Document exposing (Document)
 import Element
     exposing
         ( Element
@@ -12,7 +11,6 @@ import Element
         , paddingXY
         , px
         , row
-        , scrollbarY
         , spacing
         , text
         , width
@@ -53,6 +51,7 @@ view model =
             Element.none
 
 
+infoPanel : Document -> Element msg
 infoPanel doc =
     column [ spacing 12 ]
         [ item "id" doc.id
@@ -64,6 +63,7 @@ infoPanel doc =
         ]
 
 
+changePanel : Model -> Element Msg
 changePanel model =
     column [ spacing 12 ]
         [ inputItem "File name" InputFileName model.fileName_ 300
@@ -80,6 +80,7 @@ changePanel model =
         ]
 
 
+item : String -> String -> Element msg
 item label str =
     row [ Font.size 14, spacing 12 ]
         [ el [ Font.bold, width (px 65) ] (el [ alignRight ] (text label))
@@ -95,6 +96,7 @@ inputItem label msg inputText width_ =
         ]
 
 
+titleLine : Document -> Element msg
 titleLine doc =
     row [ width (px 450) ] [ text ("File info: " ++ doc.fileName), el [ alignRight ] Widget.closePopupButton ]
 
@@ -109,5 +111,6 @@ fileInput msg text label width_ =
         |> TextField.toElement
 
 
+fileNameInput : Model -> Int -> Element Msg
 fileNameInput model =
     fileInput InputFileName model.fileName_ ""
