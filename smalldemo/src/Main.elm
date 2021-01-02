@@ -6,6 +6,7 @@ import Http
 import Editor exposing (Editor)
 import Helpers.Load as Load
 import Element exposing (Element, column, text)
+import Text
 
 
 
@@ -35,7 +36,7 @@ init : () -> (Model, Cmd Msg)
 init _ =
     let
         newEditor =
-            Editor.initWithContent "Hello, it is me you're looking for!" Load.config
+            Editor.initWithContent Text.darwinIntroduction Load.config
     in
   ( {editor = newEditor}
   , Cmd.none
