@@ -28,6 +28,7 @@ import Common
 import EditorModel exposing (EditorModel)
 import EditorMsg exposing (EMsg(..), Selection(..))
 import Task
+import Window
 
 
 
@@ -74,14 +75,23 @@ firstLine model =
 goToLine : Int -> EditorModel -> ( EditorModel, Cmd EMsg )
 goToLine line model =
     let
+        offset = Debug.log "GTL, OFFSET" model.window.offset
+
+
+        windowMidPoint = 2*model.window.height
+
+
         length =
             Array.length model.lines
 
-        index =
-            min (length - 1) (line - 1)
-                |> max 0
+        index = Debug.log "GTL, INDEX"
+            (min (length - 1) (line - offset - 1)
+                |> max 0)
+
+        w = Debug.log "GTL, Window" (Window.recenter index model.window)
     in
-    ( { model | cursor = { line = index, column = 0 } }, scrollToLine model.lineHeight (index - model.verticalScrollOffset) )
+   -- ( { model | window = window, cursor = { line = index, column = 0 } }, scrollToLine model.lineHeight (index - model.verticalScrollOffset) )
+    ( { model | window = w.window, cursor = { line = index, column = 0 } }, scrollToLine model.lineHeight w.line )
 
 
 lastLine : EditorModel -> ( EditorModel, Cmd EMsg )

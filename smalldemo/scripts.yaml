@@ -1,0 +1,7 @@
+scripts:
+
+  make: elm-make src/Main.elm
+
+  live: elm-live src/Main.elm
+
+

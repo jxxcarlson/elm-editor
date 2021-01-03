@@ -27,6 +27,7 @@ import Update.Function as Function
 import Update.Group
 import Update.Scroll
 import Update.Wrap
+import Window
 
 
 update : EMsg -> EditorModel -> ( EditorModel, Cmd EMsg )
@@ -182,12 +183,12 @@ update msg model =
                             model.cursor
 
                         HoverLine line ->
-                            { line = line
-                            , column = lastColumn model.lines line
+                            { line = (line + model.window.offset)
+                            , column = lastColumn model.lines (line + model.window.offset)
                             }
 
                         HoverChar position ->
-                            position
+                            Window.shiftPosition model.window position
               }
             , Cmd.none
             )

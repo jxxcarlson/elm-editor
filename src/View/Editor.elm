@@ -40,7 +40,8 @@ statisticsDisplay2 model =
     in
     H.span
         displayStyle
-        [ H.text <| "(" ++ (String.fromInt (c.line + model.window.offset + 1)) ++ ", " ++ String.fromInt c.column ++ ")" ]
+        [ H.text <| "(" ++ (String.fromInt model.window.offset) ++ ", " ++(String.fromInt (c.line + 1)) ++ ", " ++ String.fromInt c.column ++ ")" ]
+
 
 
 displayStyle : List (Attribute msg)
@@ -223,16 +224,26 @@ onMultiplelick msg1 msg2 =
 
 viewLineNumbers : EditorModel -> Html EMsg
 viewLineNumbers model =
+    let
+      line = Debug.log "LINE (2)" model.cursor.line
+      offset = if model.cursor.line <= 2*model.window.height - 2 then
+                 model.cursor.line
+               else
+                 (model.cursor.line - 2*model.window.height)
+
+      lineHeightString = (String.fromFloat (model.lineHeight + 0.7)) ++ "px"
+    in
     H.div
         [ HA.style "width" "3.5em"
         , HA.style "text-align" "left"
         , HA.style "display" "flex"
         , HA.style "flex-direction" "column"
+        , HA.style "line-height" lineHeightString
         , borderBackgroundColor model.viewMode
         , borderFontColor model.viewMode
         ]
-        (List.range 1 (Array.length model.lines)
-            |> List.map (viewLineNumber model.viewMode model.window.offset )
+        (List.range 1 (4*model.window.height)
+            |> List.map (viewLineNumber model.viewMode offset )
         )
 
 
@@ -245,15 +256,22 @@ viewContent : EditorModel -> Html EMsg
 viewContent model =
     -- TODO: handle option mouseclick for LR sync
     let
+       cursor = model.cursor
        offset = model.window.offset
-       c = model.cursor
-       lineNumber = model.cursor.line - offset
-       cursor = {c | column = c.column - offset}
+       height = model.window.height
+       lineNumber = cursor.line
+       windowLines = Window.lines lineNumber model.window model.lines
 
-       hover = case model.hover of
-           NoHover -> NoHover
-           HoverLine k -> HoverLine (k - offset)
-           HoverChar pos -> HoverChar {pos | line = pos.line - offset}
+
+       cursor2 = if cursor.line < 2*height then
+                     cursor
+                 else
+                     shift (offset - 2*height) cursor
+    --
+    --   hover = case model.hover of
+    --       NoHover -> NoHover
+    --       HoverLine k -> HoverLine (k - offset)
+    --       HoverChar pos -> HoverChar {pos | line = pos.line - offset}
     in
     H.div
         [ HA.style "position" "relative"
@@ -266,11 +284,11 @@ viewContent model =
         , HE.onClick GoToHoveredPosition
         , HE.onMouseOut (Hover NoHover)
         ]
-        [ viewLines model.viewMode model.lineHeight cursor hover model.selection (Window.lines  lineNumber model.window model.lines)]
+        [ viewLines model.viewMode model.lineHeight cursor2 model.hover model.selection windowLines]
 
 
 viewLines : ViewMode -> Float -> Position -> Hover -> Selection -> Array String -> Html EMsg
-viewLines viewMode_ lineHeight position hover selection lines =
+viewLines viewMode_ lineHeight  position hover selection lines =
     H.div
         []
         (lines
@@ -280,7 +298,7 @@ viewLines viewMode_ lineHeight position hover selection lines =
 
 
 viewLine : ViewMode -> Float -> Position -> Hover -> Selection -> Array String -> Int -> String -> Html EMsg
-viewLine viewMode_ lineHeight position hover selection lines line content =
+viewLine viewMode_ lineHeight  position hover selection lines line content =
     Html.Lazy.lazy8 viewLine_ viewMode_ lineHeight position hover selection lines line content
 
 
@@ -413,6 +431,10 @@ viewCursor position char =
         [ H.text char ]
 
 
+shift : Int -> Position -> Position
+shift k pos =
+    {pos | line = pos.line - k }
+
 viewSelectedChar : ViewMode -> Position -> String -> Html EMsg
 viewSelectedChar viewMode_ position char =
     H.span
@@ -522,7 +544,7 @@ viewHeader model =
         , rowButton 32 "S" ToggleSearchPanel [ HA.style "margin-left" "24px", HA.style "margin-top" "4px", HA.title "Toggle search panel" ]
         , View.Helper.showIf model.showSearchPanel toggleReplacePanel
         , rowButton 32 "Go" GoToLine [ HA.style "margin-left" "24px", HA.style "margin-top" "4px", HA.title "Go to line number" ]
-        , textField 32 "" AcceptLineToGoTo [ HA.style "margin-left" "4px", HA.style "margin-top" "4px" ] [ textFieldFontColor model, textFieldBackgroundColor model, HA.style "font-size" "14px" ]
+        , textField 56 "" AcceptLineToGoTo [ HA.style "margin-left" "4px", HA.style "margin-top" "4px" ] [ textFieldFontColor model, textFieldBackgroundColor model, HA.style "font-size" "14px" ]
         , rowButton 60 (autoLinBreakTitle model) ToggleAutoLineBreak [ HA.style "margin-left" "24px", HA.style "margin-top" "4px", HA.title "Toggle auto line break/wrap" ]
         , editModeDisplay model
 
