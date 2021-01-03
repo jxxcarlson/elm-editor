@@ -17,11 +17,14 @@ import Debounce exposing (Debounce)
 import EditorMsg exposing (Context(..), EMsg(..), Hover(..), Position, Selection(..), WrapOption(..))
 import History exposing (History)
 import RollingList exposing (RollingList)
+import Window exposing(Window)
+import Text
 
 
 type alias EditorModel =
     { lines : Array String
     , cursor : Position
+    , window : Window
     , hover : Hover
     , selection : Selection
     , selectedText : Array String
@@ -82,8 +85,9 @@ type alias Config =
 
 init : ( Config, ContextMenu Context ) -> EditorModel
 init ( config, contextMenu ) =
-    { lines = Array.fromList [ "" ]
+    { lines = Array.fromList (String.lines Text.darwin)
     , cursor = Position 0 0
+    , window = Window.empty 33
     , hover = NoHover
     , selection = NoSelection
     , selectedText = Array.fromList [ "" ]

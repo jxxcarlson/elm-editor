@@ -36,7 +36,7 @@ init : () -> (Model, Cmd Msg)
 init _ =
     let
         newEditor =
-            Editor.initWithContent Text.darwinIntroduction Load.config
+            Editor.initWithContent Text.darwin Load.config
     in
   ( {editor = newEditor}
   , Cmd.none

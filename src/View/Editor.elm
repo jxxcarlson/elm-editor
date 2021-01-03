@@ -12,6 +12,7 @@ import Json.Decode as JD
 import Keymap
 import View.Helper
 import Widget
+import Window
 import String exposing (String)
 
 
@@ -31,6 +32,15 @@ statisticsDisplay model =
     H.span
         displayStyle
         [ H.text <| "(" ++ l ++ ", " ++ w ++ ")" ]
+
+statisticsDisplay2 : EditorModel -> Html EMsg
+statisticsDisplay2 model =
+    let
+        c = model.cursor
+    in
+    H.span
+        displayStyle
+        [ H.text <| "(" ++ (String.fromInt (c.line + model.window.offset + 1)) ++ ", " ++ String.fromInt c.column ++ ")" ]
 
 
 displayStyle : List (Attribute msg)
@@ -214,7 +224,7 @@ onMultiplelick msg1 msg2 =
 viewLineNumbers : EditorModel -> Html EMsg
 viewLineNumbers model =
     H.div
-        [ HA.style "width" "2.5em"
+        [ HA.style "width" "3.5em"
         , HA.style "text-align" "left"
         , HA.style "display" "flex"
         , HA.style "flex-direction" "column"
@@ -222,18 +232,29 @@ viewLineNumbers model =
         , borderFontColor model.viewMode
         ]
         (List.range 1 (Array.length model.lines)
-            |> List.map (viewLineNumber model.viewMode)
+            |> List.map (viewLineNumber model.viewMode model.window.offset )
         )
 
 
-viewLineNumber : ViewMode -> Int -> Html EMsg
-viewLineNumber viewMode_ n =
-    H.span [ HA.style "padding-left" "6px", borderBackgroundColor viewMode_, borderFontColor viewMode_ ] [ H.text (String.fromInt n) ]
+viewLineNumber : ViewMode -> Int -> Int -> Html EMsg
+viewLineNumber viewMode_ offset n =
+    H.span [ HA.style "padding-left" "6px", borderBackgroundColor viewMode_, borderFontColor viewMode_ ] [ H.text (String.fromInt (n + offset)) ]
 
 
 viewContent : EditorModel -> Html EMsg
 viewContent model =
     -- TODO: handle option mouseclick for LR sync
+    let
+       offset = model.window.offset
+       c = model.cursor
+       lineNumber = model.cursor.line - offset
+       cursor = {c | column = c.column - offset}
+
+       hover = case model.hover of
+           NoHover -> NoHover
+           HoverLine k -> HoverLine (k - offset)
+           HoverChar pos -> HoverChar {pos | line = pos.line - offset}
+    in
     H.div
         [ HA.style "position" "relative"
         , HA.style "flex" "1"
@@ -245,7 +266,7 @@ viewContent model =
         , HE.onClick GoToHoveredPosition
         , HE.onMouseOut (Hover NoHover)
         ]
-        [ viewLines model.viewMode model.lineHeight model.cursor model.hover model.selection model.lines ]
+        [ viewLines model.viewMode model.lineHeight cursor hover model.selection (Window.lines  lineNumber model.window model.lines)]
 
 
 viewLines : ViewMode -> Float -> Position -> Hover -> Selection -> Array String -> Html EMsg
@@ -497,7 +518,7 @@ viewHeader model =
         , borderBackgroundColor model.viewMode
         ]
         [ rowButton 60 "Help" ToggleHelp [ HA.style "margin-left" "24px", HA.style "margin-top" "4px" ]
-        , statisticsDisplay model
+        , statisticsDisplay2 model
         , rowButton 32 "S" ToggleSearchPanel [ HA.style "margin-left" "24px", HA.style "margin-top" "4px", HA.title "Toggle search panel" ]
         , View.Helper.showIf model.showSearchPanel toggleReplacePanel
         , rowButton 32 "Go" GoToLine [ HA.style "margin-left" "24px", HA.style "margin-top" "4px", HA.title "Go to line number" ]
