@@ -83,6 +83,7 @@ update msg model =
 
         InsertChar char ->
             let
+                _ = Debug.log "INSERT" char
                 ( debounce, debounceCmd ) =
                     Debounce.push EditorModel.debounceConfig char model.debounce
             in
@@ -187,12 +188,12 @@ update msg model =
                             , column = lastColumn model.lines (line)
                             }
 
-                        HoverChar position ->
+                        HoverChar localPosition ->
+
                            let
-                             _ = Debug.log "GTHP, HC, pos" position
+                             _ = Debug.log "GTHP, HC, locpos" localPosition
                            in
-                           Debug.log "GTHP, HC"  (Window.shiftPosition3 0 model.window position)
-                          -- Debug.log "GTHP, HC"  (Window.shiftPosition_ (-2*model.window.height) position)
+                           Debug.log "GTHP, HC"  (Window.shiftPosition model.window.offset localPosition)
               }
             , Cmd.none
             )

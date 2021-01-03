@@ -75,23 +75,19 @@ firstLine model =
 goToLine : Int -> EditorModel -> ( EditorModel, Cmd EMsg )
 goToLine line model =
     let
-        offset = Debug.log "GTL, OFFSET" model.window.offset
-
-
-        windowMidPoint = 2*model.window.height
-
+        _ = Debug.log "GTL, LINE" line
+        cursor = Debug.log "GTL, CURSOR" model.cursor
 
         length =
             Array.length model.lines
 
         index = Debug.log "GTL, INDEX"
-            (min (length - 1) (line - offset - 1)
-                |> max 0)
+            min (length - 1) (line - model.window.offset - 1)
+                |> Window.positive
 
         w = Debug.log "GTL, Window" (Window.recenter index model.window)
     in
-   -- ( { model | window = window, cursor = { line = index, column = 0 } }, scrollToLine model.lineHeight (index - model.verticalScrollOffset) )
-    ( { model | window = w.window, cursor = { line = index, column = 0 } }, scrollToLine model.lineHeight w.windowLine )
+    ( { model | window = w.window, cursor = {cursor | line = line - 1,  column = 0 } }, scrollToLine model.lineHeight (w.windowLine - 0) )
 
 
 lastLine : EditorModel -> ( EditorModel, Cmd EMsg )

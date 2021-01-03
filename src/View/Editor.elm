@@ -35,12 +35,9 @@ statisticsDisplay model =
 
 statisticsDisplay2 : EditorModel -> Html EMsg
 statisticsDisplay2 model =
-    let
-        c = model.cursor
-    in
     H.span
         displayStyle
-        [ H.text <| "(" ++ (String.fromInt model.window.offset) ++ ", " ++ (String.fromInt model.cursor.line) ++ "; "++(String.fromInt (c.line + 1)) ++ ", " ++ String.fromInt c.column ++ ")" ]
+        [ H.text <| "(" ++ (String.fromInt model.window.offset) ++ ", " ++ (String.fromInt model.cursor.line) ++ ", " ++ String.fromInt model.cursor.column ++ ")" ]
 
 
 
@@ -260,13 +257,13 @@ viewContent model =
        offset = model.window.offset
        height = model.window.height
        lineNumber = cursor.line
-       windowLines = Window.lines lineNumber model.window model.lines
+       windowLines = Window.lines model.window model.lines
 
 
-       cursor2 = if cursor.line < 2*height then
+       cursor2 = if cursor.line < height then
                      cursor
                  else
-                     shift (offset - 2*height) cursor
+                     Window.shiftPosition (-offset) cursor
     --
     --   hover = case model.hover of
     --       NoHover -> NoHover
