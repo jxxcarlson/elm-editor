@@ -91,7 +91,7 @@ goToLine line model =
         w = Debug.log "GTL, Window" (Window.recenter index model.window)
     in
    -- ( { model | window = window, cursor = { line = index, column = 0 } }, scrollToLine model.lineHeight (index - model.verticalScrollOffset) )
-    ( { model | window = w.window, cursor = { line = index, column = 0 } }, scrollToLine model.lineHeight w.line )
+    ( { model | window = w.window, cursor = { line = index, column = 0 } }, scrollToLine model.lineHeight w.windowLine )
 
 
 lastLine : EditorModel -> ( EditorModel, Cmd EMsg )

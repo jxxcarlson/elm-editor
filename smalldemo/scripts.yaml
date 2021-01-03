@@ -4,4 +4,6 @@ scripts:
 
   live: elm-live src/Main.elm
 
+  cloc: cloc --by-file ../src/*
+
 

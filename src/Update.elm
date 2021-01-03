@@ -183,12 +183,16 @@ update msg model =
                             model.cursor
 
                         HoverLine line ->
-                            { line = (line + model.window.offset)
-                            , column = lastColumn model.lines (line + model.window.offset)
+                           Debug.log "GTHP, HL" { line = (line + model.window.offset)
+                            , column = lastColumn model.lines (line)
                             }
 
                         HoverChar position ->
-                            Window.shiftPosition model.window position
+                           let
+                             _ = Debug.log "GTHP, HC, pos" position
+                           in
+                           Debug.log "GTHP, HC"  (Window.shiftPosition3 0 model.window position)
+                          -- Debug.log "GTHP, HC"  (Window.shiftPosition_ (-2*model.window.height) position)
               }
             , Cmd.none
             )

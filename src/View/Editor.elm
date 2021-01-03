@@ -40,7 +40,7 @@ statisticsDisplay2 model =
     in
     H.span
         displayStyle
-        [ H.text <| "(" ++ (String.fromInt model.window.offset) ++ ", " ++(String.fromInt (c.line + 1)) ++ ", " ++ String.fromInt c.column ++ ")" ]
+        [ H.text <| "(" ++ (String.fromInt model.window.offset) ++ ", " ++ (String.fromInt model.cursor.line) ++ "; "++(String.fromInt (c.line + 1)) ++ ", " ++ String.fromInt c.column ++ ")" ]
 
 
 
