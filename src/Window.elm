@@ -1,4 +1,4 @@
-module Window exposing (Window, empty, lines, shift, recenter, shiftPosition, shiftPosition2, shiftPosition3, shiftPosition_)
+module Window exposing (Window, empty, lines, positive, shift, recenter, shiftPosition)
 
 import Array exposing(Array(..))
 import EditorMsg exposing(Position)
@@ -18,31 +18,10 @@ empty height  =  {
   , height = height
  }
 
-shiftPosition_ : Int -> Position -> Position
-shiftPosition_ k pos =
+shiftPosition : Int -> Position -> Position
+shiftPosition k pos =
     {pos | line = pos.line + k}
 
-shiftPosition : Window -> Position -> Position
-shiftPosition window pos =
-  if pos.line < 2*window.height then
-    pos
-  else
-    {pos | line = pos.line + window.offset}
-
-
-shiftPosition2 : Window -> Position -> Position
-shiftPosition2 window pos =
-  if pos.line < 2*window.height then
-    pos
-  else
-    {pos | line = window.offset}
-
-shiftPosition3 : Int -> Window -> Position -> Position
-shiftPosition3 k window pos =
-  if pos.line < 2*window.height then
-    pos
-  else
-    {pos | line = window.offset + k}
 
 shift : Int -> Window -> Window
 shift offset window =
@@ -52,17 +31,14 @@ shift offset window =
 -- recenter : Int -> Window -> Window
 recenter : Int -> Window -> { window : Window, windowLine : Int }
 recenter lineNumber window =
-    if lineNumber < 2*window.height then
+    if lineNumber < window.height then
       {window = {window | offset = 0}, windowLine = lineNumber}
     else --
-      {window = {window | offset = lineNumber}, windowLine = (midLine window) - 5}
+      {window = {window | offset = lineNumber}, windowLine = 0}
 
 positive  : Int -> Int
 positive x = if x < 0 then 0 else x
 
-lines : Int -> Window -> Array String -> Array String
-lines lineNumber window lines_ =
-    let
-        offset = positive (lineNumber - 2*window.height)
-    in
-      Array.slice offset (offset + 4*window.height) lines_
+lines : Window -> Array String -> Array String
+lines window lines_ =
+      Array.slice window.offset (window.offset + window.height) lines_
