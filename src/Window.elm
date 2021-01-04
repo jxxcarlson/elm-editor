@@ -1,7 +1,7 @@
-module Window exposing (Window, empty, lines, positive, shift, recenter, shiftPosition)
+module Window exposing (Window, empty, lines, positive, shift, recenter, shiftPosition, shiftHover, shiftSelection)
 
 import Array exposing(Array(..))
-import EditorMsg exposing(Position)
+import EditorMsg exposing(Position, Selection(..), Hover(..))
 
 type alias Window = {
      offset : Int
@@ -21,6 +21,23 @@ empty height  =  {
 shiftPosition : Int -> Position -> Position
 shiftPosition k pos =
     {pos | line = pos.line + k}
+
+
+shiftHover : Int -> Hover -> Hover
+shiftHover k h =
+    case h of
+        NoHover -> NoHover
+        HoverLine l -> HoverLine (l + k)
+        HoverChar p -> HoverChar (shiftPosition k p)
+
+
+shiftSelection : Int -> Selection -> Selection
+shiftSelection k sel =
+    case sel of
+        NoSelection -> NoSelection
+        SelectingFrom hover -> SelectingFrom (shiftHover k hover)
+        SelectedChar pos -> SelectedChar (shiftPosition k pos)
+        Selection p q -> Selection (shiftPosition k p) (shiftPosition k q)
 
 
 shift : Int -> Window -> Window

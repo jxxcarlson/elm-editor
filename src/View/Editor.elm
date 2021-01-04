@@ -254,6 +254,7 @@ viewContent model =
     -- TODO: handle option mouseclick for LR sync
     let
        cursor = model.cursor
+       selection = model.selection
        offset = model.window.offset
        height = model.window.height
        lineNumber = cursor.line
@@ -264,11 +265,17 @@ viewContent model =
                      cursor
                  else
                      Window.shiftPosition (-offset) cursor
-    --
-    --   hover = case model.hover of
-    --       NoHover -> NoHover
-    --       HoverLine k -> HoverLine (k - offset)
-    --       HoverChar pos -> HoverChar {pos | line = pos.line - offset}
+
+       selection2 = if cursor.line < height then
+                         selection
+                     else
+                         Window.shiftSelection (-offset) selection
+
+       hover2 = if cursor.line < height then
+                   model.hover
+                else
+                   Window.shiftHover -offset model.hover
+
     in
     H.div
         [ HA.style "position" "relative"
@@ -281,7 +288,7 @@ viewContent model =
         , HE.onClick GoToHoveredPosition
         , HE.onMouseOut (Hover NoHover)
         ]
-        [ viewLines model.viewMode model.lineHeight cursor2 model.hover model.selection windowLines]
+        [ viewLines model.viewMode model.lineHeight cursor2 hover2 selection2 windowLines]
 
 
 viewLines : ViewMode -> Float -> Position -> Hover -> Selection -> Array String -> Html EMsg
