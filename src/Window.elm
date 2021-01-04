@@ -1,4 +1,4 @@
-module Window exposing (Window, empty, lines, positive, shift, recenter, shiftPosition, shiftHover, shiftSelection)
+module Window exposing (Window, empty, lines, positive, shift, recenter, recenterIfClose, shiftPosition, shiftHover, shiftSelection)
 
 import Array exposing(Array(..))
 import EditorMsg exposing(Position, Selection(..), Hover(..))
@@ -52,6 +52,17 @@ recenter lineNumber window =
       {window = {window | offset = 0}, windowLine = lineNumber}
     else --
       {window = {window | offset = lineNumber}, windowLine = 0}
+
+
+recenterIfClose : Int -> Window -> {window: Window, line : Int}
+recenterIfClose k w =
+    let
+        delta = 5
+        eta = 20
+    in
+      if k < delta then {window = {w | offset = w.offset - eta}, line = delta}
+      else if k > w.height - delta then {window = {w | offset = w.offset + eta}, line = w.height - delta}
+      else {window = w, line = k}
 
 positive  : Int -> Int
 positive x = if x < 0 then 0 else x

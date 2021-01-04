@@ -177,6 +177,13 @@ update msg model =
             )
 
         GoToHoveredPosition ->
+            let
+              data = case model.hover of
+                                     NoHover -> {line = model.cursor.line, window = model.window}
+                                     HoverLine line -> Window.recenterIfClose line model.window
+                                     HoverChar localPosition -> Window.recenterIfClose localPosition.line model.window
+
+            in
             ( { model
                 | cursor =
                     case model.hover of
@@ -194,8 +201,10 @@ update msg model =
                              _ = Debug.log "GTHP, HC, locpos" localPosition
                            in
                            Debug.log "GTHP, HC"  (Window.shiftPosition model.window.offset localPosition)
+
+                  , window = data.window
               }
-            , Cmd.none
+            , Cmd.none --- Update.Scroll.setEditorViewportForLine model.lineHeight (Debug.log "GTHP, L2" data.line)
             )
 
         LastLine ->
