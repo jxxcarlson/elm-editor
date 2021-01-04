@@ -2,6 +2,7 @@ module Window exposing (Window, empty, lines, positive, shift, recenter, recente
 
 import Array exposing(Array(..))
 import EditorMsg exposing(Position, Selection(..), Hover(..))
+import Config
 
 type alias Window = {
      offset : Int
@@ -48,10 +49,10 @@ shift offset window =
 -- recenter : Int -> Window -> Window
 recenter : Int -> Window -> { window : Window, windowLine : Int }
 recenter lineNumber window =
-    if lineNumber < window.height then
-      {window = {window | offset = 0}, windowLine = lineNumber}
-    else --
-      {window = {window | offset = lineNumber}, windowLine = 0}
+    --if lineNumber < window.height then
+    --  {window = {window | offset = 0}, windowLine = lineNumber}
+    --else --
+      {window = {window | offset = positive (lineNumber - Config.topMargin)}, windowLine = 0}
 
 
 recenterIfClose : Int -> Window -> {window: Window, line : Int}
@@ -69,4 +70,7 @@ positive x = if x < 0 then 0 else x
 
 lines : Window -> Array String -> Array String
 lines window lines_ =
+      let
+          _ = Debug.log "Window.lines" window
+      in
       Array.slice window.offset (window.offset + window.height) lines_

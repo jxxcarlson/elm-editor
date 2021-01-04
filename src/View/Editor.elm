@@ -256,26 +256,12 @@ viewContent model =
        cursor = model.cursor
        selection = model.selection
        offset = model.window.offset
-       height = model.window.height
-       lineNumber = cursor.line
+
        windowLines = Window.lines model.window model.lines
 
-
-       cursor2 = if cursor.line < height then
-                     cursor
-                 else
-                     Window.shiftPosition (-offset) cursor
-
-       selection2 = if cursor.line < height then
-                         selection
-                     else
-                         Window.shiftSelection (-offset) selection
-
-       hover2 = if cursor.line < height then
-                   model.hover
-                else
-                   Window.shiftHover -offset model.hover
-
+       cursor2 = Window.shiftPosition -offset cursor
+       selection2 = Window.shiftSelection -offset selection
+       hover2 = Window.shiftHover -offset model.hover
     in
     H.div
         [ HA.style "position" "relative"
