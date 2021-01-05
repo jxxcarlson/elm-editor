@@ -1,4 +1,4 @@
-module Window exposing (Window, empty, lines, positive, shift, recenter, recenterIfClose, shiftPosition, shiftHover, shiftSelection)
+module Window exposing (Window, init, lines, positive, recenter, recenterIfClose, shift, shiftPosition, shiftHover, shiftSelection)
 
 import Array exposing(Array(..))
 import EditorMsg exposing(Position, Selection(..), Hover(..))
@@ -13,8 +13,8 @@ type alias Window = {
 midLine : Window -> Int
 midLine window = 2*window.height
 
-empty : Int -> Window
-empty height  =  {
+init : Int -> Window
+init height  =  {
     offset = 0
   , height = height
  }
@@ -42,8 +42,13 @@ shiftSelection k sel =
 
 
 shift : Int -> Window -> Window
-shift offset window =
-    {window | offset = offset}
+shift line window =
+    if line < window.offset + window.height // 3 then
+      Debug.log "< 1/3" { window | offset = positive <| line - (window.height)//2 }
+    else if line > window.offset + (2 * window.height)//3 then
+      Debug.log "> 2/3"{ window | offset = positive <| line - (window.height)//2 }
+    else
+      Debug.log "Middle third" window
 
 
 -- recenter : Int -> Window -> Window

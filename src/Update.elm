@@ -28,6 +28,7 @@ import Update.Group
 import Update.Scroll
 import Update.Wrap
 import Window
+import Config
 
 
 update : EMsg -> EditorModel -> ( EditorModel, Cmd EMsg )
@@ -178,33 +179,36 @@ update msg model =
 
         GoToHoveredPosition ->
             let
-              data = case model.hover of
-                                     NoHover -> {line = model.cursor.line, window = model.window}
-                                     HoverLine line -> Window.recenterIfClose line model.window
-                                     HoverChar localPosition -> Window.recenterIfClose localPosition.line model.window
+              --data = case model.hover of
+              --                       NoHover -> {line = model.cursor.line, window = model.window}
+              --                       HoverLine line -> Window.recenterIfClose line model.window
+              --                       HoverChar localPosition -> Window.recenterIfClose localPosition.line model.window
+
+              cursor =
+                 case model.hover of
+                     NoHover ->
+                         model.cursor
+
+                     HoverLine line ->
+                        Debug.log "GTHP, HL" { line = (line + model.window.offset)
+                         , column = lastColumn model.lines (line)
+                         }
+
+                     HoverChar localPosition ->
+
+                        let
+                          _ = Debug.log "GTHP, HC, locpos" localPosition
+                        in
+                        Debug.log "GTHP, HC"  (Window.shiftPosition model.window.offset localPosition)
+
+              window =  Window.shift cursor.line model.window
 
             in
             ( { model
-                | cursor =
-                    case model.hover of
-                        NoHover ->
-                            model.cursor
-
-                        HoverLine line ->
-                           Debug.log "GTHP, HL" { line = (line + model.window.offset)
-                            , column = lastColumn model.lines (line)
-                            }
-
-                        HoverChar localPosition ->
-
-                           let
-                             _ = Debug.log "GTHP, HC, locpos" localPosition
-                           in
-                           Debug.log "GTHP, HC"  (Window.shiftPosition model.window.offset localPosition)
-
-                  , window = data.window
+                | cursor = cursor
+                , window =  window
               }
-            , Cmd.none --- Update.Scroll.setEditorViewportForLine model.lineHeight (Debug.log "GTHP, L2" data.line)
+            , Update.Scroll.setEditorViewportForLine model.lineHeight (Window.positive (cursor.line - window.offset - Config.topMargin))
             )
 
         LastLine ->

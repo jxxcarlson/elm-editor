@@ -87,7 +87,7 @@ init : ( Config, ContextMenu Context ) -> EditorModel
 init ( config, contextMenu ) =
     { lines = Array.fromList (String.lines Text.darwin)
     , cursor = Position 0 0
-    , window = Window.empty 200
+    , window = Window.init 450
     , hover = NoHover
     , selection = NoSelection
     , selectedText = Array.fromList [ "" ]
