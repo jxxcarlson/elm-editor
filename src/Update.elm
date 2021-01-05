@@ -177,38 +177,64 @@ update msg model =
             , Cmd.none
             )
 
-        GoToHoveredPosition ->
-            let
-              --data = case model.hover of
-              --                       NoHover -> {line = model.cursor.line, window = model.window}
-              --                       HoverLine line -> Window.recenterIfClose line model.window
-              --                       HoverChar localPosition -> Window.recenterIfClose localPosition.line model.window
+        ViewportMotion _ ->
+            (model, Cmd.none)
 
+        GotViewportInfo r ->
+            case r of
+             Err e ->
+                 let
+                    _ = Debug.log "ERR" e
+                 in
+                 (model, Cmd.none)
+             Ok vp ->
+                 let
+                     _ = Debug.log "(o, line, vpy)" (model.window.offset, model.cursor.line, vp.viewport.y/model.lineHeight)
+                 in
+                 (model, Cmd.none)
+
+        GoToHoveredPosition ->
+            -- TODO : Current work
+            let
               cursor =
+                 -- global coordinates
                  case model.hover of
                      NoHover ->
                          model.cursor
 
                      HoverLine line ->
-                        Debug.log "GTHP, HL" { line = (line + model.window.offset)
-                         , column = lastColumn model.lines (line)
-                         }
+                        Debug.log "GTHP, HL" { line = (line + model.window.offset), column = lastColumn model.lines (line)}
 
                      HoverChar localPosition ->
-
-                        let
-                          _ = Debug.log "GTHP, HC, locpos" localPosition
-                        in
                         Debug.log "GTHP, HC"  (Window.shiftPosition model.window.offset localPosition)
 
               window =  Window.shift cursor.line model.window
 
+              innerOffset : Dom.Viewport -> Float
+              innerOffset viewport_ = (toFloat (cursor.line - window.offset))*model.lineHeight -- - viewport_.viewport.y
+
+
+
+              innerOffset1 = 10
+
+              x = cursor.column
+
+              updateScrollPosition = Dom.getViewportOf "__editor__" |> Task.andThen (\vp -> Dom.setViewportOf "__editor__" (toFloat x) (Debug.log "IOFF" <| innerOffset vp))
+              updateScrollPosition1 = Dom.getViewportOf "__editor__" |> Task.andThen (\vp -> Dom.setViewportOf "__editor__" (toFloat x) (Debug.log "VPY" vp.viewport.y))
+
+
+              vpInfo : Task.Task Dom.Error Dom.Viewport
+              vpInfo = Dom.getViewportOf "__editor__"
+
+              -- yada = Task.attempt ViewportMotion updateScrollPoosition
             in
             ( { model
-                | cursor = cursor
-                , window =  window
+                | cursor = Debug.log "CURSOR" cursor
+                , window =  Debug.log "WINDOW" window
               }
-            , Update.Scroll.setEditorViewportForLine model.lineHeight (Window.positive (cursor.line - window.offset - Config.topMargin))
+             -- , Update.Scroll.setEditorViewportForLine model.lineHeight (Window.positive (cursor.line - window.offset - innerOffset1))
+            ,  Task.attempt ViewportMotion updateScrollPosition
+            --, Task.attempt GotViewportInfo vpInfo
             )
 
         LastLine ->
@@ -474,6 +500,7 @@ update msg model =
             Update.Scroll.toString str model
 
         GotViewport result ->
+            -- TODO
             case result of
                 Ok vp ->
                     let

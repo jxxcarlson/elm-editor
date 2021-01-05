@@ -118,6 +118,8 @@ type EMsg
       --
     | SendLineForLRSync
     | GotViewportForSync (Maybe String) Selection (Result Dom.Error Dom.Viewport)
+    | ViewportMotion (Result Dom.Error ())
+    | GotViewportInfo (Result Dom.Error Dom.Viewport)
       --
     | CopyPasteClipboard
     | WriteToSystemClipBoard

@@ -222,7 +222,6 @@ onMultiplelick msg1 msg2 =
 viewLineNumbers : EditorModel -> Html EMsg
 viewLineNumbers model =
     let
-      line = Debug.log "LINE (2)" model.cursor.line
       offset = if model.cursor.line <= 2*model.window.height - 2 then
                  model.cursor.line
                else
