@@ -1,9 +1,28 @@
-module Window exposing (Window, init, lines, positive, recenter, recenterIfClose, shift, shiftPosition, shiftHover, shiftSelection)
+module Window exposing (Window
+   , init           -- used in Editor.Model
+   , lines          -- used in View.Editor
+   , positive       -- used in Action
+   , recenter       -- used in Action
+   , shift          -- used in Update
+   , shiftPosition  -- used in Update and View.Editor
+   , shiftHover     -- used in View.Editor
+   , shiftSelection -- used in View.Editor
+   )
 
 import Array exposing(Array(..))
 import EditorMsg exposing(Position, Selection(..), Hover(..))
 import OuterConfig
 
+
+{-|
+
+A Window w defines a contiguous subset of the lines of an array,
+begin at w.offset.  The number of elements in w is at most w.height.
+
+model.window points to the window in the full array of lines
+that is visible to the editor.
+
+-}
 type alias Window = {
      offset : Int
    , height : Int

@@ -233,11 +233,11 @@ update msg model =
               -- yada = Task.attempt ViewportMotion updateScrollPoosition
             in
             ( { model
-                | cursor = Debug.log "CURSOR" cursor
-                , window =  Debug.log "WINDOW" window
+                | cursor = Debug.log "CURSOR!" cursor
+                , window =  Debug.log "WINDOW!" window
               }
              -- , Update.Scroll.setEditorViewportForLine model.lineHeight (Window.positive (cursor.line - window.offset - innerOffset1))
-            ,  Task.attempt ViewportMotion updateScrollPosition
+              ,  Cmd.none -- Task.attempt ViewportMotion updateScrollPosition
             --, Task.attempt GotViewportInfo vpInfo
             )
 
