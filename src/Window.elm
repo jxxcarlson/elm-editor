@@ -2,7 +2,7 @@ module Window exposing (Window, init, lines, positive, recenter, recenterIfClose
 
 import Array exposing(Array(..))
 import EditorMsg exposing(Position, Selection(..), Hover(..))
-import Config
+import OuterConfig
 
 type alias Window = {
      offset : Int
@@ -57,7 +57,7 @@ recenter lineNumber window =
     --if lineNumber < window.height then
     --  {window = {window | offset = 0}, windowLine = lineNumber}
     --else --
-      {window = {window | offset = positive (lineNumber - Config.topMargin)}, windowLine = 0}
+      {window = {window | offset = positive (lineNumber - OuterConfig.topMargin)}, windowLine = 0}
 
 
 recenterIfClose : Int -> Window -> {window: Window, line : Int}

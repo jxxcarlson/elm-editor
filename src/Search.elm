@@ -1,7 +1,7 @@
 module Search exposing (do, hits)
 
 import Array exposing (Array)
-import ArrayUtil exposing (Position)
+import Position exposing(Position)
 import EditorModel exposing (EditorModel)
 import EditorMsg exposing (Selection(..))
 import RollingList

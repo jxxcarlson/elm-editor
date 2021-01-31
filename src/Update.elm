@@ -28,7 +28,7 @@ import Update.Group
 import Update.Scroll
 import Update.Wrap
 import Window
-import Config
+
 
 
 update : EMsg -> EditorModel -> ( EditorModel, Cmd EMsg )

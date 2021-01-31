@@ -1,4 +1,4 @@
-module Text exposing (hello, darwinIntroduction, darwin, numbered    )
+module Text exposing (..)
 
 
 numbered : String -> String
@@ -9,6 +9,14 @@ numbered str =
       |> String.join "\n"
 
 hello = "Hello, it is me you're looking for!"
+
+test1 = """
+one
+two
+three: this is a test, I repeat, a test.
+four
+five
+"""
 
 darwinIntroduction = """
 
