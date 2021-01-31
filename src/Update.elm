@@ -211,7 +211,11 @@ update msg model =
               window =  Window.shift cursor.line model.window
 
               innerOffset : Dom.Viewport -> Float
-              innerOffset viewport_ = (toFloat (cursor.line - window.offset))*model.lineHeight -- - viewport_.viewport.y
+              innerOffset viewport_ =
+                  let
+                     _ = Debug.log "VP" (viewport_.viewport.y/model.lineHeight)
+                  in
+                  (toFloat (cursor.line - window.offset - 10 ))*model.lineHeight -- - viewport_.viewport.y
 
 
 
