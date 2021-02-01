@@ -87,7 +87,7 @@ init : ( Config, ContextMenu Context ) -> EditorModel
 init ( config, contextMenu ) =
     { lines = Array.fromList (String.lines Text.darwin)
     , cursor = Position 0 0
-    , window = Window.init 450
+    , window = Window.init 300
     , hover = NoHover
     , selection = NoSelection
     , selectedText = Array.fromList [ "" ]
@@ -95,7 +95,7 @@ init ( config, contextMenu ) =
     , width = config.width
     , height = config.height
     , fontSize = config.fontSize
-    , lineHeight = 1.2 * config.fontSize
+    , lineHeight = 1.2 * config.fontSize |> Debug.log "LINE HEIGHT"
     , verticalScrollOffset = config.verticalScrollOffset
     , lineNumberToGoTo = ""
     , debounce = Debounce.init

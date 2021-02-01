@@ -5,7 +5,7 @@ numbered : String -> String
 numbered str =
     str
       |> String.lines
-      |> List.indexedMap (\k s -> String.padLeft 4 ' ' (String.fromInt (k + 1) ++ ": " ++ s))
+      |> List.indexedMap (\k s -> String.padLeft 4 ' ' (String.fromInt k ++ ": " ++ s))
       |> String.join "\n"
 
 hello = "Hello, it is me you're looking for!"

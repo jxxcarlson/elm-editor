@@ -20,6 +20,7 @@ import Debounce
 import EditorModel exposing (AutoLineBreak(..), EditMode(..), EditorModel, VimMode(..))
 import EditorMsg exposing (EMsg(..), Hover(..), Selection(..))
 import History
+import Position
 import Search
 import Task
 import Update.File
@@ -209,22 +210,37 @@ update msg model =
                         Debug.log "GTHP, HC"  (Window.shiftPosition model.window.offset localPosition)
 
               window =  Window.shift cursor.line model.window
+              -- window =   model.window
+
+              deltaOffset = window.offset - model.window.offset |> Debug.log "deltaOffset"
 
               innerOffset : Dom.Viewport -> Float
               innerOffset viewport_ =
                   let
-                     _ = Debug.log "VP" (viewport_.viewport.y/model.lineHeight)
+                     _ = Debug.log "VP.y: lines" (viewport_.viewport.y/model.lineHeight)
                   in
                   (toFloat (cursor.line - window.offset - 10 ))*model.lineHeight -- - viewport_.viewport.y
+                  -- toFloat window.offset*model.lineHeight -- - viewport_.viewport.y
+                  -- (toFloat (-window.offset ))*model.lineHeight -- - viewport_.viewport.y
 
 
 
-              innerOffset1 = 10
+              deltaY yvp = let
+                             delta = toFloat (cursor.line - 31 + 10)*model.lineHeight
+                           in
+                             if delta < 0 then 0 else delta
 
-              x = cursor.column
+              deltaYY yvp  = let
+                                windowTop = yvp/model.lineHeight |> Debug.log "windowTop"
+                                currentLine = toFloat cursor.line |> Debug.log "currentLine"
+                                delta = (currentLine - windowTop)*model.lineHeight
+                             in
+                                if delta < 0 then 0 else delta
 
-              updateScrollPosition = Dom.getViewportOf "__editor__" |> Task.andThen (\vp -> Dom.setViewportOf "__editor__" (toFloat x) (Debug.log "IOFF" <| innerOffset vp))
-              updateScrollPosition1 = Dom.getViewportOf "__editor__" |> Task.andThen (\vp -> Dom.setViewportOf "__editor__" (toFloat x) (Debug.log "VPY" vp.viewport.y))
+
+
+              updateScrollPosition = Dom.getViewportOf "__editor__"
+                   |> Task.andThen (\vp -> let _ = Debug.log "GVP" vp in Dom.setViewportOf "__editor__" 0 (Debug.log "deltaY" (deltaY vp.viewport.y)))
 
 
               vpInfo : Task.Task Dom.Error Dom.Viewport
@@ -237,7 +253,7 @@ update msg model =
                 , window =  Debug.log "WINDOW!" window
               }
              -- , Update.Scroll.setEditorViewportForLine model.lineHeight (Window.positive (cursor.line - window.offset - innerOffset1))
-              ,  Cmd.none -- Task.attempt ViewportMotion updateScrollPosition
+             ,  Cmd.none -- Task.attempt ViewportMotion updateScrollPosition
             --, Task.attempt GotViewportInfo vpInfo
             )
 
