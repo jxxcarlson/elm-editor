@@ -3,7 +3,40 @@
 This package offers a pure Elm text editor.
 It relies heavily on prior work of 
 Martin Janiczek and Sidney Nemzer.  It is a pleasure
-to acknowledge their work.
+to acknowledge their work.  I would also like to acknowldge the 
+work of Anton-4 who cleaned up the codebase, running elm-analyse on it,
+fixed a variety of bugs, and wrote the `small-demo` app to 
+facilitate further development.  Many thanks!
+
+After a time away from this code (other things called!) I am now back at work
+with a first order of business to make it possible to edit large files
+without the app slowing to a crawl. As a test document, I am using 
+Darwin's *Voyage of the Beagle,* which weighs in at over 15,000 lines.
+Even with a file this large, the app is quite snappy.
+
+The approach taken is for the editor to "see" only a small window into the 
+full array of lines of text.  That window is currently initialized 
+in EditorModel.init at 300 lines, about ten times the number of lines visible
+in the editor of `smalldemo`.  
+
+It is important to distinguish between the viewport and the window.  The
+former consists of what is visible, while the latter populates the scene 
+defines what can be visible without moving the window in the document from
+which it is derived.
+
+When the user clicks on a line that is near the upper or lower boundary
+of the window, the window and viewport are both adjusted so that (a) there 
+is plenty of text above/below the viewport boundaries,
+ and so that (b) the cursor does not appear to move.
+
+Once the windowing system is working satisfactorily, I'll move back to working
+on other issues, including many annoying bugs and infelicities.  Regarding the
+windowing system, one thing I do not yet know how to do is to adjust the 
+window when the user scrolls to a position near the top or bottom of the window.
+This would seem to require some sort of subscription to the y-coordinate of
+the viewport.
+
+
 
 There will be real documentation at some point.  For now, 
 if you want to use the package, the best way is to
