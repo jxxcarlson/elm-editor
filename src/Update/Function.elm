@@ -19,6 +19,7 @@ import Debounce
 import Dict exposing (Dict)
 import EditorModel exposing (EditMode(..), EditorModel, HelpState(..), ViewMode(..), VimMode(..))
 import EditorMsg exposing (EMsg(..), Position, Selection(..))
+import Position
 import Task
 import Update.Line
 import Update.Vim
@@ -63,9 +64,17 @@ copySelection model =
 
 pasteSelection : EditorModel -> EditorModel
 pasteSelection model =
+    -- TODO:CURRENT
     let
-        newCursor =
-            { line = model.cursor.line + Array.length model.selectedText, column = model.cursor.column }
+        _ = Debug.log "pasteSelection" (Array.length model.selectedText)
+        _ = Debug.log "oldCursor" model.cursor
+        newCursor = (if Array.length model.selectedText == 1 then
+                        let
+                          insertionLength = Array.get 0 model.selectedText |> Maybe.withDefault "" |> String.length
+                        in
+                        Position.deltaColumn (insertionLength + 1) model.cursor
+                    else
+                         { line = model.cursor.line + Array.length model.selectedText, column = model.cursor.column }) |> Debug.log "newCursor"
     in
     { model
         | lines = ArrayUtil.replaceLines model.cursor model.cursor model.selectedText model.lines

@@ -1,6 +1,5 @@
 module ArrayUtil exposing
-    ( Position
-    , between
+    ( between
     , cut
     , cutOut
     , cutString
@@ -25,14 +24,28 @@ module ArrayUtil exposing
 
 import Array exposing (Array)
 import String.Extra
+import Position exposing(Position, deltaLine)
 
 
-type alias Position =
-    { line : Int
-    , column : Int
-    }
 
+{-
 
+Functions:
+
+    stringFromZipper : StringZipper -> String
+
+    cut : Position -> Position -> Array String -> StringZipper
+
+    cutString : Int -> Int -> Int -> Array String -> StringZipper
+    cutString line col1 col2 array = ...
+
+    joinEnds : StringZipper -> ( Array String, Array String )
+    joinEnds z = ... ( joinedEnds, z.middle )
+
+    join : StringZipper -> Array String
+    join z = joinThree z.before z.middle z.after
+
+-}
 type alias StringZipper =
     { before : Array String
     , middle : Array String
@@ -447,15 +460,24 @@ replace pos1 pos2 str array =
 
 replaceLines : Position -> Position -> Array String -> Array String -> Array String
 replaceLines pos1 pos2 newLines targetLines =
+    -- TODO:CURRENT
     if pos1.line == pos2.line then
-        let
-            sz =
-                cutString pos1.line pos1.column pos2.column targetLines
-        in
-        join { sz | middle = newLines }
+        if Array.length newLines == 1 then
+           let
+               insertion = (Array.get 0 newLines |> Maybe.withDefault "") ++ " "
+           in
+            insert pos1 insertion targetLines
+        else
+            let
+                _ = Debug.log "replaceLines (1)" (Array.length newLines)
+                sz =
+                    cutString pos1.line pos1.column pos2.column targetLines
+            in
+            join { sz | middle = newLines }
 
-    else
+        else
         let
+            _ = Debug.log "replaceLines (2)" (Array.length newLines)
             sz =
                 cut pos1 pos2 targetLines
         in

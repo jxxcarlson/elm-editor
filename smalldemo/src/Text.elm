@@ -1,6 +1,22 @@
-module Text exposing (hello, darwinIntroduction, darwin)
+module Text exposing (..)
+
+
+numbered : String -> String
+numbered str =
+    str
+      |> String.lines
+      |> List.indexedMap (\k s -> String.padLeft 4 ' ' (String.fromInt k ++ ": " ++ s))
+      |> String.join "\n"
 
 hello = "Hello, it is me you're looking for!"
+
+test1 = """
+one
+two
+three: this is a test, I repeat, a test.
+four
+five
+"""
 
 darwinIntroduction = """
 

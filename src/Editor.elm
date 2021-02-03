@@ -51,6 +51,7 @@ import Update.Scroll
 import View.Editor
 import View.Help
 import View.Search
+import Window
 
 
 {-| Opaque type for the editor
@@ -66,7 +67,7 @@ getLineHeight (Editor data) =
 
 
 {-| Return (lineNumber, target) where target in the
-editor's array of lines is a string
+editor's array inof lines is a string
 which matches the key
 -}
 indexOf : Editor -> String -> List Int

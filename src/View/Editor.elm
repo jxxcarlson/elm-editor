@@ -12,6 +12,7 @@ import Json.Decode as JD
 import Keymap
 import View.Helper
 import Widget
+import Window
 import String exposing (String)
 
 
@@ -31,6 +32,13 @@ statisticsDisplay model =
     H.span
         displayStyle
         [ H.text <| "(" ++ l ++ ", " ++ w ++ ")" ]
+
+statisticsDisplay2 : EditorModel -> Html EMsg
+statisticsDisplay2 model =
+    H.span
+        displayStyle
+        [ H.text <| "(" ++ (String.fromInt model.window.offset) ++ ", " ++ (String.fromInt model.cursor.line) ++ ", " ++ String.fromInt model.cursor.column ++ ")" ]
+
 
 
 displayStyle : List (Attribute msg)
@@ -213,27 +221,47 @@ onMultiplelick msg1 msg2 =
 
 viewLineNumbers : EditorModel -> Html EMsg
 viewLineNumbers model =
+    let
+      offset = if model.cursor.line <= 2*model.window.height - 2 then
+                 model.cursor.line
+               else
+                 (model.cursor.line - 2*model.window.height)
+
+      lineHeightString = (String.fromFloat (model.lineHeight + 0.7)) ++ "px"
+    in
     H.div
-        [ HA.style "width" "2.5em"
+        [ HA.style "width" "3.5em"
         , HA.style "text-align" "left"
         , HA.style "display" "flex"
         , HA.style "flex-direction" "column"
+        , HA.style "line-height" lineHeightString
         , borderBackgroundColor model.viewMode
         , borderFontColor model.viewMode
         ]
-        (List.range 1 (Array.length model.lines)
-            |> List.map (viewLineNumber model.viewMode)
+        (List.range 1 (4*model.window.height)
+            |> List.map (viewLineNumber model.viewMode offset )
         )
 
 
-viewLineNumber : ViewMode -> Int -> Html EMsg
-viewLineNumber viewMode_ n =
-    H.span [ HA.style "padding-left" "6px", borderBackgroundColor viewMode_, borderFontColor viewMode_ ] [ H.text (String.fromInt n) ]
+viewLineNumber : ViewMode -> Int -> Int -> Html EMsg
+viewLineNumber viewMode_ offset n =
+    H.span [ HA.style "padding-left" "6px", borderBackgroundColor viewMode_, borderFontColor viewMode_ ] [ H.text (String.fromInt (n + offset)) ]
 
 
 viewContent : EditorModel -> Html EMsg
 viewContent model =
     -- TODO: handle option mouseclick for LR sync
+    let
+       cursor = model.cursor
+       selection = model.selection
+       offset = model.window.offset
+
+       windowLines = Window.lines model.window model.lines
+
+       cursor2 = Window.shiftPosition -offset cursor
+       selection2 = Window.shiftSelection -offset selection
+       hover2 = Window.shiftHover -offset model.hover
+    in
     H.div
         [ HA.style "position" "relative"
         , HA.style "flex" "1"
@@ -245,11 +273,11 @@ viewContent model =
         , HE.onClick GoToHoveredPosition
         , HE.onMouseOut (Hover NoHover)
         ]
-        [ viewLines model.viewMode model.lineHeight model.cursor model.hover model.selection model.lines ]
+        [ viewLines model.viewMode model.lineHeight cursor2 hover2 selection2 windowLines]
 
 
 viewLines : ViewMode -> Float -> Position -> Hover -> Selection -> Array String -> Html EMsg
-viewLines viewMode_ lineHeight position hover selection lines =
+viewLines viewMode_ lineHeight  position hover selection lines =
     H.div
         []
         (lines
@@ -259,7 +287,7 @@ viewLines viewMode_ lineHeight position hover selection lines =
 
 
 viewLine : ViewMode -> Float -> Position -> Hover -> Selection -> Array String -> Int -> String -> Html EMsg
-viewLine viewMode_ lineHeight position hover selection lines line content =
+viewLine viewMode_ lineHeight  position hover selection lines line content =
     Html.Lazy.lazy8 viewLine_ viewMode_ lineHeight position hover selection lines line content
 
 
@@ -392,6 +420,10 @@ viewCursor position char =
         [ H.text char ]
 
 
+shift : Int -> Position -> Position
+shift k pos =
+    {pos | line = pos.line - k }
+
 viewSelectedChar : ViewMode -> Position -> String -> Html EMsg
 viewSelectedChar viewMode_ position char =
     H.span
@@ -497,11 +529,11 @@ viewHeader model =
         , borderBackgroundColor model.viewMode
         ]
         [ rowButton 60 "Help" ToggleHelp [ HA.style "margin-left" "24px", HA.style "margin-top" "4px" ]
-        , statisticsDisplay model
+        , statisticsDisplay2 model
         , rowButton 32 "S" ToggleSearchPanel [ HA.style "margin-left" "24px", HA.style "margin-top" "4px", HA.title "Toggle search panel" ]
         , View.Helper.showIf model.showSearchPanel toggleReplacePanel
         , rowButton 32 "Go" GoToLine [ HA.style "margin-left" "24px", HA.style "margin-top" "4px", HA.title "Go to line number" ]
-        , textField 32 "" AcceptLineToGoTo [ HA.style "margin-left" "4px", HA.style "margin-top" "4px" ] [ textFieldFontColor model, textFieldBackgroundColor model, HA.style "font-size" "14px" ]
+        , textField 56 "" AcceptLineToGoTo [ HA.style "margin-left" "4px", HA.style "margin-top" "4px" ] [ textFieldFontColor model, textFieldBackgroundColor model, HA.style "font-size" "14px" ]
         , rowButton 60 (autoLinBreakTitle model) ToggleAutoLineBreak [ HA.style "margin-left" "24px", HA.style "margin-top" "4px", HA.title "Toggle auto line break/wrap" ]
         , editModeDisplay model
 

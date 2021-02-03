@@ -20,6 +20,7 @@ import Debounce
 import EditorModel exposing (AutoLineBreak(..), EditMode(..), EditorModel, VimMode(..))
 import EditorMsg exposing (EMsg(..), Hover(..), Selection(..))
 import History
+import Position
 import Search
 import Task
 import Update.File
@@ -27,6 +28,8 @@ import Update.Function as Function
 import Update.Group
 import Update.Scroll
 import Update.Wrap
+import Window
+
 
 
 update : EMsg -> EditorModel -> ( EditorModel, Cmd EMsg )
@@ -82,6 +85,7 @@ update msg model =
 
         InsertChar char ->
             let
+                _ = Debug.log "INSERT" char
                 ( debounce, debounceCmd ) =
                     Debounce.push EditorModel.debounceConfig char model.debounce
             in
@@ -174,22 +178,61 @@ update msg model =
             , Cmd.none
             )
 
+        ViewportMotion _ ->
+            (model, Cmd.none)
+
+        GotViewportInfo r ->
+            case r of
+             Err e ->
+                 let
+                    _ = Debug.log "ERR" e
+                 in
+                 (model, Cmd.none)
+             Ok vp ->
+                 let
+                     _ = Debug.log "(o, line, vpy)" (model.window.offset, model.cursor.line, vp.viewport.y/model.lineHeight)
+                 in
+                 (model, Cmd.none)
+
         GoToHoveredPosition ->
+            -- TODO : Current work
+            let
+              cursor =
+                 -- global coordinates
+                 case model.hover of
+                     NoHover ->
+                         model.cursor
+
+                     HoverLine line ->
+                        Debug.log "GTHP, HL" { line = (line + model.window.offset), column = lastColumn model.lines (line)}
+
+                     HoverChar localPosition ->
+                        Debug.log "GTHP, HC"  (Window.shiftPosition model.window.offset localPosition)
+
+              window =  Window.shift cursor.line model.window
+
+              deltaOffset = window.offset - model.window.offset |> toFloat |> Debug.log "deltaOffset"
+
+              scrollCmd = if deltaOffset == 0 then
+                            Cmd.none
+                          else
+                            scrollEditor
+
+              scrollEditor = Task.attempt ViewportMotion updateScrollPosition
+
+              newViewportY yvp  = yvp - deltaOffset*model.lineHeight
+
+              updateScrollPosition = Dom.getViewportOf "__editor__"
+                                 |> Task.andThen (\vp -> let _ = Debug.log "GVP" vp
+                                                         in Dom.setViewportOf "__editor__" 0 (newViewportY vp.viewport.y))
+
+
+            in
             ( { model
-                | cursor =
-                    case model.hover of
-                        NoHover ->
-                            model.cursor
-
-                        HoverLine line ->
-                            { line = line
-                            , column = lastColumn model.lines line
-                            }
-
-                        HoverChar position ->
-                            position
+                | cursor = Debug.log "CURSOR!" cursor
+                , window =  Debug.log "WINDOW!" window
               }
-            , Cmd.none
+             ,  scrollCmd
             )
 
         LastLine ->
@@ -455,6 +498,7 @@ update msg model =
             Update.Scroll.toString str model
 
         GotViewport result ->
+            -- TODO
             case result of
                 Ok vp ->
                     let
