@@ -210,51 +210,29 @@ update msg model =
                         Debug.log "GTHP, HC"  (Window.shiftPosition model.window.offset localPosition)
 
               window =  Window.shift cursor.line model.window
-              -- window =   model.window
 
-              deltaOffset = window.offset - model.window.offset |> Debug.log "deltaOffset"
+              deltaOffset = window.offset - model.window.offset |> toFloat |> Debug.log "deltaOffset"
 
-              innerOffset : Dom.Viewport -> Float
-              innerOffset viewport_ =
-                  let
-                     _ = Debug.log "VP.y: lines" (viewport_.viewport.y/model.lineHeight)
-                  in
-                  (toFloat (cursor.line - window.offset - 10 ))*model.lineHeight -- - viewport_.viewport.y
-                  -- toFloat window.offset*model.lineHeight -- - viewport_.viewport.y
-                  -- (toFloat (-window.offset ))*model.lineHeight -- - viewport_.viewport.y
+              scrollCmd = if deltaOffset == 0 then
+                            Cmd.none
+                          else
+                            scrollEditor
 
+              scrollEditor = Task.attempt ViewportMotion updateScrollPosition
 
-
-              deltaY yvp = let
-                             delta = toFloat (cursor.line - 31 + 10)*model.lineHeight
-                           in
-                             if delta < 0 then 0 else delta
-
-              deltaYY yvp  = let
-                                windowTop = yvp/model.lineHeight |> Debug.log "windowTop"
-                                currentLine = toFloat cursor.line |> Debug.log "currentLine"
-                                delta = (currentLine - windowTop)*model.lineHeight
-                             in
-                                if delta < 0 then 0 else delta
-
-
+              newViewportY yvp  = yvp - deltaOffset*model.lineHeight
 
               updateScrollPosition = Dom.getViewportOf "__editor__"
-                   |> Task.andThen (\vp -> let _ = Debug.log "GVP" vp in Dom.setViewportOf "__editor__" 0 (Debug.log "deltaY" (deltaY vp.viewport.y)))
+                                 |> Task.andThen (\vp -> let _ = Debug.log "GVP" vp
+                                                         in Dom.setViewportOf "__editor__" 0 (newViewportY vp.viewport.y))
 
 
-              vpInfo : Task.Task Dom.Error Dom.Viewport
-              vpInfo = Dom.getViewportOf "__editor__"
-
-              -- yada = Task.attempt ViewportMotion updateScrollPoosition
             in
             ( { model
                 | cursor = Debug.log "CURSOR!" cursor
                 , window =  Debug.log "WINDOW!" window
               }
-             -- , Update.Scroll.setEditorViewportForLine model.lineHeight (Window.positive (cursor.line - window.offset - innerOffset1))
-             ,  Cmd.none -- Task.attempt ViewportMotion updateScrollPosition
-            --, Task.attempt GotViewportInfo vpInfo
+             ,  scrollCmd
             )
 
         LastLine ->
