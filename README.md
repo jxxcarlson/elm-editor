@@ -11,7 +11,7 @@ facilitate further development.  Many thanks!
 After a time away from this code (other things called!) I am now back at work
 with a first order of business to make it possible to edit large files
 without the app slowing to a crawl. As a test document, I am using 
-Darwin's *Voyage of the Beagle,* which weighs in at over 15,000 lines.
+Darwin's *Origin of the Species,* which weighs in at over 15,000 lines.
 Even with a file this large, the app is quite snappy.
 
 The approach taken is for the editor to "see" only a small window into the 
