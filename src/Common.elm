@@ -416,7 +416,7 @@ sanitizeHover_ hover model =
 
    in
     ({ model | hover = newHover model.hover model.lines model.window.offset, window = window}
-      , scrollCmd window model.window model.lineHeight )
+      , scrollCmd    window model.window model.lineHeight )
 
 
 

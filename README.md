@@ -31,11 +31,12 @@ is plenty of text above/below the viewport boundaries,
 
 Once the windowing system is working satisfactorily, I'll move back to working
 on other issues, including many annoying bugs and infelicities.  Regarding the
-windowing system, one thing I do not yet know how to do is to adjust the 
-window when the user scrolls to a position near the top or bottom of the window.
-This would seem to require some sort of subscription to the y-coordinate of
+windowing system, I've done some preliminary work on making the window into the 
+full text update itself as the user scroll, so that the user never runs
+out of text.  This currently works if the user scrolls say, on a mac by 
+by moving the cursor with track pad.  For the scroll bars, I think I need
+some sort of subscription to the y-coordinate of
 the viewport.
-
 
 
 There will be real documentation at some point.  For now, 
