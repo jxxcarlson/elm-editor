@@ -223,10 +223,7 @@ update msg model =
               newViewportY yvp  = yvp - deltaOffset*model.lineHeight
 
               updateScrollPosition = Dom.getViewportOf "__editor__"
-                                 |> Task.andThen (\vp -> let _ = Debug.log "GVP" vp
-                                                         in Dom.setViewportOf "__editor__" 0 (newViewportY vp.viewport.y))
-
-
+                   |> Task.andThen (\vp -> Dom.setViewportOf "__editor__" 0 (newViewportY vp.viewport.y))
             in
             ( { model
                 | cursor = Debug.log "CURSOR!" cursor
