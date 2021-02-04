@@ -62,10 +62,10 @@ shiftSelection k sel =
 
 shift : Int -> Window -> Window
 shift line window =
-    if line < window.offset + 10 then -- window.height // 3
+    if line < window.offset + ( window.height // 3) then
       -- decrease the offset because we are too close to the top of the window
       Debug.log "< 1 third" { window | offset = positive <| line - (window.height)//2 }
-    else if line > window.offset + window.height - 10 then -- (2 * window.height)//3
+    else if line > window.offset + (2 * window.height)//3 then
       -- increase the offset because we are too close to the bottom of the window
       Debug.log "> 2 thirds"{ window | offset = positive <| line - (window.height)//2 }
     else
