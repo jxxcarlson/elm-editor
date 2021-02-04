@@ -363,118 +363,60 @@ lineContent lines lineNum =
 
 
 
+newHover hover lines offset =
+    case hover of
+        NoHover ->
+            hover
+
+        HoverLine line ->
+            HoverLine (clamp 0 (lastLine lines) line)
+
+        HoverChar { line, column } ->
+            let
+                sanitizedLine = (Debug.log "SAN LINE (1)" <|
+                    -- Ensure that the line (number) is not
+                    -- beyond the index of the last line
+                    clamp 0 (lastLine lines) (Debug.log "SAN LINE (2)" line)) |> Debug.log "SAN LINE (3)"
+
+                sanitizedColumn = Debug.log "SCOL (2)" <|
+                    clamp 0 (lastColumn lines (offset + sanitizedLine)) (Debug.log "SCOL(1)" column)
+            in
+            HoverChar
+                { line = sanitizedLine
+                , column = sanitizedColumn
+                }
+
 sanitizeHover : EditorModel -> EditorModel
 sanitizeHover model =
+    { model | hover = newHover model.hover model.lines model.window.offset }
+
+
+scrollCmd newWindow oldWindow lineHeight =
     let
-
-          window =  case model.hover of
-                  NoHover -> model.window
-                  HoverLine line -> model.window
-                  HoverChar { line, column} -> Window.shift line model.window
-
-          cursor = model.cursor
-
-          deltaOffset = window.offset - model.window.offset |> toFloat |> Debug.log "deltaOffset"
-
-          scrollCmd = if deltaOffset == 0 then
-                        Cmd.none
-                      else
-                        scrollEditor
-
-          scrollEditor = Task.attempt ViewportMotion updateScrollPosition
-
-          newViewportY yvp  = yvp - deltaOffset*model.lineHeight
-
-          updateScrollPosition = Dom.getViewportOf "__editor__"
-               |> Task.andThen (\vp -> Dom.setViewportOf "__editor__" 0 (newViewportY vp.viewport.y))
-
-
-   in
-    { model
-        | hover =
-            case model.hover of
-                NoHover ->
-                    model.hover
-
-                HoverLine line ->
-                    HoverLine (clamp 0 (lastLine model.lines) line)
-
-                HoverChar { line, column } ->
-                    let
-                        sanitizedLine = (Debug.log "SAN LINE (1)" <|
-                            -- Ensure that the line (number) is not
-                            -- beyond the index of the last line
-                            clamp 0 (lastLine model.lines) (Debug.log "SAN LINE (2)" line)) |> Debug.log "SAN LINE (3)"
-
-                        sanitizedColumn = Debug.log "SCOL (2)" <|
-                            clamp 0 (lastColumn model.lines (model.window.offset + sanitizedLine)) (Debug.log "SCOL(1)" column)
-                    in
-                    HoverChar
-                        { line = sanitizedLine
-                        , column = sanitizedColumn
-                        }
-    }
+        deltaOffset = newWindow.offset - oldWindow.offset |> toFloat |> Debug.log "deltaOffset"
+        newViewportY yvp  = yvp + 100 - deltaOffset * lineHeight
+        updateScrollPosition = Dom.getViewportOf "__editor__"
+                       |> Task.andThen (\vp -> Dom.setViewportOf "__editor__" 0 (newViewportY vp.viewport.y))
+    in
+        if deltaOffset == 0 then
+            Cmd.none
+        else
+            Task.attempt ViewportMotion updateScrollPosition
 
 sanitizeHover_ : Hover -> EditorModel -> (EditorModel, Cmd EMsg)
 sanitizeHover_ hover model =
     let
 
-          gamma = 100
-
           offset = model.window.offset
-
-          _ = Debug.log "SH__" hover
 
           window =  case hover of
                   NoHover -> model.window
                   HoverLine line -> Window.shift (offset + line) model.window
                   HoverChar { line, column} -> Window.shift (offset + line) model.window
 
-          cursor = model.cursor
-
-          deltaOffset = window.offset - model.window.offset |> toFloat |> Debug.log "deltaOffset"
-
-          scrollCmd = if deltaOffset == 0 then
-                        Cmd.none
-                      else
-                        scrollEditor
-
-          scrollEditor = Task.attempt ViewportMotion updateScrollPosition
-
-          newViewportY yvp  = yvp + 100 - deltaOffset * model.lineHeight --  deltaOffset*model.lineHeight
-
-          updateScrollPosition = Dom.getViewportOf "__editor__"
-               |> Task.andThen (\vp -> Dom.setViewportOf "__editor__" 0 (newViewportY vp.viewport.y))
-
-
    in
-    ({ model
-            | hover =
-                case model.hover of
-                    NoHover ->
-                        model.hover
-
-                    HoverLine line ->
-                        HoverLine (clamp 0 (lastLine model.lines) line)
-
-                    HoverChar { line, column } ->
-                        let
-                            sanitizedLine = (Debug.log "SAN LINE (1)" <|
-                                -- Ensure that the line (number) is not
-                                -- beyond the index of the last line
-                                clamp 0 (lastLine model.lines) (Debug.log "SAN LINE (2)" line)) |> Debug.log "SAN LINE (3)"
-
-                            sanitizedColumn = Debug.log "SCOL (2)" <|
-                                clamp 0 (lastColumn model.lines (model.window.offset + sanitizedLine)) (Debug.log "SCOL(1)" column)
-                        in
-                        HoverChar
-                            { line = sanitizedLine
-                            , column = sanitizedColumn
-                            }
-
-            , window = window
-
-    }, scrollCmd )
+    ({ model | hover = newHover model.hover model.lines model.window.offset, window = window}
+      , scrollCmd window model.window model.lineHeight )
 
 
 

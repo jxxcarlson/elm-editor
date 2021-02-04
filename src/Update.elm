@@ -172,7 +172,11 @@ update msg model =
         FirstLine ->
             Action.firstLine model
 
-        Hover hover -> Common.sanitizeHover_ hover model
+         -- Continuous scroll works, click does not
+        Hover hover -> Common.sanitizeHover_ hover { model | hover = hover }
+
+        -- Click works, continuous scroll does not
+        -- Hover hover -> ( { model | hover = hover } |> Common.sanitizeHover , Cmd.none)
 
         ViewportMotion _ ->
             (model, Cmd.none)
