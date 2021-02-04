@@ -370,11 +370,13 @@ sanitizeHover model =
 
                 HoverChar { line, column } ->
                     let
-                        sanitizedLine =
-                            clamp 0 (lastLine model.lines) line
+                        sanitizedLine = (Debug.log "SAN LINE (1)" <|
+                            -- Ensure that the line (number) is not
+                            -- beyond the index of the last line
+                            clamp 0 (lastLine model.lines) (Debug.log "SAN LINE (2)" line)) |> Debug.log "SAN LINE (3)"
 
-                        sanitizedColumn =
-                            clamp 0 (lastColumn model.lines sanitizedLine) column
+                        sanitizedColumn = Debug.log "SCOL (2)" <|
+                            clamp 0 (lastColumn model.lines (model.window.offset + sanitizedLine)) (Debug.log "SCOL(1)" column)
                     in
                     HoverChar
                         { line = sanitizedLine

@@ -204,10 +204,11 @@ update msg model =
                          model.cursor
 
                      HoverLine line ->
-                        Debug.log "GTHP, HL" { line = (line + model.window.offset), column = lastColumn model.lines (line)}
+                        --- Debug.log "GTHP, HL" { line = (line + model.window.offset), column = lastColumn model.lines (line)}
+                        Debug.log "GTHP, HL" { line = (line + model.window.offset), column = lastColumn model.lines (model.window.offset + line)}
 
                      HoverChar localPosition ->
-                        Debug.log "GTHP, HC"  (Window.shiftPosition model.window.offset localPosition)
+                        Debug.log "GTHP, HC"  (Window.shiftPosition model.window.offset (Debug.log "LP" localPosition))
 
               window =  Window.shift cursor.line model.window
 

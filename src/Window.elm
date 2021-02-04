@@ -48,7 +48,7 @@ shiftHover k h =
     case h of
         NoHover -> NoHover
         HoverLine l -> HoverLine (l + k)
-        HoverChar p -> HoverChar (shiftPosition k p)
+        HoverChar p -> HoverChar (shiftPosition k (Debug.log "SH" p))
 
 
 shiftSelection : Int -> Selection -> Selection
@@ -72,12 +72,8 @@ shift line window =
       Debug.log "Middle third" window
 
 
--- recenter : Int -> Window -> Window
 recenter : Int -> Window -> { window : Window, windowLine : Int }
 recenter lineNumber window =
-    --if lineNumber < window.height then
-    --  {window = {window | offset = 0}, windowLine = lineNumber}
-    --else --
       {window = {window | offset = positive (lineNumber - OuterConfig.topMargin)}, windowLine = 0}
 
 
