@@ -172,11 +172,7 @@ update msg model =
         FirstLine ->
             Action.firstLine model
 
-        Hover hover ->
-            ( { model | hover = hover }
-                |> Common.sanitizeHover
-            , Cmd.none
-            )
+        Hover hover -> Common.sanitizeHover_ hover model
 
         ViewportMotion _ ->
             (model, Cmd.none)
