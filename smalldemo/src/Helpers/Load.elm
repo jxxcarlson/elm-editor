@@ -9,8 +9,11 @@ config =
     { width = windowWidth 1800 -- 1200
     , height = windowHeight 700
     , fontSize = 16
+    , lineNumbersOn = False
     , verticalScrollOffset = 3
+    , viewMode = EditorModel.Dark
     , debugOn = False
+    , viewLineNumbersOn = False
     , wrapOption = DontWrap
     }
 

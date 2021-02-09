@@ -36,6 +36,7 @@ type alias EditorModel =
     , lineHeight : Float
     , verticalScrollOffset : Int
     , lineNumberToGoTo : String
+    , lineNumbersOn : Bool
     , debounce : Debounce String
     , history : History Snapshot
     , contextMenu : ContextMenu Context
@@ -80,8 +81,11 @@ type alias Config =
     { width : Float
     , height : Float
     , fontSize : Float
+    , lineNumbersOn : Bool
     , verticalScrollOffset : Int
+    , viewMode : ViewMode
     , debugOn : Bool
+    , viewLineNumbersOn : Bool
     , wrapOption : WrapOption
     }
 
@@ -101,6 +105,7 @@ init ( config, contextMenu ) =
     , lineHeight = 1.2 * config.fontSize |> Debug.log "LINE HEIGHT"
     , verticalScrollOffset = config.verticalScrollOffset
     , lineNumberToGoTo = ""
+    , lineNumbersOn = config.lineNumbersOn
     , debounce = Debounce.init
     , history = History.empty
     , contextMenu = contextMenu
@@ -115,7 +120,7 @@ init ( config, contextMenu ) =
     , showSearchPanel = False
     , canReplace = False
     , replacementText = ""
-    , viewMode = Light
+    , viewMode = config.viewMode
     , indentationOffset = 4
     , helpState = HelpOff
     , editMode = StandardEditor

@@ -2,6 +2,7 @@ module View.Editor exposing (viewDebug, viewEditor, viewHeader)
 
 import Array exposing (Array)
 import Common exposing ( hoversToPositions, isLastColumn, lineContent)
+import OuterConfig
 import EditorModel exposing (AutoLineBreak(..), EditMode(..), EditorModel, ViewMode(..), VimMode(..))
 import EditorMsg exposing (Context(..), EMsg(..), Hover(..), Position, Selection(..))
 import Html as H exposing (Attribute, Html)
@@ -172,9 +173,11 @@ viewEditor model =
         , onMultiplelick SelectGroup SelectLine
         , HA.id "__editor__"
         ]
-        [ viewLineNumbers model
-        , viewContent model
+        [ View.Helper.showIf model.lineNumbersOn (viewLineNumbers model)
+         , viewContent model
         ]
+
+
 
 
 editorHeight : EditorModel -> Float
@@ -563,7 +566,7 @@ editModeDisplay model =
                 VimEditor VimInsert ->
                     "E:Vim(i)"
     in
-    H.span [ HA.style "font-style" "bold", HA.style "font-size" "12px", HA.style "margin-left" "25px", HA.style "color" "#a44" ] [ H.text message ]
+    H.span [ HA.style "font-style" "bold", HA.style "font-size" "14px", HA.style "margin-left" "25px", HA.style "color" "#e44" ] [ H.text message ]
 
 
 textFieldBackgroundColor : EditorModel -> Attribute msg

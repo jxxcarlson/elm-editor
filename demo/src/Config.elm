@@ -8,6 +8,10 @@ appMode =
     Desktop
 
 
+lineNumbersOn : Bool
+lineNumberOn = False
+
+
 tickInterval : number
 tickInterval =
     1000
