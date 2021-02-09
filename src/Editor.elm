@@ -49,6 +49,7 @@ import Menu.View exposing (viewContextMenu)
 import Update as U
 import Update.Scroll
 import View.Editor
+import View.Footer
 import View.Help
 import View.Search
 import Window
@@ -164,6 +165,7 @@ view (Editor model) =
         , View.Search.searchPanel model
         , View.Search.replacePanel model
         , View.Editor.viewEditor model
+        , View.Footer.view model
         , viewContextMenu model.width model
         , View.Editor.viewDebug model
         , View.Help.view model |> H.map MarkdownMsg

@@ -4,6 +4,7 @@ import ContextMenu
 import EditorModel exposing (EditorModel)
 import EditorMsg exposing (Context(..), EMsg(..), Hover(..), Selection(..))
 import Html as H exposing (Html)
+import Html.Attributes as HA
 import Menu.Config
 import Menu.Style
 
@@ -15,7 +16,7 @@ viewContextMenu width model =
         [ H.div
             (ContextMenu.open ContextMenuMsg Background :: Menu.Style.backgroundStyles)
             [ H.div
-                (ContextMenu.open ContextMenuMsg Object :: Menu.Style.objectStyles width)
+                (ContextMenu.open ContextMenuMsg Object :: Menu.Style.objectStyles width )
                 []
             ]
         , H.div [] []

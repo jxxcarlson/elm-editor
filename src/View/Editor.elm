@@ -123,6 +123,7 @@ editorBackgroundColor viewMode_ =
             HA.style "background-color" "#444"
 
 
+
 editorFontColor : ViewMode -> Attribute msg
 editorFontColor viewMode_ =
     case viewMode_ of
