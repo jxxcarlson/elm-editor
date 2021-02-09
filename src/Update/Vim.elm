@@ -1,5 +1,4 @@
-module Update.Vim exposing (..)
----(process, update, toString)
+module Update.Vim exposing (process, update, toString)
 
 import Action
 import EditorModel exposing (EditMode(..), EditorModel, VimMode(..))
@@ -7,8 +6,6 @@ import Vim exposing(..)
 import ArrayUtil
 import Array
 import EditDistance exposing(levenshteinOfStrings)
-import List.Extra
-
 
 
 update : VimMsg -> VimModel -> VimModel
@@ -43,10 +40,10 @@ process char model =
 
 executeBuffer : String -> String
 executeBuffer buffer_ =
-    bestMatch buffer_ replacements1
+    bestMatch buffer_ replacements
 
 
-bestMatch : String -> List GuessingDatum1 -> String
+bestMatch : String -> List GuessingDatum -> String
 bestMatch str data =
     data
       |> List.map (\datum -> (distance str datum, datum.r))
@@ -56,7 +53,7 @@ bestMatch str data =
       |> Maybe.withDefault ""
 
 
-distance : String -> GuessingDatum1 -> Int
+distance : String -> GuessingDatum -> Int
 distance word datum =
      let
            n1 = String.length word
@@ -66,27 +63,16 @@ distance word datum =
         levenshteinOfStrings (String.left n datum.k) word
 
 
-type alias GuessingDatum = {a : String, b : String, r : String}
-type alias GuessingDatum1 = {k : String, r : String}
+type alias GuessingDatum = {k : String, r : String}
 
 
-replacements1 : List GuessingDatum1
-replacements1 = [
+replacements : List GuessingDatum
+replacements = [
      { k = "theorem", r ="\\begin{theorem}\nXXX\n\\end{theorem}\n" }
    , { k = "equation", r ="\\begin{equation}\nXXX\n\\end{equation}\n" }
    , { k = "env", r ="\\begin{env}\nXXX\n\\end{env}\n" }
    , { k = "$", r = "$ XX $" }
    , { k = "$$", r = "$$\nXX\n$$" }
-
-  ]
-
-replacements : List GuessingDatum
-replacements = [
-     { a = "begin", b = "theorem", r ="\\begin{theorem}\nXXX\n\\end{theorem}\n" }
-   , { a = "begin", b = "equation", r ="\\begin{equation}\nXXX\n\\end{equation}\n" }
-   , { a = "begin", b = "env", r ="\\begin{env}\nXXX\n\\end{env}\n" }
-   , { a = "$", b = "$", r = "$ XX $" }
-   , { a = "$$", b = "$$", r = "$$\nXX\n$$" }
 
   ]
 
