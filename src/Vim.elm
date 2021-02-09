@@ -13,7 +13,7 @@ init = {
    }
 
 
-type VState = VAccumulate | VDischarge | VNormal
+type VState = VAccumulate | VNormal
 
 
-type VimMsg = StartCommand
+type VimMsg = StartCommand | ToBuffer String

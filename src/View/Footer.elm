@@ -1,23 +1,62 @@
 module View.Footer exposing (view)
 
-import EditorModel exposing (AutoLineBreak(..), EditorModel, ViewMode(..))
+import EditorModel exposing (AutoLineBreak(..), EditorModel, ViewMode(..), EditMode(..), VimMode(..))
 import Html as H exposing (Attribute, Html)
 import Html.Attributes as HA
-
+import Update.Vim as Vim
 
 view : EditorModel -> Html msg
 view model =
     let
-        _ = model.viewMode
+        prefix = "State: "
+        message : String
+        message = Vim.toString model.vimModel.state
+           |> (\x -> prefix ++ x )
+           |> (\y -> String.padRight (45 - String.length y) ' ' y)
+
     in
-    H.div [  HA.style "height" "24px"
+    H.div [  HA.style "height" "30px"
             , HA.style "font-size" "14px"
             , HA.style "padding-left" "12px"
-            , HA.style "padding-top" "6px"
+            , HA.style "line-height" "30px"
             , footerBackgroundColor model.viewMode
             , footerFontColor model.viewMode
             ]
-            [H.text "testing ..."]
+            [editModeDisplay model, vimStateDisplay model, vimBufferDisplay model]
+
+
+vimStateDisplay : EditorModel -> Html msg
+vimStateDisplay model =
+    if model.editMode == StandardEditor then
+       H.span [ ] []
+    else
+       H.span [ HA.style "font-size" "14px", HA.style "width" "30px", HA.style "margin-right" "16px",  HA.style "color" "#eee" ]
+       [ H.text <| Vim.toString model.vimModel.state ]
+
+
+vimBufferDisplay : EditorModel -> Html msg
+vimBufferDisplay model =
+    if model.editMode == StandardEditor || String.length model.vimModel.buffer == 0 then
+       H.span [ ] []
+    else
+       H.span [ HA.style "font-size" "14px", HA.style "width" "400px", HA.style "margin-right" "16px",  HA.style "color" "#eee" ] [ H.text <| "Buffer: " ++ model.vimModel.buffer ]
+
+
+editModeDisplay : EditorModel -> Html msg
+editModeDisplay model =
+    let
+        message =
+            case model.editMode of
+                StandardEditor ->
+                    ""
+
+                VimEditor VimNormal ->
+                    "Vim"
+
+                VimEditor VimInsert ->
+                    "-- Insert --"
+    in
+    H.span [ HA.style "font-style" "bold", HA.style "font-size" "14px", HA.style "width" "20px",  HA.style "margin-left" "4px", HA.style "margin-right" "16px",  HA.style "color" "#ee4444" ] [ H.text message ]
 
 footerBackgroundColor : ViewMode -> Attribute msg
 footerBackgroundColor viewMode_ =

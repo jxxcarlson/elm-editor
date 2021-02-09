@@ -19,12 +19,14 @@
         "elm-community/list-extra": "8.2.4 <= v < 9.0.0",
         "elm-community/maybe-extra": "5.1.0 <= v < 6.0.0",
         "elm-community/string-extra": "4.0.1 <= v < 5.0.0",
+        "emilianobovetti/edit-distance": "1.0.7 <= v < 2.0.0",
         "folkertdev/elm-paragraph": "1.0.0 <= v < 2.0.0",
         "jinjor/elm-contextmenu": "2.0.0 <= v < 3.0.0",
         "jinjor/elm-debounce": "3.0.0 <= v < 4.0.0",
         "jxxcarlson/elm-markdown": "9.2.5 <= v < 10.0.0",
         "lovasoa/elm-rolling-list": "1.1.4 <= v < 2.0.0",
-        "mdgriffith/elm-ui": "1.1.8 <= v < 2.0.0"
+        "mdgriffith/elm-ui": "1.1.8 <= v < 2.0.0",
+        "rluiten/stringdistance": "1.0.4 <= v < 2.0.0"
     },
     "test-dependencies": {
         "elm-explorations/test": "1.2.2 <= v < 2.0.0"

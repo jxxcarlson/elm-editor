@@ -18,7 +18,6 @@ import EditorMsg exposing (Context(..), EMsg(..), Hover(..), Position, Selection
 import History exposing (History)
 import RollingList exposing (RollingList)
 import Window exposing(Window)
-import Text
 import Vim
 
 
@@ -92,7 +91,7 @@ type alias Config =
 
 init : ( Config, ContextMenu Context ) -> EditorModel
 init ( config, contextMenu ) =
-    { lines = Array.fromList (String.lines Text.darwin)
+    { lines = Array.fromList (String.lines "")
     , cursor = Position 0 0
     , window = Window.init 600
     , hover = NoHover
