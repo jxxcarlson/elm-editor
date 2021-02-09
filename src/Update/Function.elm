@@ -316,7 +316,7 @@ toggleEditMode : EditorModel -> EditorModel
 toggleEditMode model =
     case model.editMode of
         StandardEditor ->
-            { model | editMode = VimEditor VimNormal }
+            { model | editMode = Debug.log "EDIT MODE" <| VimEditor VimNormal }
 
         VimEditor _ ->
-            { model | editMode = StandardEditor }
+            { model | editMode = Debug.log "EDIT MODE" <| StandardEditor }

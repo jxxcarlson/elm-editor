@@ -19,6 +19,7 @@ import History exposing (History)
 import RollingList exposing (RollingList)
 import Window exposing(Window)
 import Text
+import Vim
 
 
 type alias EditorModel =
@@ -53,7 +54,9 @@ type alias EditorModel =
     , indentationOffset : Int
     , helpState : HelpState
     , editMode : EditMode
+    , vimModel : Vim.VimModel
     }
+
 
 
 type ViewMode
@@ -116,6 +119,7 @@ init ( config, contextMenu ) =
     , indentationOffset = 4
     , helpState = HelpOff
     , editMode = StandardEditor
+    , vimModel = Vim.init
     }
 
 

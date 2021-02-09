@@ -27,6 +27,7 @@ import Update.File
 import Update.Function as Function
 import Update.Group
 import Update.Scroll
+import Update.Vim
 import Update.Wrap
 import Window
 
@@ -542,3 +543,6 @@ update msg model =
 
                 Nothing ->
                     ( model, Cmd.none )
+
+        Vim vimMsg ->
+            ({ model | vimModel = Update.Vim.update vimMsg model.vimModel}, Cmd.none)

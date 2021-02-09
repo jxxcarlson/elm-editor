@@ -11,6 +11,7 @@ import ContextMenu
 import Debounce
 import File exposing (File)
 import Markdown.Render exposing (MarkdownMsg(..))
+import Vim
 
 
 {-| Cursor position
@@ -141,3 +142,5 @@ type EMsg
     | ToggleEditMode
       --
     | MarkdownMsg MarkdownMsg
+    --
+    | Vim Vim.VimMsg

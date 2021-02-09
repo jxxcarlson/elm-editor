@@ -172,7 +172,7 @@ keymaps =
             , ( "ArrowRight", MoveToLineEnd )
             , ( "ß", SendLineForLRSync ) -- option s
             , ( "∂", ToggleDarkMode ) -- option d
-            , ( "´", ToggleEditMode ) -- option e
+            , ( "√", ToggleEditMode ) -- option v
             ]
     , controlAndOption =
         Dict.fromList

@@ -312,3 +312,4 @@ selectRight model =
                     extendSelection model.cursor model.cursor
     in
     { model | selection = newSelection }
+
