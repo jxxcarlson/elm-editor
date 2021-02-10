@@ -12,8 +12,15 @@ numbered str =
 hello =
     "Hello, it is me you're looking for!"
 
+start = """
+This is a test:
 
-start =
+$$
+\\int_{-\\infty}^\\infty e^{-x^2} dx = \\pi
+$$
+"""
+
+long =
     """
 
 

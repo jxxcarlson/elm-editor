@@ -4,7 +4,7 @@ import Html exposing (..)
 import Html.Attributes as HA exposing (..)
 import Html.Events exposing (onClick, onInput)
 import Style.Html exposing(..)
-import Msg exposing(..)
+import Model exposing(..)
 import Browser.Dom as Dom
 import Task exposing(Task)
 

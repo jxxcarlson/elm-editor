@@ -1,11 +1,15 @@
 scripts:
 
-  make: elm make src/Main.elm --output=public/Main.js
+  make: elm make  --optimize src/Main.elm --output=public/Main.js
+
+  debug: elm make --debug src/Main.elm --output=public/Main.js
 
   look: open -a /Applications/Firefox.app public/index.html
 
-  live: elm-live src/Main.elm
+  live: elm-live src/Main.elm --open --start-page=public/index.html -- --output=public/Main.js
 
   cloc: cloc --by-file ../src/*
+
+  
 
 

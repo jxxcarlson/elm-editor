@@ -150,12 +150,14 @@ view model =
                 [ HA.style "position" "absolute"
                 , HA.style "left" "0"
                 , HA.style "top" "37px"
-                , HA.style "background-color" "#FEF8F1"
+                , HA.style "background-color" "#fff" 
                 , HA.style "z-index" "1000"
                 , HA.style "width" (px (model.width - 20))
                 , HA.style "height" (px model.height)
                 , HA.style "overflow-y" "scroll"
                 , HA.style "padding-left" "20px"
+                , HA.style "font-size" "12px"
+                , HA.style "line-height" "1.3"
                 ]
                 [ Markdown.Render.toHtml ExtendedMath data
                 ]

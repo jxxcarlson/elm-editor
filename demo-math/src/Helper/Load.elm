@@ -1,4 +1,4 @@
-module Helpers.Load exposing (config)
+module Helper.Load exposing (config)
 
 import EditorModel
 import EditorMsg exposing (EMsg(..), WrapOption(..))

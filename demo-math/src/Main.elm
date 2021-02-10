@@ -4,14 +4,13 @@ import Browser
 import Editor exposing (Editor)
 import Element exposing (Element, row, column, el, px, text, centerX, centerY, fill)
 import Element.Background as Background
-import Helpers.Load as Load
+import Helper.Load as Load
 import Html exposing (Html)
 import Http
 import Text
 --
 import Debounce exposing (Debounce)
-import MiniLatex
-import MiniLatex.Edit exposing (Data)
+import MiniLatex.EditSimple
 import MiniLatex.Export
 import Browser.Dom as Dom
 import Style.Html exposing(..)
@@ -21,10 +20,11 @@ import Html exposing (..)
 import Html.Attributes as HA exposing (..)
 import Html.Events exposing (onClick, onInput)
 import UI exposing(..)
-import Msg exposing(..)
+import Model exposing(..)
 import Task exposing(Task)
 import File.Download as Download
-
+import Helper.Sync
+import EditorMsg
 
 -- MAIN
 
@@ -44,40 +44,21 @@ type alias Flags =
     }
 
 
--- MODEL
-
-
-type alias Model =
-    { editor : Editor
-    , sourceText : String
-    , renderedText : Html Msg
-    , macroText : String
-    , editRecord : Data (Html MiniLatex.Edit.LaTeXMsg)
-    , debounce : Debounce String
-    , counter : Int
-    , seed : Int
-    , selectedId : String
-    , message : String
-    , images : List String
-    , imageUrl : String
-    }
-
-
 init : Flags -> ( Model, Cmd Msg )
 init flags =
     let
         newEditor =
-            Editor.initWithContent (Text.numbered Text.start) Load.config
+            Editor.initWithContent Text.start Load.config
 
 
         editRecord =
-            MiniLatex.Edit.init flags.seed Text.start
+            MiniLatex.EditSimple.init flags.seed Text.start Nothing
 
         model =
             { editor = newEditor
             , sourceText = Text.start
             , macroText = ""
-            , renderedText = render "" Text.start
+            , renderedText = MiniLatex.EditSimple.get "" editRecord |> Html.div [] |> Html.map LaTeXMsg
             , editRecord = editRecord
             , debounce = Debounce.init
             , counter = 0
@@ -105,12 +86,12 @@ debounceConfig =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        MyEditorMsg editorMsg ->
-            let
-                ( newEditor, cmd ) =
-                    Editor.update editorMsg model.editor
-            in
-            ( { model | editor = newEditor }, Cmd.map MyEditorMsg cmd )
+        -- MyEditorMsg editorMsg ->
+        --     let
+        --         ( newEditor, cmd ) =
+        --             Editor.update editorMsg model.editor
+        --     in
+        --     ( { model | editor = newEditor }, Cmd.map MyEditorMsg cmd )
 
         NoOp ->
             ( model, Cmd.none )
@@ -147,7 +128,7 @@ update msg model =
                     String.fromInt model.counter
 
                 newEditRecord =
-                    MiniLatex.Edit.update model.seed str model.editRecord
+                    MiniLatex.EditSimple.update model.seed str Nothing model.editRecord
             in
             ( { model
                 | editRecord = newEditRecord
@@ -173,7 +154,7 @@ update msg model =
         Clear ->
             let
                 editRecord =
-                    MiniLatex.Edit.init 0 ""
+                    MiniLatex.EditSimple.init 0 "" Nothing
             in
             ( { model
                 | sourceText = ""
@@ -187,7 +168,7 @@ update msg model =
         FullRender ->
             let
                 editRecord =
-                    MiniLatex.Edit.init model.seed model.sourceText
+                    MiniLatex.EditSimple.init model.seed model.sourceText Nothing
             in
             ( { model
                 | counter = model.counter + 1
@@ -200,13 +181,13 @@ update msg model =
         RestoreText ->
             let
                 editRecord =
-                    MiniLatex.Edit.init model.seed Text.start
+                    MiniLatex.EditSimple.init model.seed  Text.start Nothing
             in
             ( { model
                 | counter = model.counter + 1
                 , editRecord = editRecord
                 , sourceText = Text.start
-                , renderedText = renderFromEditRecord model.selectedId model.counter editRecord
+                , renderedText = MiniLatex.EditSimple.get "" editRecord |> Html.div [] |> Html.map LaTeXMsg
               }
             , Cmd.none
             )
@@ -214,7 +195,7 @@ update msg model =
         ExampleText ->
             let
                 editRecord =
-                    MiniLatex.Edit.init model.seed Text.start
+                    MiniLatex.EditSimple.init model.seed Text.start Nothing
             in
             ( { model
                 | counter = model.counter + 1
@@ -234,16 +215,33 @@ update msg model =
                     ( model, Cmd.none )
 
         LaTeXMsg laTeXMsg ->
-            case laTeXMsg of
-                MiniLatex.Edit.IDClicked id ->
-                    ( { model
-                        | message = "Clicked: " ++ id
-                        , selectedId = id
-                        , counter = model.counter + 2
-                        , renderedText = renderFromEditRecord id model.counter model.editRecord
-                      }
-                    , Cmd.none
-                    )
+            -- TODO: re-implement this
+            (model, Cmd.none)
+
+        MyEditorMsg editorMsg ->
+            -- Handle messages from the Editor.  The messages CopyPasteClipboard, ... GotViewportForSync
+            -- require special handling.  The others are passed to a default handler
+            let
+                ( newEditor, cmd ) =
+                    Editor.update editorMsg model.editor
+            in
+            case editorMsg of
+
+                EditorMsg.InsertChar c ->
+                    let 
+                      _ = Debug.log "InsertChar" c
+                    in
+                    Helper.Sync.sync newEditor cmd model
+
+         Helper.Sync.syncAndHighlightRenderedText str Cmd.none model
+
+                _ ->
+                    -- Handle the default cases
+                    if List.member msg (List.map MyEditorMsg Editor.syncMessages) then
+                        Helper.Sync.sync newEditor cmd model
+
+                    else
+                        ( { model | editor = newEditor }, Cmd.map MyEditorMsg cmd )
 
 
 
@@ -291,9 +289,9 @@ prependMacros macros_ sourceText_ =
     "$$\n" ++ (macros_ |> normalize) ++ "\n$$\n\n" ++ sourceText_
 
 
-renderFromEditRecord : String -> Int -> Data (Html MiniLatex.Edit.LaTeXMsg) -> Html Msg
+renderFromEditRecord : String -> Int -> MiniLatex.EditSimple.Data -> Html Msg
 renderFromEditRecord selectedId counter editRecord =
-    MiniLatex.Edit.get selectedId editRecord
+    MiniLatex.EditSimple.get selectedId editRecord
         |> List.map (Html.map LaTeXMsg)
         |> List.map (\x -> Html.div [ HA.style "margin-bottom" "0.65em" ] [ x ])
         |> Html.div []
@@ -302,9 +300,3 @@ renderFromEditRecord selectedId counter editRecord =
 render_ : String -> Cmd Msg
 render_ str =
     Task.perform Render (Task.succeed str)
-
-
-render : String -> String -> Html Msg
-render selectedId sourceText_ =
-    MiniLatex.render selectedId sourceText_ |> Html.map LaTeXMsg
-
