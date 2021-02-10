@@ -103,7 +103,7 @@ config flags =
     , fontSize = 16
     , verticalScrollOffset = 3
     , viewLineNumbersOn = False
-    , viewMode = EditorModel.Light
+    , viewMode = EditorModel.Dark
     , debugOn = False
     , wrapOption = DontWrap
     }

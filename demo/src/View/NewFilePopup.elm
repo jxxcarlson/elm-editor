@@ -44,7 +44,7 @@ view model =
             Element.none
 
 
-titleLine : Element msg
+titleLine : Element Msg
 titleLine =
     row [ width (px 450) ] [ text "New File", el [ alignRight ] Widget.closePopupButton ]
 

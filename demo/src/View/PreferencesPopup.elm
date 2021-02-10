@@ -196,7 +196,7 @@ viewSignUp model =
             Element.none
 
 
-titleLine : Element msg
+titleLine : Element Msg
 titleLine =
     row [ width (px 450) ] [ text "Preferences", el [ alignRight ] Widget.closePopupButton ]
 

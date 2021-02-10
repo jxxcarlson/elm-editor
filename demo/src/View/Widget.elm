@@ -270,7 +270,7 @@ serverStatus_ model =
                 (text "")
 
 
-saveFileToStorageButton : Model -> Element msg
+saveFileToStorageButton : Model -> Element Msg
 saveFileToStorageButton model =
     case model.documentStatus of
         DocumentDirty ->
@@ -292,7 +292,7 @@ saveFileToStorageButton model =
                 ]
 
 
-closePopupButton : Element msg
+closePopupButton : Element Msg
 closePopupButton =
     altButton "X" (ManagePopup PopupClosed) [ Font.size 14 ]
 
@@ -420,7 +420,7 @@ newDocumentButton =
     button_ 70 "Create" CreateDocument
 
 
-documentTypeButton : Model -> Element msg
+documentTypeButton : Model -> Element Msg
 documentTypeButton model =
     let
         title =
@@ -442,7 +442,7 @@ documentTypeButton model =
         ]
 
 
-loadDocumentButton : Model -> String -> String -> Element msg
+loadDocumentButton : Model -> String -> String -> Element Msg
 loadDocumentButton model docTitle buttonLabel =
     let
         bgColor =
@@ -495,7 +495,7 @@ input msg text label width labelWidth =
         |> TextField.toElement
 
 
-button : String -> b -> List (Element.Attribute msg) -> Element msg
+-- button : String -> m -> List (Element.Attribute msg) -> Element msg
 button str msg attr =
     Input.button
         ([ paddingXY 8 8
@@ -508,7 +508,7 @@ button str msg attr =
         }
 
 
-altButton : String -> b -> List (Element.Attribute msg) -> Element msg
+-- altButton : String -> b -> List (Element.Attribute msg) -> Element msg
 altButton str msg attr =
     Input.button
         ([ paddingXY 8 8
@@ -521,7 +521,7 @@ altButton str msg attr =
         }
 
 
-plainButton : Int -> String -> c -> List (Element.Attribute msg) -> Element msg
+-- plainButton : Int -> String -> c -> List (Element.Attribute msg) -> Element msg
 plainButton width_ str msg attr =
     Input.button
         ([ paddingXY 8 0
@@ -536,7 +536,7 @@ plainButton width_ str msg attr =
         }
 
 
-textField : Int -> String -> (String -> msg) -> List (Html.Attribute a) -> List (Html.Attribute b) -> Html.Html c
+-- textField : Int -> String -> (String -> msg) -> List (Html.Attribute a) -> List (Html.Attribute b) -> Html.Html c
 textField width str msg attr innerAttr =
     Html.div (Attribute.style "margin-bottom" "10px" :: attr)
         [ Html.input

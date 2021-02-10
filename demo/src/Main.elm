@@ -619,7 +619,7 @@ viewEditorAndRenderedText model =
         ]
 
 
-viewEditor : Model -> Element msg
+viewEditor : Model -> Element Msg
 viewEditor model =
     Editor.view model.editor |> Html.map EditorMsg |> Element.html
 

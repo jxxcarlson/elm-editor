@@ -96,7 +96,7 @@ inputItem label msg inputText width_ =
         ]
 
 
-titleLine : Document -> Element msg
+titleLine : Document -> Element Msg
 titleLine doc =
     row [ width (px 450) ] [ text ("File info: " ++ doc.fileName), el [ alignRight ] Widget.closePopupButton ]
 
