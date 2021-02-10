@@ -3,7 +3,7 @@ module UI exposing(..)
 import Html exposing (..)
 import Html.Attributes as HA exposing (..)
 import Html.Events exposing (onClick, onInput)
-import Style exposing(..)
+import Style.Html exposing(..)
 import Msg exposing(..)
 import Browser.Dom as Dom
 import Task exposing(Task)
@@ -34,9 +34,9 @@ label text_ =
 
 
 
-renderedSource : Html Msg -> Html Msg
-renderedSource renderedText =
-    Html.div (renderedSourceStyle ++ [ HA.class "rhs" ])
+renderedSource : Float -> Float ->  Html Msg -> Html Msg
+renderedSource width height renderedText =
+    Html.div (renderedSourceStyle width height ++ [ ]) -- HA.class "rhs" 
         [ renderedText ]
 
 

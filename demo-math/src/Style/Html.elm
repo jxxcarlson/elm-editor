@@ -1,4 +1,4 @@
-module Style exposing (..)
+module Style.Html exposing (..)
 
 -- import Html exposing (..)
 
@@ -54,28 +54,19 @@ outerStyle =
     ]
 
 
-editorTextStyle =
-    textStyle "400px" "450px" "#fff"
-
-
-macroPanelStyle =
-    textStyle "300px" "450px" "#fff"
-
-
-renderedSourceStyle =
-    textStyle "400px" "610px" "#fff"
-
-
-textStyle width height color =
-    [ style "width" width
-    , style "height" height
+renderedSourceStyle width height =
+    [ style "width" ((String.fromFloat width) ++ "px")
+    , style "height" ((String.fromFloat height) ++ "px")
     , style "padding" "15px"
-    , style "margin-left" "20px"
-    , style "background-color" color
+    , style "background-color" "#fff"
     , style "overflow" "scroll"
     , style "float" "left"
     , style "margin-right" "20px"
+    , style "white-space" "normal"
+    , style "font-size" "14px"
+    , style "line-height" "1.3"
     ]
+
 
 
 labelStyle =

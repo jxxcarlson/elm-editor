@@ -2,7 +2,8 @@ module Main exposing (main)
 
 import Browser
 import Editor exposing (Editor)
-import Element exposing (Element, row, column, el, height, px, text)
+import Element exposing (Element, row, column, el, px, text, centerX, centerY, fill)
+import Element.Background as Background
 import Helpers.Load as Load
 import Html exposing (Html)
 import Http
@@ -13,7 +14,8 @@ import MiniLatex
 import MiniLatex.Edit exposing (Data)
 import MiniLatex.Export
 import Browser.Dom as Dom
-import Style exposing(..)
+import Style.Html exposing(..)
+import Style.Element
 import Random
 import Html exposing (..)
 import Html.Attributes as HA exposing (..)
@@ -259,13 +261,16 @@ subscriptions model =
 
 view : Model -> Html Msg
 view model =
-    Element.layout [] <|
-        column []
-            [ row [] [
-                  el [] (viewEditor model)
-                , renderedSource model.renderedText |> Element.html
+    Element.layout [Background.color (Style.Element.gray 0.4), Element.width fill, Element.height fill] <|
+        column [ centerY, centerX] 
+            [ row [Element.spacing 0]  [
+                   el [] (viewEditor model)
+                  -- TODO: fix the below (round) --- (round Load.config.width)
+                  , el [Element.alignTop] (UI.renderedSource (Load.config.width - 40) (Load.config.height + 22) model.renderedText |> Element.html)
                 ]
             ]
+            
+          
 
 
 viewEditor : Model -> Element Msg

@@ -7,7 +7,7 @@ import EditorMsg exposing (EMsg(..), WrapOption(..))
 config : EditorModel.Config
 config =
     { width = windowWidth 1200
-    , height = windowHeight 800
+    , height = windowHeight 740
     , fontSize = 16
     , verticalScrollOffset = 3
     , viewMode = EditorModel.Dark
