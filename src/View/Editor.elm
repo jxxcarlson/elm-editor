@@ -163,8 +163,7 @@ viewEditor model =
         , HA.style "font-size" (px model.fontSize)
         , HA.style "line-height" (px model.lineHeight)
         , HA.style "white-space" "pre-wrap"
-        , HA.style "height" (px (editorHeight model))
-        , HA.style "overflow-y" "scroll"
+        , HA.style "height" (px (editorHeight model - 35))
         , HA.style "width" (px model.width)
         , Keymap.handle
         , HA.tabindex 0
@@ -304,7 +303,7 @@ viewLine_ viewMode_ lineHeight position hover selection lines line content =
         , HA.style "background-color" "#f0f0f0"
         , HA.style "left" "0"
         , HA.style "right" "0"
-        , HA.style "padding-left" "4px"
+        , HA.style "padding-left" "14px" -- Left margin in editor set here
         , editorBackgroundColor viewMode_
         , editorFontColor viewMode_
         , HA.style "height" (px lineHeight)
