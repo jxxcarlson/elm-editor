@@ -233,8 +233,6 @@ update msg model =
                     in
                     Helper.Sync.sync newEditor cmd model
 
-         Helper.Sync.syncAndHighlightRenderedText str Cmd.none model
-
                 _ ->
                     -- Handle the default cases
                     if List.member msg (List.map MyEditorMsg Editor.syncMessages) then
@@ -264,11 +262,22 @@ view model =
             [ row [Element.spacing 0]  [
                    el [] (viewEditor model)
                   -- TODO: fix the below (round) --- (round Load.config.width)
-                  , el [Element.alignTop] (UI.renderedSource (Load.config.width - 40) (Load.config.height + 22) model.renderedText |> Element.html)
-                ]
+                  , el [Element.alignTop] 
+                    (UI.renderedSource 
+                      (Load.config.width - 40) 
+                      (Load.config.height + 22) 
+                      (render model.editRecord )
+                    )
+                
+               ]
             ]
             
-          
+render : MiniLatex.EditSimple.Data -> Html Msg        
+render  editRecord =
+  editRecord
+    |> MiniLatex.EditSimple.get "" 
+    |> Html.div []
+    |> Html.map LaTeXMsg
 
 
 viewEditor : Model -> Element Msg

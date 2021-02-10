@@ -6,6 +6,7 @@ import Html.Events exposing (onClick, onInput)
 import Style.Html exposing(..)
 import Model exposing(..)
 import Browser.Dom as Dom
+import Element exposing(Element)
 import Task exposing(Task)
 
 
@@ -34,10 +35,10 @@ label text_ =
 
 
 
-renderedSource : Float -> Float ->  Html Msg -> Html Msg
+renderedSource : Float -> Float ->  Html Msg -> Element Msg
 renderedSource width height renderedText =
-    Html.div (renderedSourceStyle width height ++ [ ]) -- HA.class "rhs" 
-        [ renderedText ]
+    (Html.div (renderedSourceStyle width height ++ [ ]) -- HA.class "rhs" 
+        [ renderedText ]) |> Element.html
 
 
 setViewportForElement : String -> Cmd Msg

@@ -41,6 +41,7 @@ updateRenderingData lines model =
     in
     { model | editRecord = newEditRecord, counter = counter }
 
+                      
 
 -- update :  Int -> String -> MiniLatex.EditSimple.Data -> MiniLatex.EditSimple.Data
 -- update version source data =

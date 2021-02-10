@@ -35671,8 +35671,6 @@ var $mdgriffith$elm_ui$Element$rgb = F3(
 var $author$project$Style$Element$gray = function (g) {
 	return A3($mdgriffith$elm_ui$Element$rgb, g, g, g);
 };
-var $mdgriffith$elm_ui$Internal$Model$unstyled = A2($elm$core$Basics$composeL, $mdgriffith$elm_ui$Internal$Model$Unstyled, $elm$core$Basics$always);
-var $mdgriffith$elm_ui$Element$html = $mdgriffith$elm_ui$Internal$Model$unstyled;
 var $mdgriffith$elm_ui$Internal$Model$OnlyDynamic = F2(
 	function (a, b) {
 		return {$: 'OnlyDynamic', a: a, b: b};
@@ -35928,6 +35926,17 @@ var $mdgriffith$elm_ui$Element$layoutWith = F3(
 	});
 var $mdgriffith$elm_ui$Element$layout = $mdgriffith$elm_ui$Element$layoutWith(
 	{options: _List_Nil});
+var $author$project$Main$render = function (editRecord) {
+	return A2(
+		$elm$html$Html$map,
+		$author$project$Model$LaTeXMsg,
+		A2(
+			$elm$html$Html$div,
+			_List_Nil,
+			A2($jxxcarlson$meenylatex$MiniLatex$EditSimple$get, '', editRecord)));
+};
+var $mdgriffith$elm_ui$Internal$Model$unstyled = A2($elm$core$Basics$composeL, $mdgriffith$elm_ui$Internal$Model$Unstyled, $elm$core$Basics$always);
+var $mdgriffith$elm_ui$Element$html = $mdgriffith$elm_ui$Internal$Model$unstyled;
 var $author$project$Style$Html$renderedSourceStyle = F2(
 	function (width, height) {
 		return _List_fromArray(
@@ -35952,13 +35961,14 @@ var $author$project$Style$Html$renderedSourceStyle = F2(
 	});
 var $author$project$UI$renderedSource = F3(
 	function (width, height, renderedText) {
-		return A2(
-			$elm$html$Html$div,
-			_Utils_ap(
-				A2($author$project$Style$Html$renderedSourceStyle, width, height),
-				_List_Nil),
-			_List_fromArray(
-				[renderedText]));
+		return $mdgriffith$elm_ui$Element$html(
+			A2(
+				$elm$html$Html$div,
+				_Utils_ap(
+					A2($author$project$Style$Html$renderedSourceStyle, width, height),
+					_List_Nil),
+				_List_fromArray(
+					[renderedText])));
 	});
 var $mdgriffith$elm_ui$Internal$Model$AsRow = {$: 'AsRow'};
 var $mdgriffith$elm_ui$Internal$Model$asRow = $mdgriffith$elm_ui$Internal$Model$AsRow;
@@ -44405,8 +44415,11 @@ var $author$project$Main$view = function (model) {
 							$mdgriffith$elm_ui$Element$el,
 							_List_fromArray(
 								[$mdgriffith$elm_ui$Element$alignTop]),
-							$mdgriffith$elm_ui$Element$html(
-								A3($author$project$UI$renderedSource, $author$project$Helper$Load$config.width - 40, $author$project$Helper$Load$config.height + 22, model.renderedText)))
+							A3(
+								$author$project$UI$renderedSource,
+								$author$project$Helper$Load$config.width - 40,
+								$author$project$Helper$Load$config.height + 22,
+								$author$project$Main$render(model.editRecord)))
 						]))
 				])));
 };
