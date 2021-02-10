@@ -143,6 +143,7 @@ deleteDocumentButton searchOptions metadata =
         msg =
             if List.member searchOptions [ ShowDeletedOnly, ShowDeleted ] then
                 HardDelete metadata.fileName
+
             else
                 SoftDelete metadata
     in
@@ -160,12 +161,14 @@ documentLinkButton searchOptions userName metaDataOfCurrentDocument metadata =
         bgColor =
             if metaDataOfCurrentDocument.id == metadata.id then
                 Background.color (Element.rgba 0.7 0.7 1.0 0.5)
+
             else
                 Background.color (Element.rgba 0 0 0 0)
 
         buttonTitle =
             if searchOptions == ExcludeDeleted then
                 prettify userName metadata.fileName
+
             else
                 metadata.fileName
     in

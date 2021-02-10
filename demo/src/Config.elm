@@ -1,4 +1,4 @@
-module Config exposing (appMode, tickInterval, messageLifeTime, fileLocation, serverURL, testURL, token)
+module Config exposing (appMode, fileLocation, messageLifeTime, serverURL, testURL, tickInterval, token)
 
 import Types exposing (AppMode(..), FileLocation(..))
 
@@ -9,7 +9,8 @@ appMode =
 
 
 viewLineNumbersOn : Bool
-viewLineNumbersOn = False
+viewLineNumbersOn =
+    False
 
 
 tickInterval : number

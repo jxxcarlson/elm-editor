@@ -92,6 +92,7 @@ updateFileList rec fileList =
         mapper r =
             if r.id == rec.id then
                 rec
+
             else
                 r
     in

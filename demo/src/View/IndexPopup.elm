@@ -5,7 +5,6 @@ import Index
 import Types exposing (FileLocation(..), HandleIndex(..), Model, Msg(..), PopupStatus(..), PopupWindow(..))
 
 
-
 view : Model -> Element Msg
 view model =
     case model.popupStatus of
@@ -26,4 +25,3 @@ view model =
 
         PopupOpen _ ->
             Element.none
-

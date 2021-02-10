@@ -1,4 +1,4 @@
-module Data exposing (about, dummyMetaData, template, onTheHorizon, markdownExample, mathExample, astro, aboutMiniLaTeX, aboutMiniLaTeX2, miniLaTeXExample)
+module Data exposing (about, aboutMiniLaTeX, aboutMiniLaTeX2, astro, dummyMetaData, markdownExample, mathExample, miniLaTeXExample, onTheHorizon, template)
 
 import Document exposing (DocType(..), Document, Metadata)
 import Time

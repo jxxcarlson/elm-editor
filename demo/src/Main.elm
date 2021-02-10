@@ -297,6 +297,7 @@ update msg model =
                     -- Handle the default cases
                     if List.member msg (List.map EditorMsg Editor.syncMessages) then
                         Helper.Sync.sync newEditor cmd model
+
                     else
                         ( { model | editor = newEditor }, Cmd.map EditorMsg cmd )
 
@@ -552,6 +553,7 @@ saveFileToStorage : Model -> ( Model, Cmd Msg )
 saveFileToStorage model =
     if modBy 15 model.tickCount == 14 then
         Update.Document.updateDocument model
+
     else
         ( { model | tickCount = model.tickCount + 1 }
         , Cmd.none
@@ -565,6 +567,7 @@ pasteToEditorAndClipboard model str =
             Editor.placeInClipboard str model.editor
     in
     { model | editor = Editor.insertAtCursor str editor2 } |> withCmd Cmd.none
+
 
 load : Int -> ( Int, Int ) -> RenderingOption -> String -> RenderingData
 load counter selectedId renderingOption str =

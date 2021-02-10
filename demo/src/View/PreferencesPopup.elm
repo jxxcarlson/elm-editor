@@ -1,4 +1,4 @@
-module View.PreferencesPopup exposing (view, viewSignedIn, viewSetup, getUserName, getDocumentDirectory, getDownloadDirectory, displayUserName, displayDocumentDirectory, displayDownloadDirectory, viewSignIn, viewSignUp, titleLine, authorInput, authorNameInput, userNameInput, emailInput, passwordInput, passwordAgainInput)
+module View.PreferencesPopup exposing (authorInput, authorNameInput, displayDocumentDirectory, displayDownloadDirectory, displayUserName, emailInput, getDocumentDirectory, getDownloadDirectory, getUserName, passwordAgainInput, passwordInput, titleLine, userNameInput, view, viewSetup, viewSignIn, viewSignUp, viewSignedIn)
 
 import Element
     exposing

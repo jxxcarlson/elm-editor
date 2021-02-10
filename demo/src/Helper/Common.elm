@@ -96,6 +96,7 @@ removePostfix postfix fileName =
     in
     if postfix == postfix_ then
         String.join "." newParts
+
     else
         fileName
 

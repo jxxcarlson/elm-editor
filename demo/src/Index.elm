@@ -4,11 +4,23 @@ import Element exposing (Element, height, paddingXY, px, spacing, width)
 import Element.Background as Background
 import Element.Font as Font
 import Helper.Common
-import Parser.Advanced exposing (Parser, run, Token(..), symbol
-  , succeed, (|=), (|.), map
-  , Trailing(..), Step(..)
-  , Nestable(..)
-  , getChompedString, chompWhile, chompUntil)
+import Parser.Advanced
+    exposing
+        ( (|.)
+        , (|=)
+        , Nestable(..)
+        , Parser
+        , Step(..)
+        , Token(..)
+        , Trailing(..)
+        , chompUntil
+        , chompWhile
+        , getChompedString
+        , map
+        , run
+        , succeed
+        , symbol
+        )
 import Types exposing (HandleIndex(..), Msg(..))
 import View.Widget as Widget
 
@@ -94,12 +106,14 @@ restOfBlock =
         succeed ()
             |. chompUntil (Token "\n\n" (Expecting "expecting blank line"))
 
+
 viewFileName : String -> String -> String -> Element Msg
 viewFileName userName currentFileName fileName =
     let
         bgColor =
             if currentFileName == fileName then
                 Background.color (Element.rgba 0.7 0.7 1.0 0.5)
+
             else
                 Background.color (Element.rgba 0 0 0 0)
     in
@@ -131,7 +145,7 @@ prettify userName str =
                     |> List.head
                     |> Maybe.withDefault "???"
         in
-            a ++ "." ++ b |> String.replace userName ""
+        a ++ "." ++ b |> String.replace userName ""
+
     else
         String.replace userName "" str
-            

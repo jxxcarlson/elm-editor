@@ -132,6 +132,7 @@ normalize : String -> String
 normalize str =
     if str == "" then
         "none"
+
     else
         str
 

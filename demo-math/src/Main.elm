@@ -2,7 +2,7 @@ module Main exposing (main)
 
 import Browser
 import Editor exposing (Editor)
-import Element exposing (Element, column, text)
+import Element exposing (Element, column, el, height, px, text)
 import Helpers.Load as Load
 import Html exposing (Html)
 import Http
@@ -80,7 +80,7 @@ view : Model -> Html Msg
 view model =
     Element.layout [] <|
         column []
-            [ Element.el [] (viewEditor model)
+            [ el [] (viewEditor model)
             ]
 
 

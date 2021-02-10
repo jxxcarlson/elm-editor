@@ -1,4 +1,4 @@
-module View.FilePopup exposing (view, infoPanel, changePanel, item, inputItem, titleLine, fileInput, fileNameInput)
+module View.FilePopup exposing (changePanel, fileInput, fileNameInput, infoPanel, inputItem, item, titleLine, view)
 
 import Document exposing (Document)
 import Element

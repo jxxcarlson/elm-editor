@@ -1,4 +1,4 @@
-module View.NewFilePopup exposing (view, titleLine, fileInput, fileNameInput)
+module View.NewFilePopup exposing (fileInput, fileNameInput, titleLine, view)
 
 import Element
     exposing

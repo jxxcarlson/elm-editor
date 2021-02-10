@@ -13,6 +13,7 @@ showIf : Bool -> Element Msg -> Element Msg
 showIf flag el =
     if flag then
         el
+
     else
         Element.none
 

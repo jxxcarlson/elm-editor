@@ -16,5 +16,6 @@ updateMessageLife : Model -> Model
 updateMessageLife model =
     if model.messageLife > 0 then
         { model | messageLife = model.messageLife - 1 }
+
     else
         model

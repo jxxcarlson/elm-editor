@@ -16,7 +16,7 @@ module Helper.Diff exposing
 import Diff exposing (Change(..))
 import Document exposing (Document)
 import Maybe.Extra
-import Regex exposing (Regex, Match)
+import Regex exposing (Match, Regex)
 
 
 rxLocal : Regex
@@ -142,7 +142,8 @@ conflictsResolved : String -> Bool
 conflictsResolved str =
     if String.contains "@remote[" str then
         False
-    else 
+
+    else
         not <| String.contains "@local[" str
 
 
@@ -176,12 +177,14 @@ stringValue change =
         Added str ->
             if str == "" then
                 str
+
             else
                 "@remote[" ++ str ++ "]"
 
         Removed str ->
             if str == "" then
                 str
+
             else
                 "@local[" ++ str ++ "]"
 

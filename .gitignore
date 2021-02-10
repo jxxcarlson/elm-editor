@@ -11,3 +11,4 @@ elm-stuff
 demo/dist/index.tauri.html
 node_modules
 
+**/.DS_Store

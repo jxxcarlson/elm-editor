@@ -62,7 +62,10 @@ view model =
             Element.none
 
 
+
 -- titleLine : Model -> Element Msg
+
+
 titleLine doc =
     row [ width (px 450), Font.size 14, Font.color Style.blackColor ] [ text doc.fileName, el [ alignRight ] Widget.closePopupButton ]
 

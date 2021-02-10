@@ -83,7 +83,11 @@ stringFromDocType docType =
             "minilatex"
 
         IndexDoc ->
-            "TODO" -- TODO implement
+            "TODO"
+
+
+
+-- TODO implement
 
 
 type alias Uuid =

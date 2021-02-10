@@ -8,8 +8,8 @@ module Helper.Load exposing
 import Data
 import Document exposing (DocType(..), Document)
 import Editor
-import EditorMsg exposing (WrapOption(..))
 import EditorModel exposing (EditorModel)
+import EditorMsg exposing (WrapOption(..))
 import Helper.Common
 import Markdown.Option exposing (MarkdownOption(..))
 import Render exposing (RenderingOption(..))
@@ -54,7 +54,7 @@ load document model =
         , counter = model.counter + 1
         , editor =
             Editor.initWithContent document.content
-                (config { width = model.width, height = model.height,  wrapOption = DontWrap })
+                (config { width = model.width, height = model.height, wrapOption = DontWrap })
         , docTitle = document.fileName
         , docType = docType
         , currentDocument = Just document
@@ -94,9 +94,12 @@ createAndLoad time fileName_ content_ docType_ model =
     ( doc, load doc model |> UuidHelper.newUuid )
 
 
+
 -- config : { a | width : Float, height : Float } -> EditorModel
 -- config : { a | width : Float, height : Float } -> EditorModel]c
-config : { a | width : Float, height : Float }  -> EditorModel.Config
+
+
+config : { a | width : Float, height : Float } -> EditorModel.Config
 config flags =
     { width = Helper.Common.windowWidth flags.width
     , height = Helper.Common.windowHeight (flags.height - 10)

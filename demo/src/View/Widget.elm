@@ -1,6 +1,7 @@
 module View.Widget exposing
     ( aboutButton
     , acceptLocalButton
+    , acceptOneLocalButton
     , acceptOneRemoteButton
     , acceptRemoteButton
     , button
@@ -40,18 +41,18 @@ module View.Widget exposing
     , syncDocumentButton
     , textField
     , toggleFileLocationButton
-    , acceptOneLocalButton)
+    )
 
 import Document exposing (DocType(..))
 import Element
     exposing
-        ( el
+        ( Element
+        , el
         , height
         , paddingXY
         , px
         , text
         , width
-        , Element
         )
 import Element.Background as Background
 import Element.Font as Font
@@ -64,15 +65,14 @@ import Types
         ( DocumentStatus(..)
         , FileLocation(..)
         , MergeSite(..)
+        , Model
         , Msg(..)
         , PopupStatus(..)
         , PopupWindow(..)
         , ResolveMergeConflict(..)
         , SearchOptions(..)
         , ServerStatus(..)
-        , Model
         )
-
 import View.Helpers
 import View.Style as Style
 import Widget.Button as Button exposing (Size(..))
@@ -448,6 +448,7 @@ loadDocumentButton model docTitle buttonLabel =
         bgColor =
             if model.docTitle == docTitle then
                 Style.redColor
+
             else
                 Style.grayColor
     in
@@ -495,7 +496,10 @@ input msg text label width labelWidth =
         |> TextField.toElement
 
 
+
 -- button : String -> m -> List (Element.Attribute msg) -> Element msg
+
+
 button str msg attr =
     Input.button
         ([ paddingXY 8 8
@@ -508,7 +512,10 @@ button str msg attr =
         }
 
 
+
 -- altButton : String -> b -> List (Element.Attribute msg) -> Element msg
+
+
 altButton str msg attr =
     Input.button
         ([ paddingXY 8 8
@@ -521,7 +528,10 @@ altButton str msg attr =
         }
 
 
+
 -- plainButton : Int -> String -> c -> List (Element.Attribute msg) -> Element msg
+
+
 plainButton width_ str msg attr =
     Input.button
         ([ paddingXY 8 0
@@ -536,7 +546,10 @@ plainButton width_ str msg attr =
         }
 
 
+
 -- textField : Int -> String -> (String -> msg) -> List (Html.Attribute a) -> List (Html.Attribute b) -> Html.Html c
+
+
 textField width str msg attr innerAttr =
     Html.div (Attribute.style "margin-bottom" "10px" :: attr)
         [ Html.input

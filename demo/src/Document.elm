@@ -133,18 +133,21 @@ extendFileName docType_ prefix uuid fileName =
         removeMDSuffix s =
             if String.right 3 s == ".md" then
                 String.dropRight 3 s
+
             else
                 s
 
         removeTeXSuffix s =
             if String.right 4 s == ".tex" then
                 String.dropRight 4 s
+
             else
                 s
 
         removeIndexSuffix s =
             if String.right 6 s == ".index" then
                 String.dropRight 6 s
+
             else
                 s
 
@@ -273,7 +276,6 @@ updateSyncTimes t doc =
 
 syncOperation : Document -> Document -> SyncOperation
 syncOperation localDocument remoteDocument =
-
     case ( localDocument.timeSynced, remoteDocument.timeSynced ) of
         ( Nothing, _ ) ->
             if localDocument.content == remoteDocument.content then
