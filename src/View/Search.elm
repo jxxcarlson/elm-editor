@@ -137,6 +137,7 @@ showIf : Bool -> Html EMsg -> Html EMsg
 showIf flag el =
     if flag then
         el
+
     else
         H.div [] []
 

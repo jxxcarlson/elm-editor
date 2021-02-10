@@ -17,8 +17,8 @@ import Debounce exposing (Debounce)
 import EditorMsg exposing (Context(..), EMsg(..), Hover(..), Position, Selection(..), WrapOption(..))
 import History exposing (History)
 import RollingList exposing (RollingList)
-import Window exposing(Window)
 import Vim
+import Window exposing (Window)
 
 
 type alias EditorModel =
@@ -56,7 +56,6 @@ type alias EditorModel =
     , editMode : EditMode
     , vimModel : Vim.VimModel
     }
-
 
 
 type ViewMode

@@ -20,51 +20,52 @@ type Direction
 group are returned. Otherwise `Nothing` is returned.
 -}
 groupRange : Position -> Array String -> Maybe ( Int, Int )
-groupRange ({ line, column }) strArray =
-    Array.get line strArray |> Maybe.andThen (\text ->
-        let
-            chars : ( Maybe Char, Maybe Char, Maybe Char )
-            chars =
-                charsAround column text
+groupRange { line, column } strArray =
+    Array.get line strArray
+        |> Maybe.andThen
+            (\text ->
+                let
+                    chars : ( Maybe Char, Maybe Char, Maybe Char )
+                    chars =
+                        charsAround column text
 
-            range : (Char -> Bool) -> Maybe ( Int, Int )
-            range pred =
-                case tuple3CharsPred pred chars of
-                    ( True, True, True ) ->
-                        Just
-                            ( groupStart column text + 1
-                            , groupEnd column text - 1
-                            )
+                    range : (Char -> Bool) -> Maybe ( Int, Int )
+                    range pred =
+                        case tuple3CharsPred pred chars of
+                            ( True, True, True ) ->
+                                Just
+                                    ( groupStart column text + 1
+                                    , groupEnd column text - 1
+                                    )
 
-                    ( False, True, True ) ->
-                        Just
-                            ( column
-                            , groupEnd column text - 1
-                            )
+                            ( False, True, True ) ->
+                                Just
+                                    ( column
+                                    , groupEnd column text - 1
+                                    )
 
-                    ( True, True, False ) ->
-                        Just
-                            ( groupStart column text + 1
-                            , column + 1
-                            )
+                            ( True, True, False ) ->
+                                Just
+                                    ( groupStart column text + 1
+                                    , column + 1
+                                    )
 
-                    ( True, False, _ ) ->
-                        Just
-                            ( groupStart column text + 1
-                            , column
-                            )
+                            ( True, False, _ ) ->
+                                Just
+                                    ( groupStart column text + 1
+                                    , column
+                                    )
 
-                    ( False, True, False ) ->
-                        Just
-                            ( column, column + 1 )
+                            ( False, True, False ) ->
+                                Just
+                                    ( column, column + 1 )
 
-                    _ ->
-                        Nothing
-            in
-            range isWordChar
-                |> Maybe.Extra.orElseLazy (\() -> range isNonWordChar)
-    )
-            
+                            _ ->
+                                Nothing
+                in
+                range isWordChar
+                    |> Maybe.Extra.orElseLazy (\() -> range isNonWordChar)
+            )
 
 
 charsAround : Int -> String -> ( Maybe Char, Maybe Char, Maybe Char )

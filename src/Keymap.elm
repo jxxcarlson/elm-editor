@@ -206,7 +206,7 @@ keymaps =
             , ( "k", KillLine )
             , ( "u", DeleteLine )
             , ( "o", EditorRequestFile )
-            , ( "v", Paste )  -- TODO:CURRENT
+            , ( "v", Paste ) -- TODO:CURRENT
             , ( "a", MoveToLineStart )
             , ( "e", MoveToLineEnd )
             , ( "z", Undo )

@@ -77,6 +77,7 @@ filter keywords array =
     in
     if List.length indices < 2 then
         indices
+
     else
         loop initialState (nextState array)
 

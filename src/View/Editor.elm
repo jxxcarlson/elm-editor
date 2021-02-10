@@ -1,8 +1,7 @@
 module View.Editor exposing (viewDebug, viewEditor, viewHeader)
 
 import Array exposing (Array)
-import Common exposing ( hoversToPositions, isLastColumn, lineContent)
-import OuterConfig
+import Common exposing (hoversToPositions, isLastColumn, lineContent)
 import EditorModel exposing (AutoLineBreak(..), EditMode(..), EditorModel, ViewMode(..), VimMode(..))
 import EditorMsg exposing (Context(..), EMsg(..), Hover(..), Position, Selection(..))
 import Html as H exposing (Attribute, Html)
@@ -11,10 +10,11 @@ import Html.Events as HE
 import Html.Lazy
 import Json.Decode as JD
 import Keymap
+import OuterConfig
+import String exposing (String)
 import View.Helper
 import Widget
 import Window
-import String exposing (String)
 
 
 statisticsDisplay : EditorModel -> Html EMsg
@@ -34,12 +34,12 @@ statisticsDisplay model =
         displayStyle
         [ H.text <| "(" ++ l ++ ", " ++ w ++ ")" ]
 
+
 statisticsDisplay2 : EditorModel -> Html EMsg
 statisticsDisplay2 model =
     H.span
         displayStyle
-        [ H.text <| "(" ++ (String.fromInt model.window.offset) ++ ", " ++ (String.fromInt model.cursor.line) ++ ", " ++ String.fromInt model.cursor.column ++ ")" ]
-
+        [ H.text <| "(" ++ String.fromInt model.window.offset ++ ", " ++ String.fromInt model.cursor.line ++ ", " ++ String.fromInt model.cursor.column ++ ")" ]
 
 
 displayStyle : List (Attribute msg)
@@ -54,12 +54,13 @@ viewDebug : EditorModel -> Html EMsg
 viewDebug model =
     if model.debugOn then
         H.div
-                [ HA.style "max-width" (px model.width), HA.style "padding" "8px" ]
-                [ H.pre [] [ H.text <| "cursor: " ++ stringFromPosition model.cursor ]
-                , H.pre [] [ H.text <| "hover: " ++ stringFromHover model.hover ]
-                , H.pre [] [ H.text (stringFromSelection model.selection) ]
-                , H.pre [] [ H.text <| "selected text:\n" ++ selectedText model.selection model.hover model.lines ]
-                ]
+            [ HA.style "max-width" (px model.width), HA.style "padding" "8px" ]
+            [ H.pre [] [ H.text <| "cursor: " ++ stringFromPosition model.cursor ]
+            , H.pre [] [ H.text <| "hover: " ++ stringFromHover model.hover ]
+            , H.pre [] [ H.text (stringFromSelection model.selection) ]
+            , H.pre [] [ H.text <| "selected text:\n" ++ selectedText model.selection model.hover model.lines ]
+            ]
+
     else
         H.div [] []
 
@@ -123,7 +124,6 @@ editorBackgroundColor viewMode_ =
             HA.style "background-color" "#444"
 
 
-
 editorFontColor : ViewMode -> Attribute msg
 editorFontColor viewMode_ =
     case viewMode_ of
@@ -174,10 +174,8 @@ viewEditor model =
         , HA.id "__editor__"
         ]
         [ View.Helper.showIf model.viewLineNumbersOn (viewLineNumbers model)
-         , viewContent model
+        , viewContent model
         ]
-
-
 
 
 editorHeight : EditorModel -> Float
@@ -225,12 +223,15 @@ onMultiplelick msg1 msg2 =
 viewLineNumbers : EditorModel -> Html EMsg
 viewLineNumbers model =
     let
-      offset = if model.cursor.line <= 2*model.window.height - 2 then
-                 model.cursor.line
-               else
-                 (model.cursor.line - 2*model.window.height)
+        offset =
+            if model.cursor.line <= 2 * model.window.height - 2 then
+                model.cursor.line
 
-      lineHeightString = (String.fromFloat (model.lineHeight + 0.7)) ++ "px"
+            else
+                model.cursor.line - 2 * model.window.height
+
+        lineHeightString =
+            String.fromFloat (model.lineHeight + 0.7) ++ "px"
     in
     H.div
         [ HA.style "width" "3.5em"
@@ -241,8 +242,8 @@ viewLineNumbers model =
         , borderBackgroundColor model.viewMode
         , borderFontColor model.viewMode
         ]
-        (List.range 1 (4*model.window.height)
-            |> List.map (viewLineNumber model.viewMode offset )
+        (List.range 1 (4 * model.window.height)
+            |> List.map (viewLineNumber model.viewMode offset)
         )
 
 
@@ -255,15 +256,26 @@ viewContent : EditorModel -> Html EMsg
 viewContent model =
     -- TODO: handle option mouseclick for LR sync
     let
-       cursor = model.cursor
-       selection = model.selection
-       offset = model.window.offset
+        cursor =
+            model.cursor
 
-       windowLines = Window.lines model.window model.lines
+        selection =
+            model.selection
 
-       cursor2 = Window.shiftPosition -offset cursor
-       selection2 = Window.shiftSelection -offset selection
-       hover2 = Window.shiftHover -offset model.hover
+        offset =
+            model.window.offset
+
+        windowLines =
+            Window.lines model.window model.lines
+
+        cursor2 =
+            Window.shiftPosition -offset cursor
+
+        selection2 =
+            Window.shiftSelection -offset selection
+
+        hover2 =
+            Window.shiftHover -offset model.hover
     in
     H.div
         [ HA.style "position" "relative"
@@ -276,11 +288,11 @@ viewContent model =
         , HE.onClick GoToHoveredPosition
         , HE.onMouseOut (Hover NoHover)
         ]
-        [ viewLines model.viewMode model.lineHeight cursor2 hover2 selection2 windowLines]
+        [ viewLines model.viewMode model.lineHeight cursor2 hover2 selection2 windowLines ]
 
 
 viewLines : ViewMode -> Float -> Position -> Hover -> Selection -> Array String -> Html EMsg
-viewLines viewMode_ lineHeight  position hover selection lines =
+viewLines viewMode_ lineHeight position hover selection lines =
     H.div
         []
         (lines
@@ -290,7 +302,7 @@ viewLines viewMode_ lineHeight  position hover selection lines =
 
 
 viewLine : ViewMode -> Float -> Position -> Hover -> Selection -> Array String -> Int -> String -> Html EMsg
-viewLine viewMode_ lineHeight  position hover selection lines line content =
+viewLine viewMode_ lineHeight position hover selection lines line content =
     Html.Lazy.lazy8 viewLine_ viewMode_ lineHeight position hover selection lines line content
 
 
@@ -425,7 +437,8 @@ viewCursor position char =
 
 shift : Int -> Position -> Position
 shift k pos =
-    {pos | line = pos.line - k }
+    { pos | line = pos.line - k }
+
 
 viewSelectedChar : ViewMode -> Position -> String -> Html EMsg
 viewSelectedChar viewMode_ position char =
@@ -518,6 +531,8 @@ nbsp =
 
 
 -- HEADER
+
+
 viewHeader : EditorModel -> Html EMsg
 viewHeader model =
     H.div

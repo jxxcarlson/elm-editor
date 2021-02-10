@@ -23,29 +23,31 @@ module ArrayUtil exposing
     )
 
 import Array exposing (Array)
+import Position exposing (Position, deltaLine)
 import String.Extra
-import Position exposing(Position, deltaLine)
 
 
 
 {-
 
-Functions:
+   Functions:
 
-    stringFromZipper : StringZipper -> String
+       stringFromZipper : StringZipper -> String
 
-    cut : Position -> Position -> Array String -> StringZipper
+       cut : Position -> Position -> Array String -> StringZipper
 
-    cutString : Int -> Int -> Int -> Array String -> StringZipper
-    cutString line col1 col2 array = ...
+       cutString : Int -> Int -> Int -> Array String -> StringZipper
+       cutString line col1 col2 array = ...
 
-    joinEnds : StringZipper -> ( Array String, Array String )
-    joinEnds z = ... ( joinedEnds, z.middle )
+       joinEnds : StringZipper -> ( Array String, Array String )
+       joinEnds z = ... ( joinedEnds, z.middle )
 
-    join : StringZipper -> Array String
-    join z = joinThree z.before z.middle z.after
+       join : StringZipper -> Array String
+       join z = joinThree z.before z.middle z.after
 
 -}
+
+
 type alias StringZipper =
     { before : Array String
     , middle : Array String
@@ -463,21 +465,27 @@ replaceLines pos1 pos2 newLines targetLines =
     -- TODO:CURRENT
     if pos1.line == pos2.line then
         if Array.length newLines == 1 then
-           let
-               insertion = (Array.get 0 newLines |> Maybe.withDefault "") ++ " "
-           in
+            let
+                insertion =
+                    (Array.get 0 newLines |> Maybe.withDefault "") ++ " "
+            in
             insert pos1 insertion targetLines
+
         else
             let
-                _ = Debug.log "replaceLines (1)" (Array.length newLines)
+                _ =
+                    Debug.log "replaceLines (1)" (Array.length newLines)
+
                 sz =
                     cutString pos1.line pos1.column pos2.column targetLines
             in
             join { sz | middle = newLines }
 
-        else
+    else
         let
-            _ = Debug.log "replaceLines (2)" (Array.length newLines)
+            _ =
+                Debug.log "replaceLines (2)" (Array.length newLines)
+
             sz =
                 cut pos1 pos2 targetLines
         in
@@ -620,16 +628,19 @@ next : Direction -> ST -> Step ST Int
 next direction st =
     if Array.get st.currentLine st.lines == Just "" then
         Done st.currentLine
+
     else
         case direction of
             Forward ->
                 if st.currentLine < st.lastIndex then
                     Loop { st | currentLine = st.currentLine + 1 }
+
                 else
                     Done st.lastIndex
 
             Backward ->
                 if st.currentLine == 0 then
                     Done 0
+
                 else
                     Loop { st | currentLine = st.currentLine - 1 }

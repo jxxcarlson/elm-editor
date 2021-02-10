@@ -16,7 +16,7 @@ viewContextMenu width model =
         [ H.div
             (ContextMenu.open ContextMenuMsg Background :: Menu.Style.backgroundStyles)
             [ H.div
-                (ContextMenu.open ContextMenuMsg Object :: Menu.Style.objectStyles width )
+                (ContextMenu.open ContextMenuMsg Object :: Menu.Style.objectStyles width)
                 []
             ]
         , H.div [] []

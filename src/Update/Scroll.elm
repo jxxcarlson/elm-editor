@@ -28,6 +28,7 @@ setEditorViewportForLine lineHeight lineNumber =
         Dom.setViewportOf "__editor__" 0 y
             |> Task.andThen (\_ -> Dom.getViewportOf "__editor__")
             |> Task.attempt (\info -> GotViewport info)
+
     else
         Cmd.none
 
@@ -70,10 +71,11 @@ jumpToBottom : EditorModel -> Cmd EMsg
 jumpToBottom model =
     if model.cursor.line == (Array.length model.lines - 1) then
         Dom.getViewportOf "__editor__"
-                |> Task.andThen (\info -> Dom.setViewportOf "__editor__" 0 info.scene.height)
-                |> Task.attempt (\_ -> EditorNoOp)
+            |> Task.andThen (\info -> Dom.setViewportOf "__editor__" 0 info.scene.height)
+            |> Task.attempt (\_ -> EditorNoOp)
+
     else
-        Cmd.none 
+        Cmd.none
 
 
 rollSearchSelectionForward : EditorModel -> ( EditorModel, Cmd EMsg )
@@ -161,7 +163,6 @@ sendLine model =
         paragraphStart : Int
         paragraphStart =
             ArrayUtil.paragraphStart newCursor model.lines
-
 
         paragraphEnd : Int
         paragraphEnd =

@@ -83,13 +83,13 @@ columnButton width msg str attr =
 lightColumnButton : Int -> msg -> String -> List (Html.Attribute msg) -> Html.Html msg
 lightColumnButton width msg str attr =
     div (columnButtonStyle ++ attr)
-        [ button ( onClick msg :: lightButtonLabelStyle width) [ text str ] ]
+        [ button (onClick msg :: lightButtonLabelStyle width) [ text str ] ]
 
 
 lightRowButton : Int -> msg -> String -> List (Html.Attribute msg) -> Html.Html msg
 lightRowButton width msg str attr =
     div (rowButtonStyle ++ attr)
-        [ button ( onClick msg :: lightButtonLabelStyle width) [ text str ] ]
+        [ button (onClick msg :: lightButtonLabelStyle width) [ text str ] ]
 
 
 rowButton : Int -> msg -> String -> List (Html.Attribute msg) -> Html.Html msg

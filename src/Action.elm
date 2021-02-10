@@ -75,15 +75,21 @@ firstLine model =
 goToLine : Int -> EditorModel -> ( EditorModel, Cmd EMsg )
 goToLine line model =
     let
-        _ = Debug.log "goToLine" line
-        cursor = {line = line - 1, column = 0} -- Debug.log "GTL, CURSOR" model.cursor
+        _ =
+            Debug.log "goToLine" line
 
+        cursor =
+            { line = line - 1, column = 0 }
+
+        -- Debug.log "GTL, CURSOR" model.cursor
         length =
             Array.length model.lines
 
-        index = min (length - 1) cursor.line |> Window.positive
+        index =
+            min (length - 1) cursor.line |> Window.positive
 
-        w = Window.recenter index model.window
+        w =
+            Window.recenter index model.window
     in
     ( { model | window = w.window, cursor = cursor }, scrollToLine model.lineHeight w.windowLine )
 
@@ -312,4 +318,3 @@ selectRight model =
                     extendSelection model.cursor model.cursor
     in
     { model | selection = newSelection }
-

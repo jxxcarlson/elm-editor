@@ -1,4 +1,5 @@
 module EditorStyle exposing (darkBlue, darkGray, lightBlue, lightGray, mediumGray)
+
 import String exposing (String)
 
 

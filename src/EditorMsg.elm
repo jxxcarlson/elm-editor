@@ -142,5 +142,5 @@ type EMsg
     | ToggleEditMode
       --
     | MarkdownMsg MarkdownMsg
-    --
+      --
     | Vim Vim.VimMsg

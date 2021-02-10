@@ -1,6 +1,5 @@
 module View.Help exposing (data, view)
 
-
 import EditorModel exposing (EditorModel, HelpState(..))
 import Html exposing (Html)
 import Html.Attributes as HA

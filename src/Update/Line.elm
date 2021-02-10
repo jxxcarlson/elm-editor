@@ -1,4 +1,4 @@
-module Update.Line exposing (break, breakLineBefore, breakLineAfter)
+module Update.Line exposing (break, breakLineAfter, breakLineBefore)
 
 import Array
 import ArrayUtil
@@ -31,36 +31,36 @@ break model =
                     in
                     if currentLineLength <= k then
                         model
+
+                    else if currentLineLength == model.cursor.column then
+                        case breakLineBefore k currentLine of
+                            ( _, Nothing ) ->
+                                model
+
+                            ( adjustedLine, Just extraLine ) ->
+                                let
+                                    newCursor =
+                                        { line = line + 1, column = String.length extraLine }
+                                in
+                                model
+                                    |> replaceLineAt line adjustedLine
+                                    |> insertLineAfter line extraLine
+                                    |> putCursorAt newCursor
+
                     else
-                        if currentLineLength == model.cursor.column then
-                            case breakLineBefore k currentLine of
-                                ( _, Nothing ) ->
-                                    model
+                        case breakLineAfter model.cursor.column currentLine of
+                            ( _, Nothing ) ->
+                                model
 
-                                ( adjustedLine, Just extraLine ) ->
-                                    let
-                                        newCursor =
-                                            { line = line + 1, column = String.length extraLine }
-                                    in
-                                    model
-                                        |> replaceLineAt line adjustedLine
-                                        |> insertLineAfter line extraLine
-                                        |> putCursorAt newCursor
-
-                        else
-                            case breakLineAfter model.cursor.column currentLine of
-                                ( _, Nothing ) ->
-                                    model
-
-                                ( adjustedLine, Just extraLine ) ->
-                                    let
-                                        newCursor =
-                                            model.cursor
-                                    in
-                                    model
-                                        |> replaceLineAt line adjustedLine
-                                        |> insertLineAfter line extraLine
-                                        |> putCursorAt newCursor
+                            ( adjustedLine, Just extraLine ) ->
+                                let
+                                    newCursor =
+                                        model.cursor
+                                in
+                                model
+                                    |> replaceLineAt line adjustedLine
+                                    |> insertLineAfter line extraLine
+                                    |> putCursorAt newCursor
 
 
 
@@ -107,6 +107,7 @@ breakLineAfter k str =
         in
         splitStringAt (indexOfSucceedingBlank + 1) str
             |> (\( a, b ) -> ( a, Just b ))
+
     else
         ( str, Nothing )
 
@@ -138,9 +139,10 @@ breakLineBefore k str =
         in
         if indexOfPrecedingBlank <= k then
             splitStringAt (indexOfPrecedingBlank + 1) str
-                    |> (\( a, b ) -> ( a, Just b ))
+                |> (\( a, b ) -> ( a, Just b ))
+
         else
             ( str, Nothing )
-                
+
     else
         ( str, Nothing )

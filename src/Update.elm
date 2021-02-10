@@ -5,16 +5,18 @@ import Array
 import ArrayUtil
 import Browser.Dom as Dom
 import Cmd.Extra exposing (withCmd, withNoCmd)
-import Common exposing (
-    hoversToPositions
-    , lastColumn
-    , lastLine
-    , recordHistory
-    , recordHistoryWithCmd
-    , recordHistory_
-    , removeCharAfter
-    , sanitizeHover
-    , stateToSnapshot)
+import Common
+    exposing
+        ( hoversToPositions
+        , lastColumn
+        , lastLine
+        , recordHistory
+        , recordHistoryWithCmd
+        , recordHistory_
+        , removeCharAfter
+        , sanitizeHover
+        , stateToSnapshot
+        )
 import ContextMenu
 import Debounce
 import EditorModel exposing (AutoLineBreak(..), EditMode(..), EditorModel, VimMode(..))
@@ -30,7 +32,6 @@ import Update.Scroll
 import Update.Vim
 import Update.Wrap
 import Window
-
 
 
 update : EMsg -> EditorModel -> ( EditorModel, Cmd EMsg )
@@ -86,7 +87,9 @@ update msg model =
 
         InsertChar char ->
             let
-                _ = Debug.log "INSERT" char
+                _ =
+                    Debug.log "INSERT" char
+
                 ( debounce, debounceCmd ) =
                     Debounce.push EditorModel.debounceConfig char model.debounce
             in
@@ -173,65 +176,75 @@ update msg model =
         FirstLine ->
             Action.firstLine model
 
-         -- Continuous scroll works, click does not
-        Hover hover -> Common.sanitizeHover_ hover { model | hover = hover }
+        -- Continuous scroll works, click does not
+        Hover hover ->
+            Common.sanitizeHover_ hover { model | hover = hover }
 
         -- Click works, continuous scroll does not
         -- Hover hover -> ( { model | hover = hover } |> Common.sanitizeHover , Cmd.none)
-
         ViewportMotion _ ->
-            (model, Cmd.none)
+            ( model, Cmd.none )
 
         GotViewportInfo r ->
             case r of
-             Err e ->
-                 let
-                    _ = Debug.log "ERR" e
-                 in
-                 (model, Cmd.none)
-             Ok vp ->
-                 let
-                     _ = Debug.log "(o, line, vpy)" (model.window.offset, model.cursor.line, vp.viewport.y/model.lineHeight)
-                 in
-                 (model, Cmd.none)
+                Err e ->
+                    let
+                        _ =
+                            Debug.log "ERR" e
+                    in
+                    ( model, Cmd.none )
+
+                Ok vp ->
+                    let
+                        _ =
+                            Debug.log "(o, line, vpy)" ( model.window.offset, model.cursor.line, vp.viewport.y / model.lineHeight )
+                    in
+                    ( model, Cmd.none )
 
         GoToHoveredPosition ->
             -- TODO : Current work
             let
-              cursor =
-                 -- global coordinates
-                 case model.hover of
-                     NoHover ->
-                         model.cursor
+                cursor =
+                    -- global coordinates
+                    case model.hover of
+                        NoHover ->
+                            model.cursor
 
-                     HoverLine line ->
-                        --- Debug.log "GTHP, HL" { line = (line + model.window.offset), column = lastColumn model.lines (line)}
-                        Debug.log "GTHP, HL" { line = (line + model.window.offset), column = lastColumn model.lines (model.window.offset + line)}
+                        HoverLine line ->
+                            --- Debug.log "GTHP, HL" { line = (line + model.window.offset), column = lastColumn model.lines (line)}
+                            Debug.log "GTHP, HL" { line = line + model.window.offset, column = lastColumn model.lines (model.window.offset + line) }
 
-                     HoverChar localPosition ->
-                        Debug.log "GTHP, HC"  (Window.shiftPosition model.window.offset (Debug.log "LP" localPosition))
+                        HoverChar localPosition ->
+                            Debug.log "GTHP, HC" (Window.shiftPosition model.window.offset (Debug.log "LP" localPosition))
 
-              window =  Window.shift cursor.line model.window
+                window =
+                    Window.shift cursor.line model.window
 
-              deltaOffset = window.offset - model.window.offset |> toFloat |> Debug.log "deltaOffset"
+                deltaOffset =
+                    window.offset - model.window.offset |> toFloat |> Debug.log "deltaOffset"
 
-              scrollCmd = if deltaOffset == 0 then
-                            Cmd.none
-                          else
-                            scrollEditor
+                scrollCmd =
+                    if deltaOffset == 0 then
+                        Cmd.none
 
-              scrollEditor = Task.attempt ViewportMotion updateScrollPosition
+                    else
+                        scrollEditor
 
-              newViewportY yvp  = yvp - deltaOffset*model.lineHeight
+                scrollEditor =
+                    Task.attempt ViewportMotion updateScrollPosition
 
-              updateScrollPosition = Dom.getViewportOf "__editor__"
-                   |> Task.andThen (\vp -> Dom.setViewportOf "__editor__" 0 (newViewportY vp.viewport.y))
+                newViewportY yvp =
+                    yvp - deltaOffset * model.lineHeight
+
+                updateScrollPosition =
+                    Dom.getViewportOf "__editor__"
+                        |> Task.andThen (\vp -> Dom.setViewportOf "__editor__" 0 (newViewportY vp.viewport.y))
             in
             ( { model
                 | cursor = Debug.log "CURSOR!" cursor
-                , window =  Debug.log "WINDOW!" window
+                , window = Debug.log "WINDOW!" window
               }
-             ,  scrollCmd
+            , scrollCmd
             )
 
         LastLine ->
@@ -545,4 +558,4 @@ update msg model =
                     ( model, Cmd.none )
 
         Vim vimMsg ->
-            ({ model | vimModel = Update.Vim.update vimMsg model.vimModel}, Cmd.none)
+            ( { model | vimModel = Update.Vim.update vimMsg model.vimModel }, Cmd.none )

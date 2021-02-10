@@ -27,21 +27,20 @@ module Common exposing
     , recordHistory_
     , removeCharAfter
     , removeCharBefore
-    , sanitizeHover_
     , sanitizeHover
+    , sanitizeHover_
     , startOfDocument
     , stateToSnapshot
     )
 
 import Array exposing (Array)
+import Browser.Dom as Dom
 import Cmd.Extra exposing (withNoCmd)
 import EditorModel exposing (EditorModel, Snapshot)
 import EditorMsg exposing (EMsg(..), Hover(..), Position)
 import History
-import Window
 import Task
-import Browser.Dom as Dom
-
+import Window
 
 
 hoversToPositions : Array String -> Hover -> Hover -> Maybe ( Position, Position )
@@ -362,7 +361,6 @@ lineContent lines lineNum =
         |> Maybe.withDefault ""
 
 
-
 newHover hover lines offset =
     case hover of
         NoHover ->
@@ -373,18 +371,23 @@ newHover hover lines offset =
 
         HoverChar { line, column } ->
             let
-                sanitizedLine = (Debug.log "SAN LINE (1)" <|
-                    -- Ensure that the line (number) is not
-                    -- beyond the index of the last line
-                    clamp 0 (lastLine lines) (Debug.log "SAN LINE (2)" line)) |> Debug.log "SAN LINE (3)"
+                sanitizedLine =
+                    (Debug.log "SAN LINE (1)" <|
+                        -- Ensure that the line (number) is not
+                        -- beyond the index of the last line
+                        clamp 0 (lastLine lines) (Debug.log "SAN LINE (2)" line)
+                    )
+                        |> Debug.log "SAN LINE (3)"
 
-                sanitizedColumn = Debug.log "SCOL (2)" <|
-                    clamp 0 (lastColumn lines (offset + sanitizedLine)) (Debug.log "SCOL(1)" column)
+                sanitizedColumn =
+                    Debug.log "SCOL (2)" <|
+                        clamp 0 (lastColumn lines (offset + sanitizedLine)) (Debug.log "SCOL(1)" column)
             in
             HoverChar
                 { line = sanitizedLine
                 , column = sanitizedColumn
                 }
+
 
 sanitizeHover : EditorModel -> EditorModel
 sanitizeHover model =
@@ -393,30 +396,43 @@ sanitizeHover model =
 
 scrollCmd newWindow oldWindow lineHeight =
     let
-        deltaOffset = newWindow.offset - oldWindow.offset |> toFloat |> Debug.log "deltaOffset"
-        newViewportY yvp  = yvp + 100 - deltaOffset * lineHeight
-        updateScrollPosition = Dom.getViewportOf "__editor__"
-                       |> Task.andThen (\vp -> Dom.setViewportOf "__editor__" 0 (newViewportY vp.viewport.y))
-    in
-        if deltaOffset == 0 then
-            Cmd.none
-        else
-            Task.attempt ViewportMotion updateScrollPosition
+        deltaOffset =
+            newWindow.offset - oldWindow.offset |> toFloat |> Debug.log "deltaOffset"
 
-sanitizeHover_ : Hover -> EditorModel -> (EditorModel, Cmd EMsg)
+        newViewportY yvp =
+            yvp + 100 - deltaOffset * lineHeight
+
+        updateScrollPosition =
+            Dom.getViewportOf "__editor__"
+                |> Task.andThen (\vp -> Dom.setViewportOf "__editor__" 0 (newViewportY vp.viewport.y))
+    in
+    if deltaOffset == 0 then
+        Cmd.none
+
+    else
+        Task.attempt ViewportMotion updateScrollPosition
+
+
+sanitizeHover_ : Hover -> EditorModel -> ( EditorModel, Cmd EMsg )
 sanitizeHover_ hover model =
     let
+        offset =
+            model.window.offset
 
-          offset = model.window.offset
+        window =
+            case hover of
+                NoHover ->
+                    model.window
 
-          window =  case hover of
-                  NoHover -> model.window
-                  HoverLine line -> Window.shift (offset + line) model.window
-                  HoverChar { line, column} -> Window.shift (offset + line) model.window
+                HoverLine line ->
+                    Window.shift (offset + line) model.window
 
-   in
-    ({ model | hover = newHover model.hover model.lines model.window.offset, window = window}
-      , scrollCmd    window model.window model.lineHeight )
+                HoverChar { line, column } ->
+                    Window.shift (offset + line) model.window
+    in
+    ( { model | hover = newHover model.hover model.lines model.window.offset, window = window }
+    , scrollCmd window model.window model.lineHeight
+    )
 
 
 
