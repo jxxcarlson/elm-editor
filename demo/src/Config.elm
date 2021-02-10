@@ -8,8 +8,8 @@ appMode =
     Desktop
 
 
-lineNumbersOn : Bool
-lineNumberOn = False
+viewLineNumbersOn : Bool
+viewLineNumbersOn = False
 
 
 tickInterval : number

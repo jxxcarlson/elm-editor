@@ -174,7 +174,7 @@ viewEditor model =
         , onMultiplelick SelectGroup SelectLine
         , HA.id "__editor__"
         ]
-        [ View.Helper.showIf model.lineNumbersOn (viewLineNumbers model)
+        [ View.Helper.showIf model.viewLineNumbersOn (viewLineNumbers model)
          , viewContent model
         ]
 

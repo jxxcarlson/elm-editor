@@ -1,4 +1,4 @@
-module View.Footer exposing (view)
+module View.EditorFooter exposing (view)
 
 import EditorModel exposing (AutoLineBreak(..), EditorModel, ViewMode(..), EditMode(..), VimMode(..))
 import Html as H exposing (Attribute, Html)
