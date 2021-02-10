@@ -25687,6 +25687,7 @@ var $author$project$EditorMsg$Selection = F2(
 	function (a, b) {
 		return {$: 'Selection', a: a, b: b};
 	});
+var $author$project$Vim$VAccumulate = {$: 'VAccumulate'};
 var $author$project$EditorMsg$ViewportMotion = function (a) {
 	return {$: 'ViewportMotion', a: a};
 };
@@ -27773,352 +27774,6 @@ var $author$project$Action$indent = function (model) {
 		model,
 		{lines: newLines});
 };
-var $author$project$Update$Line$splitStringAt = F2(
-	function (k, str) {
-		var n = $elm$core$String$length(str);
-		return _Utils_Tuple2(
-			A3($elm$core$String$slice, 0, k, str),
-			A3($elm$core$String$slice, k, n, str));
-	});
-var $author$project$Update$Line$breakLineAfter = F2(
-	function (k, str) {
-		if (_Utils_cmp(
-			$elm$core$String$length(str),
-			k) > 0) {
-			var indexOfSucceedingBlank = A2(
-				$elm$core$Maybe$withDefault,
-				k,
-				$elm$core$List$head(
-					A2(
-						$elm$core$List$filter,
-						function (i) {
-							return _Utils_cmp(i, k) > 0;
-						},
-						A2($elm$core$String$indexes, ' ', str))));
-			return function (_v0) {
-				var a = _v0.a;
-				var b = _v0.b;
-				return _Utils_Tuple2(
-					a,
-					$elm$core$Maybe$Just(b));
-			}(
-				A2($author$project$Update$Line$splitStringAt, indexOfSucceedingBlank + 1, str));
-		} else {
-			return _Utils_Tuple2(str, $elm$core$Maybe$Nothing);
-		}
-	});
-var $author$project$Update$Line$breakLineBefore = F2(
-	function (k, str) {
-		if (_Utils_cmp(
-			$elm$core$String$length(str),
-			k) > 0) {
-			var indexOfPrecedingBlank = A2(
-				$elm$core$Maybe$withDefault,
-				k,
-				$elm$core$List$head(
-					$elm$core$List$reverse(
-						A2(
-							$elm$core$List$filter,
-							function (i) {
-								return _Utils_cmp(i, k) < 0;
-							},
-							A2($elm$core$String$indexes, ' ', str)))));
-			return (_Utils_cmp(indexOfPrecedingBlank, k) < 1) ? function (_v0) {
-				var a = _v0.a;
-				var b = _v0.b;
-				return _Utils_Tuple2(
-					a,
-					$elm$core$Maybe$Just(b));
-			}(
-				A2($author$project$Update$Line$splitStringAt, indexOfPrecedingBlank + 1, str)) : _Utils_Tuple2(str, $elm$core$Maybe$Nothing);
-		} else {
-			return _Utils_Tuple2(str, $elm$core$Maybe$Nothing);
-		}
-	});
-var $author$project$ArrayUtil$split = F2(
-	function (position, array) {
-		var _v0 = A2($elm$core$Array$get, position.line, array);
-		if (_v0.$ === 'Nothing') {
-			return _Utils_Tuple2(
-				array,
-				$elm$core$Array$fromList(
-					_List_fromArray(
-						[''])));
-		} else {
-			var focus = _v0.a;
-			var n = $elm$core$Array$length(array);
-			var focusLength = $elm$core$String$length(focus);
-			var beforeSuffix = A3($elm$core$String$slice, 0, position.column, focus);
-			var before = A3($elm$core$Array$slice, 0, position.line, array);
-			var firstPart = (beforeSuffix === '') ? before : A2($elm$core$Array$push, beforeSuffix, before);
-			var afterPrefix = A3($elm$core$String$slice, position.column, focusLength, focus);
-			var after = A3($elm$core$Array$slice, position.line + 1, n, array);
-			var secondPart = A2($author$project$ArrayUtil$put, afterPrefix, after);
-			return _Utils_Tuple2(firstPart, secondPart);
-		}
-	});
-var $author$project$ArrayUtil$insertLineAfter = F3(
-	function (line, str, lines) {
-		var _v0 = A2(
-			$author$project$ArrayUtil$split,
-			{column: 0, line: line + 1},
-			lines);
-		var before = _v0.a;
-		var after = _v0.b;
-		return A3(
-			$author$project$ArrayUtil$joinThree,
-			before,
-			$elm$core$Array$fromList(
-				_List_fromArray(
-					[str])),
-			after);
-	});
-var $author$project$Update$Line$insertLineAfter = F3(
-	function (k, str, model) {
-		return _Utils_update(
-			model,
-			{
-				lines: A3($author$project$ArrayUtil$insertLineAfter, k, str, model.lines)
-			});
-	});
-var $author$project$Update$Line$charactersPerLine = F2(
-	function (screenWidth, fontSize) {
-		return (1.55 * screenWidth) / fontSize;
-	});
-var $author$project$Update$Line$optimumWrapWidth = function (model) {
-	return (A2($author$project$Update$Line$charactersPerLine, model.width, model.fontSize) - 6) | 0;
-};
-var $author$project$Update$Line$putCursorAt = F2(
-	function (position, model) {
-		return _Utils_update(
-			model,
-			{cursor: position});
-	});
-var $elm$core$Array$setHelp = F4(
-	function (shift, index, value, tree) {
-		var pos = $elm$core$Array$bitMask & (index >>> shift);
-		var _v0 = A2($elm$core$Elm$JsArray$unsafeGet, pos, tree);
-		if (_v0.$ === 'SubTree') {
-			var subTree = _v0.a;
-			var newSub = A4($elm$core$Array$setHelp, shift - $elm$core$Array$shiftStep, index, value, subTree);
-			return A3(
-				$elm$core$Elm$JsArray$unsafeSet,
-				pos,
-				$elm$core$Array$SubTree(newSub),
-				tree);
-		} else {
-			var values = _v0.a;
-			var newLeaf = A3($elm$core$Elm$JsArray$unsafeSet, $elm$core$Array$bitMask & index, value, values);
-			return A3(
-				$elm$core$Elm$JsArray$unsafeSet,
-				pos,
-				$elm$core$Array$Leaf(newLeaf),
-				tree);
-		}
-	});
-var $elm$core$Array$set = F3(
-	function (index, value, array) {
-		var len = array.a;
-		var startShift = array.b;
-		var tree = array.c;
-		var tail = array.d;
-		return ((index < 0) || (_Utils_cmp(index, len) > -1)) ? array : ((_Utils_cmp(
-			index,
-			$elm$core$Array$tailIndex(len)) > -1) ? A4(
-			$elm$core$Array$Array_elm_builtin,
-			len,
-			startShift,
-			tree,
-			A3($elm$core$Elm$JsArray$unsafeSet, $elm$core$Array$bitMask & index, value, tail)) : A4(
-			$elm$core$Array$Array_elm_builtin,
-			len,
-			startShift,
-			A4($elm$core$Array$setHelp, startShift, index, value, tree),
-			tail));
-	});
-var $author$project$Update$Line$replaceLineAt = F3(
-	function (k, str, model) {
-		return _Utils_update(
-			model,
-			{
-				lines: A3($elm$core$Array$set, k, str, model.lines)
-			});
-	});
-var $author$project$Update$Line$break = function (model) {
-	var _v0 = model.autoLineBreak;
-	if (_v0.$ === 'AutoLineBreakOFF') {
-		return model;
-	} else {
-		var line = model.cursor.line;
-		var k = $author$project$Update$Line$optimumWrapWidth(model);
-		var _v1 = A2($elm$core$Array$get, line, model.lines);
-		if (_v1.$ === 'Nothing') {
-			return model;
-		} else {
-			var currentLine = _v1.a;
-			var currentLineLength = $elm$core$String$length(currentLine);
-			if (_Utils_cmp(currentLineLength, k) < 1) {
-				return model;
-			} else {
-				if (_Utils_eq(currentLineLength, model.cursor.column)) {
-					var _v2 = A2($author$project$Update$Line$breakLineBefore, k, currentLine);
-					if (_v2.b.$ === 'Nothing') {
-						var _v3 = _v2.b;
-						return model;
-					} else {
-						var adjustedLine = _v2.a;
-						var extraLine = _v2.b.a;
-						var newCursor = {
-							column: $elm$core$String$length(extraLine),
-							line: line + 1
-						};
-						return A2(
-							$author$project$Update$Line$putCursorAt,
-							newCursor,
-							A3(
-								$author$project$Update$Line$insertLineAfter,
-								line,
-								extraLine,
-								A3($author$project$Update$Line$replaceLineAt, line, adjustedLine, model)));
-					}
-				} else {
-					var _v4 = A2($author$project$Update$Line$breakLineAfter, model.cursor.column, currentLine);
-					if (_v4.b.$ === 'Nothing') {
-						var _v5 = _v4.b;
-						return model;
-					} else {
-						var adjustedLine = _v4.a;
-						var extraLine = _v4.b.a;
-						var newCursor = model.cursor;
-						return A2(
-							$author$project$Update$Line$putCursorAt,
-							newCursor,
-							A3(
-								$author$project$Update$Line$insertLineAfter,
-								line,
-								extraLine,
-								A3($author$project$Update$Line$replaceLineAt, line, adjustedLine, model)));
-					}
-				}
-			}
-		}
-	}
-};
-var $author$project$Update$Function$autoclose = $elm$core$Dict$fromList(
-	_List_fromArray(
-		[
-			_Utils_Tuple2('[', ']'),
-			_Utils_Tuple2('{', '}'),
-			_Utils_Tuple2('(', ')'),
-			_Utils_Tuple2('\"', '\"'),
-			_Utils_Tuple2('`', '`')
-		]));
-var $author$project$Update$Function$insertSimple = F2(
-	function (_char, model) {
-		var cursor = model.cursor;
-		var lines = model.lines;
-		var _v0 = cursor;
-		var line = _v0.line;
-		var column = _v0.column;
-		var lineWithCharAdded = function (content) {
-			return _Utils_ap(
-				A2($elm$core$String$left, column, content),
-				_Utils_ap(
-					_char,
-					A2($elm$core$String$dropLeft, column, content)));
-		};
-		var newCursor = {column: column + 1, line: line};
-		var newLines = A2(
-			$elm$core$Array$indexedMap,
-			F2(
-				function (i, content) {
-					return _Utils_eq(i, line) ? lineWithCharAdded(content) : content;
-				}),
-			lines);
-		return _Utils_update(
-			model,
-			{cursor: newCursor, lines: newLines});
-	});
-var $elm_community$string_extra$String$Extra$replaceSlice = F4(
-	function (substitution, start, end, string) {
-		return _Utils_ap(
-			A3($elm$core$String$slice, 0, start, string),
-			_Utils_ap(
-				substitution,
-				A3(
-					$elm$core$String$slice,
-					end,
-					$elm$core$String$length(string),
-					string)));
-	});
-var $author$project$ArrayUtil$replace = F4(
-	function (pos1, pos2, str, array) {
-		if (_Utils_eq(pos1.line, pos2.line)) {
-			var _v0 = A2($elm$core$Array$get, pos1.line, array);
-			if (_v0.$ === 'Nothing') {
-				return array;
-			} else {
-				var line = _v0.a;
-				var newLine = A4($elm_community$string_extra$String$Extra$replaceSlice, str, pos1.column, pos2.column, line);
-				return A3($elm$core$Array$set, pos1.line, newLine, array);
-			}
-		} else {
-			var sz = A3($author$project$ArrayUtil$cut, pos1, pos2, array);
-			return A2(
-				$elm$core$Array$append,
-				A2($elm$core$Array$push, str, sz.before),
-				sz.after);
-		}
-	});
-var $author$project$Update$Function$insertWithMatching = F4(
-	function (selection, closing, str, model) {
-		var _v0 = function () {
-			if (selection.$ === 'Selection') {
-				var a = selection.a;
-				var b = selection.b;
-				return _Utils_Tuple2(a, b);
-			} else {
-				return _Utils_Tuple2(model.cursor, model.cursor);
-			}
-		}();
-		var start = _v0.a;
-		var end = _v0.b;
-		var insertion = _Utils_ap(
-			str,
-			_Utils_ap(
-				A3($author$project$ArrayUtil$between, start, end, model.lines),
-				closing));
-		var newCursor = {
-			column: (model.cursor.column + $elm$core$String$length(insertion)) - 1,
-			line: model.cursor.line
-		};
-		var newLines = A4($author$project$ArrayUtil$replace, start, end, insertion, model.lines);
-		return _Utils_update(
-			model,
-			{cursor: newCursor, lines: newLines});
-	});
-var $author$project$Update$Function$insertDispatch = F2(
-	function (str, model) {
-		var _v0 = _Utils_Tuple2(
-			model.selection,
-			A2($elm$core$Dict$get, str, $author$project$Update$Function$autoclose));
-		if (_v0.b.$ === 'Just') {
-			var selection = _v0.a;
-			var closing = _v0.b.a;
-			return A4($author$project$Update$Function$insertWithMatching, selection, closing, str, model);
-		} else {
-			return A2($author$project$Update$Function$insertSimple, str, model);
-		}
-	});
-var $author$project$Vim$VAccumulate = {$: 'VAccumulate'};
-var $author$project$Update$Vim$appendBuffer = F2(
-	function (str, model) {
-		return _Utils_update(
-			model,
-			{
-				buffer: _Utils_ap(model.buffer, str)
-			});
-	});
 var $emilianobovetti$edit_distance$EditDistance$last = function (list) {
 	last:
 	while (true) {
@@ -28374,9 +28029,63 @@ var $author$project$ArrayUtil$cutString = F4(
 					[b]))
 		};
 	});
+var $elm_community$string_extra$String$Extra$replaceSlice = F4(
+	function (substitution, start, end, string) {
+		return _Utils_ap(
+			A3($elm$core$String$slice, 0, start, string),
+			_Utils_ap(
+				substitution,
+				A3(
+					$elm$core$String$slice,
+					end,
+					$elm$core$String$length(string),
+					string)));
+	});
 var $elm_community$string_extra$String$Extra$insertAt = F3(
 	function (insert, pos, string) {
 		return A4($elm_community$string_extra$String$Extra$replaceSlice, insert, pos, pos, string);
+	});
+var $elm$core$Array$setHelp = F4(
+	function (shift, index, value, tree) {
+		var pos = $elm$core$Array$bitMask & (index >>> shift);
+		var _v0 = A2($elm$core$Elm$JsArray$unsafeGet, pos, tree);
+		if (_v0.$ === 'SubTree') {
+			var subTree = _v0.a;
+			var newSub = A4($elm$core$Array$setHelp, shift - $elm$core$Array$shiftStep, index, value, subTree);
+			return A3(
+				$elm$core$Elm$JsArray$unsafeSet,
+				pos,
+				$elm$core$Array$SubTree(newSub),
+				tree);
+		} else {
+			var values = _v0.a;
+			var newLeaf = A3($elm$core$Elm$JsArray$unsafeSet, $elm$core$Array$bitMask & index, value, values);
+			return A3(
+				$elm$core$Elm$JsArray$unsafeSet,
+				pos,
+				$elm$core$Array$Leaf(newLeaf),
+				tree);
+		}
+	});
+var $elm$core$Array$set = F3(
+	function (index, value, array) {
+		var len = array.a;
+		var startShift = array.b;
+		var tree = array.c;
+		var tail = array.d;
+		return ((index < 0) || (_Utils_cmp(index, len) > -1)) ? array : ((_Utils_cmp(
+			index,
+			$elm$core$Array$tailIndex(len)) > -1) ? A4(
+			$elm$core$Array$Array_elm_builtin,
+			len,
+			startShift,
+			tree,
+			A3($elm$core$Elm$JsArray$unsafeSet, $elm$core$Array$bitMask & index, value, tail)) : A4(
+			$elm$core$Array$Array_elm_builtin,
+			len,
+			startShift,
+			A4($elm$core$Array$setHelp, startShift, index, value, tree),
+			tail));
 	});
 var $author$project$ArrayUtil$insert = F3(
 	function (position, str, array) {
@@ -28449,6 +28158,297 @@ var $author$project$Update$Vim$innerProcessCommand = function (model) {
 		model,
 		{lines: lines, vimModel: vimModel});
 };
+var $author$project$Update$Line$splitStringAt = F2(
+	function (k, str) {
+		var n = $elm$core$String$length(str);
+		return _Utils_Tuple2(
+			A3($elm$core$String$slice, 0, k, str),
+			A3($elm$core$String$slice, k, n, str));
+	});
+var $author$project$Update$Line$breakLineAfter = F2(
+	function (k, str) {
+		if (_Utils_cmp(
+			$elm$core$String$length(str),
+			k) > 0) {
+			var indexOfSucceedingBlank = A2(
+				$elm$core$Maybe$withDefault,
+				k,
+				$elm$core$List$head(
+					A2(
+						$elm$core$List$filter,
+						function (i) {
+							return _Utils_cmp(i, k) > 0;
+						},
+						A2($elm$core$String$indexes, ' ', str))));
+			return function (_v0) {
+				var a = _v0.a;
+				var b = _v0.b;
+				return _Utils_Tuple2(
+					a,
+					$elm$core$Maybe$Just(b));
+			}(
+				A2($author$project$Update$Line$splitStringAt, indexOfSucceedingBlank + 1, str));
+		} else {
+			return _Utils_Tuple2(str, $elm$core$Maybe$Nothing);
+		}
+	});
+var $author$project$Update$Line$breakLineBefore = F2(
+	function (k, str) {
+		if (_Utils_cmp(
+			$elm$core$String$length(str),
+			k) > 0) {
+			var indexOfPrecedingBlank = A2(
+				$elm$core$Maybe$withDefault,
+				k,
+				$elm$core$List$head(
+					$elm$core$List$reverse(
+						A2(
+							$elm$core$List$filter,
+							function (i) {
+								return _Utils_cmp(i, k) < 0;
+							},
+							A2($elm$core$String$indexes, ' ', str)))));
+			return (_Utils_cmp(indexOfPrecedingBlank, k) < 1) ? function (_v0) {
+				var a = _v0.a;
+				var b = _v0.b;
+				return _Utils_Tuple2(
+					a,
+					$elm$core$Maybe$Just(b));
+			}(
+				A2($author$project$Update$Line$splitStringAt, indexOfPrecedingBlank + 1, str)) : _Utils_Tuple2(str, $elm$core$Maybe$Nothing);
+		} else {
+			return _Utils_Tuple2(str, $elm$core$Maybe$Nothing);
+		}
+	});
+var $author$project$ArrayUtil$split = F2(
+	function (position, array) {
+		var _v0 = A2($elm$core$Array$get, position.line, array);
+		if (_v0.$ === 'Nothing') {
+			return _Utils_Tuple2(
+				array,
+				$elm$core$Array$fromList(
+					_List_fromArray(
+						[''])));
+		} else {
+			var focus = _v0.a;
+			var n = $elm$core$Array$length(array);
+			var focusLength = $elm$core$String$length(focus);
+			var beforeSuffix = A3($elm$core$String$slice, 0, position.column, focus);
+			var before = A3($elm$core$Array$slice, 0, position.line, array);
+			var firstPart = (beforeSuffix === '') ? before : A2($elm$core$Array$push, beforeSuffix, before);
+			var afterPrefix = A3($elm$core$String$slice, position.column, focusLength, focus);
+			var after = A3($elm$core$Array$slice, position.line + 1, n, array);
+			var secondPart = A2($author$project$ArrayUtil$put, afterPrefix, after);
+			return _Utils_Tuple2(firstPart, secondPart);
+		}
+	});
+var $author$project$ArrayUtil$insertLineAfter = F3(
+	function (line, str, lines) {
+		var _v0 = A2(
+			$author$project$ArrayUtil$split,
+			{column: 0, line: line + 1},
+			lines);
+		var before = _v0.a;
+		var after = _v0.b;
+		return A3(
+			$author$project$ArrayUtil$joinThree,
+			before,
+			$elm$core$Array$fromList(
+				_List_fromArray(
+					[str])),
+			after);
+	});
+var $author$project$Update$Line$insertLineAfter = F3(
+	function (k, str, model) {
+		return _Utils_update(
+			model,
+			{
+				lines: A3($author$project$ArrayUtil$insertLineAfter, k, str, model.lines)
+			});
+	});
+var $author$project$Update$Line$charactersPerLine = F2(
+	function (screenWidth, fontSize) {
+		return (1.55 * screenWidth) / fontSize;
+	});
+var $author$project$Update$Line$optimumWrapWidth = function (model) {
+	return (A2($author$project$Update$Line$charactersPerLine, model.width, model.fontSize) - 6) | 0;
+};
+var $author$project$Update$Line$putCursorAt = F2(
+	function (position, model) {
+		return _Utils_update(
+			model,
+			{cursor: position});
+	});
+var $author$project$Update$Line$replaceLineAt = F3(
+	function (k, str, model) {
+		return _Utils_update(
+			model,
+			{
+				lines: A3($elm$core$Array$set, k, str, model.lines)
+			});
+	});
+var $author$project$Update$Line$break = function (model) {
+	var _v0 = model.autoLineBreak;
+	if (_v0.$ === 'AutoLineBreakOFF') {
+		return model;
+	} else {
+		var line = model.cursor.line;
+		var k = $author$project$Update$Line$optimumWrapWidth(model);
+		var _v1 = A2($elm$core$Array$get, line, model.lines);
+		if (_v1.$ === 'Nothing') {
+			return model;
+		} else {
+			var currentLine = _v1.a;
+			var currentLineLength = $elm$core$String$length(currentLine);
+			if (_Utils_cmp(currentLineLength, k) < 1) {
+				return model;
+			} else {
+				if (_Utils_eq(currentLineLength, model.cursor.column)) {
+					var _v2 = A2($author$project$Update$Line$breakLineBefore, k, currentLine);
+					if (_v2.b.$ === 'Nothing') {
+						var _v3 = _v2.b;
+						return model;
+					} else {
+						var adjustedLine = _v2.a;
+						var extraLine = _v2.b.a;
+						var newCursor = {
+							column: $elm$core$String$length(extraLine),
+							line: line + 1
+						};
+						return A2(
+							$author$project$Update$Line$putCursorAt,
+							newCursor,
+							A3(
+								$author$project$Update$Line$insertLineAfter,
+								line,
+								extraLine,
+								A3($author$project$Update$Line$replaceLineAt, line, adjustedLine, model)));
+					}
+				} else {
+					var _v4 = A2($author$project$Update$Line$breakLineAfter, model.cursor.column, currentLine);
+					if (_v4.b.$ === 'Nothing') {
+						var _v5 = _v4.b;
+						return model;
+					} else {
+						var adjustedLine = _v4.a;
+						var extraLine = _v4.b.a;
+						var newCursor = model.cursor;
+						return A2(
+							$author$project$Update$Line$putCursorAt,
+							newCursor,
+							A3(
+								$author$project$Update$Line$insertLineAfter,
+								line,
+								extraLine,
+								A3($author$project$Update$Line$replaceLineAt, line, adjustedLine, model)));
+					}
+				}
+			}
+		}
+	}
+};
+var $author$project$Update$Function$autoclose = $elm$core$Dict$fromList(
+	_List_fromArray(
+		[
+			_Utils_Tuple2('[', ']'),
+			_Utils_Tuple2('{', '}'),
+			_Utils_Tuple2('(', ')'),
+			_Utils_Tuple2('\"', '\"'),
+			_Utils_Tuple2('`', '`')
+		]));
+var $author$project$Update$Function$insertSimple = F2(
+	function (_char, model) {
+		var cursor = model.cursor;
+		var lines = model.lines;
+		var _v0 = cursor;
+		var line = _v0.line;
+		var column = _v0.column;
+		var lineWithCharAdded = function (content) {
+			return _Utils_ap(
+				A2($elm$core$String$left, column, content),
+				_Utils_ap(
+					_char,
+					A2($elm$core$String$dropLeft, column, content)));
+		};
+		var newCursor = {column: column + 1, line: line};
+		var newLines = A2(
+			$elm$core$Array$indexedMap,
+			F2(
+				function (i, content) {
+					return _Utils_eq(i, line) ? lineWithCharAdded(content) : content;
+				}),
+			lines);
+		return _Utils_update(
+			model,
+			{cursor: newCursor, lines: newLines});
+	});
+var $author$project$ArrayUtil$replace = F4(
+	function (pos1, pos2, str, array) {
+		if (_Utils_eq(pos1.line, pos2.line)) {
+			var _v0 = A2($elm$core$Array$get, pos1.line, array);
+			if (_v0.$ === 'Nothing') {
+				return array;
+			} else {
+				var line = _v0.a;
+				var newLine = A4($elm_community$string_extra$String$Extra$replaceSlice, str, pos1.column, pos2.column, line);
+				return A3($elm$core$Array$set, pos1.line, newLine, array);
+			}
+		} else {
+			var sz = A3($author$project$ArrayUtil$cut, pos1, pos2, array);
+			return A2(
+				$elm$core$Array$append,
+				A2($elm$core$Array$push, str, sz.before),
+				sz.after);
+		}
+	});
+var $author$project$Update$Function$insertWithMatching = F4(
+	function (selection, closing, str, model) {
+		var _v0 = function () {
+			if (selection.$ === 'Selection') {
+				var a = selection.a;
+				var b = selection.b;
+				return _Utils_Tuple2(a, b);
+			} else {
+				return _Utils_Tuple2(model.cursor, model.cursor);
+			}
+		}();
+		var start = _v0.a;
+		var end = _v0.b;
+		var insertion = _Utils_ap(
+			str,
+			_Utils_ap(
+				A3($author$project$ArrayUtil$between, start, end, model.lines),
+				closing));
+		var newCursor = {
+			column: (model.cursor.column + $elm$core$String$length(insertion)) - 1,
+			line: model.cursor.line
+		};
+		var newLines = A4($author$project$ArrayUtil$replace, start, end, insertion, model.lines);
+		return _Utils_update(
+			model,
+			{cursor: newCursor, lines: newLines});
+	});
+var $author$project$Update$Function$insertDispatch = F2(
+	function (str, model) {
+		var _v0 = _Utils_Tuple2(
+			model.selection,
+			A2($elm$core$Dict$get, str, $author$project$Update$Function$autoclose));
+		if (_v0.b.$ === 'Just') {
+			var selection = _v0.a;
+			var closing = _v0.b.a;
+			return A4($author$project$Update$Function$insertWithMatching, selection, closing, str, model);
+		} else {
+			return A2($author$project$Update$Function$insertSimple, str, model);
+		}
+	});
+var $author$project$Update$Vim$appendBuffer = F2(
+	function (str, model) {
+		return _Utils_update(
+			model,
+			{
+				buffer: _Utils_ap(model.buffer, str)
+			});
+	});
 var $author$project$EditorModel$VimInsert = {$: 'VimInsert'};
 var $author$project$Update$Vim$processCommand = function (model) {
 	return model;
@@ -30097,15 +30097,34 @@ var $author$project$Update$update = F2(
 			case 'ToggleEditMode':
 				return $Janiczek$cmd_extra$Cmd$Extra$withNoCmd(
 					$author$project$Update$Function$toggleEditMode(model));
+			case 'ToggleShortCutExecution':
+				var _v25 = model.vimModel.state;
+				if (_v25.$ === 'VNormal') {
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{
+								editMode: $author$project$EditorModel$VimEditor($author$project$EditorModel$VimNormal),
+								vimModel: A2($author$project$Update$Vim$setState, $author$project$Vim$VAccumulate, model.vimModel)
+							}),
+						$elm$core$Platform$Cmd$none);
+				} else {
+					var newModel = $author$project$Update$Vim$innerProcessCommand(model);
+					return _Utils_Tuple2(
+						_Utils_update(
+							newModel,
+							{editMode: $author$project$EditorModel$StandardEditor}),
+						$elm$core$Platform$Cmd$none);
+				}
 			case 'MarkdownMsg':
 				return $Janiczek$cmd_extra$Cmd$Extra$withNoCmd(model);
 			case 'SelectGroup':
 				var range = A2($author$project$Update$Group$groupRange, model.cursor, model.lines);
 				var line = model.cursor.line;
 				if (range.$ === 'Just') {
-					var _v26 = range.a;
-					var start = _v26.a;
-					var end = _v26.b;
+					var _v27 = range.a;
+					var start = _v27.a;
+					var end = _v27.b;
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
@@ -36276,14 +36295,14 @@ var $author$project$View$EditorFooter$editModeDisplay = function (model) {
 };
 var $author$project$View$EditorFooter$footerBackgroundColor = function (viewMode_) {
 	if (viewMode_.$ === 'Light') {
-		return A2($elm$html$Html$Attributes$style, 'background-color', '#f0f0f0');
+		return A2($elm$html$Html$Attributes$style, 'background-color', '#557');
 	} else {
 		return A2($elm$html$Html$Attributes$style, 'background-color', '#557');
 	}
 };
 var $author$project$View$EditorFooter$footerFontColor = function (viewMode_) {
 	if (viewMode_.$ === 'Light') {
-		return A2($elm$html$Html$Attributes$style, 'color', '#444');
+		return A2($elm$html$Html$Attributes$style, 'color', '#f0f0f0');
 	} else {
 		return A2($elm$html$Html$Attributes$style, 'color', '#f0f0f0');
 	}
@@ -36367,7 +36386,7 @@ var $author$project$View$EditorFooter$view = function (model) {
 			]));
 };
 var $jxxcarlson$elm_markdown$Markdown$Option$ExtendedMath = {$: 'ExtendedMath'};
-var $author$project$View$Help$data = '\n\n## Menu\n\nThe items in the menu bar are\n\n- Help:  toggles this help page\n- (142,  589) or something like that: the number of lines and words\n- Go: enter a line number and press this button\n- brkOn: toggle automatic line-breaking\n\n\n## Key Commands\n\nType `ctrl-H` to toggle this window.\n\n### Search\n\n````\nSearch                ctrl-S\nNext search hit       ctrl-.   (Think >)\nPrevious search hit   ctrl-,   (Think <)\n````\n    \n### Content\n\n````\nUndo       ctrl-Z\nRedo       ctrl-Y\n\nCopy       ctrl-C\nCut        ctrl-X\nPaste      ctrl-V\nClear      ctrl-opt-C\n\nDelete Forward   ctrl-D\n\nKill Line     ctrl-K   (from cursor to end)\nDelete Line   ctrl-U\nPaste         ctrl-V\n\nFor now, Google Chrome only:\nCopy to system clipboard       ctrl-shift-C\nPaste from system clipboard    ctrl-shift-V\n\nIndent     TAB\nDeindent   shift-TAB\n\nType (, [, {, ` and the editor will\nmatch with ), ], }, `.  Works also\nif there is a selection.\n````\n\n### Sync\n\nPress `ctrl-\\` in the source text to sync\nit to the rendered text.  Click in the rendered\ntext to sync to the source text.\n\n### Cursor\n\n````\nUp       ArrowUp\nDown     ArrowDown\nLeft     ArrowLeft\nRight    ArrowRight\n\nPage up     ArrowUp\nPage down   opt-ArrowDown\n````\n\n### Selection\n\nExtend selection using shift + an arrow key (left, right, up, down).\nDouble-click (or ctrl-J) to select a word, triple-click (or ctrl-L)\nto select a line.\n\n### Lines\n\n````\nLine start   opt-ArrowLeft,  ctrl-A\nLine end     opt-ArrowRight, ctrl-E\n\nFirst line   ctrl-opt-ArrowUp\nLast line    ctrl-opt-ArrowDown\n````\n\n### Wrap \n\n````\nWrap selection   ctrl-W\nWrap all         ctrl-shift-W\n````\n\n### Other\n\n````\nToggle dark mode   option-D\nToggle help        ctrl-H\nToggle edit mode   option-E\n\nThe last command is to toggle between normal\nediting and Vim mode.\n````\n\n### About Vim Mode\n\nVim mode is not yet\noperational and it will be a while before it is.\nSo far I have installed a primitive scaffolding for\nbuilding this feature, but have implemented only the commands listed\nbelow.  I will do a little more, reserving plenty\nof things for the April 25 hackathon in Paris.\n\n### Vim commands implemented so far\n\n````\ni, ESC\nh, j, k, l\n````\n\n';
+var $author$project$View$Help$data = '\n\n## Menu\n\nThe items in the menu bar are\n\n- Help:  toggles this help page\n- (142,  589) or something like that: the number of lines and words\n- Go: enter a line number and press this button\n- brkOn: toggle automatic line-breaking\n\n\n## Key Commands\n\nType `ctrl-H` to toggle this window.\n\n### Search\n\n```nolang\nSearch                ctrl-S\nNext search hit       ctrl-.   (Think >)\nPrevious search hit   ctrl-,   (Think <)\n```\n    \n### Content\n\n```nolang\nUndo       ctrl-Z\nRedo       ctrl-Y\n\nCopy       ctrl-C\nCut        ctrl-X\nPaste      ctrl-V\nClear      ctrl-opt-C\n\nDelete Forward   ctrl-D\n\nKill Line     ctrl-K   (from cursor to end)\nDelete Line   ctrl-U\nPaste         ctrl-V\n\nFor now, Google Chrome only:\nCopy to system clipboard       ctrl-shift-C\nPaste from system clipboard    ctrl-shift-V\n\nIndent     TAB\nDeindent   shift-TAB\n\nType (, [, {, ` and the editor will\nmatch with ), ], }, `.  Works also\nif there is a selection.\n```\n\n### Sync\n\nPress `ctrl-\\` in the source text to sync\nit to the rendered text.  Click in the rendered\ntext to sync to the source text.\n\n### Cursor\n\n```nolang\nUp       ArrowUp\nDown     ArrowDown\nLeft     ArrowLeft\nRight    ArrowRight\n\nPage up     ArrowUp\nPage down   opt-ArrowDown\n```\n\n### Selection\n\nExtend selection using shift + an arrow key (left, right, up, down).\nDouble-click (or ctrl-J) to select a word, triple-click (or ctrl-L)\nto select a line.\n\n### Lines\n\n```nolang\nLine start   opt-ArrowLeft,  ctrl-A\nLine end     opt-ArrowRight, ctrl-E\n\nFirst line   ctrl-opt-ArrowUp\nLast line    ctrl-opt-ArrowDown\n```\n\n### Wrap \n\n```nolang\nWrap selection   ctrl-W\nWrap all         ctrl-shift-W\n```\n\n### Other\n\n```nolang\nToggle dark mode   option-D\nToggle help        ctrl-H\nToggle edit mode   option-E\n\nThe last command is to toggle between normal\nediting and Vim mode.\n```\n\n### About Vim Mode\n\nVim mode is not yet\noperational and it will be a while before it is.\nSo far I have installed a primitive scaffolding for\nbuilding this feature, but have implemented only the commands listed\nbelow.  I will do a little more, reserving plenty\nof things for the April 25 hackathon in Paris.\n\n### Vim commands implemented so far\n\n```nolang\ni, ESC\nh, j, k, l\n```\n\n';
 var $author$project$View$Help$px = function (p) {
 	return $elm$core$String$fromFloat(p) + 'px';
 };
@@ -42454,7 +42473,7 @@ var $author$project$View$Help$view = function (model) {
 					$author$project$View$Help$px(model.height)),
 					A2($elm$html$Html$Attributes$style, 'overflow-y', 'scroll'),
 					A2($elm$html$Html$Attributes$style, 'padding-left', '20px'),
-					A2($elm$html$Html$Attributes$style, 'font-size', '12px'),
+					A2($elm$html$Html$Attributes$style, 'font-size', '14px'),
 					A2($elm$html$Html$Attributes$style, 'line-height', '1.3')
 				]),
 			_List_fromArray(
@@ -43525,6 +43544,7 @@ var $author$project$EditorMsg$SendLineForLRSync = {$: 'SendLineForLRSync'};
 var $author$project$EditorMsg$Test = {$: 'Test'};
 var $author$project$EditorMsg$ToggleEditMode = {$: 'ToggleEditMode'};
 var $author$project$EditorMsg$ToggleHelp = {$: 'ToggleHelp'};
+var $author$project$EditorMsg$ToggleShortCutExecution = {$: 'ToggleShortCutExecution'};
 var $author$project$Keymap$keymaps = {
 	control: $elm$core$Dict$fromList(
 		_List_fromArray(
@@ -43590,7 +43610,8 @@ var $author$project$Keymap$keymaps = {
 				_Utils_Tuple2('ArrowRight', $author$project$EditorMsg$MoveToLineEnd),
 				_Utils_Tuple2('ß', $author$project$EditorMsg$SendLineForLRSync),
 				_Utils_Tuple2('∂', $author$project$EditorMsg$ToggleDarkMode),
-				_Utils_Tuple2('√', $author$project$EditorMsg$ToggleEditMode)
+				_Utils_Tuple2('√', $author$project$EditorMsg$ToggleEditMode),
+				_Utils_Tuple2('≠', $author$project$EditorMsg$ToggleShortCutExecution)
 			])),
 	shift: $elm$core$Dict$fromList(
 		_List_fromArray(
@@ -44455,4 +44476,4 @@ _Platform_export({'Main':{'init':$author$project$Main$main(
 				},
 				A2($elm$json$Json$Decode$field, 'seed', $elm$json$Json$Decode$int));
 		},
-		A2($elm$json$Json$Decode$field, 'width', $elm$json$Json$Decode$int)))({"versions":{"elm":"0.19.1"},"types":{"message":"Model.Msg","aliases":{"Editor.EditorMsg":{"args":[],"type":"EditorMsg.EMsg"},"Browser.Dom.Element":{"args":[],"type":"{ scene : { width : Basics.Float, height : Basics.Float }, viewport : { x : Basics.Float, y : Basics.Float, width : Basics.Float, height : Basics.Float }, element : { x : Basics.Float, y : Basics.Float, width : Basics.Float, height : Basics.Float } }"},"Browser.Dom.Viewport":{"args":[],"type":"{ scene : { width : Basics.Float, height : Basics.Float }, viewport : { x : Basics.Float, y : Basics.Float, width : Basics.Float, height : Basics.Float } }"},"ContextMenu.Position":{"args":[],"type":"{ x : Basics.Float, y : Basics.Float }"},"EditorMsg.Position":{"args":[],"type":"{ line : Basics.Int, column : Basics.Int }"},"ContextMenu.Size":{"args":[],"type":"{ width : Basics.Float, height : Basics.Float }"}},"unions":{"Model.Msg":{"args":[],"tags":{"MyEditorMsg":["Editor.EditorMsg"],"NoOp":[],"Clear":[],"Render":["String.String"],"GetContent":["String.String"],"GetMacroText":["String.String"],"DebounceMsg":["Debounce.Msg"],"GenerateSeed":[],"NewSeed":["Basics.Int"],"FullRender":[],"RestoreText":[],"ExampleText":[],"SetViewPortForElement":["Result.Result Browser.Dom.Error ( Browser.Dom.Element, Browser.Dom.Viewport )"],"LaTeXMsg":["MiniLatex.EditSimple.LaTeXMsg"],"Export":[]}},"EditorMsg.EMsg":{"args":[],"tags":{"EditorNoOp":[],"ExitVimInsertMode":[],"MoveUp":[],"MoveDown":[],"MoveLeft":[],"MoveRight":[],"MoveToLineStart":[],"MoveToLineEnd":[],"PageUp":[],"PageDown":[],"FirstLine":[],"LastLine":[],"GoToLine":[],"NewLine":[],"InsertChar":["String.String"],"Indent":[],"Deindent":[],"RemoveCharBefore":[],"RemoveCharAfter":[],"KillLine":[],"DeleteLine":[],"Cut":[],"Copy":[],"Paste":[],"WrapAll":[],"WrapSelection":[],"Hover":["EditorMsg.Hover"],"GoToHoveredPosition":[],"StartSelecting":[],"StopSelecting":[],"SelectLine":[],"SelectUp":[],"SelectDown":[],"SelectLeft":[],"SelectRight":[],"SelectGroup":[],"Undo":[],"Redo":[],"AcceptLineToGoTo":["String.String"],"DebounceMsg":["Debounce.Msg"],"Unload":["String.String"],"Clear":[],"Test":[],"ContextMenuMsg":["ContextMenu.Msg EditorMsg.Context"],"Item":["Basics.Int"],"ToggleAutoLineBreak":[],"EditorRequestFile":[],"EditorRequestedFile":["File.File"],"MarkdownLoaded":["String.String"],"EditorSaveFile":[],"SendLineForLRSync":[],"GotViewportForSync":["Maybe.Maybe String.String","EditorMsg.Selection","Result.Result Browser.Dom.Error Browser.Dom.Viewport"],"ViewportMotion":["Result.Result Browser.Dom.Error ()"],"GotViewportInfo":["Result.Result Browser.Dom.Error Browser.Dom.Viewport"],"CopyPasteClipboard":[],"WriteToSystemClipBoard":[],"DoSearch":["String.String"],"ToggleSearchPanel":[],"ToggleReplacePanel":[],"OpenReplaceField":[],"RollSearchSelectionForward":[],"RollSearchSelectionBackward":[],"ReplaceCurrentSelection":[],"AcceptLineNumber":["String.String"],"AcceptSearchText":["String.String"],"AcceptReplacementText":["String.String"],"GotViewport":["Result.Result Browser.Dom.Error Browser.Dom.Viewport"],"ToggleDarkMode":[],"ToggleHelp":[],"ToggleEditMode":[],"MarkdownMsg":["Markdown.Render.MarkdownMsg"],"Vim":["Vim.VimMsg"]}},"Browser.Dom.Error":{"args":[],"tags":{"NotFound":["String.String"]}},"Basics.Float":{"args":[],"tags":{"Float":[]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"MiniLatex.EditSimple.LaTeXMsg":{"args":[],"tags":{"IDClicked":["String.String"]}},"Debounce.Msg":{"args":[],"tags":{"NoOp":[],"Flush":["Maybe.Maybe Basics.Float"],"SendIfLengthNotChangedFrom":["Basics.Int"]}},"Result.Result":{"args":["error","value"],"tags":{"Ok":["value"],"Err":["error"]}},"String.String":{"args":[],"tags":{"String":[]}},"EditorMsg.Context":{"args":[],"tags":{"Object":[],"Background":[]}},"File.File":{"args":[],"tags":{"File":[]}},"EditorMsg.Hover":{"args":[],"tags":{"NoHover":[],"HoverLine":["Basics.Int"],"HoverChar":["EditorMsg.Position"]}},"Markdown.Render.MarkdownMsg":{"args":[],"tags":{"IDClicked":["String.String"]}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"ContextMenu.Msg":{"args":["context"],"tags":{"NoOp":[],"RequestOpen":["context","ContextMenu.Position"],"Open":["context","ContextMenu.Position","ContextMenu.Size"],"Close":[],"EnterItem":["( Basics.Int, Basics.Int )"],"LeaveItem":[],"EnterContainer":[],"LeaveContainer":[]}},"EditorMsg.Selection":{"args":[],"tags":{"NoSelection":[],"SelectingFrom":["EditorMsg.Hover"],"SelectedChar":["EditorMsg.Position"],"Selection":["EditorMsg.Position","EditorMsg.Position"]}},"Vim.VimMsg":{"args":[],"tags":{"StartCommand":[],"ToBuffer":["String.String"]}}}}})}});}(this));
+		A2($elm$json$Json$Decode$field, 'width', $elm$json$Json$Decode$int)))({"versions":{"elm":"0.19.1"},"types":{"message":"Model.Msg","aliases":{"Editor.EditorMsg":{"args":[],"type":"EditorMsg.EMsg"},"Browser.Dom.Element":{"args":[],"type":"{ scene : { width : Basics.Float, height : Basics.Float }, viewport : { x : Basics.Float, y : Basics.Float, width : Basics.Float, height : Basics.Float }, element : { x : Basics.Float, y : Basics.Float, width : Basics.Float, height : Basics.Float } }"},"Browser.Dom.Viewport":{"args":[],"type":"{ scene : { width : Basics.Float, height : Basics.Float }, viewport : { x : Basics.Float, y : Basics.Float, width : Basics.Float, height : Basics.Float } }"},"ContextMenu.Position":{"args":[],"type":"{ x : Basics.Float, y : Basics.Float }"},"EditorMsg.Position":{"args":[],"type":"{ line : Basics.Int, column : Basics.Int }"},"ContextMenu.Size":{"args":[],"type":"{ width : Basics.Float, height : Basics.Float }"}},"unions":{"Model.Msg":{"args":[],"tags":{"MyEditorMsg":["Editor.EditorMsg"],"NoOp":[],"Clear":[],"Render":["String.String"],"GetContent":["String.String"],"GetMacroText":["String.String"],"DebounceMsg":["Debounce.Msg"],"GenerateSeed":[],"NewSeed":["Basics.Int"],"FullRender":[],"RestoreText":[],"ExampleText":[],"SetViewPortForElement":["Result.Result Browser.Dom.Error ( Browser.Dom.Element, Browser.Dom.Viewport )"],"LaTeXMsg":["MiniLatex.EditSimple.LaTeXMsg"],"Export":[]}},"EditorMsg.EMsg":{"args":[],"tags":{"EditorNoOp":[],"ExitVimInsertMode":[],"MoveUp":[],"MoveDown":[],"MoveLeft":[],"MoveRight":[],"MoveToLineStart":[],"MoveToLineEnd":[],"PageUp":[],"PageDown":[],"FirstLine":[],"LastLine":[],"GoToLine":[],"NewLine":[],"InsertChar":["String.String"],"Indent":[],"Deindent":[],"RemoveCharBefore":[],"RemoveCharAfter":[],"KillLine":[],"DeleteLine":[],"Cut":[],"Copy":[],"Paste":[],"WrapAll":[],"WrapSelection":[],"Hover":["EditorMsg.Hover"],"GoToHoveredPosition":[],"StartSelecting":[],"StopSelecting":[],"SelectLine":[],"SelectUp":[],"SelectDown":[],"SelectLeft":[],"SelectRight":[],"SelectGroup":[],"Undo":[],"Redo":[],"AcceptLineToGoTo":["String.String"],"DebounceMsg":["Debounce.Msg"],"Unload":["String.String"],"Clear":[],"Test":[],"ContextMenuMsg":["ContextMenu.Msg EditorMsg.Context"],"Item":["Basics.Int"],"ToggleAutoLineBreak":[],"EditorRequestFile":[],"EditorRequestedFile":["File.File"],"MarkdownLoaded":["String.String"],"EditorSaveFile":[],"SendLineForLRSync":[],"GotViewportForSync":["Maybe.Maybe String.String","EditorMsg.Selection","Result.Result Browser.Dom.Error Browser.Dom.Viewport"],"ViewportMotion":["Result.Result Browser.Dom.Error ()"],"GotViewportInfo":["Result.Result Browser.Dom.Error Browser.Dom.Viewport"],"CopyPasteClipboard":[],"WriteToSystemClipBoard":[],"DoSearch":["String.String"],"ToggleSearchPanel":[],"ToggleReplacePanel":[],"OpenReplaceField":[],"RollSearchSelectionForward":[],"RollSearchSelectionBackward":[],"ReplaceCurrentSelection":[],"AcceptLineNumber":["String.String"],"AcceptSearchText":["String.String"],"AcceptReplacementText":["String.String"],"GotViewport":["Result.Result Browser.Dom.Error Browser.Dom.Viewport"],"ToggleDarkMode":[],"ToggleHelp":[],"ToggleEditMode":[],"ToggleShortCutExecution":[],"MarkdownMsg":["Markdown.Render.MarkdownMsg"],"Vim":["Vim.VimMsg"]}},"Browser.Dom.Error":{"args":[],"tags":{"NotFound":["String.String"]}},"Basics.Float":{"args":[],"tags":{"Float":[]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"MiniLatex.EditSimple.LaTeXMsg":{"args":[],"tags":{"IDClicked":["String.String"]}},"Debounce.Msg":{"args":[],"tags":{"NoOp":[],"Flush":["Maybe.Maybe Basics.Float"],"SendIfLengthNotChangedFrom":["Basics.Int"]}},"Result.Result":{"args":["error","value"],"tags":{"Ok":["value"],"Err":["error"]}},"String.String":{"args":[],"tags":{"String":[]}},"EditorMsg.Context":{"args":[],"tags":{"Object":[],"Background":[]}},"File.File":{"args":[],"tags":{"File":[]}},"EditorMsg.Hover":{"args":[],"tags":{"NoHover":[],"HoverLine":["Basics.Int"],"HoverChar":["EditorMsg.Position"]}},"Markdown.Render.MarkdownMsg":{"args":[],"tags":{"IDClicked":["String.String"]}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"ContextMenu.Msg":{"args":["context"],"tags":{"NoOp":[],"RequestOpen":["context","ContextMenu.Position"],"Open":["context","ContextMenu.Position","ContextMenu.Size"],"Close":[],"EnterItem":["( Basics.Int, Basics.Int )"],"LeaveItem":[],"EnterContainer":[],"LeaveContainer":[]}},"EditorMsg.Selection":{"args":[],"tags":{"NoSelection":[],"SelectingFrom":["EditorMsg.Hover"],"SelectedChar":["EditorMsg.Position"],"Selection":["EditorMsg.Position","EditorMsg.Position"]}},"Vim.VimMsg":{"args":[],"tags":{"StartCommand":[],"ToBuffer":["String.String"]}}}}})}});}(this));

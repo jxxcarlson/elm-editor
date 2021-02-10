@@ -69,7 +69,7 @@ footerBackgroundColor : ViewMode -> Attribute msg
 footerBackgroundColor viewMode_ =
     case viewMode_ of
         Light ->
-            HA.style "background-color" "#f0f0f0"
+            HA.style "background-color" "#557"
 
         Dark ->
             HA.style "background-color" "#557"
@@ -79,7 +79,7 @@ footerFontColor : ViewMode -> Attribute msg
 footerFontColor viewMode_ =
     case viewMode_ of
         Light ->
-            HA.style "color" "#444"
+            HA.style "color" "#f0f0f0"
 
         Dark ->
             HA.style "color" "#f0f0f0"

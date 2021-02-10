@@ -32,6 +32,7 @@ import Update.Scroll
 import Update.Vim
 import Update.Wrap
 import Window
+import Vim 
 
 
 update : EMsg -> EditorModel -> ( EditorModel, Cmd EMsg )
@@ -533,6 +534,16 @@ update msg model =
 
         ToggleEditMode ->
             Function.toggleEditMode model |> withNoCmd
+
+        ToggleShortCutExecution -> 
+           case model.vimModel.state of
+              Vim.VNormal -> ({ model | vimModel = Update.Vim.setState Vim.VAccumulate model.vimModel
+                                 , editMode = VimEditor VimNormal }, Cmd.none)
+              Vim.VAccumulate -> 
+                let
+                    newModel = Update.Vim.innerProcessCommand  model
+                in
+                ( {newModel | editMode = StandardEditor}, Cmd.none)
 
         MarkdownMsg _ ->
             model |> withNoCmd

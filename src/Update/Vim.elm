@@ -1,4 +1,4 @@
-module Update.Vim exposing (process, toString, update)
+module Update.Vim exposing (process, toString, update, setState, innerProcessCommand)
 
 import Action
 import Array
@@ -45,6 +45,7 @@ process : String -> EditorModel -> EditorModel
 process char model =
     case ( model.vimModel.state, char ) of
         ( VNormal, "=" ) ->
+            -- TODO: link to option-=
             { model | vimModel = setState VAccumulate model.vimModel }
 
         ( VNormal, _ ) ->
@@ -104,6 +105,7 @@ replacements =
 
 innerProcessCommand : EditorModel -> EditorModel
 innerProcessCommand model =
+    -- TODO: link to option-=
     let
         insertion =
             executeBuffer model.vimModel.buffer

@@ -33,15 +33,15 @@ Type `ctrl-H` to toggle this window.
 
 ### Search
 
-````
+```nolang
 Search                ctrl-S
 Next search hit       ctrl-.   (Think >)
 Previous search hit   ctrl-,   (Think <)
-````
+```
     
 ### Content
 
-````
+```nolang
 Undo       ctrl-Z
 Redo       ctrl-Y
 
@@ -66,7 +66,7 @@ Deindent   shift-TAB
 Type (, [, {, ` and the editor will
 match with ), ], }, `.  Works also
 if there is a selection.
-````
+```
 
 ### Sync
 
@@ -76,7 +76,7 @@ text to sync to the source text.
 
 ### Cursor
 
-````
+```nolang
 Up       ArrowUp
 Down     ArrowDown
 Left     ArrowLeft
@@ -84,7 +84,7 @@ Right    ArrowRight
 
 Page up     ArrowUp
 Page down   opt-ArrowDown
-````
+```
 
 ### Selection
 
@@ -94,31 +94,31 @@ to select a line.
 
 ### Lines
 
-````
+```nolang
 Line start   opt-ArrowLeft,  ctrl-A
 Line end     opt-ArrowRight, ctrl-E
 
 First line   ctrl-opt-ArrowUp
 Last line    ctrl-opt-ArrowDown
-````
+```
 
 ### Wrap 
 
-````
+```nolang
 Wrap selection   ctrl-W
 Wrap all         ctrl-shift-W
-````
+```
 
 ### Other
 
-````
+```nolang
 Toggle dark mode   option-D
 Toggle help        ctrl-H
 Toggle edit mode   option-E
 
 The last command is to toggle between normal
 editing and Vim mode.
-````
+```
 
 ### About Vim Mode
 
@@ -131,10 +131,10 @@ of things for the April 25 hackathon in Paris.
 
 ### Vim commands implemented so far
 
-````
+```nolang
 i, ESC
 h, j, k, l
-````
+```
 
 """
 
@@ -156,7 +156,7 @@ view model =
                 , HA.style "height" (px model.height)
                 , HA.style "overflow-y" "scroll"
                 , HA.style "padding-left" "20px"
-                , HA.style "font-size" "12px"
+                , HA.style "font-size" "14px"
                 , HA.style "line-height" "1.3"
                 ]
                 [ Markdown.Render.toHtml ExtendedMath data

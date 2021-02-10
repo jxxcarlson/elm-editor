@@ -140,6 +140,7 @@ type EMsg
     | ToggleDarkMode
     | ToggleHelp
     | ToggleEditMode
+    | ToggleShortCutExecution
       --
     | MarkdownMsg MarkdownMsg
       --
