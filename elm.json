@@ -24,6 +24,7 @@
         "jinjor/elm-contextmenu": "2.0.0 <= v < 3.0.0",
         "jinjor/elm-debounce": "3.0.0 <= v < 4.0.0",
         "jxxcarlson/elm-markdown": "9.2.5 <= v < 10.0.0",
+        "jxxcarlson/meenylatex": "14.0.0 <= v < 15.0.0",
         "lovasoa/elm-rolling-list": "1.1.4 <= v < 2.0.0",
         "mdgriffith/elm-ui": "1.1.8 <= v < 2.0.0",
         "rluiten/stringdistance": "1.0.4 <= v < 2.0.0"

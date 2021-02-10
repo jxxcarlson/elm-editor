@@ -14,6 +14,7 @@
             "elm/html": "1.0.0",
             "elm/http": "2.0.0",
             "elm/json": "1.1.3",
+            "elm/random": "1.0.0",
             "elm-community/list-extra": "8.2.4",
             "elm-community/maybe-extra": "5.2.0",
             "elm-community/string-extra": "4.0.1",
@@ -22,6 +23,7 @@
             "jinjor/elm-contextmenu": "2.0.0",
             "jinjor/elm-debounce": "3.0.0",
             "jxxcarlson/elm-markdown": "10.0.1",
+            "jxxcarlson/meenylatex": "14.0.0",
             "lovasoa/elm-rolling-list": "1.1.4",
             "mdgriffith/elm-ui": "1.1.8",
             "rluiten/stringdistance": "1.0.4"
@@ -40,6 +42,7 @@
             "elm/url": "1.0.0",
             "elm/virtual-dom": "1.0.2",
             "elm-community/dict-extra": "2.4.0",
+            "elm-community/result-extra": "2.4.0",
             "erlandsona/assoc-set": "1.1.0",
             "jxxcarlson/htree": "2.0.1",
             "pablohirafuji/elm-syntax-highlight": "3.4.0",

@@ -164,6 +164,7 @@ viewEditor model =
         , HA.style "line-height" (px model.lineHeight)
         , HA.style "white-space" "pre-wrap"
         , HA.style "height" (px (editorHeight model - 35))
+        , HA.style "overflow" "scroll"
         , HA.style "width" (px model.width)
         , Keymap.handle
         , HA.tabindex 0

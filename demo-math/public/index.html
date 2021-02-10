@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+
+    <!-- Load KaTeX code -->
+    <script src="assets/elm-katex.js"></script>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css" integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3+Aro6EYUG4+cU+KJWu/X" crossorigin="anonymous">
+
+    <!-- Fonts -->
+
+    <script defer src="https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.js" integrity="sha256-4O4pS1SH31ZqrSO2A/2QJTVjTPqVe+jnYgOWUVr7EEc=" crossorigin="anonymous"></script>
+
+    <title>MiniLaTeX Example (KaTeX)</title>
+
+    <!-- Style -->
+    <link rel="stylesheet" href="assets/style.css">
+
+    <!-- Load app -->
+    <script src="Main.js" charset="utf-8"></script>
+
+</head>
+
+<body>
+
+<div id="main"></div>
+
+<script>
+
+		// Generate random numbers to see UUID generator
+		const crypto = window.crypto || window.msCrypto;
+		const getRandomInts = (n) => {
+			const randInts = new Uint32Array(n);
+			crypto.getRandomValues(randInts);
+			return Array.from(randInts);
+		};
+		// For a UUID, we need at least 128 bits of randomness.
+		// This means we need to seed our generator with at least 4 32-bit ints.
+		// We get 5 here, since the Pcg.Extended generator performs slightly faster if our extension array
+		// has a size that is a power of two (4 here).
+		const randInts = getRandomInts(5);
+
+		var root = document.getElementById('main');
+		var app = Elm.Main.init({node: root, flags:  { seed: randInts[0], width:  1200, height: 900 }});
+        init(app);
+
+	 </script>
+
+</body>
+</html>
