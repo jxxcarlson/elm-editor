@@ -45,6 +45,7 @@ import ContextMenu exposing (ContextMenu)
 import EditorModel exposing (Config, EditorModel)
 import EditorMsg exposing (Context(..), EMsg(..), WrapOption)
 import Html as H exposing (Html)
+import Html.Attributes as HA
 import Menu.View exposing (viewContextMenu)
 import Update as U
 import Update.Scroll
@@ -160,7 +161,7 @@ resize width height (Editor model) =
 -}
 view : Editor -> Html EMsg
 view (Editor model) =
-    H.div []
+    H.div [HA.style "background-color" "#555"]
         [ View.Editor.viewHeader model
         , View.Search.searchPanel model
         , View.Search.replacePanel model

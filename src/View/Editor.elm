@@ -166,6 +166,7 @@ viewEditor model =
         , HA.style "height" (px (editorHeight model - 35))
         , HA.style "overflow" "scroll"
         , HA.style "width" (px model.width)
+        , HA.style "background-color" "#555"
         , Keymap.handle
         , HA.tabindex 0
 
@@ -277,6 +278,10 @@ viewContent model =
 
         hover2 =
             Window.shiftHover -offset model.hover
+
+        bgColor = case model.viewMode of 
+           Light -> "#ddd"
+           Dark -> "#555"
     in
     H.div
         [ HA.style "position" "relative"
@@ -284,6 +289,7 @@ viewContent model =
         , HA.style "background-color" "#f0f0f0"
         , HA.style "user-select" "none"
         , HA.style "user-select" "none"
+        , HA.style "background-color" bgColor
         , HE.onMouseDown StartSelecting
         , HE.onMouseUp StopSelecting
         , HE.onClick GoToHoveredPosition

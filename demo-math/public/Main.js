@@ -43978,6 +43978,14 @@ var $author$project$View$Editor$viewContent = function (model) {
 	var hover2 = A2($author$project$Window$shiftHover, -offset, model.hover);
 	var cursor = model.cursor;
 	var cursor2 = A2($author$project$Window$shiftPosition, -offset, cursor);
+	var bgColor = function () {
+		var _v0 = model.viewMode;
+		if (_v0.$ === 'Light') {
+			return '#ddd';
+		} else {
+			return '#555';
+		}
+	}();
 	return A2(
 		$elm$html$Html$div,
 		_List_fromArray(
@@ -43987,6 +43995,7 @@ var $author$project$View$Editor$viewContent = function (model) {
 				A2($elm$html$Html$Attributes$style, 'background-color', '#f0f0f0'),
 				A2($elm$html$Html$Attributes$style, 'user-select', 'none'),
 				A2($elm$html$Html$Attributes$style, 'user-select', 'none'),
+				A2($elm$html$Html$Attributes$style, 'background-color', bgColor),
 				$elm$html$Html$Events$onMouseDown($author$project$EditorMsg$StartSelecting),
 				$elm$html$Html$Events$onMouseUp($author$project$EditorMsg$StopSelecting),
 				$elm$html$Html$Events$onClick($author$project$EditorMsg$GoToHoveredPosition),
@@ -44075,6 +44084,7 @@ var $author$project$View$Editor$viewEditor = function (model) {
 				$elm$html$Html$Attributes$style,
 				'width',
 				$author$project$View$Editor$px(model.width)),
+				A2($elm$html$Html$Attributes$style, 'background-color', '#555'),
 				$author$project$Keymap$handle,
 				$elm$html$Html$Attributes$tabindex(0),
 				A2($author$project$View$Editor$onMultiplelick, $author$project$EditorMsg$SelectGroup, $author$project$EditorMsg$SelectLine),
@@ -44360,7 +44370,10 @@ var $author$project$Editor$view = function (_v0) {
 	var model = _v0.a;
 	return A2(
 		$elm$html$Html$div,
-		_List_Nil,
+		_List_fromArray(
+			[
+				A2($elm$html$Html$Attributes$style, 'background-color', '#555')
+			]),
 		_List_fromArray(
 			[
 				$author$project$View$Editor$viewHeader(model),

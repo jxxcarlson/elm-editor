@@ -1,4 +1,4 @@
-module UI exposing(..)
+module UI exposing(renderedSource, setViewPortForSelectedLine)
 
 import Html exposing (..)
 import Html.Attributes as HA exposing (..)
@@ -9,25 +9,6 @@ import Browser.Dom as Dom
 import Element exposing(Element)
 import Task exposing(Task)
 
-
--- VIEW FUNCTIONS
-
-
-viewImages model =
-    div [ HA.style "overflow" "scroll", HA.style "height" "500px" ] (List.map viewImage model.images)
-
-
-viewImage : String -> Html Msg
-viewImage url =
-    div []
-        [ Html.a
-            [ HA.style "margin-left" "18px"
-            , HA.style "padding-bottom" "9px"
-            , HA.href url
-            ]
-            [ Html.img [ HA.src url, HA.style "height" "30px" ] []
-            ]
-        ]
 
 
 label text_ =
