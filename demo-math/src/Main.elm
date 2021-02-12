@@ -12,6 +12,7 @@ import Element.Font as Font
 import Helper.File
 import Helper.Load as Load
 import Helper.Sync
+import Helper.Update
 import Html exposing (..)
 import Html.Attributes as HA exposing (..)
 import MiniLatex.EditSimple
@@ -79,66 +80,23 @@ init flags =
 -- UPDATE
 
 
-debounceConfig : Debounce.Config Msg
-debounceConfig =
-    { strategy = Debounce.later 250
-    , transform = DebounceMsg
-    }
-
-
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        -- MyEditorMsg editorMsg ->
-        --     let
-        --         ( newEditor, cmd ) =
-        --             Editor.update editorMsg model.editor
-        --     in
-        --     ( { model | editor = newEditor }, Cmd.map MyEditorMsg cmd )
         NoOp ->
             ( model, Cmd.none )
 
         GetContent str ->
-            let
-                ( debounce, cmd ) =
-                    Debounce.push debounceConfig str model.debounce
-            in
-            ( { model
-                | sourceText = str
-                , debounce = debounce
-              }
-            , cmd
-            )
+            Helper.Update.getContent model str
 
         DebounceMsg msg_ ->
-            let
-                ( debounce, cmd ) =
-                    Debounce.update
-                        debounceConfig
-                        (Debounce.takeLast render_)
-                        msg_
-                        model.debounce
-            in
-            ( { model | debounce = debounce }, cmd )
+            Helper.Update.debounceMsg model msg_
 
         GetMacroText str ->
             ( { model | macroText = str }, Cmd.none )
 
         Render str ->
-            let
-                n =
-                    String.fromInt model.counter
-
-                newEditRecord =
-                    MiniLatex.EditSimple.update model.seed str Nothing model.editRecord
-            in
-            ( { model
-                | editRecord = newEditRecord
-                , renderedText = renderFromEditRecord model.selectedId model.counter newEditRecord
-                , counter = model.counter + 2
-              }
-            , Random.generate NewSeed (Random.int 1 10000)
-            )
+            Helper.Update.render model str
 
         GenerateSeed ->
             ( model, Random.generate NewSeed (Random.int 1 10000) )
@@ -147,31 +105,10 @@ update msg model =
             ( { model | seed = newSeed }, Cmd.none )
 
         Clear ->
-            let
-                editRecord =
-                    MiniLatex.EditSimple.init 0 "" Nothing
-            in
-            ( { model
-                | sourceText = ""
-                , editRecord = editRecord
-                , renderedText = renderFromEditRecord model.selectedId model.counter editRecord
-                , counter = model.counter + 1
-              }
-            , Cmd.none
-            )
+            Helper.Update.clear model
 
         FullRender ->
-            let
-                editRecord =
-                    MiniLatex.EditSimple.init model.seed model.sourceText Nothing
-            in
-            ( { model
-                | counter = model.counter + 1
-                , editRecord = editRecord
-                , renderedText = renderFromEditRecord model.selectedId model.counter editRecord
-              }
-            , Cmd.none
-            )
+            Helper.Update.fullRender model
 
         RestoreText ->
             let
@@ -188,18 +125,7 @@ update msg model =
             )
 
         ExampleText ->
-            let
-                editRecord =
-                    MiniLatex.EditSimple.init model.seed Text.start Nothing
-            in
-            ( { model
-                | counter = model.counter + 1
-                , editRecord = editRecord
-                , sourceText = Text.start
-                , renderedText = renderFromEditRecord model.selectedId model.counter editRecord
-              }
-            , Cmd.none
-            )
+            Helper.Update.exampleText model
 
         SetViewPortForElement result ->
             case result of
@@ -321,16 +247,3 @@ normalize str =
 prependMacros : String -> String -> String
 prependMacros macros_ sourceText_ =
     "$$\n" ++ (macros_ |> normalize) ++ "\n$$\n\n" ++ sourceText_
-
-
-renderFromEditRecord : String -> Int -> MiniLatex.EditSimple.Data -> Html Msg
-renderFromEditRecord selectedId counter editRecord =
-    MiniLatex.EditSimple.get selectedId editRecord
-        |> List.map (Html.map LaTeXMsg)
-        |> List.map (\x -> Html.div [ HA.style "margin-bottom" "0.65em" ] [ x ])
-        |> Html.div []
-
-
-render_ : String -> Cmd Msg
-render_ str =
-    Task.perform Render (Task.succeed str)
