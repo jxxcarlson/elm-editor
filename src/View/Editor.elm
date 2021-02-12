@@ -1,4 +1,4 @@
-module View.Editor exposing (viewDebug, viewEditor, viewHeader)
+module View.Editor exposing (view, viewDebug, viewHeader)
 
 import Array exposing (Array)
 import Common exposing (hoversToPositions, isLastColumn, lineContent)
@@ -154,8 +154,8 @@ borderFontColor viewMode_ =
             HA.style "color" "#aaa"
 
 
-viewEditor : EditorModel -> Html EMsg
-viewEditor model =
+view : EditorModel -> Html EMsg
+view model =
     H.div
         [ HA.style "display" "flex"
         , HA.style "flex-direction" "row"
@@ -163,7 +163,7 @@ viewEditor model =
         , HA.style "font-size" (px model.fontSize)
         , HA.style "line-height" (px model.lineHeight)
         , HA.style "white-space" "pre-wrap"
-        , HA.style "height" (px (editorHeight model - 35))
+        , HA.style "height" (px (editorHeight model))
         , HA.style "overflow" "scroll"
         , HA.style "width" (px model.width)
         , HA.style "background-color" "#555"
@@ -184,7 +184,7 @@ editorHeight : EditorModel -> Float
 editorHeight model =
     let
         defaultHeight =
-            model.height
+            model.height - 20
 
         barHeight =
             35
@@ -279,9 +279,13 @@ viewContent model =
         hover2 =
             Window.shiftHover -offset model.hover
 
-        bgColor = case model.viewMode of 
-           Light -> "#ddd"
-           Dark -> "#555"
+        bgColor =
+            case model.viewMode of
+                Light ->
+                    "#ddd"
+
+                Dark ->
+                    "#555"
     in
     H.div
         [ HA.style "position" "relative"

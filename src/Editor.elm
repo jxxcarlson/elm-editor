@@ -161,13 +161,14 @@ resize width height (Editor model) =
 -}
 view : Editor -> Html EMsg
 view (Editor model) =
-    H.div [HA.style "background-color" "#555"]
+    H.div [ HA.style "background-color" "#555", HA.style "height" (String.fromFloat (model.height + 0) ++ "px") ]
         [ View.Editor.viewHeader model
         , View.Search.searchPanel model
         , View.Search.replacePanel model
-        , View.Editor.viewEditor model
+        , View.Editor.view model
         , View.EditorFooter.view model
-        , viewContextMenu model.width model
+
+        -- , viewContextMenu model.width model
         , View.Editor.viewDebug model
         , View.Help.view model |> H.map MarkdownMsg
         ]

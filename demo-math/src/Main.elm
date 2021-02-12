@@ -1,30 +1,28 @@
 module Main exposing (main)
 
-import Browser
-import Editor exposing (Editor)
-import Element exposing (Element, row, column, el, px, text, centerX, centerY, fill)
-import Element.Background as Background
-import Helper.Load as Load
-import Html exposing (Html)
-import Http
-import Text
 --
+
+import Browser
 import Debounce exposing (Debounce)
-import MiniLatex.EditSimple
-import MiniLatex.Export
-import Browser.Dom as Dom
-import Style.Html exposing(..)
-import Style.Element
-import Random
+import Editor exposing (Editor)
+import EditorMsg
+import Element exposing (Element, centerX, centerY, column, el, fill, px, row, text)
+import Element.Background as Background
+import Element.Font as Font
+import Helper.File
+import Helper.Load as Load
+import Helper.Sync
 import Html exposing (..)
 import Html.Attributes as HA exposing (..)
-import Html.Events exposing (onClick, onInput)
-import UI exposing(..)
-import Model exposing(..)
-import Task exposing(Task)
-import File.Download as Download
-import Helper.Sync
-import EditorMsg
+import MiniLatex.EditSimple
+import Model exposing (..)
+import Random
+import Style.Element
+import Task exposing (Task)
+import Text
+import UI exposing (..)
+
+
 
 -- MAIN
 
@@ -36,6 +34,7 @@ main =
         , subscriptions = subscriptions
         , view = view
         }
+
 
 type alias Flags =
     { seed : Int
@@ -50,12 +49,13 @@ init flags =
         newEditor =
             Editor.initWithContent Text.start Load.config
 
-
         editRecord =
             MiniLatex.EditSimple.init flags.seed Text.start Nothing
 
         model =
-            { editor = newEditor
+            { windowWidth = flags.width
+            , windowHeight = flags.height
+            , editor = newEditor
             , sourceText = Text.start
             , macroText = ""
             , renderedText = MiniLatex.EditSimple.get "" editRecord |> Html.div [] |> Html.map LaTeXMsg
@@ -67,14 +67,17 @@ init flags =
             , message = "No message yet ..."
             , images = []
             , imageUrl = ""
-            }    
+            , fileName = "mydocument.tex"
+            }
 
         -- Editor.initWithContent Text.test1 Load.config
     in
     ( model, Cmd.none )
 
 
+
 -- UPDATE
+
 
 debounceConfig : Debounce.Config Msg
 debounceConfig =
@@ -92,7 +95,6 @@ update msg model =
         --             Editor.update editorMsg model.editor
         --     in
         --     ( { model | editor = newEditor }, Cmd.map MyEditorMsg cmd )
-
         NoOp ->
             ( model, Cmd.none )
 
@@ -138,13 +140,6 @@ update msg model =
             , Random.generate NewSeed (Random.int 1 10000)
             )
 
-        Export ->
-            let
-                ( contentForExport, images ) =
-                    model.sourceText |> MiniLatex.Export.toLaTeXWithImages
-            in
-            ( { model | images = images }, Download.string "mydocument.tex" "text/x-tex" contentForExport )
-
         GenerateSeed ->
             ( model, Random.generate NewSeed (Random.int 1 10000) )
 
@@ -181,7 +176,7 @@ update msg model =
         RestoreText ->
             let
                 editRecord =
-                    MiniLatex.EditSimple.init model.seed  Text.start Nothing
+                    MiniLatex.EditSimple.init model.seed Text.start Nothing
             in
             ( { model
                 | counter = model.counter + 1
@@ -216,7 +211,7 @@ update msg model =
 
         LaTeXMsg laTeXMsg ->
             -- TODO: re-implement this
-            (model, Cmd.none)
+            ( model, Cmd.none )
 
         MyEditorMsg editorMsg ->
             -- Handle messages from the Editor.  The messages CopyPasteClipboard, ... GotViewportForSync
@@ -226,7 +221,6 @@ update msg model =
                     Editor.update editorMsg model.editor
             in
             case editorMsg of
-
                 EditorMsg.InsertChar c ->
                     Helper.Sync.sync newEditor cmd model
 
@@ -236,12 +230,25 @@ update msg model =
                         Helper.Sync.sync newEditor cmd model
 
                     else
-                      case editorMsg of 
-                        EditorMsg.Clear ->                         
-                          ( { model | editor = newEditor, editRecord = MiniLatex.EditSimple.emptyData }, Cmd.map MyEditorMsg cmd )
+                        case editorMsg of
+                            EditorMsg.Clear ->
+                                ( { model | editor = newEditor, editRecord = MiniLatex.EditSimple.emptyData }, Cmd.map MyEditorMsg cmd )
 
-                        _ -> ( { model | editor = newEditor }, Cmd.map MyEditorMsg cmd )
+                            _ ->
+                                ( { model | editor = newEditor }, Cmd.map MyEditorMsg cmd )
 
+        -- FILE I/O
+        --ImportFile file ->
+        --    ( { model | fileName = File.name file }, Helper.File.load file )
+        Export ->
+            ( model, Helper.File.export model )
+
+
+
+--DocumentLoaded content ->
+--     Update.Document.loadDocument content model
+--SaveFile ->
+--     ( model, Helper.File.save model )
 -- SUBSCRIPTIONS
 
 
@@ -256,32 +263,49 @@ subscriptions model =
 
 view : Model -> Html Msg
 view model =
-    Element.layout [Background.color (Style.Element.gray 0.4), Element.width fill, Element.height fill] <|
-        column [ centerY, centerX] 
-            [ row [Element.spacing 0]  [
-                   el [] (viewEditor model)
-                  -- TODO: fix the below (round) --- (round Load.config.width)
-                  , el [Element.alignTop] 
-                    (UI.renderedSource 
-                      (Load.config.width - 40) 
-                      (Load.config.height + 22) 
-                      (render model.editRecord )
+    Element.layout [ Background.color (Style.Element.gray 0.4), Element.width fill, Element.height fill ] <|
+        column [ centerY, centerX ]
+            [ row [ Element.spacing 0 ]
+                [ el [ Element.alignTop ] (viewEditor model)
+
+                -- TODO: fix the below (round) --- (round Load.config.width)
+                , el [ Element.alignTop ]
+                    (UI.renderedSource
+                        (Load.config.width - 40)
+                        (Load.config.height + 22)
+                        (render model.editRecord)
                     )
-                
-               ]
+                ]
+            , footer model
             ]
-            
-render : MiniLatex.EditSimple.Data -> Html Msg        
-render  editRecord =
-  editRecord
-    |> MiniLatex.EditSimple.get "" 
-    |> Html.div []
-    |> Html.map LaTeXMsg
+
+
+footer : Model -> Element Msg
+footer model =
+    row
+        [ Element.spacing 12
+        , Font.size 14
+        , Element.height (px 30)
+        , Element.width (px model.windowWidth)
+        , Background.color (Style.Element.gray 0.2)
+        , Font.color (Style.Element.gray 0.9)
+        , Element.paddingXY 12 0
+        ]
+        [ Element.text "Buttons" ]
+
+
+render : MiniLatex.EditSimple.Data -> Html Msg
+render editRecord =
+    editRecord
+        |> MiniLatex.EditSimple.get ""
+        |> Html.div []
+        |> Html.map LaTeXMsg
 
 
 viewEditor : Model -> Element Msg
 viewEditor model =
     Editor.view model.editor |> Html.map MyEditorMsg |> Element.html
+
 
 
 -- HELPERS

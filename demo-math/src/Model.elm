@@ -1,18 +1,21 @@
-module Model exposing(..)
+module Model exposing (..)
 
-import Editor exposing(EditorMsg)
-import Debounce
 import Browser.Dom as Dom
-import MiniLatex.EditSimple exposing(LaTeXMsg, Data)
-import Debounce exposing(Debounce)
-import Html exposing(Html)
-import Editor exposing(Editor)
+import Debounce exposing (Debounce)
+import Editor exposing (Editor, EditorMsg)
+import File exposing (File)
+import Html exposing (Html)
+import MiniLatex.EditSimple exposing (Data, LaTeXMsg)
+
+
 
 -- MODEL
 
 
 type alias Model =
-    { editor : Editor
+    { windowWidth : Int
+    , windowHeight : Int
+    , editor : Editor
     , sourceText : String
     , renderedText : Html Msg
     , macroText : String
@@ -24,6 +27,7 @@ type alias Model =
     , message : String
     , images : List String
     , imageUrl : String
+    , fileName : String
     }
 
 
@@ -43,3 +47,9 @@ type Msg
     | SetViewPortForElement (Result Dom.Error ( Dom.Element, Dom.Viewport ))
     | LaTeXMsg MiniLatex.EditSimple.LaTeXMsg
     | Export
+
+
+
+--| ImportFile File
+--| SaveFile
+--| DocumentLoaded String
