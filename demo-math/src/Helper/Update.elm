@@ -107,6 +107,59 @@ exampleText model =
     )
 
 
+restoreText model =
+    let
+        editRecord =
+            MiniLatex.EditSimple.init model.seed Text.start Nothing
+    in
+    ( { model
+        | counter = model.counter + 1
+        , editRecord = editRecord
+        , sourceText = Text.start
+        , renderedText = MiniLatex.EditSimple.get "" editRecord |> Html.div [] |> Html.map LaTeXMsg
+      }
+    , Cmd.none
+    )
+
+
+setViewPortForElement model result =
+    case result of
+        Ok ( element, viewport ) ->
+            ( model, setViewPortForSelectedLine element viewport )
+
+        Err _ ->
+            ( model, Cmd.none )
+
+
+{-| }
+Handle messages from the Editor. The messages CopyPasteClipboard, ... GotViewportForSync
+require special handling. The others are passed to a default handler
+-}
+handleEditorMsg model msg editorMsg =
+    let
+        ( newEditor, cmd ) =
+            Editor.update editorMsg model.editor
+    in
+    case editorMsg of
+        EditorMsg.InsertChar c ->
+            Helper.Sync.sync newEditor cmd model
+
+        _ ->
+            -- Handle the default cases
+            if List.member msg (List.map MyEditorMsg Editor.syncMessages) then
+                Helper.Sync.sync newEditor cmd model
+
+            else
+                case editorMsg of
+                    EditorMsg.Clear ->
+                        ( { model | editor = newEditor, editRecord = MiniLatex.EditSimple.emptyData }
+                        , Cmd.map MyEditorMsg cmd
+                        )
+
+                    _ ->
+                        ( { model | editor = newEditor }, Cmd.map MyEditorMsg cmd )
+
+
 
 -- HELPERS
 

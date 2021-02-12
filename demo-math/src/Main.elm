@@ -14,12 +14,10 @@ import Helper.Load as Load
 import Helper.Sync
 import Helper.Update
 import Html exposing (..)
-import Html.Attributes as HA exposing (..)
 import MiniLatex.EditSimple
 import Model exposing (..)
 import Random
 import Style.Element
-import Task exposing (Task)
 import Text
 import UI exposing (..)
 
@@ -111,29 +109,13 @@ update msg model =
             Helper.Update.fullRender model
 
         RestoreText ->
-            let
-                editRecord =
-                    MiniLatex.EditSimple.init model.seed Text.start Nothing
-            in
-            ( { model
-                | counter = model.counter + 1
-                , editRecord = editRecord
-                , sourceText = Text.start
-                , renderedText = MiniLatex.EditSimple.get "" editRecord |> Html.div [] |> Html.map LaTeXMsg
-              }
-            , Cmd.none
-            )
+            Helper.Update.restoreText model
 
         ExampleText ->
             Helper.Update.exampleText model
 
         SetViewPortForElement result ->
-            case result of
-                Ok ( element, viewport ) ->
-                    ( model, setViewPortForSelectedLine element viewport )
-
-                Err _ ->
-                    ( model, Cmd.none )
+            Helper.Update.setViewPortForElement model result
 
         LaTeXMsg laTeXMsg ->
             -- TODO: re-implement this
@@ -142,30 +124,8 @@ update msg model =
         MyEditorMsg editorMsg ->
             -- Handle messages from the Editor.  The messages CopyPasteClipboard, ... GotViewportForSync
             -- require special handling.  The others are passed to a default handler
-            let
-                ( newEditor, cmd ) =
-                    Editor.update editorMsg model.editor
-            in
-            case editorMsg of
-                EditorMsg.InsertChar c ->
-                    Helper.Sync.sync newEditor cmd model
+            Helper.Update.handleEditorMsg model msg editorMsg
 
-                _ ->
-                    -- Handle the default cases
-                    if List.member msg (List.map MyEditorMsg Editor.syncMessages) then
-                        Helper.Sync.sync newEditor cmd model
-
-                    else
-                        case editorMsg of
-                            EditorMsg.Clear ->
-                                ( { model | editor = newEditor, editRecord = MiniLatex.EditSimple.emptyData }, Cmd.map MyEditorMsg cmd )
-
-                            _ ->
-                                ( { model | editor = newEditor }, Cmd.map MyEditorMsg cmd )
-
-        -- FILE I/O
-        --ImportFile file ->
-        --    ( { model | fileName = File.name file }, Helper.File.load file )
         Export ->
             ( model, Helper.File.export model )
 
