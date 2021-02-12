@@ -228,9 +228,6 @@ update msg model =
             case editorMsg of
 
                 EditorMsg.InsertChar c ->
-                    let 
-                      _ = Debug.log "InsertChar" c
-                    in
                     Helper.Sync.sync newEditor cmd model
 
                 _ ->
@@ -239,9 +236,11 @@ update msg model =
                         Helper.Sync.sync newEditor cmd model
 
                     else
-                        ( { model | editor = newEditor }, Cmd.map MyEditorMsg cmd )
+                      case editorMsg of 
+                        EditorMsg.Clear ->                         
+                          ( { model | editor = newEditor, editRecord = MiniLatex.EditSimple.emptyData }, Cmd.map MyEditorMsg cmd )
 
-
+                        _ -> ( { model | editor = newEditor }, Cmd.map MyEditorMsg cmd )
 
 -- SUBSCRIPTIONS
 

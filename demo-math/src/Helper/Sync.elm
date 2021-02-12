@@ -26,8 +26,7 @@ updateRenderingData lines model =
             lines |> Array.toList |> String.join "\n"
 
         counter : Int
-        counter =
-           Debug.log "SYNC" model.counter + 1
+        counter = model.counter + 1
 
         oldEditRecord : MiniLatex.EditSimple.Data
         oldEditRecord = model.editRecord
@@ -37,7 +36,6 @@ updateRenderingData lines model =
             -- update : Int -> String -> Data -> Data
             MiniLatex.EditSimple.update counter source Nothing oldEditRecord
 
-        _ = Debug.log "CMP" (oldEditRecord == newEditRecord)
     in
     { model | editRecord = newEditRecord, counter = counter }
 

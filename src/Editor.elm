@@ -260,7 +260,7 @@ getContextMenu (Editor model) =
     model.contextMenu
 
 
-{-| Messages to be handles by a host app in some default way
+{-| Messages to be handled by a host app in some default way
 -}
 syncMessages : List EMsg
 syncMessages =

@@ -13,12 +13,52 @@ hello =
     "Hello, it is me you're looking for!"
 
 start = """
-This is a test:
+\\title{Towards a LaTeX IDE for the Web}
+
+\\maketitle
+
+This app demonstrates the elm-only text editor
+that I have been working on for a while. Still
+quite primitive and far from finished, but because
+it is integrated with MiniLaTeX + KaTeX or MathJax,
+it can do both text-mode and math-mode LaTeX.
 
 $$
 \\int_{-\\infty}^\\infty e^{-x^2} dx = \\pi
 $$
+
+But there are several new things. First off, there
+is a dark mode, which is what you see now in the editor. Use
+option-D to switch betwen dark an light. Most important,
+and most recent, is \\italic{LaTeX completion}.  As 
+an example, try this:  type option-=, then "th", then
+option-= again.  You should see a dummy theorem environment
+in the source text.  Replace the XXX with whatever you like.
+
+Other things to try with option-= — eq, \\dollar, 
+and \\dollar\\dollar.  I'll be adding others as I continue 
+to work on the app.  Also, if you would like to experiment,
+press ctrl-option-C to clear the editor and rendered text.
+Then have at it!
+
+For more info, type ctrl-H for help, or press the \\strong{Help}
+button in the header.
+
+Do contact me if you have questions, bug reports, etc.  There
+is a lot to do!  The idea is to end up with a real IDE for LaTeX
+on the web.
+
+\\begin{obeylines}
+Jim Carlson
+email: jxxcarlson@gmail.com
+Elm slack: jxxcarlson
+Twitter: @epsilon2718
+\\href{https://github.com/jxxcarlson/elm-editor}{Github repo: post issues!}
+\\end{obeylines}
+
+\\image{https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcSKK5oCbORAuRM5xZjVTqEIsRGiFjTStX4euA&usqp=CAU}{What 4 billion years of evolution can come up with}{width: 550}
 """
+
 
 long =
     """

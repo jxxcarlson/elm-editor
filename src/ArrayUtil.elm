@@ -473,8 +473,7 @@ replaceLines pos1 pos2 newLines targetLines =
 
         else
             let
-                _ =
-                    Debug.log "replaceLines (1)" (Array.length newLines)
+               --  _ = Debug.log "replaceLines (1)" (Array.length newLines)
 
                 sz =
                     cutString pos1.line pos1.column pos2.column targetLines
@@ -483,8 +482,7 @@ replaceLines pos1 pos2 newLines targetLines =
 
     else
         let
-            _ =
-                Debug.log "replaceLines (2)" (Array.length newLines)
+            -- _ = Debug.log "replaceLines (2)" (Array.length newLines)
 
             sz =
                 cut pos1 pos2 targetLines

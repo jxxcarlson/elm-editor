@@ -372,16 +372,12 @@ newHover hover lines offset =
         HoverChar { line, column } ->
             let
                 sanitizedLine =
-                    (Debug.log "SAN LINE (1)" <|
                         -- Ensure that the line (number) is not
                         -- beyond the index of the last line
-                        clamp 0 (lastLine lines) (Debug.log "SAN LINE (2)" line)
-                    )
-                        |> Debug.log "SAN LINE (3)"
-
+                        clamp 0 (lastLine lines) line
+                    
                 sanitizedColumn =
-                    Debug.log "SCOL (2)" <|
-                        clamp 0 (lastColumn lines (offset + sanitizedLine)) (Debug.log "SCOL(1)" column)
+                        clamp 0 (lastColumn lines (offset + sanitizedLine)) column
             in
             HoverChar
                 { line = sanitizedLine
@@ -397,7 +393,7 @@ sanitizeHover model =
 scrollCmd newWindow oldWindow lineHeight =
     let
         deltaOffset =
-            newWindow.offset - oldWindow.offset |> toFloat |> Debug.log "deltaOffset"
+            newWindow.offset - oldWindow.offset |> toFloat 
 
         newViewportY yvp =
             yvp + 100 - deltaOffset * lineHeight

@@ -66,14 +66,8 @@ pasteSelection : EditorModel -> EditorModel
 pasteSelection model =
     -- TODO:CURRENT
     let
-        _ =
-            Debug.log "pasteSelection" (Array.length model.selectedText)
-
-        _ =
-            Debug.log "oldCursor" model.cursor
-
         newCursor =
-            (if Array.length model.selectedText == 1 then
+            if Array.length model.selectedText == 1 then
                 let
                     insertionLength =
                         Array.get 0 model.selectedText |> Maybe.withDefault "" |> String.length
@@ -82,8 +76,7 @@ pasteSelection model =
 
              else
                 { line = model.cursor.line + Array.length model.selectedText, column = model.cursor.column }
-            )
-                |> Debug.log "newCursor"
+                
     in
     { model
         | lines = ArrayUtil.replaceLines model.cursor model.cursor model.selectedText model.lines
@@ -325,7 +318,7 @@ toggleEditMode : EditorModel -> EditorModel
 toggleEditMode model =
     case model.editMode of
         StandardEditor ->
-            { model | editMode = Debug.log "EDIT MODE" <| VimEditor VimNormal }
+            { model | editMode =  VimEditor VimNormal }
 
         VimEditor _ ->
-            { model | editMode = Debug.log "EDIT MODE" <| StandardEditor }
+            { model | editMode =  StandardEditor }

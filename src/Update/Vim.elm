@@ -69,7 +69,6 @@ bestMatch str data =
         |> List.map (\datum -> ( distance str datum, datum.r ))
         |> List.sortBy (\( ds, s ) -> ds)
         |> List.head
-        |> Debug.log "XX"
         |> Maybe.map Tuple.second
         |> Maybe.withDefault ""
 

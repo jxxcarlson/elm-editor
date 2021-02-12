@@ -88,9 +88,6 @@ update msg model =
 
         InsertChar char ->
             let
-                _ =
-                    Debug.log "INSERT" char
-
                 ( debounce, debounceCmd ) =
                     Debounce.push EditorModel.debounceConfig char model.debounce
             in
@@ -189,17 +186,10 @@ update msg model =
         GotViewportInfo r ->
             case r of
                 Err e ->
-                    let
-                        _ =
-                            Debug.log "ERR" e
-                    in
+
                     ( model, Cmd.none )
 
                 Ok vp ->
-                    let
-                        _ =
-                            Debug.log "(o, line, vpy)" ( model.window.offset, model.cursor.line, vp.viewport.y / model.lineHeight )
-                    in
                     ( model, Cmd.none )
 
         GoToHoveredPosition ->
@@ -212,17 +202,16 @@ update msg model =
                             model.cursor
 
                         HoverLine line ->
-                            --- Debug.log "GTHP, HL" { line = (line + model.window.offset), column = lastColumn model.lines (line)}
-                            Debug.log "GTHP, HL" { line = line + model.window.offset, column = lastColumn model.lines (model.window.offset + line) }
+                            { line = line + model.window.offset, column = lastColumn model.lines (model.window.offset + line) } 
 
                         HoverChar localPosition ->
-                            Debug.log "GTHP, HC" (Window.shiftPosition model.window.offset (Debug.log "LP" localPosition))
+                            Window.shiftPosition model.window.offset localPosition
 
                 window =
                     Window.shift cursor.line model.window
 
                 deltaOffset =
-                    window.offset - model.window.offset |> toFloat |> Debug.log "deltaOffset"
+                    window.offset - model.window.offset |> toFloat 
 
                 scrollCmd =
                     if deltaOffset == 0 then
@@ -242,8 +231,8 @@ update msg model =
                         |> Task.andThen (\vp -> Dom.setViewportOf "__editor__" 0 (newViewportY vp.viewport.y))
             in
             ( { model
-                | cursor = Debug.log "CURSOR!" cursor
-                , window = Debug.log "WINDOW!" window
+                | cursor =  cursor 
+                , window = window 
               }
             , scrollCmd
             )

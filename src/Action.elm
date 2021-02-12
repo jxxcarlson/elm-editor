@@ -75,13 +75,9 @@ firstLine model =
 goToLine : Int -> EditorModel -> ( EditorModel, Cmd EMsg )
 goToLine line model =
     let
-        _ =
-            Debug.log "goToLine" line
-
         cursor =
             { line = line - 1, column = 0 }
 
-        -- Debug.log "GTL, CURSOR" model.cursor
         length =
             Array.length model.lines
 
