@@ -9,6 +9,7 @@ module Editor exposing
 {-| Use the Editor module to embed a pure Elm text editor
 into another application. See `./demo` in the source
 code for an example.
+a
 
 
 ## Setting up the editor
@@ -46,14 +47,12 @@ import EditorModel exposing (Config, EditorModel)
 import EditorMsg exposing (Context(..), EMsg(..), WrapOption)
 import Html as H exposing (Html)
 import Html.Attributes as HA
-import Menu.View exposing (viewContextMenu)
 import Update as U
 import Update.Scroll
 import View.Editor
 import View.EditorFooter
 import View.Help
 import View.Search
-import Window
 
 
 {-| Opaque type for the editor

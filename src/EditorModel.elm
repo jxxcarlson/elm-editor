@@ -55,6 +55,7 @@ type alias EditorModel =
     , helpState : HelpState
     , editMode : EditMode
     , vimModel : Vim.VimModel
+    , devModeOn : Bool
     }
 
 
@@ -99,7 +100,7 @@ init ( config, contextMenu ) =
     , width = config.width
     , height = config.height
     , fontSize = config.fontSize
-    , lineHeight = 1.2 * config.fontSize 
+    , lineHeight = 1.2 * config.fontSize
     , verticalScrollOffset = config.verticalScrollOffset
     , lineNumberToGoTo = ""
     , viewLineNumbersOn = config.viewLineNumbersOn
@@ -122,6 +123,7 @@ init ( config, contextMenu ) =
     , helpState = HelpOff
     , editMode = StandardEditor
     , vimModel = Vim.init
+    , devModeOn = False
     }
 
 

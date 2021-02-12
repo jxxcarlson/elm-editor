@@ -31,8 +31,8 @@ import Update.Group
 import Update.Scroll
 import Update.Vim
 import Update.Wrap
+import Vim
 import Window
-import Vim 
 
 
 update : EMsg -> EditorModel -> ( EditorModel, Cmd EMsg )
@@ -186,7 +186,6 @@ update msg model =
         GotViewportInfo r ->
             case r of
                 Err e ->
-
                     ( model, Cmd.none )
 
                 Ok vp ->
@@ -202,7 +201,7 @@ update msg model =
                             model.cursor
 
                         HoverLine line ->
-                            { line = line + model.window.offset, column = lastColumn model.lines (model.window.offset + line) } 
+                            { line = line + model.window.offset, column = lastColumn model.lines (model.window.offset + line) }
 
                         HoverChar localPosition ->
                             Window.shiftPosition model.window.offset localPosition
@@ -211,7 +210,7 @@ update msg model =
                     Window.shift cursor.line model.window
 
                 deltaOffset =
-                    window.offset - model.window.offset |> toFloat 
+                    window.offset - model.window.offset |> toFloat
 
                 scrollCmd =
                     if deltaOffset == 0 then
@@ -231,8 +230,8 @@ update msg model =
                         |> Task.andThen (\vp -> Dom.setViewportOf "__editor__" 0 (newViewportY vp.viewport.y))
             in
             ( { model
-                | cursor =  cursor 
-                , window = window 
+                | cursor = cursor
+                , window = window
               }
             , scrollCmd
             )
@@ -524,15 +523,22 @@ update msg model =
         ToggleEditMode ->
             Function.toggleEditMode model |> withNoCmd
 
-        ToggleShortCutExecution -> 
-           case model.vimModel.state of
-              Vim.VNormal -> ({ model | vimModel = Update.Vim.setState Vim.VAccumulate model.vimModel
-                                 , editMode = VimEditor VimNormal }, Cmd.none)
-              Vim.VAccumulate -> 
-                let
-                    newModel = Update.Vim.innerProcessCommand  model
-                in
-                ( {newModel | editMode = StandardEditor}, Cmd.none)
+        ToggleShortCutExecution ->
+            case model.vimModel.state of
+                Vim.VNormal ->
+                    ( { model
+                        | vimModel = Update.Vim.setState Vim.VAccumulate model.vimModel
+                        , editMode = VimEditor VimNormal
+                      }
+                    , Cmd.none
+                    )
+
+                Vim.VAccumulate ->
+                    let
+                        newModel =
+                            Update.Vim.innerProcessCommand model
+                    in
+                    ( { newModel | editMode = StandardEditor }, Cmd.none )
 
         MarkdownMsg _ ->
             model |> withNoCmd

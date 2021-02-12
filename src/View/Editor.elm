@@ -162,7 +162,7 @@ view model =
         , HA.style "font-family" "monospace"
         , HA.style "font-size" (px model.fontSize)
         , HA.style "line-height" (px model.lineHeight)
-        , HA.style "white-space" "pre-wrap"
+        , HA.style "white-space" "wrap"
         , HA.style "height" (px (editorHeight model))
         , HA.style "overflow" "scroll"
         , HA.style "width" (px model.width)
@@ -558,7 +558,11 @@ viewHeader model =
         , borderBackgroundColor model.viewMode
         ]
         [ rowButton 60 "Help" ToggleHelp [ HA.style "margin-left" "24px", HA.style "margin-top" "4px" ]
-        , statisticsDisplay2 model
+        , if model.devModeOn then
+            statisticsDisplay2 model
+
+          else
+            statisticsDisplay model
         , rowButton 32 "S" ToggleSearchPanel [ HA.style "margin-left" "24px", HA.style "margin-top" "4px", HA.title "Toggle search panel" ]
         , View.Helper.showIf model.showSearchPanel toggleReplacePanel
         , rowButton 32 "Go" GoToLine [ HA.style "margin-left" "24px", HA.style "margin-top" "4px", HA.title "Go to line number" ]

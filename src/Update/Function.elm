@@ -33,6 +33,15 @@ autoclose =
         , ( "(", ")" )
         , ( "\"", "\"" )
         , ( "`", "`" )
+        , ( "$", "\\pi$" )
+        ]
+
+
+replacements : Dict String String
+replacements =
+    Dict.fromList
+        [ ( ":$", "$$\n\\pi\n$$" )
+        , ( ":th", "\\begin{theorem}\n\n\\end{theorem}" )
         ]
 
 
@@ -74,9 +83,8 @@ pasteSelection model =
                 in
                 Position.deltaColumn (insertionLength + 1) model.cursor
 
-             else
+            else
                 { line = model.cursor.line + Array.length model.selectedText, column = model.cursor.column }
-                
     in
     { model
         | lines = ArrayUtil.replaceLines model.cursor model.cursor model.selectedText model.lines
@@ -213,6 +221,10 @@ insertChar editMode char model =
 
 insertDispatch : String -> EditorModel -> EditorModel
 insertDispatch str model =
+    let
+        _ =
+            Debug.log "SEL" model.selection
+    in
     case ( model.selection, Dict.get str autoclose ) of
         ( selection, Just closing ) ->
             insertWithMatching selection closing str model
@@ -318,7 +330,7 @@ toggleEditMode : EditorModel -> EditorModel
 toggleEditMode model =
     case model.editMode of
         StandardEditor ->
-            { model | editMode =  VimEditor VimNormal }
+            { model | editMode = VimEditor VimNormal }
 
         VimEditor _ ->
-            { model | editMode =  StandardEditor }
+            { model | editMode = StandardEditor }
