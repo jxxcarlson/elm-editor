@@ -1,21 +1,14 @@
 module Helper.Update exposing (..)
 
-import Browser
 import Debounce exposing (Debounce)
 import Editor exposing (Editor)
 import EditorMsg
-import Element exposing (Element, centerX, centerY, column, el, fill, px, row, text)
-import Element.Background as Background
-import Element.Font as Font
-import Helper.File
-import Helper.Load as Load
 import Helper.Sync
 import Html exposing (..)
 import Html.Attributes as HA exposing (..)
 import MiniLatex.EditSimple
 import Model exposing (..)
 import Random
-import Style.Element
 import Task exposing (Task)
 import Text
 import UI exposing (..)
