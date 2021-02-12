@@ -1,25 +1,30 @@
-module UI exposing(renderedSource, setViewPortForSelectedLine)
+module UI exposing
+    ( exportButton
+    , renderedSource
+    , setViewPortForSelectedLine
+    )
 
-import Html exposing (..)
-import Html.Attributes as HA exposing (..)
-import Html.Events exposing (onClick, onInput)
-import Style.Html exposing(..)
-import Model exposing(..)
 import Browser.Dom as Dom
-import Element exposing(Element)
-import Task exposing(Task)
-
+import Element exposing (Element)
+import Element.Background as Background
+import Element.Input as Input
+import Html exposing (..)
+import Html.Events exposing (onClick)
+import Model exposing (..)
+import Style.Html exposing (..)
+import Task exposing (Task)
 
 
 label text_ =
     p labelStyle [ text text_ ]
 
 
-
-renderedSource : Float -> Float ->  Html Msg -> Element Msg
+renderedSource : Float -> Float -> Html Msg -> Element Msg
 renderedSource width height renderedText =
-    (Html.div (renderedSourceStyle width height ++ [ ]) -- HA.class "rhs" 
-        [ renderedText ]) |> Element.html
+    Html.div (renderedSourceStyle width height ++ [])
+        -- HA.class "rhs"
+        [ renderedText ]
+        |> Element.html
 
 
 setViewportForElement : String -> Cmd Msg
@@ -45,7 +50,6 @@ getElementWithViewPort vp id =
 
 
 
-
 --
 -- BUTTONS
 --
@@ -53,6 +57,7 @@ getElementWithViewPort vp id =
 
 clearButton width =
     button ([ onClick Clear ] ++ buttonStyle colorBlue width) [ text "Clear" ]
+        |> Element.html
 
 
 fullRenderButton width =
@@ -64,9 +69,12 @@ restoreTextButton width =
 
 
 exportButton width =
-    button ([ onClick Export ] ++ buttonStyle colorBlue width) [ text "Export" ]
+    Input.button
+        [ Element.mouseDown [ Background.color (Element.rgb255 200 40 40) ]
+        , Element.paddingXY 4 8
+        ]
+        { onPress = Just Export, label = Element.text "Export" }
 
 
 exampleButton width =
     button ([ onClick ExampleText ] ++ buttonStyle colorBlue width) [ text "Example 2" ]
-

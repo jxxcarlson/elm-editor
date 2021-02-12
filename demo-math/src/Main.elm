@@ -263,7 +263,9 @@ subscriptions model =
 
 view : Model -> Html Msg
 view model =
-    Element.layout [ Background.color (Style.Element.gray 0.4), Element.width fill, Element.height fill ] <|
+    Element.layoutWith { options = [ Element.focusStyle Style.Element.noFocus ] }
+        [ Background.color (Style.Element.gray 0.4), Element.width fill, Element.height fill ]
+    <|
         column [ centerY, centerX ]
             [ row [ Element.spacing 0 ]
                 [ el [ Element.alignTop ] (viewEditor model)
@@ -286,12 +288,12 @@ footer model =
         [ Element.spacing 12
         , Font.size 14
         , Element.height (px 30)
-        , Element.width (px model.windowWidth)
+        , Element.width (px (model.windowWidth - 8))
         , Background.color (Style.Element.gray 0.2)
         , Font.color (Style.Element.gray 0.9)
         , Element.paddingXY 12 0
         ]
-        [ Element.text "Buttons" ]
+        [ UI.exportButton 100 ]
 
 
 render : MiniLatex.EditSimple.Data -> Html Msg
