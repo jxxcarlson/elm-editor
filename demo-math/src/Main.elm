@@ -127,6 +127,9 @@ update msg model =
         Export ->
             ( model, Helper.File.export model )
 
+        SaveFile ->
+            ( model, Helper.File.save model )
+
 
 
 --DocumentLoaded content ->
@@ -177,7 +180,7 @@ footer model =
         , Font.color (Style.Element.gray 0.9)
         , Element.paddingXY 12 0
         ]
-        [ UI.exportButton 100 ]
+        [ UI.exportButton 100, UI.saveFileButton 100 ]
 
 
 render : MiniLatex.EditSimple.Data -> Html Msg

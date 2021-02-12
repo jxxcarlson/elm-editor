@@ -24,7 +24,7 @@ toString vstate =
             "accumulate"
 
         VNormal ->
-            "normal"
+            ""
 
 
 setState : VState -> VimModel -> VimModel
@@ -67,7 +67,7 @@ bestMatch : String -> List GuessingDatum -> String
 bestMatch str data =
     data
         |> List.map (\datum -> ( distance str datum, datum.r ))
-        |> List.sortBy (\( ds, s ) -> ds)
+        |> List.filter (\( ds, s ) -> ds == 0)
         |> List.head
         |> Maybe.map Tuple.second
         |> Maybe.withDefault ""

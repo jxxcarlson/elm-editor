@@ -47,9 +47,9 @@ type Msg
     | SetViewPortForElement (Result Dom.Error ( Dom.Element, Dom.Viewport ))
     | LaTeXMsg MiniLatex.EditSimple.LaTeXMsg
     | Export
+    | SaveFile
 
 
 
 --| ImportFile File
---| SaveFile
 --| DocumentLoaded String

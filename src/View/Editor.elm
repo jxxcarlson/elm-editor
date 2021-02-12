@@ -44,7 +44,7 @@ statisticsDisplay2 model =
 
 displayStyle : List (Attribute msg)
 displayStyle =
-    [ HA.style "margin-left" "24px"
+    [ HA.style "margin-left" "12px"
     , HA.style "font-size" "16px"
     , HA.style "margin-top" "8px"
     ]
@@ -557,13 +557,13 @@ viewHeader model =
         , borderFontColor model.viewMode
         , borderBackgroundColor model.viewMode
         ]
-        [ rowButton 60 "Help" ToggleHelp [ HA.style "margin-left" "24px", HA.style "margin-top" "4px" ]
+        [ rowButton 60 "Help" ToggleHelp [ HA.style "margin-left" "12px", HA.style "margin-top" "4px" ]
         , if model.devModeOn then
             statisticsDisplay2 model
 
           else
             statisticsDisplay model
-        , rowButton 32 "S" ToggleSearchPanel [ HA.style "margin-left" "24px", HA.style "margin-top" "4px", HA.title "Toggle search panel" ]
+        , rowButton 32 "Search" ToggleSearchPanel [ HA.style "margin-left" "24px", HA.style "margin-top" "4px", HA.title "Toggle search panel" ]
         , View.Helper.showIf model.showSearchPanel toggleReplacePanel
         , rowButton 32 "Go" GoToLine [ HA.style "margin-left" "24px", HA.style "margin-top" "4px", HA.title "Go to line number" ]
         , textField 56 "" AcceptLineToGoTo [ HA.style "margin-left" "4px", HA.style "margin-top" "4px" ] [ textFieldFontColor model, textFieldBackgroundColor model, HA.style "font-size" "14px" ]
@@ -588,13 +588,13 @@ editModeDisplay model =
         message =
             case model.editMode of
                 StandardEditor ->
-                    "E:STD"
+                    "Standard"
 
                 VimEditor VimNormal ->
-                    "E:Vim"
+                    "Vim"
 
                 VimEditor VimInsert ->
-                    "E:Vim(INSERT)"
+                    "Vim - insert"
     in
     H.span [ HA.style "font-style" "bold", HA.style "font-size" "14px", HA.style "margin-left" "25px", HA.style "color" "#e44" ] [ H.text message ]
 
