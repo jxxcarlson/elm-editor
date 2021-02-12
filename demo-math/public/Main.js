@@ -31849,7 +31849,7 @@ var $author$project$View$Search$searchPanel = function (model) {
 var $author$project$EditorMsg$SelectGroup = {$: 35};
 var $author$project$EditorMsg$SelectLine = {$: 30};
 var $author$project$View$Editor$editorHeight = function (model) {
-	var defaultHeight = model.cx - 20;
+	var defaultHeight = model.cx - 16;
 	var barHeight = 35;
 	var _v0 = _Utils_Tuple2(model.ed, model.cY);
 	if (_v0.a) {
@@ -32418,18 +32418,10 @@ var $author$project$View$Editor$viewContent = function (model) {
 			]));
 };
 var $author$project$View$Editor$borderBackgroundColor = function (viewMode_) {
-	if (!viewMode_) {
-		return A2($elm$html$Html$Attributes$style, 'background-color', '#bbb');
-	} else {
-		return A2($elm$html$Html$Attributes$style, 'background-color', '#252525');
-	}
+	return A2($elm$html$Html$Attributes$style, 'background-color', '#252525');
 };
 var $author$project$View$Editor$borderFontColor = function (viewMode_) {
-	if (!viewMode_) {
-		return A2($elm$html$Html$Attributes$style, 'color', '#444          ');
-	} else {
-		return A2($elm$html$Html$Attributes$style, 'color', '#aaa');
-	}
+	return A2($elm$html$Html$Attributes$style, 'color', '#aaa');
 };
 var $author$project$View$Editor$viewLineNumber = F3(
 	function (viewMode_, offset, n) {
@@ -38680,7 +38672,7 @@ var $author$project$View$Editor$editModeDisplay = function (model) {
 				return 'E:Vim';
 			} else {
 				var _v2 = _v0.a;
-				return 'E:Vim(i)';
+				return 'E:Vim(INSERT)';
 			}
 		}
 	}();
@@ -38701,14 +38693,14 @@ var $author$project$View$Editor$editModeDisplay = function (model) {
 var $author$project$View$Editor$rowButtonLabelStyle = function (width) {
 	return _List_fromArray(
 		[
-			A2($elm$html$Html$Attributes$style, 'font-size', '12px'),
-			A2($elm$html$Html$Attributes$style, 'background-color', '#666'),
+			A2($elm$html$Html$Attributes$style, 'font-size', '14px'),
+			A2($elm$html$Html$Attributes$style, 'background-color', '#222'),
 			A2($elm$html$Html$Attributes$style, 'color', '#eee'),
 			A2(
 			$elm$html$Html$Attributes$style,
 			'width',
 			$elm$core$String$fromInt(width) + 'px'),
-			A2($elm$html$Html$Attributes$style, 'height', '24px'),
+			A2($elm$html$Html$Attributes$style, 'height', '26px'),
 			A2($elm$html$Html$Attributes$style, 'border', 'none')
 		]);
 };
@@ -38764,7 +38756,7 @@ var $author$project$View$Editor$textField = F5(
 					_Utils_ap(
 						_List_fromArray(
 							[
-								A2($elm$html$Html$Attributes$style, 'height', '24px'),
+								A2($elm$html$Html$Attributes$style, 'height', '20px'),
 								A2(
 								$elm$html$Html$Attributes$style,
 								'width',
@@ -38779,20 +38771,10 @@ var $author$project$View$Editor$textField = F5(
 				]));
 	});
 var $author$project$View$Editor$textFieldBackgroundColor = function (model) {
-	var _v0 = model.ce;
-	if (!_v0) {
-		return A2($elm$html$Html$Attributes$style, 'background-color', '#eee');
-	} else {
-		return A2($elm$html$Html$Attributes$style, 'background-color', '#999');
-	}
+	return A2($elm$html$Html$Attributes$style, 'background-color', '#ccc');
 };
 var $author$project$View$Editor$textFieldFontColor = function (model) {
-	var _v0 = model.ce;
-	if (!_v0) {
-		return A2($elm$html$Html$Attributes$style, 'color', '#222');
-	} else {
-		return A2($elm$html$Html$Attributes$style, 'color', '#eee');
-	}
+	return A2($elm$html$Html$Attributes$style, 'color', '#222');
 };
 var $author$project$EditorMsg$ToggleReplacePanel = {$: 58};
 var $author$project$Widget$lightButtonLabelStyle = function (width) {
@@ -38835,6 +38817,7 @@ var $author$project$View$Editor$toggleReplacePanel = A4(
 	'R',
 	_List_fromArray(
 		[
+			A2($elm$html$Html$Attributes$style, 'background-color', '#222'),
 			A2($elm$html$Html$Attributes$style, 'float', 'left'),
 			A2($elm$html$Html$Attributes$style, 'float', 'left'),
 			$elm$html$Html$Attributes$title('Toggle replace text panel')

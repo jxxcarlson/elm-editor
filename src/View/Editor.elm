@@ -136,22 +136,22 @@ editorFontColor viewMode_ =
 
 borderBackgroundColor : ViewMode -> Attribute msg
 borderBackgroundColor viewMode_ =
-    case viewMode_ of
-        Light ->
-            HA.style "background-color" "#bbb"
-
-        Dark ->
-            HA.style "background-color" "#252525"
+    --case viewMode_ of
+    --    Light ->
+    --        HA.style "background-color" "#bbb"
+    --
+    --    Dark ->
+    HA.style "background-color" "#252525"
 
 
 borderFontColor : ViewMode -> Attribute msg
 borderFontColor viewMode_ =
-    case viewMode_ of
-        Light ->
-            HA.style "color" "#444          "
-
-        Dark ->
-            HA.style "color" "#aaa"
+    --case viewMode_ of
+    --    Light ->
+    --        HA.style "color" "#444          "
+    --
+    --    Dark ->
+    HA.style "color" "#aaa"
 
 
 view : EditorModel -> Html EMsg
@@ -184,7 +184,7 @@ editorHeight : EditorModel -> Float
 editorHeight model =
     let
         defaultHeight =
-            model.height - 20
+            model.height - 16
 
         barHeight =
             35
@@ -504,7 +504,7 @@ textField : Int -> String -> (String -> msg) -> List (Attribute msg) -> List (At
 textField width str msg attr innerAttr =
     H.div attr
         [ H.input
-            ([ HA.style "height" "24px"
+            ([ HA.style "height" "20px"
              , HA.style "width" (String.fromInt width ++ "px")
              , HA.type_ "text"
              , HA.placeholder str
@@ -526,11 +526,11 @@ rowButtonStyle =
 
 rowButtonLabelStyle : Int -> List (Attribute msg)
 rowButtonLabelStyle width =
-    [ HA.style "font-size" "12px"
-    , HA.style "background-color" "#666"
+    [ HA.style "font-size" "14px"
+    , HA.style "background-color" "#222"
     , HA.style "color" "#eee"
     , HA.style "width" (String.fromInt width ++ "px")
-    , HA.style "height" "24px"
+    , HA.style "height" "26px"
     , HA.style "border" "none"
     ]
 
@@ -590,29 +590,19 @@ editModeDisplay model =
                     "E:Vim"
 
                 VimEditor VimInsert ->
-                    "E:Vim(i)"
+                    "E:Vim(INSERT)"
     in
     H.span [ HA.style "font-style" "bold", HA.style "font-size" "14px", HA.style "margin-left" "25px", HA.style "color" "#e44" ] [ H.text message ]
 
 
 textFieldBackgroundColor : EditorModel -> Attribute msg
 textFieldBackgroundColor model =
-    case model.viewMode of
-        Light ->
-            HA.style "background-color" "#eee"
-
-        Dark ->
-            HA.style "background-color" "#999"
+    HA.style "background-color" "#ccc"
 
 
 textFieldFontColor : EditorModel -> Attribute msg
 textFieldFontColor model =
-    case model.viewMode of
-        Light ->
-            HA.style "color" "#222"
-
-        Dark ->
-            HA.style "color" "#eee"
+    HA.style "color" "#222"
 
 
 autoLinBreakTitle : EditorModel -> String
