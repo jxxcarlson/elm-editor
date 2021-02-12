@@ -137,6 +137,9 @@ handleEditorMsg model msg editorMsg =
         EditorMsg.InsertChar c ->
             Helper.Sync.sync newEditor cmd model
 
+        EditorMsg.ToggleShortCutExecution ->
+            Helper.Sync.sync newEditor cmd model
+
         _ ->
             -- Handle the default cases
             if List.member msg (List.map MyEditorMsg Editor.syncMessages) then

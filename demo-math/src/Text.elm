@@ -12,7 +12,9 @@ numbered str =
 hello =
     "Hello, it is me you're looking for!"
 
-start = """
+
+start =
+    """
 \\title{Towards a LaTeX IDE for the Web}
 
 \\maketitle
@@ -29,24 +31,27 @@ $$
 
 But there are several new things. First off, there
 is a dark mode, which is what you see now in the editor. Use
-option-D to switch betwen dark an light. Most important,
+option-D to switch between dark an light. Most important,
 and most recent, is \\italic{LaTeX completion}.  As 
-an example, try this:  type option-=, then "th", then
-option-= again.  You should see a dummy theorem environment
+an example, try this:  type ESC, then "th", then
+ESC again.  You should see a dummy theorem environment
 in the source text.  Replace the XXX with whatever you like.
 
-Other things to try with option-= — eq, \\dollar, 
+Other things to try with ESC are eq, \\dollar,
 and \\dollar\\dollar.  I'll be adding others as I continue 
 to work on the app.  Also, if you would like to experiment,
 press ctrl-option-C to clear the editor and rendered text.
 Then have at it!
 
-For more info, type ctrl-H for help, or press the \\strong{Help}
-button in the header.
+For more info, press the \\strong{Help}
+button in the header.  To hide the help document,
+press \\strong{Help} again.
 
 Do contact me if you have questions, bug reports, etc.  There
 is a lot to do!  The idea is to end up with a real IDE for LaTeX
-on the web.
+on the web.  When the editor project is a little further along,
+I'll use is as the editor for
+\\href{https://minilatex.lamdera.app}{minilatex.lamdera.app}.
 
 \\begin{obeylines}
 Jim Carlson

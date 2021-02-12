@@ -221,10 +221,6 @@ insertChar editMode char model =
 
 insertDispatch : String -> EditorModel -> EditorModel
 insertDispatch str model =
-    let
-        _ =
-            Debug.log "SEL" model.selection
-    in
     case ( model.selection, Dict.get str autoclose ) of
         ( selection, Just closing ) ->
             insertWithMatching selection closing str model

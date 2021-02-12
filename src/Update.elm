@@ -524,8 +524,8 @@ update msg model =
             Function.toggleEditMode model |> withNoCmd
 
         ToggleShortCutExecution ->
-            case model.vimModel.state of
-                Vim.VNormal ->
+            case ( model.editMode, model.vimModel.state ) of
+                ( StandardEditor, Vim.VNormal ) ->
                     ( { model
                         | vimModel = Update.Vim.setState Vim.VAccumulate model.vimModel
                         , editMode = VimEditor VimNormal
@@ -533,12 +533,25 @@ update msg model =
                     , Cmd.none
                     )
 
-                Vim.VAccumulate ->
+                ( VimEditor VimNormal, Vim.VAccumulate ) ->
                     let
                         newModel =
                             Update.Vim.innerProcessCommand model
                     in
                     ( { newModel | editMode = StandardEditor }, Cmd.none )
+
+                ( VimEditor VimInsert, Vim.VAccumulate ) ->
+                    let
+                        newModel =
+                            Update.Vim.innerProcessCommand model
+                    in
+                    ( { newModel | editMode = VimEditor VimNormal }, Cmd.none )
+
+                ( VimEditor VimInsert, Vim.VNormal ) ->
+                    ( { model | editMode = VimEditor VimNormal }, Cmd.none )
+
+                _ ->
+                    ( model, Cmd.none )
 
         MarkdownMsg _ ->
             model |> withNoCmd

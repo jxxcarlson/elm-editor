@@ -151,7 +151,9 @@ keymaps =
             , ( "Home", MoveToLineStart )
             , ( "End", MoveToLineEnd )
             , ( "Tab", Indent )
-            , ( "Escape", ExitVimInsertMode )
+            , ( "Escape", ToggleShortCutExecution )
+
+            --, ( "Escape", ExitVimInsertMode )
             ]
     , shift =
         Dict.fromList
@@ -173,7 +175,6 @@ keymaps =
             , ( "ß", SendLineForLRSync ) -- option s
             , ( "∂", ToggleDarkMode ) -- option d
             , ( "√", ToggleEditMode ) -- option v
-            , ( "≠", ToggleShortCutExecution)  
             ]
     , controlAndOption =
         Dict.fromList

@@ -1,4 +1,4 @@
-module Update.Vim exposing (process, toString, update, setState, innerProcessCommand)
+module Update.Vim exposing (innerProcessCommand, process, setState, toString, update)
 
 import Action
 import Array
@@ -97,8 +97,8 @@ replacements =
     [ { k = "theorem", r = "\\begin{theorem}\nXXX\n\\end{theorem}\n" }
     , { k = "equation", r = "\\begin{equation}\nXXX\n\\end{equation}\n" }
     , { k = "env", r = "\\begin{env}\nXXX\n\\end{env}\n" }
-    , { k = "$", r = "$ XX $" }
-    , { k = "$$", r = "$$\nXX\n$$" }
+    , { k = "$", r = "$\\pi$" }
+    , { k = "$$", r = "$$\n\\pi\n$$" }
     ]
 
 
