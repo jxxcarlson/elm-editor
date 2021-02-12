@@ -3,6 +3,9 @@ module Helper.Update exposing (..)
 import Debounce exposing (Debounce)
 import Editor exposing (Editor)
 import EditorMsg
+import File
+import File.Select as Select
+import Helper.Load as Load
 import Helper.Sync
 import Html exposing (..)
 import Html.Attributes as HA exposing (..)
@@ -122,6 +125,36 @@ setViewPortForElement model result =
 
         Err _ ->
             ( model, Cmd.none )
+
+
+fileRequested model =
+    ( model
+    , Select.file [ "text/tex" ] FileSelected
+    )
+
+
+fileSelected model file =
+    ( model
+    , Task.perform FileLoaded (File.toString file)
+    )
+
+
+fileLoaded model content =
+    let
+        newEditor =
+            Editor.initWithContent content Load.config
+
+        editRecord =
+            MiniLatex.EditSimple.init model.counter content Nothing
+    in
+    ( { model
+        | sourceText = content
+        , editor = newEditor
+        , editRecord = editRecord
+        , counter = model.counter + 1
+      }
+    , Cmd.none
+    )
 
 
 {-| }

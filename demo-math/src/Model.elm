@@ -48,6 +48,9 @@ type Msg
     | LaTeXMsg MiniLatex.EditSimple.LaTeXMsg
     | Export
     | SaveFile
+    | FileRequested
+    | FileSelected File
+    | FileLoaded String
 
 
 

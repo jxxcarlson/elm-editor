@@ -130,6 +130,15 @@ update msg model =
         SaveFile ->
             ( model, Helper.File.save model )
 
+        FileRequested ->
+            Helper.Update.fileRequested model
+
+        FileSelected file ->
+            Helper.Update.fileSelected model file
+
+        FileLoaded contents ->
+            Helper.Update.fileLoaded model contents
+
 
 
 --DocumentLoaded content ->
@@ -180,7 +189,7 @@ footer model =
         , Font.color (Style.Element.gray 0.9)
         , Element.paddingXY 12 0
         ]
-        [ UI.exportButton 100, UI.saveFileButton 100 ]
+        [ UI.openFileButton 100, UI.exportButton 100, UI.saveFileButton 100 ]
 
 
 render : MiniLatex.EditSimple.Data -> Html Msg

@@ -1,5 +1,6 @@
 module UI exposing
     ( exportButton
+    , openFileButton
     , renderedSource
     , saveFileButton
     , setViewPortForSelectedLine
@@ -83,6 +84,14 @@ saveFileButton width =
         , Element.paddingXY 4 8
         ]
         { onPress = Just SaveFile, label = Element.text "Save" }
+
+
+openFileButton width =
+    Input.button
+        [ Element.mouseDown [ Background.color (Element.rgb255 200 40 40) ]
+        , Element.paddingXY 4 8
+        ]
+        { onPress = Just FileRequested, label = Element.text "Open" }
 
 
 exampleButton width =
