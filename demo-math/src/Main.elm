@@ -70,7 +70,7 @@ init flags =
             , message = "No message yet ..."
             , images = []
             , imageUrl = ""
-            , fileName = "mydocument.tex"
+            , fileName = "announcement.tex"
             , printingState = PrintWaiting
             , docId = ""
             }
@@ -216,8 +216,8 @@ footer model =
         [ UI.openFileButton 100
         , UI.exportButton 100
         , UI.saveFileButton 100
-        , el [] (Element.text ("File: " ++ model.fileName))
         , printToPDF model
+        , el [] (Element.text ("File: " ++ model.fileName))
         ]
 
 

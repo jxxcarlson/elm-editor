@@ -13,10 +13,13 @@ scripts:
 
   publish-github:
     - elm make --optimize src/Main.elm --output=public/Main.js
+    - echo "ugliying ..."
     - npx uglify-js public/Main.js -mc 'pure_funcs="F2,F3,F4,F5,F6,F7,F8,F9"' -o public/Main.min.js
+    - echo "Moving files"
+    - sed 's/Main.js/Main.min.js/' public/index.html > /Users/carlson/dev/jxxcarlson.github.io/app/elm-editor2/index.html
     - cp public/Main.min.js /Users/carlson/dev/jxxcarlson.github.io/app/elm-editor2/
+    - echo "Done"
     # - cp -r public/* /Users/carlson/dev/jxxcarlson.github.io/app/elm-editor2/
-    - cd /Users/carlson/dev/jxxcarlson.github.io/app/elm-editor2/
 
 
 

@@ -114,10 +114,7 @@ Wrap all         ctrl-shift-W
 ```nolang
 Toggle dark mode   option-D
 Toggle help        ctrl-H
-Toggle edit mode   option-E
-
-The last command is to toggle between normal
-editing and Vim mode.
+Toggle Vim mode    option-V
 ```
 
 ### About Vim Mode
@@ -150,7 +147,7 @@ view model =
                 [ HA.style "position" "absolute"
                 , HA.style "left" "0"
                 , HA.style "top" "37px"
-                , HA.style "background-color" "#fff" 
+                , HA.style "background-color" "#fff"
                 , HA.style "z-index" "1000"
                 , HA.style "width" (px (model.width - 20))
                 , HA.style "height" (px model.height)

@@ -175,6 +175,8 @@ keymaps =
             , ( "ß", SendLineForLRSync ) -- option s
             , ( "∂", ToggleDarkMode ) -- option d
             , ( "√", ToggleEditMode ) -- option v
+
+            --, ( "≠", ToggleShortCutExecution )
             ]
     , controlAndOption =
         Dict.fromList

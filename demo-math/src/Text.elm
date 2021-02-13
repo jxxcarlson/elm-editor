@@ -19,7 +19,7 @@ start =
 
 \\maketitle
 
-This app demonstrates the elm-only text editor
+This app demonstrates the pure Elm text editor
 that I have been working on for a while. Still
 quite primitive and far from finished, but because
 it is integrated with MiniLaTeX + KaTeX or MathJax,
@@ -42,6 +42,10 @@ and \\dollar\\dollar.  I'll be adding others as I continue
 to work on the app.  Also, if you would like to experiment,
 press ctrl-option-C to clear the editor and rendered text.
 Then have at it!
+
+Oh — one more thing.  Note the buttons in the footer: Open,
+Export, Save, and PDF: open files on disk, export MiniLaTeX
+files to standard LaTeX, save as MiniLaTeX, adn generate PDF.
 
 For more info, press the \\strong{Help}
 button in the header.  To hide the help document,

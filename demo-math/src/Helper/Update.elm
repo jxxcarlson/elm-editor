@@ -61,12 +61,19 @@ render model str =
 
 clear model =
     let
+        text_ =
+            String.repeat 40 " \n"
+
+        newEditor =
+            Editor.setCursor { line = 0, column = 0 } (Editor.initWithContent text_ Load.config)
+
         editRecord =
-            MiniLatex.EditSimple.init 0 "" Nothing
+            MiniLatex.EditSimple.init 0 text_ Nothing
     in
     ( { model
-        | sourceText = ""
+        | sourceText = text_
         , editRecord = editRecord
+        , editor = newEditor
         , renderedText = renderFromEditRecord model.selectedId model.counter editRecord
         , counter = model.counter + 1
       }

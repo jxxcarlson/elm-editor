@@ -22,7 +22,11 @@ import Task
 
 save : Model -> Cmd msg
 save model =
-    Download.string model.fileName "text/x-tex" model.sourceText
+    let
+        content =
+            Editor.getContent model.editor
+    in
+    Download.string model.fileName "text/x-tex" content
 
 
 export : Model -> Cmd msg
