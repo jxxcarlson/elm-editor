@@ -104,7 +104,6 @@ replacements =
 
 innerProcessCommand : EditorModel -> EditorModel
 innerProcessCommand model =
-    -- TODO: link to option-=
     let
         insertion =
             executeBuffer model.vimModel.buffer

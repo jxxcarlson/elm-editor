@@ -321,8 +321,6 @@ viewLine_ : ViewMode -> Float -> Position -> Hover -> Selection -> Array String 
 viewLine_ viewMode_ lineHeight position hover selection lines line content =
     H.div
         [ HA.style "position" "absolute"
-        , HA.style "position" "absolute"
-        , HA.style "position" "absolute"
         , HA.style "background-color" "#f0f0f0"
         , HA.style "left" "0"
         , HA.style "right" "0"
@@ -467,7 +465,7 @@ selectedColor viewMode_ =
             HA.style "background-color" highlightColorLight
 
         Dark ->
-            HA.style "background-color" "#44a"
+            HA.style "background-color" "#44b"
 
 
 highlightColorLight : String
