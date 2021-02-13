@@ -3,19 +3,25 @@ module Main exposing (main)
 --
 
 import Browser
+import Config
 import Debounce exposing (Debounce)
 import Editor exposing (Editor)
 import Element exposing (Element, centerX, centerY, column, el, fill, px, row, text)
 import Element.Background as Background
+import Element.Events
 import Element.Font as Font
+import Element.Input as Input
 import Helper.File
+import Helper.LaTeX
 import Helper.Load as Load
 import Helper.Update
 import Html exposing (..)
 import MiniLatex.EditSimple
 import Model exposing (..)
+import Process
 import Random
 import Style.Element
+import Task
 import Text
 import UI exposing (..)
 
@@ -65,6 +71,8 @@ init flags =
             , images = []
             , imageUrl = ""
             , fileName = "mydocument.tex"
+            , printingState = PrintWaiting
+            , docId = ""
             }
 
         -- Editor.initWithContent Text.test1 Load.config
@@ -139,12 +147,28 @@ update msg model =
         FileLoaded contents ->
             Helper.Update.fileLoaded model contents
 
+        PrintToPDF ->
+            Helper.LaTeX.printToPDF model
+
+        ChangePrintingState printingState ->
+            let
+                cmd =
+                    if printingState == PrintWaiting then
+                        Process.sleep 1000 |> Task.perform (always (FinallyDoCleanPrintArtefacts model.docId))
+
+                    else
+                        Cmd.none
+            in
+            ( { model | printingState = printingState }, cmd )
+
+        GotPdfLink result ->
+            Helper.LaTeX.gotPdfLink model result
+
+        FinallyDoCleanPrintArtefacts _ ->
+            ( model, Cmd.none )
 
 
---DocumentLoaded content ->
---     Update.Document.loadDocument content model
---SaveFile ->
---     ( model, Helper.File.save model )
+
 -- SUBSCRIPTIONS
 
 
@@ -189,7 +213,12 @@ footer model =
         , Font.color (Style.Element.gray 0.9)
         , Element.paddingXY 12 0
         ]
-        [ UI.openFileButton 100, UI.exportButton 100, UI.saveFileButton 100 ]
+        [ UI.openFileButton 100
+        , UI.exportButton 100
+        , UI.saveFileButton 100
+        , el [] (Element.text ("File: " ++ model.fileName))
+        , printToPDF model
+        ]
 
 
 render : MiniLatex.EditSimple.Data -> Html Msg
@@ -205,6 +234,32 @@ viewEditor model =
     Editor.view model.editor |> Html.map MyEditorMsg |> Element.html
 
 
+printToPDF : Model -> Element Msg
+printToPDF model =
+    case model.printingState of
+        PrintWaiting ->
+            Input.button
+                (UI.elementAttribute "title" "Generate PDF" :: Style.Element.simpleButtonStyle)
+                { onPress = Just PrintToPDF
+                , label = Element.text "PDF"
+                }
+
+        PrintProcessing ->
+            el [ Font.size 14, Element.padding 8, Element.height (px 30), Background.color Style.Element.blue, Font.color Style.Element.white ]
+                (Element.text "Please wait ...")
+
+        PrintReady ->
+            Element.link
+                [ Font.size 14
+                , Background.color (Style.Element.gray 0.2)
+                , Element.paddingXY 8 8
+                , Font.color (Style.Element.gray 0.8)
+                , Element.Events.onClick (ChangePrintingState PrintWaiting)
+                , UI.elementAttribute "target" "_blank"
+                ]
+                { url = Config.pdfServer ++ "/pdf/" ++ Config.testUuid, label = el [] (Element.text "Click for PDF") }
+
+
 
 -- HELPERS
 
@@ -212,8 +267,3 @@ viewEditor model =
 normalize : String -> String
 normalize str =
     str |> String.lines |> List.filter (\x -> x /= "") |> String.join "\n"
-
-
-prependMacros : String -> String -> String
-prependMacros macros_ sourceText_ =
-    "$$\n" ++ (macros_ |> normalize) ++ "\n$$\n\n" ++ sourceText_

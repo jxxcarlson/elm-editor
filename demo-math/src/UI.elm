@@ -1,5 +1,6 @@
 module UI exposing
-    ( exportButton
+    ( elementAttribute
+    , exportButton
     , openFileButton
     , renderedSource
     , saveFileButton
@@ -7,10 +8,11 @@ module UI exposing
     )
 
 import Browser.Dom as Dom
-import Element exposing (Element)
+import Element exposing (Attribute, Element)
 import Element.Background as Background
 import Element.Input as Input
 import Html exposing (..)
+import Html.Attributes as HA
 import Html.Events exposing (onClick)
 import Model exposing (..)
 import Style.Html exposing (..)
@@ -49,6 +51,11 @@ getElementWithViewPort : Dom.Viewport -> String -> Task Dom.Error ( Dom.Element,
 getElementWithViewPort vp id =
     Dom.getElement id
         |> Task.map (\el -> ( el, vp ))
+
+
+elementAttribute : String -> String -> Element.Attribute msg
+elementAttribute key value =
+    Element.htmlAttribute (HA.attribute key value)
 
 
 

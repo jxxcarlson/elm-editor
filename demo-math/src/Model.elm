@@ -5,6 +5,7 @@ import Debounce exposing (Debounce)
 import Editor exposing (Editor, EditorMsg)
 import File exposing (File)
 import Html exposing (Html)
+import Http
 import MiniLatex.EditSimple exposing (Data, LaTeXMsg)
 
 
@@ -28,6 +29,8 @@ type alias Model =
     , images : List String
     , imageUrl : String
     , fileName : String
+    , printingState : PrintingState
+    , docId : String
     }
 
 
@@ -51,6 +54,16 @@ type Msg
     | FileRequested
     | FileSelected File
     | FileLoaded String
+    | PrintToPDF
+    | ChangePrintingState PrintingState
+    | GotPdfLink (Result Http.Error String)
+    | FinallyDoCleanPrintArtefacts String
+
+
+type PrintingState
+    = PrintWaiting
+    | PrintProcessing
+    | PrintReady
 
 
 

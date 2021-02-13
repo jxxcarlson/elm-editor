@@ -14,7 +14,8 @@ scripts:
   publish-github:
     - elm make --optimize src/Main.elm --output=public/Main.js
     - npx uglify-js public/Main.js -mc 'pure_funcs="F2,F3,F4,F5,F6,F7,F8,F9"' -o public/Main.min.js
-    - cp -r public/* /Users/carlson/dev/jxxcarlson.github.io/app/elm-editor2/
+    - cp public/Main.min.js /Users/carlson/dev/jxxcarlson.github.io/app/elm-editor2/
+    # - cp -r public/* /Users/carlson/dev/jxxcarlson.github.io/app/elm-editor2/
     - cd /Users/carlson/dev/jxxcarlson.github.io/app/elm-editor2/
 
 

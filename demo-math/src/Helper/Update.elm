@@ -134,7 +134,7 @@ fileRequested model =
 
 
 fileSelected model file =
-    ( model
+    ( { model | fileName = File.name file }
     , Task.perform FileLoaded (File.toString file)
     )
 
