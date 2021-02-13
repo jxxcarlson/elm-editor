@@ -226,6 +226,7 @@ keymaps =
             , ( "V", CopyPasteClipboard )
             , ( "W", WrapAll )
             , ( "S", SendLineForLRSync )
+            , ( "K", KillLineAlt )
 
             --, ( "A", SelectAll )
             ]

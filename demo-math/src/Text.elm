@@ -19,7 +19,8 @@ start =
 
 \\maketitle
 
-This app demonstrates the pure Elm text editor
+This app is a work-in-progress demonstration of
+the pure Elm text editor
 that I have been working on for a while. Still
 quite primitive and far from finished, but because
 it is integrated with MiniLaTeX + KaTeX or MathJax,
@@ -35,21 +36,22 @@ option-D to switch between dark an light. Most important,
 and most recent, is \\italic{LaTeX completion}.  As 
 an example, try this:  type ESC, then "th", then
 ESC again.  You should see a dummy theorem environment
-in the source text.  Replace the XXX with whatever you like.
+in the source text.  Replace "XXX" with whatever you like.
 
-Other things to try with ESC are eq, \\dollar,
-and \\dollar\\dollar.  I'll be adding others as I continue 
+Other things to try with ESC are \\code{eq}, a dollar or double
+dollar sign, as well as \\code{enum} and
+ \\code{item}.  I'll be adding other environments as I continue
 to work on the app.  Also, if you would like to experiment,
 press ctrl-option-C to clear the editor and rendered text.
 Then have at it!
 
 Oh — one more thing.  Note the buttons in the footer: Open,
 Export, Save, and PDF: open files on disk, export MiniLaTeX
-files to standard LaTeX, save as MiniLaTeX, adn generate PDF.
+files to standard LaTeX, save as MiniLaTeX, and generate PDF.
+(Try the PDF button now).
 
 For more info, press the \\strong{Help}
-button in the header.  To hide the help document,
-press \\strong{Help} again.
+button in the header. 
 
 Do contact me if you have questions, bug reports, etc.  There
 is a lot to do!  The idea is to end up with a real IDE for LaTeX
@@ -65,7 +67,9 @@ Twitter: @epsilon2718
 \\href{https://github.com/jxxcarlson/elm-editor}{Github repo: post issues!}
 \\end{obeylines}
 
-\\image{https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcSKK5oCbORAuRM5xZjVTqEIsRGiFjTStX4euA&usqp=CAU}{What 4 billion years of evolution can come up with}{width: 550}
+
+
+\\image{https://vschool.s3.amazonaws.com/minilatex/hummingbird.jpg}{What 4 billion years of evolution can come up with}{width: 550}
 """
 
 

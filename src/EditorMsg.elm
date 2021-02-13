@@ -78,6 +78,7 @@ type EMsg
     | RemoveCharBefore
     | RemoveCharAfter
     | KillLine
+    | KillLineAlt
     | DeleteLine
     | Cut
     | Copy
