@@ -65,7 +65,7 @@ clear model =
             String.repeat 40 " \n"
 
         newEditor =
-            Editor.setCursor { line = 0, column = 0 } (Editor.initWithContent text_ Load.config)
+            Editor.setCursor { line = 0, column = 0 } (Editor.initWithContent text_ model.config)
 
         editRecord =
             MiniLatex.EditSimple.init 0 text_ Nothing
@@ -149,7 +149,7 @@ fileSelected model file =
 fileLoaded model content =
     let
         newEditor =
-            Editor.initWithContent content Load.config
+            Editor.initWithContent content model.config
 
         editRecord =
             MiniLatex.EditSimple.init model.counter content Nothing

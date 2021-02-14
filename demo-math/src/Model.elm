@@ -3,6 +3,7 @@ module Model exposing (..)
 import Browser.Dom as Dom
 import Debounce exposing (Debounce)
 import Editor exposing (Editor, EditorMsg)
+import EditorModel
 import File exposing (File)
 import Html exposing (Html)
 import Http
@@ -16,6 +17,7 @@ import MiniLatex.EditSimple exposing (Data, LaTeXMsg)
 type alias Model =
     { windowWidth : Int
     , windowHeight : Int
+    , config : EditorModel.Config
     , editor : Editor
     , sourceText : String
     , renderedText : Html Msg

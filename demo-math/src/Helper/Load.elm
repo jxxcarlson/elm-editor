@@ -1,13 +1,33 @@
-module Helper.Load exposing (config)
+module Helper.Load exposing (config, makeConfig)
 
 import EditorModel
 import EditorMsg exposing (EMsg(..), WrapOption(..))
 
 
+makeConfig : Int -> Int -> EditorModel.Config
+makeConfig appWidth appHeight =
+    let
+        w =
+            windowWidth (toFloat appWidth)
+
+        h =
+            windowHeight (toFloat appHeight)
+    in
+    { width = w
+    , height = h
+    , fontSize = 16
+    , verticalScrollOffset = 3
+    , viewMode = EditorModel.Dark
+    , debugOn = False
+    , viewLineNumbersOn = False
+    , wrapOption = DontWrap
+    }
+
+
 config : EditorModel.Config
 config =
-    { width = windowWidth 1200
-    , height = windowHeight 740
+    { width = windowWidth 1100
+    , height = windowHeight 720
     , fontSize = 16
     , verticalScrollOffset = 3
     , viewMode = EditorModel.Dark

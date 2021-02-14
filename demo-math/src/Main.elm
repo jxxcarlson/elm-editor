@@ -49,8 +49,12 @@ type alias Flags =
 init : Flags -> ( Model, Cmd Msg )
 init flags =
     let
+        config =
+            Load.makeConfig 900 (flags.height - 111)
+
+        -- config = Load.makeConfig flags.width flags.height
         newEditor =
-            Editor.initWithContent Text.start Load.config
+            Editor.initWithContent Text.start config
 
         editRecord =
             MiniLatex.EditSimple.init flags.seed Text.start Nothing
@@ -58,6 +62,7 @@ init flags =
         model =
             { windowWidth = flags.width
             , windowHeight = flags.height
+            , config = config
             , editor = newEditor
             , sourceText = Text.start
             , macroText = ""
@@ -186,15 +191,15 @@ view model =
     Element.layoutWith { options = [ Element.focusStyle Style.Element.noFocus ] }
         [ Background.color (Style.Element.gray 0.4), Element.width fill, Element.height fill ]
     <|
-        column [ centerY, centerX ]
+        column []
             [ row [ Element.spacing 0 ]
                 [ el [ Element.alignTop ] (viewEditor model)
 
                 -- TODO: fix the below (round) --- (round Load.config.width)
                 , el [ Element.alignTop ]
                     (UI.renderedSource
-                        (Load.config.width - 40)
-                        (Load.config.height + 22)
+                        (model.config.width - 40)
+                        (model.config.height + 22)
                         (render model.editRecord)
                     )
                 ]
@@ -208,7 +213,9 @@ footer model =
         [ Element.spacing 12
         , Font.size 14
         , Element.height (px 30)
-        , Element.width (px (model.windowWidth - 8))
+
+        -- , Element.width (px (model.windowWidth - 108))
+        , Element.width (px (round <| 2 * model.config.width - 7))
         , Background.color (Style.Element.gray 0.2)
         , Font.color (Style.Element.gray 0.9)
         , Element.paddingXY 12 0
