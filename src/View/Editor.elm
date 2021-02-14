@@ -172,6 +172,7 @@ view model =
 
         -- , onDoubleClick SelectGroup
         --, onTripleClick SelectLine
+        -- The line below dispatches code to handle double and triple clicks
         , onMultiplelick SelectGroup SelectLine
         , HA.id "__editor__"
         ]
