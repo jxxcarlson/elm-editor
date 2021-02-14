@@ -133,7 +133,7 @@ i, ESC
 h, j, k, l
 ```
 
-For LaTeX command execution, use sequences like = \\pi =
+For LaTeX command execution, use sequences like `"= \\pi ="`
 to insert `$\\pi$`.
 
 

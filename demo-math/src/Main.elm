@@ -52,7 +52,6 @@ init flags =
         config =
             Load.makeConfig flags.width (flags.height - 200)
 
-        -- config = Load.makeConfig flags.width flags.height
         newEditor =
             Editor.initWithContent Text.start config
 
