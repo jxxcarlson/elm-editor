@@ -56,9 +56,6 @@ copySelection model =
             let
                 ( _, selectedText ) =
                     Action.deleteSelection sel model.lines
-
-                _ =
-                    selectedText |> Debug.log "DEL SEL"
             in
             ( { model
                 | cursor = { endSel | column = endSel.column + 1 }
@@ -74,50 +71,22 @@ copySelection model =
             ( model, Cmd.none )
 
 
+lengthOfLine line targetLines =
+    Array.get line targetLines
+        |> Maybe.map String.length
+        |> Maybe.withDefault 0
+
+
 pasteSelection : EditorModel -> EditorModel
 pasteSelection model =
     -- TODO:CURRENT
     let
-        ( newCursor, replacementText ) =
+        newCursor =
             if Array.length model.selectedText == 1 then
-                let
-                    insertionLength =
-                        Array.get 0 model.selectedText
-                            |> Debug.log "INSERTION"
-                            |> Maybe.withDefault ""
-                            |> String.length
-                            |> Debug.log "INSERTION LEN"
-
-                    lineEnd =
-                        Array.get model.cursor.line model.lines
-                            |> Maybe.map String.length
-                            |> Debug.log "LINE END"
-
-                    replacementText_ =
-                        if Just insertionLength == lineEnd then
-                            let
-                                _ =
-                                    Debug.log "BR" 1
-                            in
-                            Array.append model.selectedText (Array.fromList [ "!!" ])
-
-                        else
-                            let
-                                _ =
-                                    Debug.log "BR" 2
-                            in
-                            Array.append model.selectedText (Array.fromList [ "!" ])
-                in
-                ( Position.deltaColumn insertionLength model.cursor, replacementText_ )
+                Position.deltaColumn (lengthOfLine 0 model.selectedText) model.cursor
 
             else
-                let
-                    _ =
-                        Debug.log "BR" 3
-                in
-                ( { line = model.cursor.line + Array.length model.selectedText, column = model.cursor.column }
-                , model.selectedText
-                )
+                { line = model.cursor.line + Array.length model.selectedText, column = model.cursor.column }
     in
     { model
         | lines = ArrayUtil.replaceLines model.cursor model.cursor model.selectedText model.lines

@@ -175,10 +175,6 @@ selectLine model =
 
 deleteSelection : Selection -> Array String -> ( Array String, Array String )
 deleteSelection selection array =
-    let
-        _ =
-            Debug.log "deleteSelection" selection
-    in
     case selection of
         Selection beginSel endSel ->
             ArrayUtil.cut beginSel endSel array

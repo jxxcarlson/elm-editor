@@ -582,7 +582,7 @@ update msg model =
         SelectGroup ->
             let
                 range =
-                    Update.Group.groupRange model.cursor model.lines |> Debug.log "RANGE"
+                    Update.Group.groupRange model.cursor model.lines
 
                 line =
                     model.cursor.line

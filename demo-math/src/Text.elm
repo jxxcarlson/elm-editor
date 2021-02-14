@@ -13,7 +13,12 @@ hello =
     "Hello, it is me you're looking for!"
 
 
-start =
+plansAndChangeLog =
+    """
+"""
+
+
+test2 =
     """AAA
 BBB
 CCC
@@ -23,7 +28,7 @@ HHH
 """
 
 
-welcome =
+start =
     """
 \\title{Towards a LaTeX IDE for the Web}
 

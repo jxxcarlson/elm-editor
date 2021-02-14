@@ -441,10 +441,6 @@ cutOut pos1 pos2 array =
 -}
 replace : Position -> Position -> String -> Array String -> Array String
 replace pos1 pos2 str array =
-    let
-        _ =
-            Debug.log "replace" ( pos1, pos2, str )
-    in
     if pos1.line == pos2.line then
         case Array.get pos1.line array of
             Nothing ->
