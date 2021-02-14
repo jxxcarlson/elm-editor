@@ -62,7 +62,7 @@ render model str =
 clear model =
     let
         text_ =
-            String.repeat 40 " \n"
+            String.repeat 40 "x\n"
 
         newEditor =
             Editor.setCursor { line = 0, column = 0 } (Editor.initWithContent text_ model.config)
@@ -146,7 +146,17 @@ fileSelected model file =
     )
 
 
-fileLoaded model content =
+loadEmpty : Int -> Model -> Model
+loadEmpty n model =
+    let
+        content =
+            String.repeat n "\n"
+    in
+    load content model
+
+
+load : String -> Model -> Model
+load content model =
     let
         newEditor =
             Editor.initWithContent content model.config
@@ -154,14 +164,16 @@ fileLoaded model content =
         editRecord =
             MiniLatex.EditSimple.init model.counter content Nothing
     in
-    ( { model
+    { model
         | sourceText = content
         , editor = newEditor
         , editRecord = editRecord
         , counter = model.counter + 1
-      }
-    , Cmd.none
-    )
+    }
+
+
+load_ content model =
+    ( load content model, Cmd.none )
 
 
 {-| }
@@ -188,7 +200,7 @@ handleEditorMsg model msg editorMsg =
             else
                 case editorMsg of
                     EditorMsg.Clear ->
-                        ( { model | editor = newEditor, editRecord = MiniLatex.EditSimple.emptyData }
+                        ( load (String.repeat 40 "\n") model
                         , Cmd.map MyEditorMsg cmd
                         )
 

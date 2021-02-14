@@ -112,9 +112,6 @@ update msg model =
         NewSeed newSeed ->
             ( { model | seed = newSeed }, Cmd.none )
 
-        Clear ->
-            Helper.Update.clear model
-
         FullRender ->
             Helper.Update.fullRender model
 
@@ -149,7 +146,11 @@ update msg model =
             Helper.Update.fileSelected model file
 
         FileLoaded contents ->
-            Helper.Update.fileLoaded model contents
+            Helper.Update.load_ contents model
+
+        Clear ->
+            -- TODO: handle this!
+            ( model, Cmd.none )
 
         PrintToPDF ->
             Helper.LaTeX.printToPDF model
