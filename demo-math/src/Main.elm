@@ -50,7 +50,7 @@ init : Flags -> ( Model, Cmd Msg )
 init flags =
     let
         config =
-            Load.makeConfig 900 (flags.height - 111)
+            Load.makeConfig flags.width (flags.height - 200)
 
         -- config = Load.makeConfig flags.width flags.height
         newEditor =
@@ -191,7 +191,7 @@ view model =
     Element.layoutWith { options = [ Element.focusStyle Style.Element.noFocus ] }
         [ Background.color (Style.Element.gray 0.4), Element.width fill, Element.height fill ]
     <|
-        column []
+        column [ centerX, centerY ]
             [ row [ Element.spacing 0 ]
                 [ el [ Element.alignTop ] (viewEditor model)
 
