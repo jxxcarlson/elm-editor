@@ -14,6 +14,16 @@ hello =
 
 
 start =
+    """AAA
+BBB
+CCC
+DEF
+GGG
+HHH
+"""
+
+
+welcome =
     """
 \\title{Towards a LaTeX IDE for the Web}
 

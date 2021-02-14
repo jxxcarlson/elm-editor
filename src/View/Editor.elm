@@ -58,15 +58,15 @@ viewDebug model =
             [ H.pre [] [ H.text <| "cursor: " ++ stringFromPosition model.cursor ]
             , H.pre [] [ H.text <| "hover: " ++ stringFromHover model.hover ]
             , H.pre [] [ H.text (stringFromSelection model.selection) ]
-            , H.pre [] [ H.text <| "selected text:\n" ++ selectedText model.selection model.hover model.lines ]
+            , H.pre [] [ H.text <| "selected text:\n" ++ selectedText_ model.selection model.hover model.lines ]
             ]
 
     else
         H.div [] []
 
 
-selectedText : Selection -> Hover -> Array String -> String
-selectedText selection currentHover lines =
+selectedText_ : Selection -> Hover -> Array String -> String
+selectedText_ selection currentHover lines =
     let
         positionsToString : Position -> Position -> String
         positionsToString from to =

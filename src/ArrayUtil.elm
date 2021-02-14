@@ -470,12 +470,24 @@ replaceLines pos1 pos2 newLines targetLines =
     let
         _ =
             Debug.log "replaceLines" ( pos1, pos2, newLines )
+
+        insertionLength =
+            Array.get 0 newLines
+                |> Debug.log "!! INSERTION"
+                |> Maybe.withDefault ""
+                |> String.length
+                |> Debug.log "!! INSERTION LEN"
+
+        lineEnd =
+            Array.get pos1.line targetLines
+                |> Maybe.map String.length
+                |> Debug.log "!! LINE END"
     in
     if pos1.line == pos2.line then
-        if Array.length newLines == 1 then
+        if Array.length newLines == 1 && Just insertionLength /= lineEnd then
             let
                 _ =
-                    Debug.log "BR one line" pos1.line
+                    Debug.log "BR one line (1)" pos1.line
 
                 insertion =
                     Array.get 0 newLines |> Maybe.withDefault ""
@@ -484,17 +496,25 @@ replaceLines pos1 pos2 newLines targetLines =
 
         else
             let
-                --  _ = Debug.log "replaceLines (1)" (Array.length newLines)
-                sz =
-                    cutString pos1.line pos1.column pos2.column targetLines
+                _ =
+                    Debug.log "replaceLines (2)" { p1l = pos1.line, p1col = pos1.column, p2col = pos2.column, tl = targetLines }
+
+                --sz =
+                --    cutString pos1.line pos1.column pos2.column targetLines
+                insertion =
+                    Array.get 0 newLines |> Maybe.withDefault ""
             in
-            join { sz | middle = newLines }
+            --join { sz | middle = newLines }
+            insertLineAfter (pos1.line - 1) insertion targetLines
 
     else
         let
-            -- _ = Debug.log "replaceLines (2)" (Array.length newLines)
+            _ =
+                Debug.log "replaceLines (3)" (Array.length newLines)
+
             sz =
                 cut pos1 pos2 targetLines
+                    |> Debug.log "SZ (CUT)"
         in
         join { sz | middle = newLines }
 
