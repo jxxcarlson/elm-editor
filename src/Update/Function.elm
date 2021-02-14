@@ -79,9 +79,9 @@ pasteSelection model =
             if Array.length model.selectedText == 1 then
                 let
                     insertionLength =
-                        Array.get 0 model.selectedText |> Maybe.withDefault "" |> String.length
+                        Array.get 0 model.selectedText |> Debug.log "INSERTION" |> Maybe.withDefault "" |> String.length
                 in
-                Position.deltaColumn (insertionLength + 1) model.cursor
+                Position.deltaColumn insertionLength model.cursor
 
             else
                 { line = model.cursor.line + Array.length model.selectedText, column = model.cursor.column }

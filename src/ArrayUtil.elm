@@ -440,6 +440,10 @@ cutOut pos1 pos2 array =
 -}
 replace : Position -> Position -> String -> Array String -> Array String
 replace pos1 pos2 str array =
+    let
+        _ =
+            Debug.log "replace" ( pos1, pos2, str )
+    in
     if pos1.line == pos2.line then
         case Array.get pos1.line array of
             Nothing ->
@@ -463,18 +467,24 @@ replace pos1 pos2 str array =
 replaceLines : Position -> Position -> Array String -> Array String -> Array String
 replaceLines pos1 pos2 newLines targetLines =
     -- TODO:CURRENT
+    let
+        _ =
+            Debug.log "replaceLines" ( pos1, pos2, newLines )
+    in
     if pos1.line == pos2.line then
         if Array.length newLines == 1 then
             let
+                _ =
+                    Debug.log "BR one line" pos1.line
+
                 insertion =
-                    (Array.get 0 newLines |> Maybe.withDefault "") ++ " "
+                    Array.get 0 newLines |> Maybe.withDefault ""
             in
             insert pos1 insertion targetLines
 
         else
             let
-               --  _ = Debug.log "replaceLines (1)" (Array.length newLines)
-
+                --  _ = Debug.log "replaceLines (1)" (Array.length newLines)
                 sz =
                     cutString pos1.line pos1.column pos2.column targetLines
             in
@@ -483,7 +493,6 @@ replaceLines pos1 pos2 newLines targetLines =
     else
         let
             -- _ = Debug.log "replaceLines (2)" (Array.length newLines)
-
             sz =
                 cut pos1 pos2 targetLines
         in

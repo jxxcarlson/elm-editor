@@ -123,7 +123,7 @@ init ( config, contextMenu ) =
     , helpState = HelpOff
     , editMode = StandardEditor
     , vimModel = Vim.init
-    , devModeOn = False
+    , devModeOn = True
     }
 
 
