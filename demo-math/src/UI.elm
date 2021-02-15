@@ -8,10 +8,10 @@ module UI exposing
     )
 
 import Browser.Dom as Dom
-import Element exposing (Attribute, Element)
+import Element exposing (..)
 import Element.Background as Background
 import Element.Input as Input
-import Html exposing (..)
+import Html exposing (Html)
 import Html.Attributes as HA
 import Html.Events exposing (onClick)
 import Model exposing (..)
@@ -20,7 +20,7 @@ import Task exposing (Task)
 
 
 label text_ =
-    p labelStyle [ text text_ ]
+    Html.p labelStyle [ Html.text text_ ]
 
 
 renderedSource : Float -> Float -> Html Msg -> Element Msg
@@ -28,7 +28,7 @@ renderedSource width height renderedText =
     Html.div (renderedSourceStyle width height ++ [])
         -- HA.class "rhs"
         [ renderedText ]
-        |> Element.html
+        |> html
 
 
 setViewportForElement : String -> Cmd Msg
@@ -53,9 +53,9 @@ getElementWithViewPort vp id =
         |> Task.map (\el -> ( el, vp ))
 
 
-elementAttribute : String -> String -> Element.Attribute msg
+elementAttribute : String -> String -> Attribute msg
 elementAttribute key value =
-    Element.htmlAttribute (HA.attribute key value)
+    htmlAttribute (HA.attribute key value)
 
 
 
@@ -65,41 +65,59 @@ elementAttribute key value =
 
 
 clearButton width =
-    button ([ onClick Clear ] ++ buttonStyle colorBlue width) [ text "Clear" ]
-        |> Element.html
+    Html.button ([ onClick Clear ] ++ buttonStyle colorBlue width) [ Html.text "Clear" ]
+        |> html
 
 
 fullRenderButton width =
-    button ([ onClick FullRender ] ++ buttonStyle colorBlue width) [ text "Re-render" ]
+    Html.button ([ onClick FullRender ] ++ buttonStyle colorBlue width) [ Html.text "Re-render" ]
 
 
 restoreTextButton width =
-    button ([ onClick RestoreText ] ++ buttonStyle colorBlue width) [ text "Restore" ]
+    Html.button ([ onClick RestoreText ] ++ buttonStyle colorBlue width) [ Html.text "Restore" ]
 
 
+exportButton : a -> Element Msg
 exportButton width =
     Input.button
-        [ Element.mouseDown [ Background.color (Element.rgb255 200 40 40) ]
-        , Element.paddingXY 4 8
+        [ mouseDown [ Background.color (rgb255 200 40 40) ]
+        , paddingXY 4 8
         ]
-        { onPress = Just Export, label = Element.text "Export" }
+        { onPress = Just Export, label = text "Export" }
 
 
+saveFileButton : a -> Element Msg
 saveFileButton width =
     Input.button
-        [ Element.mouseDown [ Background.color (Element.rgb255 200 40 40) ]
-        , Element.paddingXY 4 8
+        [ mouseDown [ Background.color (rgb255 200 40 40) ]
+        , paddingXY 4 8
         ]
-        { onPress = Just SaveFile, label = Element.text "Save" }
+        { onPress = Just SaveFile, label = text "Save" }
 
 
+openFileButton : Int -> Element Msg
 openFileButton width =
     Input.button
-        [ Element.mouseDown [ Background.color (Element.rgb255 200 40 40) ]
-        , Element.paddingXY 4 8
+        [ mouseDown [ Background.color (rgb255 200 40 40) ]
+        , paddingXY 4 8
         ]
-        { onPress = Just FileRequested, label = Element.text "Open" }
+        { onPress = Just FileRequested, label = text "Open" }
 
 
 exampleButton width =
-    button ([ onClick ExampleText ] ++ buttonStyle colorBlue width) [ text "Example 2" ]
+    Html.button ([ onClick ExampleText ] ++ buttonStyle colorBlue width) [ Html.text "Example 2" ]
+
+
+toggleFileButton : Int -> Element Msg
+toggleFileButton width =
+    Input.button
+        [ mouseDown [ Background.color (rgb255 200 40 40) ]
+        , paddingXY 4 8
+        ]
+        { onPress = Just ToggleFilePopup, label = text "File Info" }
+
+
+filePopup : Model -> Element Msg
+filePopup model =
+    column [ spacing 12 ]
+        []

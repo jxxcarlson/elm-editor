@@ -77,7 +77,8 @@ init flags =
             , fileName = "announcement.tex"
             , printingState = PrintWaiting
             , docId = ""
-            , renderingMode = MiniLaTeX
+            , renderingMode = MathMarkdown
+            , filePopupOpen = False
             }
 
         -- Editor.initWithContent Text.test1 Load.config
@@ -133,6 +134,9 @@ update msg model =
             -- Handle messages from the Editor.  The messages CopyPasteClipboard, ... GotViewportForSync
             -- require special handling.  The others are passed to a default handler
             Helper.Update.handleEditorMsg model msg editorMsg
+
+        ToggleFilePopup ->
+            ( { model | filePopupOpen = not model.filePopupOpen }, Cmd.none )
 
         Export ->
             ( model, Helper.File.export model )

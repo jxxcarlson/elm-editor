@@ -60,7 +60,7 @@ editModeDisplay model =
                     "Vim"
 
                 VimEditor VimInsert ->
-                    "-- Insert --"
+                    "Vim: Insert"
     in
     H.span [ HA.style "font-style" "bold", HA.style "font-size" "14px", HA.style "width" "20px", HA.style "margin-left" "4px", HA.style "margin-right" "16px", HA.style "color" "#ee4444" ] [ H.text message ]
 

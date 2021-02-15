@@ -34,6 +34,7 @@ type alias Model =
     , printingState : PrintingState
     , docId : String
     , renderingMode : RenderingMode
+    , filePopupOpen : Bool
     }
 
 
@@ -62,6 +63,7 @@ type Msg
     | GotPdfLink (Result Http.Error String)
     | FinallyDoCleanPrintArtefacts String
     | Umuli Umuli.UmuliMsg
+    | ToggleFilePopup
 
 
 type RenderingMode
