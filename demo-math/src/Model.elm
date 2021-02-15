@@ -8,6 +8,7 @@ import File exposing (File)
 import Html exposing (Html)
 import Http
 import MiniLatex.EditSimple exposing (Data, LaTeXMsg)
+import Random
 import Umuli
 
 
@@ -35,6 +36,8 @@ type alias Model =
     , docId : String
     , documentType : DocumentType
     , filePopupOpen : Bool
+    , randomSeed : Random.Seed
+    , uuid : String
     }
 
 

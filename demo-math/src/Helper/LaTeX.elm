@@ -7,13 +7,19 @@ import Http
 import MiniLatex.Export
 import Model exposing (Msg(..), PrintingState(..))
 import Process
+import Random
 import Task
+import UUID
 
 
 printToPDF model =
-    ( model
+    let
+        ( newUUID, newSeed ) =
+            Random.step UUID.generator model.randomSeed
+    in
+    ( { model | randomSeed = newSeed, uuid = UUID.toString newUUID }
     , Cmd.batch
-        [ generatePdf model.editor
+        [ generatePdf (UUID.toString newUUID) model.editor
         , Process.sleep 1 |> Task.perform (always (ChangePrintingState PrintProcessing))
         ]
     )
@@ -32,8 +38,8 @@ gotPdfLink model result =
             )
 
 
-generatePdf : Editor -> Cmd Msg
-generatePdf editor =
+generatePdf : String -> Editor -> Cmd Msg
+generatePdf uuid editor =
     let
         ( contentForExport, imageUrlList ) =
             Editor.getContent editor
@@ -43,7 +49,7 @@ generatePdf editor =
         { method = "POST"
         , headers = [ Http.header "Content-Type" "application/json" ]
         , url = Config.pdfServer ++ "/pdf"
-        , body = Http.jsonBody (Codec.encodeForPDF Config.testUuid contentForExport imageUrlList)
+        , body = Http.jsonBody (Codec.encodeForPDF uuid contentForExport imageUrlList)
         , expect = Http.expectString GotPdfLink
         , timeout = Nothing
         , tracker = Nothing

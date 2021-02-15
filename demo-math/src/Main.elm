@@ -54,6 +54,7 @@ init flags =
         config =
             Load.makeConfig flags.width (flags.height - 200)
 
+        -- Load.makeConfig 800 600
         newEditor =
             Editor.initWithContent Text.start config
 
@@ -77,6 +78,8 @@ init flags =
             , docId = ""
             , documentType = MiniLaTeX
             , filePopupOpen = False
+            , randomSeed = Random.initialSeed 17319485
+            , uuid = "axyadjfa;o2020394aklsd"
             }
 
         -- Editor.initWithContent Text.test1 Load.config
@@ -240,9 +243,9 @@ footer model =
         [ UI.openFileButton 100
         , showIf (model.documentType == MiniLaTeX) (UI.exportButton 100)
         , UI.saveFileButton 100
-        , printToPDF model
-        , el [] (Element.text ("File: " ++ model.fileName))
+        , showIf (model.documentType == MiniLaTeX) (printToPDF model)
         , UI.newDocuemntPopup model
+        , el [ Element.alignRight ] (Element.text ("File: " ++ model.fileName))
         ]
 
 
@@ -291,7 +294,7 @@ printToPDF model =
                 , Element.Events.onClick (ChangePrintingState PrintWaiting)
                 , UI.elementAttribute "target" "_blank"
                 ]
-                { url = Config.pdfServer ++ "/pdf/" ++ Config.testUuid, label = el [] (Element.text "Click for PDF") }
+                { url = Config.pdfServer ++ "/pdf/" ++ model.uuid, label = el [] (Element.text "Click for PDF") }
 
 
 
