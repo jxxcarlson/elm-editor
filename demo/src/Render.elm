@@ -21,7 +21,7 @@ import Html.Attributes as Attribute
 import Markdown.Option exposing (MarkdownOption(..), OutputOption(..))
 import Markdown.Parse
 import Markdown.Render exposing (MarkdownMsg(..), MarkdownOutput(..))
-import MiniLatex
+import MiniLatex as MiniLTX
 import MiniLatex.Edit exposing (LaTeXMsg(..))
 import MiniLatex.Render exposing (MathJaxRenderOption(..))
 import Render.Markdown
@@ -35,7 +35,7 @@ import Tree exposing (Tree)
         Markdown
 
     ML =
-        MiniLatex
+        MiniLTX
 
 -}
 type RenderingData
@@ -45,7 +45,7 @@ type RenderingData
 
 type alias MLData =
     { fullText : Maybe String
-    , editRecord : MiniLatex.Edit.Data (Html MiniLatex.Edit.LaTeXMsg)
+    , editRecord : MiniLTX.Edit.Data (Html MiniLTX.Edit.LaTeXMsg)
     }
 
 
@@ -128,7 +128,7 @@ update selectedId version source rd =
                 }
 
         ML data ->
-            ML { data | editRecord = MiniLatex.Edit.update NoDelay version source data.editRecord }
+            ML { data | editRecord = MiniLTX.Edit.update NoDelay version source data.editRecord }
 
 
 get : String -> RenderingData -> RenderedText
@@ -139,7 +139,7 @@ get selectedId rd =
                 |> fixMD
 
         ML data ->
-            { document = MiniLatex.Edit.get selectedId data.editRecord |> Html.div [ Attribute.attribute "id" "__RENDERED_TEXT__" ]
+            { document = MiniLTX.Edit.get selectedId data.editRecord |> Html.div [ Attribute.attribute "id" "__RENDERED_TEXT__" ]
             , title = Html.span [ Attribute.style "font-size" "24px" ] [ Html.text (getTitle data.editRecord) ]
             , toc = innerTableOfContents data.editRecord.latexState
             }
@@ -164,7 +164,7 @@ fixML r =
     }
 
 
-getTitle : MiniLatex.Edit.Data (Html msg) -> String
+getTitle : MiniLTX.Edit.Data (Html msg) -> String
 getTitle data =
     data.latexState.tableOfContents
         |> List.head
@@ -215,12 +215,12 @@ loadMarkdownFast selectedId counter option str =
 
 loadMiniLatex : Int -> String -> RenderingData
 loadMiniLatex version str =
-    ML { fullText = Nothing, editRecord = MiniLatex.Edit.init NoDelay version str }
+    ML { fullText = Nothing, editRecord = MiniLTX.Edit.init NoDelay version str }
 
 
 loadMiniLatexFast : Int -> String -> RenderingData
 loadMiniLatexFast version str =
-    ML { fullText = Just str, editRecord = MiniLatex.Edit.init NoDelay version (getFirstPart str) }
+    ML { fullText = Just str, editRecord = MiniLTX.Edit.init NoDelay version (getFirstPart str) }
 
 
 {-| HELPERS
@@ -231,15 +231,15 @@ getFirstPart str =
 
 
 
-{- MiniLatex Table of contents -}
+{- MiniLTX Table of contents -}
 
 
-innerTableOfContents : MiniLatex.LatexState -> Html msg
+innerTableOfContents : MiniLTX.LatexState -> Html msg
 innerTableOfContents latexState =
     Html.div [ Attribute.style "margin-top" "20px", Attribute.style "margin-left" "20px" ] (List.map innerTocItem (List.drop 1 latexState.tableOfContents))
 
 
-innerTocItem : MiniLatex.TocEntry -> Html msg
+innerTocItem : MiniLTX.TocEntry -> Html msg
 innerTocItem tocEntry =
     let
         name =

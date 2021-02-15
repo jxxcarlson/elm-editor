@@ -243,7 +243,7 @@ footer model =
         [ UI.openFileButton 100
         , showIf (model.documentType == MiniLaTeX) (UI.exportButton 100)
         , UI.saveFileButton 100
-        , showIf (model.documentType == MiniLaTeX) (printToPDF model)
+        , printToPDF model
         , UI.newDocuemntPopup model
         , el [ Element.alignRight ] (Element.text ("File: " ++ model.fileName))
         ]
