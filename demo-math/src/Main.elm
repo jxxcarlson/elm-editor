@@ -24,6 +24,7 @@ import Style.Element
 import Task
 import Text
 import UI exposing (..)
+import Umuli
 
 
 
@@ -63,6 +64,7 @@ init flags =
             , windowHeight = flags.height
             , config = config
             , editor = newEditor
+            , data = Umuli.init Umuli.LMiniLaTeX 0 Text.start Nothing
             , sourceText = Text.start
             , macroText = ""
             , renderedText = MiniLatex.EditSimple.get "" editRecord |> Html.div [] |> Html.map LaTeXMsg
@@ -77,6 +79,7 @@ init flags =
             , fileName = "announcement.tex"
             , printingState = PrintWaiting
             , docId = ""
+            , renderingMode = MiniLaTeX
             }
 
         -- Editor.initWithContent Text.test1 Load.config

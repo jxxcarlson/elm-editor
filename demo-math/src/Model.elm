@@ -8,6 +8,7 @@ import File exposing (File)
 import Html exposing (Html)
 import Http
 import MiniLatex.EditSimple exposing (Data, LaTeXMsg)
+import Umuli
 
 
 
@@ -19,6 +20,7 @@ type alias Model =
     , windowHeight : Int
     , config : EditorModel.Config
     , editor : Editor
+    , data : Umuli.Data
     , sourceText : String
     , renderedText : Html Msg
     , macroText : String
@@ -33,6 +35,7 @@ type alias Model =
     , fileName : String
     , printingState : PrintingState
     , docId : String
+    , renderingMode : RenderingMode
     }
 
 
@@ -60,6 +63,12 @@ type Msg
     | ChangePrintingState PrintingState
     | GotPdfLink (Result Http.Error String)
     | FinallyDoCleanPrintArtefacts String
+
+
+type RenderingMode
+    = MiniLaTeX
+    | MathMarkdown
+    | PlainText
 
 
 type PrintingState

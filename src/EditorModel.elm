@@ -56,7 +56,6 @@ type alias EditorModel =
     , editMode : EditMode
     , vimModel : Vim.VimModel
     , devModeOn : Bool
-    , renderingMode : RenderingMode
     }
 
 
@@ -125,13 +124,7 @@ init ( config, contextMenu ) =
     , editMode = StandardEditor
     , vimModel = Vim.init
     , devModeOn = False
-    , renderingMode = MiniLaTeX
     }
-
-
-type RenderingMode
-    = MiniLaTeX
-    | MathMarkdown
 
 
 type EditMode
