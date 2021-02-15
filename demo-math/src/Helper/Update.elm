@@ -13,7 +13,6 @@ import MiniLatex.EditSimple
 import Model exposing (..)
 import Random
 import Task exposing (Task)
-import Text
 import UI exposing (..)
 import Umuli
 
@@ -153,7 +152,7 @@ setViewPortForElement model result =
 
 fileRequested model =
     ( model
-    , Select.file [ "text/tex" ] FileSelected
+    , Select.file [ "text/tex", "text/md", "text/md" ] FileSelected
     )
 
 
@@ -168,29 +167,59 @@ loadEmpty n model =
     let
         content =
             String.repeat n "\n"
+
+        fileName =
+            "doc" ++ fileExtension model.documentType
     in
-    load content model
+    load fileName content model
 
 
-load : String -> Model -> Model
-load content model =
+load : String -> String -> Model -> Model
+load fileName content model =
     let
         newEditor =
             Editor.initWithContent content model.config
 
+        documentType =
+            findDocumentType fileName
+
         data =
-            Umuli.init (umuliLang model.documentType) model.counter content Nothing
+            Umuli.init (umuliLang documentType) model.counter content Nothing
     in
     { model
         | sourceText = content
         , editor = newEditor
+        , documentType = documentType
         , data = data
         , counter = model.counter + 1
     }
 
 
-load_ content model =
-    ( load content model, Cmd.none )
+findDocumentType : String -> DocumentType
+findDocumentType fileName =
+    let
+        parts =
+            String.split "." fileName
+
+        mExtensionName =
+            List.head (List.reverse parts)
+    in
+    case mExtensionName of
+        Just "tex" ->
+            MiniLaTeX
+
+        Just "md" ->
+            MathMarkdown
+
+        Just "txt" ->
+            PlainText
+
+        _ ->
+            PlainText
+
+
+load_ fileName content model =
+    ( load fileName content model, Cmd.none )
 
 
 {-| }
@@ -217,7 +246,7 @@ handleEditorMsg model msg editorMsg =
             else
                 case editorMsg of
                     EditorMsg.Clear ->
-                        ( load (String.repeat 40 "\n") model
+                        ( load (fileExtension model.documentType) (String.repeat 40 "\n") model
                         , Cmd.map MyEditorMsg cmd
                         )
 

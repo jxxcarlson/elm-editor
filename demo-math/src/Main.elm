@@ -11,6 +11,7 @@ import Element.Background as Background
 import Element.Events
 import Element.Font as Font
 import Element.Input as Input
+import File
 import Helper.File
 import Helper.LaTeX
 import Helper.Load as Load
@@ -145,10 +146,10 @@ update msg model =
             Helper.Update.fileRequested model
 
         FileSelected file ->
-            Helper.Update.fileSelected model file
+            Helper.Update.fileSelected { model | fileName = File.name file } file
 
         FileLoaded contents ->
-            Helper.Update.load_ contents model
+            Helper.Update.load_ model.fileName contents model
 
         Clear ->
             -- TODO: handle this!
