@@ -68,7 +68,6 @@ init flags =
             , sourceText = Text.start
             , macroText = ""
             , renderedText = MiniLatex.EditSimple.get "" editRecord |> Html.div [] |> Html.map LaTeXMsg
-            , editRecord = editRecord
             , debounce = Debounce.init
             , counter = 0
             , seed = flags.seed
@@ -175,6 +174,9 @@ update msg model =
         FinallyDoCleanPrintArtefacts _ ->
             ( model, Cmd.none )
 
+        Umuli _ ->
+            ( model, Cmd.none )
+
 
 
 -- SUBSCRIPTIONS
@@ -203,7 +205,7 @@ view model =
                     (UI.renderedSource
                         (model.config.width - 40)
                         (model.config.height + 22)
-                        (render model.editRecord)
+                        (Umuli.render "" model.data |> Html.div [] |> Html.map Umuli)
                     )
                 ]
             , footer model

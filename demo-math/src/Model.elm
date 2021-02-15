@@ -24,7 +24,6 @@ type alias Model =
     , sourceText : String
     , renderedText : Html Msg
     , macroText : String
-    , editRecord : Data -- MiniLatex.EditSimple.LaTeXMsg
     , debounce : Debounce String
     , counter : Int
     , seed : Int
@@ -63,12 +62,26 @@ type Msg
     | ChangePrintingState PrintingState
     | GotPdfLink (Result Http.Error String)
     | FinallyDoCleanPrintArtefacts String
+    | Umuli Umuli.UmuliMsg
 
 
 type RenderingMode
     = MiniLaTeX
     | MathMarkdown
     | PlainText
+
+
+umuliLang : RenderingMode -> Umuli.Lang
+umuliLang mode =
+    case mode of
+        MiniLaTeX ->
+            Umuli.LMiniLaTeX
+
+        MathMarkdown ->
+            Umuli.LMarkdown
+
+        PlainText ->
+            Umuli.LText
 
 
 type PrintingState

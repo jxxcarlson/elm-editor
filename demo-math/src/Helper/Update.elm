@@ -1,11 +1,11 @@
 module Helper.Update exposing (..)
 
+import Array
 import Debounce exposing (Debounce)
 import Editor exposing (Editor)
 import EditorMsg
 import File
 import File.Select as Select
-import Helper.Load as Load
 import Helper.Sync
 import Html exposing (..)
 import Html.Attributes as HA exposing (..)
@@ -15,6 +15,7 @@ import Random
 import Task exposing (Task)
 import Text
 import UI exposing (..)
+import Umuli
 
 
 getContent model str =
@@ -47,12 +48,16 @@ render model str =
         n =
             String.fromInt model.counter
 
-        newEditRecord =
-            MiniLatex.EditSimple.update model.seed str Nothing model.editRecord
+        newData =
+            Umuli.update model.counter str Nothing model.data
+
+        renderedText : Html Msg
+        renderedText =
+            Umuli.render "" newData |> Html.div [] |> Html.map Umuli
     in
     ( { model
-        | editRecord = newEditRecord
-        , renderedText = renderFromEditRecord model.selectedId model.counter newEditRecord
+        | data = newData
+        , renderedText = renderedText
         , counter = model.counter + 2
       }
     , Random.generate NewSeed (Random.int 1 10000)
@@ -83,46 +88,60 @@ clear model =
 
 fullRender model =
     let
-        editRecord =
-            MiniLatex.EditSimple.init model.seed model.sourceText Nothing
+        content =
+            Editor.getLines model.editor
+                |> Array.toList
+                |> String.join "\n"
+
+        newData =
+            Umuli.init (umuliLang model.renderingMode) model.counter content Nothing
     in
     ( { model
         | counter = model.counter + 1
-        , editRecord = editRecord
-        , renderedText = renderFromEditRecord model.selectedId model.counter editRecord
+        , data = newData
+        , renderedText = Umuli.render "" newData |> Html.div [] |> Html.map Umuli
       }
     , Cmd.none
     )
 
 
 exampleText model =
-    let
-        editRecord =
-            MiniLatex.EditSimple.init model.seed Text.start Nothing
-    in
-    ( { model
-        | counter = model.counter + 1
-        , editRecord = editRecord
-        , sourceText = Text.start
-        , renderedText = renderFromEditRecord model.selectedId model.counter editRecord
-      }
-    , Cmd.none
-    )
+    ( model, Cmd.none )
 
 
 restoreText model =
-    let
-        editRecord =
-            MiniLatex.EditSimple.init model.seed Text.start Nothing
-    in
-    ( { model
-        | counter = model.counter + 1
-        , editRecord = editRecord
-        , sourceText = Text.start
-        , renderedText = MiniLatex.EditSimple.get "" editRecord |> Html.div [] |> Html.map LaTeXMsg
-      }
-    , Cmd.none
-    )
+    ( model, Cmd.none )
+
+
+
+--exampleText model =
+--    let
+--        editRecord =
+--            MiniLatex.EditSimple.init model.seed Text.start Nothing
+--    in
+--    ( { model
+--        | counter = model.counter + 1
+--        , editRecord = editRecord
+--        , sourceText = Text.start
+--        , renderedText = renderFromEditRecord model.selectedId model.counter editRecord
+--      }
+--    , Cmd.none
+--    )
+--
+--
+--restoreText model =
+--    let
+--        editRecord =
+--            MiniLatex.EditSimple.init model.seed Text.start Nothing
+--    in
+--    ( { model
+--        | counter = model.counter + 1
+--        , editRecord = editRecord
+--        , sourceText = Text.start
+--        , renderedText = MiniLatex.EditSimple.get "" editRecord |> Html.div [] |> Html.map LaTeXMsg
+--      }
+--    , Cmd.none
+--    )
 
 
 setViewPortForElement model result =
@@ -161,13 +180,13 @@ load content model =
         newEditor =
             Editor.initWithContent content model.config
 
-        editRecord =
-            MiniLatex.EditSimple.init model.counter content Nothing
+        data =
+            Umuli.init (umuliLang model.renderingMode) model.counter content Nothing
     in
     { model
         | sourceText = content
         , editor = newEditor
-        , editRecord = editRecord
+        , data = data
         , counter = model.counter + 1
     }
 
