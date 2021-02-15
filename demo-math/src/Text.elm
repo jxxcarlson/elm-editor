@@ -30,28 +30,37 @@ HHH
 
 start =
     """
+
 \\title{Towards a LaTeX IDE for the Web}
 
 \\maketitle
 
+\\tableofcontents
+
 This app is a work-in-progress demonstration of the
 pure Elm text editor that I have been working on for
-a while. Still quite primitive and far from finished,
-but because it is integrated with MiniLaTeX + KaTeX or
-MathJax, it can do both text-mode and math-mode LaTeX.
+a while. Although more work is needed, it can
+already do some useful thing: documents can be
+written in MiniLaTeX (a subset/variant of LaTeX),
+MathMarkdown (a flavor of Markdown that can render
+LaTeX-style formulas), and plain text.
 
 $$
 \\int_{-\\infty}^\\infty e^{-x^2} dx = \\pi
 $$
 
-But there are several new things. First off, there is a
-dark mode, which is what you see now in the editor. Use
-option-D to switch between dark an light. Most
-important, and most recent, is \\italic{LaTeX
-completion}. As an example, try this: type ESC, then
+When the editor is in good shape, it will become
+part of
+\\href{https://minilatex.lamdera.app}{minilatex.lamdera.app}.
+
+\\section{Command execution}
+
+One new feature of note is \\blue{command
+execution}.
+As an example, try this: type ESC, then
 "th", then ESC again. You should see a dummy theorem
-environment in the source text. Replace "XXX" with
-whatever you like.
+environment in the source text. Replace the "XXX"
+that you see with whatever you like.
 
 Other things to try with ESC are \\code{eq}, a dollar
 or double dollar sign, as well as \\code{enum} and
@@ -60,13 +69,45 @@ continue to work on the app. Also, if you would like
 to experiment, press ctrl-option-C to clear the editor
 and rendered text. Then have at it!
 
-Oh — one more thing. Note the buttons in the footer:
-Open, Export, Save, and PDF: open files on disk, export
-MiniLaTeX files to standard LaTeX, save as MiniLaTeX,
-and generate PDF. (Try the PDF button now).
 
-For more info, press the \\strong{Help} button in the
-header.
+\\section{Other features}
+
+\\strong{New documents.} Use the \\blue{New document} button in the footer
+to create a new document. In the popup window,
+you can choose the document format
+
+
+\\strong{Files.} Files on disk can be opened, edited.
+
+
+\\strong{Footer.} Note the other buttons in the footer:
+Open, Export, Save, and PDF: \\italic{open
+files on disk, export
+MiniLaTeX files to standard LaTeX, save as MiniLaTeX,
+and generate PDF.} (Try the PDF button now).
+
+
+\\strong{More info.} For more info, press the \\blue{Help} button in the
+header.  Do note the various key commands.  They
+work OK for Mac users, but I need to have an
+alternative keymap for Linux and Windows users.
+Suggestions are hereby solicited!
+
+\\section{Known bugs}
+
+Lists in LaTeX are not always rendered properly.
+An artefact of the way text is stored ... I'm
+woking on it.
+
+\\section{Feedback}
+
+Writing an editor is a complex undertaking.  I need
+feedback on what doesn't work and what is missing.
+Please see my contact info below.  Posting issues
+on Github is welcome, but Slack, Email, and Twitter
+also work.
+
+\\section{Contact}
 
 Do contact me if you have questions, bug reports, etc.
 There is a lot to do! The idea is to end up with a real
@@ -81,6 +122,8 @@ Elm slack: jxxcarlson
 Twitter: @epsilon2718
 \\href{https://github.com/jxxcarlson/elm-editor}{Github repo: post issues!}
 \\end{obeylines}
+
+\\image{https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcSKK5oCbORAuRM5xZjVTqEIsRGiFjTStX4euA&usqp=CAU}{What 4 billion years of evolution can come up with}{width: 500}
 """
 
 
