@@ -1,4 +1,4 @@
-module Update.Vim exposing (innerProcessCommand, process, setState, toString, update)
+module Update.Vim exposing (innerProcessCommand, process, setState, toString, toggleShortCutExecution, update)
 
 import Action
 import Array
@@ -17,6 +17,37 @@ type alias ReplacementData =
 update : VimMsg -> VimModel -> VimModel
 update msg model =
     model
+
+
+toggleShortCutExecution model =
+    case ( model.editMode, model.vimModel.state ) of
+        ( StandardEditor, Vim.VNormal ) ->
+            ( { model
+                | vimModel = setState Vim.VAccumulate model.vimModel
+                , editMode = VimEditor VimNormal
+              }
+            , Cmd.none
+            )
+
+        ( VimEditor VimNormal, Vim.VAccumulate ) ->
+            let
+                newModel =
+                    innerProcessCommand model
+            in
+            ( { newModel | editMode = StandardEditor }, Cmd.none )
+
+        ( VimEditor VimInsert, Vim.VAccumulate ) ->
+            let
+                newModel =
+                    innerProcessCommand model
+            in
+            ( { newModel | editMode = VimEditor VimNormal }, Cmd.none )
+
+        ( VimEditor VimInsert, Vim.VNormal ) ->
+            ( { model | editMode = VimEditor VimNormal }, Cmd.none )
+
+        _ ->
+            ( model, Cmd.none )
 
 
 
@@ -100,7 +131,7 @@ replacements =
     , { k = "env", r = "\\begin{env}\nXXX\n\\end{env}\n\n", deltaLine = 1, deltaColumn = 0 }
     , { k = "enumerate", r = "\\begin{enumerate}\n\n\\item X\n\n\\item Y\n\n\\end{enumerate}\n\n", deltaLine = 2, deltaColumn = 6 }
     , { k = "itemize", r = "\\begin{itemize}\n\n\\item X\n\n\\item Y\n\n\\end{itemize}\n\n", deltaLine = 2, deltaColumn = 6 }
-    , { k = "$", r = "$ $", deltaLine = 0, deltaColumn = 1 }
+    , { k = "$", r = "$\\pi$", deltaLine = 0, deltaColumn = 1 }
     , { k = "$$", r = "$$\n\\pi\n$$\n", deltaLine = 1, deltaColumn = 0 }
     ]
 
@@ -119,46 +150,52 @@ innerProcessCommand model =
             { model | vimModel = Vim.init }
 
         Just replacementData ->
-            let
-                insertion =
-                    replacementData.r
+            if model.vimModel.buffer == "" then
+                { model | vimModel = Vim.init }
 
-                linesToInsert =
-                    Array.fromList (String.lines insertion)
+            else
+                doReplacement replacementData model
 
-                newLines =
-                    ArrayUtil.replaceLines model.cursor model.cursor linesToInsert model.lines
 
-                line =
-                    model.cursor.line
+doReplacement : ReplacementData -> EditorModel -> EditorModel
+doReplacement replacementData model =
+    let
+        linesToInsert =
+            Array.fromList (String.lines replacementData.r)
 
-                lineEnd_ =
-                    Array.get line newLines
-                        |> Maybe.map String.length
-                        |> Maybe.withDefault 0
-                        |> (\x -> x - 1)
+        newLines =
+            ArrayUtil.replaceLines model.cursor model.cursor linesToInsert model.lines
 
-                newSelection =
-                    Selection
-                        { line = line + 1, column = 0 }
-                        { line = line + 1, column = lineEnd_ - 1 }
+        line =
+            model.cursor.line
 
-                newCursor =
-                    { line = line + replacementData.deltaLine, column = model.cursor.column + replacementData.deltaColumn }
+        lineEnd_ =
+            Array.get line newLines
+                |> Maybe.map String.length
+                |> Maybe.withDefault 0
+                |> (\x -> x - 1)
 
-                vimModel =
-                    model.vimModel
-                        |> setState VNormal
-                        |> setBuffer ""
-            in
-            { model
-                | vimModel = vimModel
-                , lines = newLines
+        newSelection =
+            Selection
+                { line = line + 1, column = 0 }
+                { line = line + 1, column = lineEnd_ - 1 }
 
-                --, selection = newSelection
-                , cursor = newCursor
-            }
-                |> Common.recordHistory_ model
+        newCursor =
+            { line = line + replacementData.deltaLine, column = model.cursor.column + replacementData.deltaColumn }
+
+        vimModel =
+            model.vimModel
+                |> setState VNormal
+                |> setBuffer ""
+    in
+    { model
+        | vimModel = vimModel
+        , lines = newLines
+
+        --, selection = newSelection
+        , cursor = newCursor
+    }
+        |> Common.recordHistory_ model
 
 
 vimModeProcess : String -> EditorModel -> EditorModel

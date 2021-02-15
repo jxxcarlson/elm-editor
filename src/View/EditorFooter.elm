@@ -54,7 +54,7 @@ editModeDisplay model =
         message =
             case model.editMode of
                 StandardEditor ->
-                    ""
+                    "Standard"
 
                 VimEditor VimNormal ->
                     "Vim"
