@@ -67,7 +67,6 @@ init flags =
             , data = Umuli.init Umuli.LMiniLaTeX 0 Text.start Nothing
             , sourceText = Text.start
             , macroText = ""
-            , renderedText = MiniLatex.EditSimple.get "" editRecord |> Html.div [] |> Html.map LaTeXMsg
             , debounce = Debounce.init
             , counter = 0
             , seed = flags.seed

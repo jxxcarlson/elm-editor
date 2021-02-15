@@ -57,7 +57,6 @@ render model str =
     in
     ( { model
         | data = newData
-        , renderedText = renderedText
         , counter = model.counter + 2
       }
     , Random.generate NewSeed (Random.int 1 10000)
@@ -99,7 +98,6 @@ fullRender model =
     ( { model
         | counter = model.counter + 1
         , data = newData
-        , renderedText = Umuli.render "" newData |> Html.div [] |> Html.map Umuli
       }
     , Cmd.none
     )
