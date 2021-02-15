@@ -121,7 +121,7 @@ editorBackgroundColor viewMode_ =
             HA.style "background-color" "#f0f0f0"
 
         Dark ->
-            HA.style "background-color" "#444"
+            HA.style "background-color" "#444#444"
 
 
 editorFontColor : ViewMode -> Attribute msg
@@ -291,7 +291,6 @@ viewContent model =
     H.div
         [ HA.style "position" "relative"
         , HA.style "flex" "1"
-        , HA.style "background-color" "#f0f0f0"
         , HA.style "user-select" "none"
         , HA.style "user-select" "none"
         , HA.style "background-color" bgColor
@@ -466,7 +465,14 @@ selectedColor viewMode_ =
             HA.style "background-color" highlightColorLight
 
         Dark ->
-            HA.style "background-color" "#44b"
+            HA.style "background-color" "#03a199"
+
+
+
+--"#a10303"
+-- "#0367a1"
+-- "#03a199"
+-- "#a10303"
 
 
 highlightColorLight : String
