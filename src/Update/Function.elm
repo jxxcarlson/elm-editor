@@ -1,7 +1,9 @@
 module Update.Function exposing
     ( copySelection
+    , deleteLine
     , deleteSelection
     , insertChar
+    , killLine
     , newLine
     , pasteSelection
     , replaceLines
@@ -19,6 +21,7 @@ import Debounce
 import Dict exposing (Dict)
 import EditorModel exposing (EditMode(..), EditorModel, HelpState(..), ViewMode(..), VimMode(..))
 import EditorMsg exposing (EMsg(..), Position, Selection(..))
+import Line
 import Position
 import Task
 import Update.Line
@@ -75,6 +78,37 @@ lengthOfLine line targetLines =
     Array.get line targetLines
         |> Maybe.map String.length
         |> Maybe.withDefault 0
+
+
+killLine : EditorModel -> EditorModel
+killLine model =
+    let
+        newSelection =
+            Selection model.cursor (Line.lastPosition model.cursor.line model.lines)
+
+        ( newLines, selectedText ) =
+            Action.deleteSelection newSelection model.lines
+    in
+    { model | lines = newLines, selectedText = selectedText }
+
+
+deleteLine : EditorModel -> EditorModel
+deleteLine model =
+    let
+        newCursor =
+            { line = model.cursor.line, column = 0 }
+
+        newSelection =
+            Selection newCursor (Line.lastPosition model.cursor.line model.lines)
+
+        ( newLines, selectedText ) =
+            Action.deleteSelection newSelection model.lines
+    in
+    { model
+        | lines = newLines
+        , selectedText = selectedText
+        , cursor = newCursor
+    }
 
 
 pasteSelection : EditorModel -> EditorModel

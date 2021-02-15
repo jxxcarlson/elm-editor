@@ -22,7 +22,7 @@ import Debounce
 import EditorModel exposing (AutoLineBreak(..), EditMode(..), EditorModel, VimMode(..))
 import EditorMsg exposing (EMsg(..), Hover(..), Selection(..))
 import History
-import Position
+import Line
 import Search
 import Task
 import Update.File
@@ -108,76 +108,14 @@ update msg model =
                 |> withNoCmd
 
         KillLine ->
-            let
-                lineNumber =
-                    model.cursor.line
-
-                lastColumnOfLine =
-                    Array.get lineNumber model.lines
-                        |> Maybe.map String.length
-                        |> Maybe.withDefault 0
-                        |> (\x -> x - 1)
-
-                lineEnd =
-                    { line = lineNumber, column = lastColumnOfLine }
-
-                newSelection =
-                    Selection model.cursor lineEnd
-
-                ( newLines, selectedText ) =
-                    Action.deleteSelection newSelection model.lines
-            in
-            ( { model | lines = newLines, selectedText = selectedText }, Cmd.none )
-                |> recordHistoryWithCmd model
+            Function.killLine model |> recordHistory
 
         KillLineAlt ->
-            let
-                lineNumber =
-                    model.cursor.line
-
-                lastColumnOfLine =
-                    Array.get lineNumber model.lines
-                        |> Maybe.map String.length
-                        |> Maybe.withDefault 0
-                        |> (\x -> x - 1)
-
-                lineEnd =
-                    { line = lineNumber, column = lastColumnOfLine }
-
-                newSelection =
-                    Selection model.cursor lineEnd
-
-                ( newLines, selectedText ) =
-                    Action.deleteSelection newSelection model.lines
-            in
-            ( { model | lines = newLines, selectedText = selectedText }, Cmd.none )
-                |> recordHistoryWithCmd model
+            -- TODO: what did I hace in mind here?
+            Function.killLine model |> recordHistory
 
         DeleteLine ->
-            let
-                lineNumber =
-                    model.cursor.line
-
-                newCursor =
-                    { line = lineNumber, column = 0 }
-
-                lastColumnOfLine =
-                    Array.get lineNumber model.lines
-                        |> Maybe.map String.length
-                        |> Maybe.withDefault 0
-                        |> (\x -> x - 1)
-
-                lineEnd =
-                    { line = lineNumber, column = lastColumnOfLine }
-
-                newSelection =
-                    Selection newCursor lineEnd
-
-                ( newLines, selectedText ) =
-                    Action.deleteSelection newSelection model.lines
-            in
-            ( { model | lines = newLines, selectedText = selectedText }, Cmd.none )
-                |> recordHistoryWithCmd model
+            Function.deleteLine model |> recordHistory
 
         Cut ->
             Function.deleteSelection model

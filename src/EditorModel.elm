@@ -147,3 +147,11 @@ debounceConfig =
     { strategy = Debounce.later 300
     , transform = DebounceMsg
     }
+
+
+lineEnd : Int -> EditorModel -> Int
+lineEnd line model =
+    Array.get line model.lines
+        |> Maybe.map String.length
+        |> Maybe.withDefault 0
+        |> (\x -> x - 1)
