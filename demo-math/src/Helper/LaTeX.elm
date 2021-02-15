@@ -2,6 +2,7 @@ module Helper.LaTeX exposing (..)
 
 import Codec
 import Config
+import Editor exposing (Editor)
 import Http
 import MiniLatex.Export
 import Model exposing (Msg(..), PrintingState(..))
@@ -12,7 +13,7 @@ import Task
 printToPDF model =
     ( model
     , Cmd.batch
-        [ generatePdf model.sourceText
+        [ generatePdf model.editor
         , Process.sleep 1 |> Task.perform (always (ChangePrintingState PrintProcessing))
         ]
     )
@@ -31,11 +32,11 @@ gotPdfLink model result =
             )
 
 
-generatePdf : String -> Cmd Msg
-generatePdf sourceText =
+generatePdf : Editor -> Cmd Msg
+generatePdf editor =
     let
         ( contentForExport, imageUrlList ) =
-            sourceText
+            Editor.getContent editor
                 |> MiniLatex.Export.toLaTeXWithImages
     in
     Http.request
