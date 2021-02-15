@@ -22,7 +22,6 @@ import Debounce
 import EditorModel exposing (AutoLineBreak(..), EditMode(..), EditorModel, VimMode(..))
 import EditorMsg exposing (EMsg(..), Hover(..), Selection(..))
 import History
-import Line
 import Search
 import Task
 import Update.File
