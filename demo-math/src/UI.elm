@@ -1,6 +1,7 @@
 module UI exposing
     ( elementAttribute
     , exportButton
+    , filePopup
     , openFileButton
     , renderedSource
     , saveFileButton
@@ -10,11 +11,13 @@ module UI exposing
 import Browser.Dom as Dom
 import Element exposing (..)
 import Element.Background as Background
+import Element.Font as Font
 import Element.Input as Input
 import Html exposing (Html)
 import Html.Attributes as HA
 import Html.Events exposing (onClick)
 import Model exposing (..)
+import Style.Element
 import Style.Html exposing (..)
 import Task exposing (Task)
 
@@ -119,5 +122,25 @@ toggleFileButton width =
 
 filePopup : Model -> Element Msg
 filePopup model =
-    column [ spacing 12 ]
-        []
+    if model.filePopupOpen then
+        column [ inFront (filePopup_ model) ] [ toggleFileButton 100 ]
+
+    else
+        toggleFileButton 100
+
+
+filePopup_ : a -> Element Msg
+filePopup_ model =
+    column
+        [ spacing 12
+        , Font.size 14
+        , padding 20
+        , Font.color (Style.Element.gray 0.1)
+        , alignBottom
+        , height (px 300)
+        , width (px 300)
+        , Background.color (rgb 0.95 0.95 1.0)
+        , moveUp 320
+        ]
+        [ text "XXXX"
+        ]

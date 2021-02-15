@@ -233,6 +233,7 @@ footer model =
         , UI.saveFileButton 100
         , printToPDF model
         , el [] (Element.text ("File: " ++ model.fileName))
+        , UI.filePopup model
         ]
 
 
