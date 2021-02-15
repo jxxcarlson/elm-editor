@@ -33,7 +33,7 @@ type alias Model =
     , fileName : String
     , printingState : PrintingState
     , docId : String
-    , renderingMode : RenderingMode
+    , documentType : DocumentType
     , filePopupOpen : Bool
     }
 
@@ -64,15 +64,16 @@ type Msg
     | FinallyDoCleanPrintArtefacts String
     | Umuli Umuli.UmuliMsg
     | ToggleFilePopup
+    | NewDocument DocumentType
 
 
-type RenderingMode
+type DocumentType
     = MiniLaTeX
     | MathMarkdown
     | PlainText
 
 
-umuliLang : RenderingMode -> Umuli.Lang
+umuliLang : DocumentType -> Umuli.Lang
 umuliLang mode =
     case mode of
         MiniLaTeX ->
@@ -83,6 +84,19 @@ umuliLang mode =
 
         PlainText ->
             Umuli.LText
+
+
+fileExtension : DocumentType -> String
+fileExtension docType =
+    case docType of
+        MiniLaTeX ->
+            ".tex"
+
+        MathMarkdown ->
+            ".md"
+
+        PlainText ->
+            ".txt"
 
 
 type PrintingState

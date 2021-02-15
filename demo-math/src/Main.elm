@@ -56,9 +56,6 @@ init flags =
         newEditor =
             Editor.initWithContent Text.start config
 
-        editRecord =
-            MiniLatex.EditSimple.init flags.seed Text.start Nothing
-
         model =
             { windowWidth = flags.width
             , windowHeight = flags.height
@@ -77,7 +74,7 @@ init flags =
             , fileName = "announcement.tex"
             , printingState = PrintWaiting
             , docId = ""
-            , renderingMode = MathMarkdown
+            , documentType = MiniLaTeX
             , filePopupOpen = False
             }
 
@@ -180,6 +177,17 @@ update msg model =
         Umuli _ ->
             ( model, Cmd.none )
 
+        NewDocument mode ->
+            ( { model
+                | documentType = mode
+                , editor = Editor.initWithContent "" model.config
+                , data = Umuli.init (Model.umuliLang mode) model.counter "" Nothing
+                , fileName = "doc" ++ Model.fileExtension mode
+                , filePopupOpen = False
+              }
+            , Cmd.none
+            )
+
 
 
 -- SUBSCRIPTIONS
@@ -233,7 +241,7 @@ footer model =
         , UI.saveFileButton 100
         , printToPDF model
         , el [] (Element.text ("File: " ++ model.fileName))
-        , UI.filePopup model
+        , UI.newDocuemntPopup model
         ]
 
 

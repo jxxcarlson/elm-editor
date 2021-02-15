@@ -1,7 +1,7 @@
 module UI exposing
     ( elementAttribute
     , exportButton
-    , filePopup
+    , newDocuemntPopup
     , openFileButton
     , renderedSource
     , saveFileButton
@@ -112,25 +112,59 @@ exampleButton width =
 
 
 toggleFileButton : Int -> Element Msg
-toggleFileButton width =
+toggleFileButton w =
     Input.button
         [ mouseDown [ Background.color (rgb255 200 40 40) ]
         , paddingXY 4 8
+        , width (px w)
         ]
-        { onPress = Just ToggleFilePopup, label = text "File Info" }
+        { onPress = Just ToggleFilePopup, label = text "New document" }
 
 
-filePopup : Model -> Element Msg
-filePopup model =
+setRenderingModeButton : DocumentType -> DocumentType -> Element Msg
+setRenderingModeButton currentMode newMode =
+    let
+        label_ =
+            case newMode of
+                MiniLaTeX ->
+                    "MiniLaTeX"
+
+                MathMarkdown ->
+                    "MathMarkdown"
+
+                PlainText ->
+                    "Plain Text"
+
+        bgColor =
+            if currentMode == newMode then
+                rgb255 120 0 0
+
+            else
+                Style.Element.gray 0.2
+    in
+    Input.button
+        [ mouseDown [ Background.color (rgb255 40 200 40) ]
+        , Background.color bgColor
+        , width (px 120)
+        , Font.color (Style.Element.gray 0.8)
+        , paddingXY 8 8
+        ]
+        { onPress = Just (NewDocument newMode), label = text label_ }
+
+
+newDocuemntPopup : Model -> Element Msg
+newDocuemntPopup model =
     if model.filePopupOpen then
-        column [ inFront (filePopup_ model) ] [ toggleFileButton 100 ]
+        column [ inFront (newDocumentPopup_ model) ]
+            [ toggleFileButton 100
+            ]
 
     else
         toggleFileButton 100
 
 
-filePopup_ : a -> Element Msg
-filePopup_ model =
+newDocumentPopup_ : Model -> Element Msg
+newDocumentPopup_ model =
     column
         [ spacing 12
         , Font.size 14
@@ -139,8 +173,10 @@ filePopup_ model =
         , alignBottom
         , height (px 300)
         , width (px 300)
-        , Background.color (rgb 0.95 0.95 1.0)
+        , Background.color (Style.Element.gray 0.9)
         , moveUp 320
         ]
-        [ text "XXXX"
+        [ setRenderingModeButton model.documentType MiniLaTeX
+        , setRenderingModeButton model.documentType MathMarkdown
+        , setRenderingModeButton model.documentType PlainText
         ]

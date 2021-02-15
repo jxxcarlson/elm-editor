@@ -93,7 +93,7 @@ fullRender model =
                 |> String.join "\n"
 
         newData =
-            Umuli.init (umuliLang model.renderingMode) model.counter content Nothing
+            Umuli.init (umuliLang model.documentType) model.counter content Nothing
     in
     ( { model
         | counter = model.counter + 1
@@ -179,7 +179,7 @@ load content model =
             Editor.initWithContent content model.config
 
         data =
-            Umuli.init (umuliLang model.renderingMode) model.counter content Nothing
+            Umuli.init (umuliLang model.documentType) model.counter content Nothing
     in
     { model
         | sourceText = content
