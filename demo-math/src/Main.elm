@@ -146,7 +146,7 @@ update msg model =
             Helper.Update.fileRequested model
 
         FileSelected file ->
-            Helper.Update.fileSelected { model | fileName = File.name file } file
+            Helper.Update.fileSelected model (File.name file) file
 
         FileLoaded contents ->
             Helper.Update.load_ model.fileName contents model
@@ -238,12 +238,21 @@ footer model =
         , Element.paddingXY 12 0
         ]
         [ UI.openFileButton 100
-        , UI.exportButton 100
+        , showIf (model.documentType == MiniLaTeX) (UI.exportButton 100)
         , UI.saveFileButton 100
         , printToPDF model
         , el [] (Element.text ("File: " ++ model.fileName))
         , UI.newDocuemntPopup model
         ]
+
+
+showIf : Bool -> Element Msg -> Element Msg
+showIf flag el =
+    if flag then
+        el
+
+    else
+        Element.none
 
 
 render : MiniLatex.EditSimple.Data -> Html Msg
