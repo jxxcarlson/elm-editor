@@ -244,7 +244,8 @@ people, for the people, shall not perish from the earth.
 ## Poetry (Extension)
 
 Poetry blocks, an extension of normal Markdown,
- begin with ">>"; line endings are respected.
+id implemented as a code block with language
+*verse*.
 
 ```verse
 Twas brillig, and the slithy toves
