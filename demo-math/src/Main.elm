@@ -65,7 +65,6 @@ init flags =
             , config = config
             , editor = newEditor
             , data = Umuli.init Umuli.LMiniLaTeX 0 Text.start Nothing
-            , sourceText = Text.start
             , macroText = ""
             , debounce = Debounce.init
             , counter = 0

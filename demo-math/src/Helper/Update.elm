@@ -23,8 +23,7 @@ getContent model str =
             Debounce.push debounceConfig str model.debounce
     in
     ( { model
-        | sourceText = str
-        , debounce = debounce
+        | debounce = debounce
       }
     , cmd
     )
@@ -189,8 +188,7 @@ loadDocument fileName content model =
             Umuli.init (umuliLang documentType) model.counter content Nothing
     in
     { model
-        | sourceText = content
-        , editor = newEditor
+        | editor = newEditor
         , documentType = documentType
         , data = data
         , fileName = fileName
@@ -214,8 +212,7 @@ load fileName content model =
             Umuli.init (umuliLang docType) model.counter content Nothing
     in
     { model
-        | sourceText = content
-        , editor = newEditor
+        | editor = newEditor
         , documentType = documentType
         , data = data
         , counter = model.counter + 1

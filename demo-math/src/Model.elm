@@ -22,7 +22,6 @@ type alias Model =
     , config : EditorModel.Config
     , editor : Editor
     , data : Umuli.Data
-    , sourceText : String
     , macroText : String
     , debounce : Debounce String
     , counter : Int
