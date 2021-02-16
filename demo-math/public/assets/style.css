@@ -55,6 +55,10 @@ h1 {font-size: 24px}
   text-indent: -18px;
 	white-space: normal;
 }
+
+.p mm-ulist-item > mm-block-0 { margin-left: 20px;}
+.p fmm-ulist-item > mm-block-1 { margin-left: 40px;}
+
 .mm-quotation {
 	margin-left: 24px;
 	margin-top: 18px;
@@ -83,6 +87,9 @@ h1 {font-size: 24px}
 	margin-bottom: 4px;
 	width: inherit;
 }
+
+.mm-poetry p { margin-bottom: 0;}
+
 .mm-error-message {
 	color: red; margin-bottom: 12px;
 }
@@ -118,7 +125,7 @@ p.mm-table-cell {
 }
 
 .mm-verbatim {
-	font: 16px courier; background-color: #eee; 
+	font: 16px courier; background-color: #eee;
 }
 
 

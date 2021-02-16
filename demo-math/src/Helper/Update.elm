@@ -111,6 +111,7 @@ restoreText model =
 
 
 
+--
 --exampleText model =
 --    let
 --        editRecord =
@@ -124,6 +125,7 @@ restoreText model =
 --      }
 --    , Cmd.none
 --    )
+--
 --
 --
 --restoreText model =
@@ -174,8 +176,8 @@ loadEmpty n model =
     load fileName content model
 
 
-load : String -> String -> Model -> Model
-load fileName content model =
+loadDocument : String -> String -> Model -> Model
+loadDocument fileName content model =
     let
         newEditor =
             Editor.initWithContent content model.config
@@ -185,6 +187,30 @@ load fileName content model =
 
         data =
             Umuli.init (umuliLang documentType) model.counter content Nothing
+    in
+    { model
+        | sourceText = content
+        , editor = newEditor
+        , documentType = documentType
+        , data = data
+        , counter = model.counter + 1
+    }
+
+
+load : String -> String -> Model -> Model
+load fileName content model =
+    let
+        docType =
+            findDocumentType fileName
+
+        newEditor =
+            Editor.initWithContent content model.config
+
+        documentType =
+            findDocumentType fileName
+
+        data =
+            Umuli.init (umuliLang docType) model.counter content Nothing
     in
     { model
         | sourceText = content

@@ -5,6 +5,7 @@ module Main exposing (main)
 import Browser
 import Config
 import Debounce exposing (Debounce)
+import Dict
 import Editor exposing (Editor)
 import Element exposing (Element, centerX, centerY, column, el, fill, px, row, text)
 import Element.Background as Background
@@ -154,6 +155,14 @@ update msg model =
         FileLoaded contents ->
             Helper.Update.load_ model.fileName contents model
 
+        LoadDocument fileName ->
+            case Dict.get fileName Text.textDictionary of
+                Nothing ->
+                    ( model, Cmd.none )
+
+                Just content ->
+                    ( Helper.Update.loadDocument fileName content model, Cmd.none )
+
         Clear ->
             -- TODO: handle this!
             ( model, Cmd.none )
@@ -245,7 +254,8 @@ footer model =
         , UI.saveFileButton 100
         , printToPDF model
         , UI.newDocuemntPopup model
-        , el [ Element.alignRight ] (Element.text ("File: " ++ model.fileName))
+        , el [ Font.color (Element.rgb 0.9 0.5 0.5) ] (Element.text ("File: " ++ model.fileName))
+        , UI.loadDocumentButton "markdownDemo.md"
         ]
 
 

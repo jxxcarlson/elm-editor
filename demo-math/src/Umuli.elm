@@ -11,6 +11,7 @@ module Umuli exposing
 import Html exposing (Html)
 import Html.Attributes as HA
 import Markdown.Data as Markdown
+import Markdown.Option
 import Markdown.Render
 import MiniLatex.EditSimple
 
@@ -67,8 +68,23 @@ render selectedId data =
                 |> List.map (Html.map MLMsg)
 
         MD data_ ->
-            Markdown.render selectedId data_
-                |> List.map (Html.map MDMsg)
+            -- Markdown.render selectedId data_
+            let
+                output =
+                    Markdown.Render.withOptions
+                        Markdown.Option.ExtendedMath
+                        (Markdown.Option.InternalTOC "Contents")
+                        ( 0, 0 )
+                        0
+                        data_.source
+            in
+            case output of
+                Markdown.Render.Simple html ->
+                    [ html |> Html.map MDMsg ]
+
+                Markdown.Render.Composite docParts ->
+                    [ docParts.title, docParts.toc, docParts.document ]
+                        |> List.map (Html.map MDMsg)
 
         TT data_ ->
             [ Html.div [ HA.style "white-space" "pre" ] [ Html.text data_ ] ]

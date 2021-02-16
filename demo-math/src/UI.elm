@@ -1,6 +1,7 @@
 module UI exposing
     ( elementAttribute
     , exportButton
+    , loadDocumentButton
     , newDocuemntPopup
     , openFileButton
     , renderedSource
@@ -111,14 +112,32 @@ exampleButton width =
     Html.button ([ onClick ExampleText ] ++ buttonStyle colorBlue width) [ Html.text "Example 2" ]
 
 
-toggleFileButton : Int -> Element Msg
-toggleFileButton w =
+toggleFileButton : Model -> Int -> Element Msg
+toggleFileButton model w =
+    let
+        label_ =
+            if model.filePopupOpen then
+                "Cancel"
+
+            else
+                "New document"
+    in
     Input.button
         [ mouseDown [ Background.color (rgb255 200 40 40) ]
         , paddingXY 4 8
         , width (px w)
         ]
-        { onPress = Just ToggleFilePopup, label = text "New document" }
+        { onPress = Just ToggleFilePopup, label = text label_ }
+
+
+loadDocumentButton : String -> Element Msg
+loadDocumentButton fileName =
+    Input.button
+        [ mouseDown [ Background.color (rgb255 200 40 40) ]
+        , paddingXY 4 8
+        , width (px 100)
+        ]
+        { onPress = Just (LoadDocument fileName), label = text fileName }
 
 
 setRenderingModeButton : DocumentType -> DocumentType -> Element Msg
@@ -156,11 +175,11 @@ newDocuemntPopup : Model -> Element Msg
 newDocuemntPopup model =
     if model.filePopupOpen then
         column [ inFront (newDocumentPopup_ model) ]
-            [ toggleFileButton 100
+            [ toggleFileButton model 100
             ]
 
     else
-        toggleFileButton 100
+        toggleFileButton model 100
 
 
 newDocumentPopup_ : Model -> Element Msg
@@ -171,10 +190,10 @@ newDocumentPopup_ model =
         , padding 20
         , Font.color (Style.Element.gray 0.1)
         , alignBottom
-        , height (px 300)
+        , height (px 160)
         , width (px 300)
         , Background.color (Style.Element.gray 0.9)
-        , moveUp 320
+        , moveUp 160
         ]
         [ setRenderingModeButton model.documentType MiniLaTeX
         , setRenderingModeButton model.documentType MathMarkdown

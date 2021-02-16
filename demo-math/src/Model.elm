@@ -68,6 +68,7 @@ type Msg
     | Umuli Umuli.UmuliMsg
     | ToggleFilePopup
     | NewDocument DocumentType
+    | LoadDocument String
 
 
 type DocumentType
@@ -90,8 +91,8 @@ umuliLang mode =
 
 
 fileExtension : DocumentType -> String
-fileExtension docType =
-    case docType of
+fileExtension dt =
+    case dt of
         MiniLaTeX ->
             ".tex"
 
@@ -100,6 +101,22 @@ fileExtension docType =
 
         PlainText ->
             ".txt"
+
+
+docType : String -> DocumentType
+docType ext =
+    case ext of
+        "tex" ->
+            MiniLaTeX
+
+        "md" ->
+            MathMarkdown
+
+        "txt" ->
+            PlainText
+
+        _ ->
+            MathMarkdown
 
 
 type PrintingState
