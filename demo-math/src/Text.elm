@@ -4,7 +4,7 @@ import Dict
 
 
 textDictionary =
-    Dict.fromList [ ( "start.txt", start ), ( "markdownDemo.md", markdownDemo ) ]
+    Dict.fromList [ ( "announcement.tex", start ), ( "markdownDemo.md", markdownDemo ) ]
 
 
 numbered : String -> String
@@ -337,6 +337,11 @@ files on disk, export
 MiniLaTeX files to standard LaTeX, save as MiniLaTeX,
 and generate PDF.} (Try the PDF button now).
 
+
+\\strong{Demo files.} Note the buttons in the footer
+on the extreme right. Clicking on them will load a file
+into the editor.  As a bonus, the app can render
+Markdown docs (along with LaTeX-style formulas).
 
 \\strong{More info.} For more info, press the \\blue{Help} button in the
 header.  Do note the various key commands.  They

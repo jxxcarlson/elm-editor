@@ -134,8 +134,8 @@ loadDocumentButton : String -> Element Msg
 loadDocumentButton fileName =
     Input.button
         [ mouseDown [ Background.color (rgb255 200 40 40) ]
-        , paddingXY 4 8
-        , width (px 100)
+        , paddingXY 8 8
+        , width (px 140)
         ]
         { onPress = Just (LoadDocument fileName), label = text fileName }
 

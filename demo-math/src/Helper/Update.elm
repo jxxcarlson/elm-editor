@@ -193,6 +193,7 @@ loadDocument fileName content model =
         , editor = newEditor
         , documentType = documentType
         , data = data
+        , fileName = fileName
         , counter = model.counter + 1
     }
 

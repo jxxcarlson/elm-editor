@@ -255,7 +255,10 @@ footer model =
         , printToPDF model
         , UI.newDocuemntPopup model
         , el [ Font.color (Element.rgb 0.9 0.5 0.5) ] (Element.text ("File: " ++ model.fileName))
-        , UI.loadDocumentButton "markdownDemo.md"
+        , row [ Element.alignRight, Element.spacing 12 ]
+            [ UI.loadDocumentButton "announcement.tex"
+            , UI.loadDocumentButton "markdownDemo.md"
+            ]
         ]
 
 
