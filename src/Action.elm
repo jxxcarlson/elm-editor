@@ -135,8 +135,9 @@ pageUp : EditorModel -> ( EditorModel, Cmd EMsg )
 pageUp model =
     let
         lpp =
-            linesPerPage model
+            20
 
+        -- linesPerPage model
         newLine =
             max 0 (model.cursor.line - lpp)
 

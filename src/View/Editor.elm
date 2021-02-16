@@ -121,7 +121,7 @@ editorBackgroundColor viewMode_ =
             HA.style "background-color" "#f0f0f0"
 
         Dark ->
-            HA.style "background-color" "#444#444"
+            HA.style "background-color" "#444444"
 
 
 editorFontColor : ViewMode -> Attribute msg
@@ -279,21 +279,13 @@ viewContent model =
 
         hover2 =
             Window.shiftHover -offset model.hover
-
-        bgColor =
-            case model.viewMode of
-                Light ->
-                    "#ddd"
-
-                Dark ->
-                    "#555"
     in
     H.div
         [ HA.style "position" "relative"
         , HA.style "flex" "1"
         , HA.style "user-select" "none"
         , HA.style "user-select" "none"
-        , HA.style "background-color" bgColor
+        , editorBackgroundColor model.viewMode
         , HE.onMouseDown StartSelecting
         , HE.onMouseUp StopSelecting
         , HE.onClick GoToHoveredPosition
@@ -321,7 +313,6 @@ viewLine_ : ViewMode -> Float -> Position -> Hover -> Selection -> Array String 
 viewLine_ viewMode_ lineHeight position hover selection lines line content =
     H.div
         [ HA.style "position" "absolute"
-        , HA.style "background-color" "#f0f0f0"
         , HA.style "left" "0"
         , HA.style "right" "0"
         , HA.style "padding-left" "14px" -- Left margin in editor set here
