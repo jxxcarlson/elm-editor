@@ -118,12 +118,6 @@ update msg model =
         FullRender ->
             Helper.Update.fullRender model
 
-        RestoreText ->
-            Helper.Update.restoreText model
-
-        ExampleText ->
-            Helper.Update.exampleText model
-
         SetViewPortForElement result ->
             Helper.Update.setViewPortForElement model result
 
@@ -252,11 +246,16 @@ footer model =
         , showIf (model.documentType == MiniLaTeX) (UI.exportButton 100)
         , UI.saveFileButton 100
         , printToPDF model
-        , UI.newDocuemntPopup model
-        , el [ Font.color (Element.rgb 0.9 0.5 0.5) ] (Element.text ("File: " ++ model.fileName))
+        , UI.fullRenderButton 100
+        , row [ Element.paddingXY 24 0, Element.spacing 8 ]
+            [ UI.newDocuemntPopup model
+            , el
+                [ Font.color (Element.rgb 0.9 0.5 0.5) ]
+                (Element.text ("File: " ++ model.fileName))
+            ]
         , row [ Element.alignRight, Element.spacing 12 ]
-            [ UI.loadDocumentButton "announcement.tex"
-            , UI.loadDocumentButton "markdownDemo.md"
+            [ UI.loadDocumentButton "start.tex"
+            , UI.loadDocumentButton "markdown.md"
             ]
         ]
 

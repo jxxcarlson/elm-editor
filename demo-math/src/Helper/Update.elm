@@ -101,47 +101,6 @@ fullRender model =
     )
 
 
-exampleText model =
-    ( model, Cmd.none )
-
-
-restoreText model =
-    ( model, Cmd.none )
-
-
-
---
---exampleText model =
---    let
---        editRecord =
---            MiniLatex.EditSimple.init model.seed Text.start Nothing
---    in
---    ( { model
---        | counter = model.counter + 1
---        , editRecord = editRecord
---        , sourceText = Text.start
---        , renderedText = renderFromEditRecord model.selectedId model.counter editRecord
---      }
---    , Cmd.none
---    )
---
---
---
---restoreText model =
---    let
---        editRecord =
---            MiniLatex.EditSimple.init model.seed Text.start Nothing
---    in
---    ( { model
---        | counter = model.counter + 1
---        , editRecord = editRecord
---        , sourceText = Text.start
---        , renderedText = MiniLatex.EditSimple.get "" editRecord |> Html.div [] |> Html.map LaTeXMsg
---      }
---    , Cmd.none
---    )
-
-
 setViewPortForElement model result =
     case result of
         Ok ( element, viewport ) ->

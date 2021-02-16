@@ -4,7 +4,7 @@ import Dict
 
 
 textDictionary =
-    Dict.fromList [ ( "announcement.tex", start ), ( "markdownDemo.md", markdownDemo ) ]
+    Dict.fromList [ ( "start.tex", start ), ( "markdown.md", markdownDemo ) ]
 
 
 numbered : String -> String

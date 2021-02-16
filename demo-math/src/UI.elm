@@ -1,6 +1,7 @@
 module UI exposing
     ( elementAttribute
     , exportButton
+    , fullRenderButton
     , loadDocumentButton
     , newDocuemntPopup
     , openFileButton
@@ -74,11 +75,11 @@ clearButton width =
 
 
 fullRenderButton width =
-    Html.button ([ onClick FullRender ] ++ buttonStyle colorBlue width) [ Html.text "Re-render" ]
-
-
-restoreTextButton width =
-    Html.button ([ onClick RestoreText ] ++ buttonStyle colorBlue width) [ Html.text "Restore" ]
+    Input.button
+        [ mouseDown [ Background.color (rgb255 200 40 40) ]
+        , paddingXY 4 8
+        ]
+        { onPress = Just FullRender, label = text "Render" }
 
 
 exportButton : a -> Element Msg
@@ -108,10 +109,6 @@ openFileButton width =
         { onPress = Just FileRequested, label = text "Open" }
 
 
-exampleButton width =
-    Html.button ([ onClick ExampleText ] ++ buttonStyle colorBlue width) [ Html.text "Example 2" ]
-
-
 toggleFileButton : Model -> Int -> Element Msg
 toggleFileButton model w =
     let
@@ -135,7 +132,8 @@ loadDocumentButton fileName =
     Input.button
         [ mouseDown [ Background.color (rgb255 200 40 40) ]
         , paddingXY 8 8
-        , width (px 140)
+
+        -- , width (px 100)
         ]
         { onPress = Just (LoadDocument fileName), label = text fileName }
 

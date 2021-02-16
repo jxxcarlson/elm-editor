@@ -51,8 +51,6 @@ type Msg
     | GenerateSeed
     | NewSeed Int
     | FullRender
-    | RestoreText
-    | ExampleText
     | SetViewPortForElement (Result Dom.Error ( Dom.Element, Dom.Viewport ))
     | LaTeXMsg MiniLatex.EditSimple.LaTeXMsg
     | Export
