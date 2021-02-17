@@ -41,6 +41,8 @@ type alias Model =
     , fileArchive : FileArchive
     , tick : Int
     , currentTime : Time.Posix
+    , documentDirty : Bool
+    , newFilename : String
     }
 
 
@@ -78,6 +80,9 @@ type Msg
     | SavedToServer (Result Http.Error ())
     | ServerIsAlive (Result Http.Error String)
     | Tick Time.Posix
+    | GotFilename String
+    | MakeNewfile
+    | CancelNewfile
 
 
 type DocumentType
@@ -126,6 +131,29 @@ docType ext =
 
         _ ->
             MathMarkdown
+
+
+findDocumentType : String -> DocumentType
+findDocumentType fileName =
+    let
+        parts =
+            String.split "." fileName
+
+        mExtensionName =
+            List.head (List.reverse parts)
+    in
+    case mExtensionName of
+        Just "tex" ->
+            MiniLaTeX
+
+        Just "md" ->
+            MathMarkdown
+
+        Just "txt" ->
+            PlainText
+
+        _ ->
+            PlainText
 
 
 type PrintingState

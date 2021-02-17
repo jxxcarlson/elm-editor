@@ -84,6 +84,8 @@ init flags =
             , fileArchive = Server
             , tick = 0
             , currentTime = Time.millisToPosix 0
+            , documentDirty = False
+            , newFilename = ""
             }
     in
     ( model, Helper.File.checkServer )
@@ -141,14 +143,14 @@ update msg model =
         SaveFile ->
             case model.fileArchive of
                 Disk ->
-                    ( model, Helper.File.save model )
+                    ( { model | documentDirty = False }, Helper.File.save model )
 
                 Server ->
                     let
                         content =
                             Editor.getContent model.editor
                     in
-                    ( model, Helper.File.postToServer model.fileName content )
+                    ( { model | documentDirty = False }, Helper.File.postToServer model.fileName content )
 
         SavedToServer _ ->
             ( model, Cmd.none )
@@ -168,7 +170,7 @@ update msg model =
             Helper.Update.fileSelected model (File.name file) file
 
         FileLoaded contents ->
-            Helper.Update.load_ model.fileName contents model
+            Helper.Update.load_ model.fileName contents { model | documentDirty = True }
 
         LoadDocument fileName ->
             case Dict.get fileName Text.textDictionary of
@@ -203,21 +205,64 @@ update msg model =
             ( model, Cmd.none )
 
         Umuli _ ->
-            ( model, Cmd.none )
+            ( { model | documentDirty = True }, Cmd.none )
 
-        NewDocument mode ->
+        NewDocument documentType ->
             ( { model
-                | documentType = mode
+                | documentType = documentType
                 , editor = Editor.initWithContent "" model.config
-                , data = Umuli.init (Model.umuliLang mode) model.counter "" Nothing
-                , fileName = "doc" ++ Model.fileExtension mode
+                , data = Umuli.init (Model.umuliLang documentType) model.counter "" Nothing
+
+                -- , fileName = "doc" ++ Model.fileExtension mode
                 , filePopupOpen = False
+                , documentDirty = False
               }
-            , Cmd.none
+            , Helper.File.postToServer model.fileName " "
             )
 
         Tick newTime ->
-            ( { model | currentTime = newTime, tick = model.tick + 1 }, Cmd.none )
+            let
+                ( documentDirty, cmd ) =
+                    if modBy 30 model.tick == 0 && model.documentDirty then
+                        ( False, Helper.File.save model )
+
+                    else
+                        ( model.documentDirty, Cmd.none )
+            in
+            ( { model | currentTime = newTime, tick = model.tick + 1, documentDirty = documentDirty }, cmd )
+
+        GotFilename str ->
+            ( { model | newFilename = str }, Cmd.none )
+
+        MakeNewfile ->
+            let
+                documentType =
+                    findDocumentType model.newFilename
+            in
+            ( { model
+                | documentType = documentType
+                , editor = Editor.initWithContent "" model.config
+                , data = Umuli.init (Model.umuliLang documentType) model.counter "" Nothing
+                , fileName = model.newFilename
+                , newFilename = ""
+                , filePopupOpen = False
+                , documentDirty = False
+              }
+            , Helper.File.postToServer model.newFilename ""
+            )
+
+        --( { model
+        --    | documentType = docType
+        --    , editor = Editor.initWithContent "" model.config
+        --    , data = Umuli.init (Model.umuliLang docType) model.counter "" Nothing
+        --    , fileName = model.newFilename
+        --    , filePopupOpen = False
+        --    , documentDirty = False
+        --  }
+        --, Cmd.none
+        --)
+        CancelNewfile ->
+            ( { model | filePopupOpen = False }, Cmd.none )
 
 
 
@@ -259,7 +304,7 @@ footer model =
     row
         [ Element.spacing 12
         , Font.size 14
-        , Element.height (px 30)
+        , Element.height (px 35)
 
         -- , Element.width (px (model.windowWidth - 108))
         , Element.width (px (round <| 2 * model.config.width - 7))
@@ -273,10 +318,11 @@ footer model =
         , printToPDF model
         , UI.fullRenderButton 100
         , row [ Element.paddingXY 24 0, Element.spacing 8 ]
-            [ UI.newDocuemntPopup model
+            [ UI.newDocumentPopup model
             , el
                 [ Font.color (Element.rgb 0.9 0.5 0.5) ]
                 (Element.text ("File: " ++ model.fileName))
+            , fileStatus model.documentDirty
             , fileArchive model.fileArchive
             ]
         , row [ Element.alignRight, Element.spacing 12 ]
@@ -284,6 +330,19 @@ footer model =
             , UI.loadDocumentButton "markdown.md"
             ]
         ]
+
+
+fileStatus : Bool -> Element Msg
+fileStatus isDirty =
+    let
+        color =
+            if isDirty then
+                Element.rgb 0.7 0 0
+
+            else
+                Element.rgb 0 0.7 0
+    in
+    el [ Background.color color, centerX, centerY, Element.width (px 8), Element.height (px 8) ] (Element.text "")
 
 
 fileArchive : FileArchive -> Element Msg

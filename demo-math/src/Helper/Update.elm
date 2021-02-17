@@ -178,29 +178,6 @@ load fileName content model =
     }
 
 
-findDocumentType : String -> DocumentType
-findDocumentType fileName =
-    let
-        parts =
-            String.split "." fileName
-
-        mExtensionName =
-            List.head (List.reverse parts)
-    in
-    case mExtensionName of
-        Just "tex" ->
-            MiniLaTeX
-
-        Just "md" ->
-            MathMarkdown
-
-        Just "txt" ->
-            PlainText
-
-        _ ->
-            PlainText
-
-
 load_ fileName content model =
     ( load fileName content model, Cmd.none )
 
@@ -216,7 +193,7 @@ handleEditorMsg model msg editorMsg =
     in
     case editorMsg of
         EditorMsg.InsertChar c ->
-            Helper.Sync.sync newEditor cmd model
+            Helper.Sync.sync newEditor cmd { model | documentDirty = True }
 
         EditorMsg.ToggleShortCutExecution ->
             Helper.Sync.sync newEditor cmd model

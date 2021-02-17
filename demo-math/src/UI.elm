@@ -3,7 +3,7 @@ module UI exposing
     , exportButton
     , fullRenderButton
     , loadDocumentButton
-    , newDocuemntPopup
+    , newDocumentPopup
     , openFileButton
     , renderedSource
     , saveFileButton
@@ -14,7 +14,7 @@ import Browser.Dom as Dom
 import Element exposing (..)
 import Element.Background as Background
 import Element.Font as Font
-import Element.Input as Input
+import Element.Input as Input exposing (labelAbove)
 import Html exposing (Html)
 import Html.Attributes as HA
 import Html.Events exposing (onClick)
@@ -169,8 +169,8 @@ setRenderingModeButton currentMode newMode =
         { onPress = Just (NewDocument newMode), label = text label_ }
 
 
-newDocuemntPopup : Model -> Element Msg
-newDocuemntPopup model =
+newDocumentPopup : Model -> Element Msg
+newDocumentPopup model =
     if model.filePopupOpen then
         column [ inFront (newDocumentPopup_ model) ]
             [ toggleFileButton model 100
@@ -183,17 +183,50 @@ newDocuemntPopup model =
 newDocumentPopup_ : Model -> Element Msg
 newDocumentPopup_ model =
     column
-        [ spacing 12
+        [ spacing 8
         , Font.size 14
         , padding 20
-        , Font.color (Style.Element.gray 0.1)
+        , Font.color (Style.Element.gray 0.9)
         , alignBottom
-        , height (px 160)
-        , width (px 300)
-        , Background.color (Style.Element.gray 0.9)
-        , moveUp 160
+        , height (px 130)
+        , width (px 400)
+        , Background.color (Style.Element.gray 0.2)
+        , moveUp 170
+        , moveLeft 80
         ]
-        [ setRenderingModeButton model.documentType MiniLaTeX
-        , setRenderingModeButton model.documentType MathMarkdown
-        , setRenderingModeButton model.documentType PlainText
+        [ inputFilename model
+        , row [ spacing 24, Font.color (Style.Element.gray 0.9) ] [ makeNewFileButton, cancelNewFileButton ]
         ]
+
+
+inputFilename model =
+    Input.text [ Element.height (px 35), Font.color (Style.Element.gray 0.2) ]
+        { onChange = GotFilename
+        , text = model.newFilename
+        , placeholder = Nothing
+        , label = labelAbove [] (text "File name")
+        }
+
+
+makeNewFileButton : Element Msg
+makeNewFileButton =
+    Input.button
+        [ mouseDown [ Font.color (Style.Element.gray 0.9), Background.color (Element.rgb 0.7 0 0) ]
+        , Font.color (Style.Element.gray 0.9)
+        , Element.height (px 30)
+        , Background.color (Style.Element.gray 0.4)
+        , paddingXY 8 0
+        ]
+        { onPress = Just MakeNewfile, label = text "New" }
+
+
+cancelNewFileButton : Element Msg
+cancelNewFileButton =
+    Input.button
+        [ mouseDown [ Font.color (Style.Element.gray 0.9), Background.color (Element.rgb 0.7 0 0) ]
+        , Element.height (px 30)
+        , Font.color (Style.Element.gray 0.9)
+        , Background.color (Style.Element.gray 0.4)
+        , paddingXY 8 8
+        ]
+        { onPress = Just CancelNewfile, label = text "Cancel" }
