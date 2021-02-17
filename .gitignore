@@ -13,3 +13,4 @@ node_modules
 
 **/.DS_Store
 demo-math/public/Main.js
+demo-math/.env
