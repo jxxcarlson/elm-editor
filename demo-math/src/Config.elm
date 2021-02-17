@@ -1,9 +1,15 @@
-module Config exposing (pdfServer, testUuid)
+module Config exposing (fileServer, pdfServer)
+
+import Model exposing (FileArchive(..))
+
+
+fileServer =
+    "http://localhost:8077"
 
 
 pdfServer =
     "https://shoobox.io"
 
 
-testUuid =
-    "bd3839fc-a77a-4256-885e-4e493137b597"
+fileArcive =
+    Server

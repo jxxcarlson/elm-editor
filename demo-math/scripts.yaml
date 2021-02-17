@@ -12,6 +12,7 @@ scripts:
 
   go: open -a /Applications/Firefox.app https://jxxcarlson.github.io/app/elm-editor2
 
+  curl: curl http://localhost:8000
 
   publish-github:
     - elm make --optimize src/Main.elm --output=public/Main.js

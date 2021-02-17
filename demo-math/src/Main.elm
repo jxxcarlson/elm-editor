@@ -25,6 +25,7 @@ import Random
 import Style.Element
 import Task
 import Text
+import Time
 import UI exposing (..)
 import Umuli
 
@@ -80,11 +81,12 @@ init flags =
             , filePopupOpen = False
             , randomSeed = Random.initialSeed 17319485
             , uuid = "axyadjfa;o2020394aklsd"
+            , fileArchive = Server
+            , tick = 0
+            , currentTime = Time.millisToPosix 0
             }
-
-        -- Editor.initWithContent Text.test1 Load.config
     in
-    ( model, Cmd.none )
+    ( model, Helper.File.checkServer )
 
 
 
@@ -137,7 +139,27 @@ update msg model =
             ( model, Helper.File.export model )
 
         SaveFile ->
-            ( model, Helper.File.save model )
+            case model.fileArchive of
+                Disk ->
+                    ( model, Helper.File.save model )
+
+                Server ->
+                    let
+                        content =
+                            Editor.getContent model.editor
+                    in
+                    ( model, Helper.File.postToServer model.fileName content )
+
+        SavedToServer _ ->
+            ( model, Cmd.none )
+
+        ServerIsAlive result ->
+            case result of
+                Ok _ ->
+                    ( { model | fileArchive = Server }, Cmd.none )
+
+                Err _ ->
+                    ( { model | fileArchive = Disk }, Cmd.none )
 
         FileRequested ->
             Helper.Update.fileRequested model
@@ -194,6 +216,9 @@ update msg model =
             , Cmd.none
             )
 
+        Tick newTime ->
+            ( { model | currentTime = newTime, tick = model.tick + 1 }, Cmd.none )
+
 
 
 -- SUBSCRIPTIONS
@@ -201,7 +226,7 @@ update msg model =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    Sub.none
+    Time.every 1000 Tick
 
 
 
@@ -252,12 +277,23 @@ footer model =
             , el
                 [ Font.color (Element.rgb 0.9 0.5 0.5) ]
                 (Element.text ("File: " ++ model.fileName))
+            , fileArchive model.fileArchive
             ]
         , row [ Element.alignRight, Element.spacing 12 ]
             [ UI.loadDocumentButton "start.tex"
             , UI.loadDocumentButton "markdown.md"
             ]
         ]
+
+
+fileArchive : FileArchive -> Element Msg
+fileArchive fa =
+    case fa of
+        Server ->
+            el [ Font.color (Style.Element.gray 0.5) ] (Element.text "Archive: server/data")
+
+        Disk ->
+            el [ Font.color (Style.Element.gray 0.5) ] (Element.text "Archive: Disk")
 
 
 showIf : Bool -> Element Msg -> Element Msg

@@ -9,6 +9,7 @@ import Html exposing (Html)
 import Http
 import MiniLatex.EditSimple exposing (Data, LaTeXMsg)
 import Random
+import Time
 import Umuli
 
 
@@ -37,7 +38,15 @@ type alias Model =
     , filePopupOpen : Bool
     , randomSeed : Random.Seed
     , uuid : String
+    , fileArchive : FileArchive
+    , tick : Int
+    , currentTime : Time.Posix
     }
+
+
+type FileArchive
+    = Server
+    | Disk
 
 
 type Msg
@@ -66,6 +75,9 @@ type Msg
     | ToggleFilePopup
     | NewDocument DocumentType
     | LoadDocument String
+    | SavedToServer (Result Http.Error ())
+    | ServerIsAlive (Result Http.Error String)
+    | Tick Time.Posix
 
 
 type DocumentType

@@ -1,23 +1,62 @@
-module Helper.File exposing (export, save)
+module Helper.File exposing (checkServer, export, postToServer, save)
 
+import Config
 import Editor
-import File exposing (File)
 import File.Download as Download
-import File.Select as Select
+import Http
+import Json.Encode exposing (encode, string)
 import MiniLatex.Export
 import Model exposing (Model, Msg(..))
-import Task
 
 
+mimeType : String -> String
+mimeType fileName =
+    let
+        parts =
+            String.split "." fileName
+                |> List.reverse
+                |> List.head
+    in
+    case parts of
+        Nothing ->
+            "text/txt"
 
---importFile : Cmd Msg
---importFile =
---    Select.file [ "text/markdown", "text/x-tex" ] ImportFile
---
---
---load : File -> Cmd Msg
---load file =
---    Task.perform DocumentLoaded (File.toString file)
+        Just "tex" ->
+            "text/x-latex"
+
+        Just "md" ->
+            "text/x-markdown"
+
+        Just "txt" ->
+            "text/plain"
+
+        _ ->
+            "text/plain"
+
+
+encodeDocument : String -> String -> Json.Encode.Value
+encodeDocument fileName content =
+    Json.Encode.object
+        [ ( "fileName", Json.Encode.string fileName )
+        , ( "content", Json.Encode.string content )
+        ]
+
+
+postToServer : String -> String -> Cmd Msg
+postToServer fileName content =
+    Http.post
+        { url = Config.fileServer ++ "/save"
+        , body = Http.jsonBody (encodeDocument fileName content)
+        , expect = Http.expectWhatever SavedToServer
+        }
+
+
+checkServer : Cmd Msg
+checkServer =
+    Http.get
+        { url = Config.fileServer ++ "/hello"
+        , expect = Http.expectString ServerIsAlive
+        }
 
 
 save : Model -> Cmd msg
