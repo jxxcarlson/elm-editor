@@ -380,13 +380,14 @@ Twitter: @epsilon2718
 \\href{https://github.com/jxxcarlson/elm-editor}{Github repo: post issues!}
 \\end{obeylines}
 
+\\par
+
 \\image{https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcSKK5oCbORAuRM5xZjVTqEIsRGiFjTStX4euA&usqp=CAU}{What 4 billion years of evolution can come up with}{width: 500}
 """
 
 
 long =
     """
-
 
 \\title{Sample MiniLaTeX Doc}
 
