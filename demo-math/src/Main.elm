@@ -223,7 +223,7 @@ update msg model =
         Tick newTime ->
             let
                 ( documentDirty, cmd ) =
-                    if modBy 30 model.tick == 0 && model.documentDirty then
+                    if modBy Config.saveFileInterval model.tick == 0 && model.documentDirty then
                         ( False, Helper.File.save model )
 
                     else

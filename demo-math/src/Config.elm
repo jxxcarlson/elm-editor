@@ -1,6 +1,14 @@
-module Config exposing (fileServer, pdfServer)
+module Config exposing (fileServer, pdfServer, saveFileInterval)
 
 import Model exposing (FileArchive(..))
+
+
+saveFileInterval =
+    15
+
+
+
+-- seconds
 
 
 fileServer =
