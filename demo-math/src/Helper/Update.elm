@@ -1,16 +1,19 @@
 module Helper.Update exposing (..)
 
 import Array
+import Cmd.Extra
 import Debounce exposing (Debounce)
 import Editor exposing (Editor)
 import EditorMsg
 import File
 import File.Select as Select
+import Helper.File
 import Helper.Sync
 import Html exposing (..)
 import Html.Attributes as HA exposing (..)
 import MiniLatex.EditSimple
 import Model exposing (..)
+import Outside
 import Random
 import Task exposing (Task)
 import UI exposing (..)
@@ -186,6 +189,7 @@ load_ fileName content model =
 Handle messages from the Editor. The messages CopyPasteClipboard, ... GotViewportForSync
 require special handling. The others are passed to a default handler
 -}
+handleEditorMsg : Model -> Msg -> EditorMsg.EMsg -> ( Model, Cmd Msg )
 handleEditorMsg model msg editorMsg =
     let
         ( newEditor, cmd ) =
@@ -194,6 +198,26 @@ handleEditorMsg model msg editorMsg =
     case editorMsg of
         EditorMsg.InsertChar c ->
             Helper.Sync.sync newEditor cmd { model | documentDirty = True }
+
+        --EditorMsg.CopyPasteClipboard ->
+        --    let
+        --        clipBoardCmd =
+        --            Outside.sendInfo (Outside.AskForClipBoard Json.Encode.null)
+        --    in
+        --    model
+        --        |> syncModel newEditor
+        --        |> Cmd.Extra.withCmds [ clipBoardCmd, Cmd.map EditorMsg cmd ]
+        EditorMsg.WriteToSystemClipBoard ->
+            let
+                _ =
+                    Debug.log "Here is" "WriteToSystemClipBoard"
+            in
+            ( { model | editor = newEditor }
+            , Outside.sendInfo
+                (Outside.WriteToClipBoard
+                    (Editor.getSelectedString newEditor |> Maybe.withDefault "Nothing!!")
+                )
+            )
 
         EditorMsg.ToggleShortCutExecution ->
             Helper.Sync.sync newEditor cmd model
@@ -216,6 +240,13 @@ handleEditorMsg model msg editorMsg =
 
 
 -- HELPERS
+--
+--syncModel : Editor -> Model -> Model
+--syncModel newEditor model =
+--    model
+--        |> updateRenderingData (Editor.getLines newEditor)
+--        |> updateDocument newEditor
+--        |> (\m -> { m | editor = newEditor })
 
 
 debounceConfig : Debounce.Config Msg
@@ -236,3 +267,12 @@ renderFromEditRecord selectedId counter editRecord =
         |> List.map (Html.map LaTeXMsg)
         |> List.map (\x -> Html.div [ HA.style "margin-bottom" "0.65em" ] [ x ])
         |> Html.div []
+
+
+saveFileToServer : Model -> ( Model, Cmd Msg )
+saveFileToServer model =
+    let
+        content =
+            Editor.getContent model.editor
+    in
+    ( { model | documentDirty = False }, Helper.File.postToServer model.fileName content )

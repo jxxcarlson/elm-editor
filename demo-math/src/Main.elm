@@ -144,11 +144,7 @@ update msg model =
                     ( { model | documentDirty = False }, Helper.File.save model )
 
                 Server ->
-                    let
-                        content =
-                            Editor.getContent model.editor
-                    in
-                    ( { model | documentDirty = False }, Helper.File.postToServer model.fileName content )
+                    Helper.Update.saveFileToServer model
 
         SavedToServer _ ->
             ( model, Cmd.none )
@@ -219,15 +215,11 @@ update msg model =
             )
 
         Tick newTime ->
-            let
-                ( documentDirty, cmd ) =
-                    if modBy Config.saveFileInterval model.tick == 0 && model.documentDirty then
-                        ( False, Helper.File.save model )
+            if modBy Config.saveFileInterval model.tick == 0 && model.documentDirty then
+                Helper.Update.saveFileToServer model
 
-                    else
-                        ( model.documentDirty, Cmd.none )
-            in
-            ( { model | currentTime = newTime, tick = model.tick + 1, documentDirty = documentDirty }, cmd )
+            else
+                ( { model | currentTime = newTime, tick = model.tick + 1 }, Cmd.none )
 
         GotFilename str ->
             ( { model | newFilename = str }, Cmd.none )
