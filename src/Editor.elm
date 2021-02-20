@@ -123,10 +123,15 @@ replaceSelection2 str (Editor data) =
             Editor data
 
         SelectedChar pos ->
-            Editor { data | lines = ArrayUtil.replace pos pos str data.lines }
+            Editor { data | lines = ArrayUtil.replaceLines pos pos (arrayFromString str) data.lines }
 
         Selection sel1 sel2 ->
-            Editor { data | lines = ArrayUtil.replace sel1 sel2 str data.lines }
+            Editor { data | lines = ArrayUtil.replaceLines sel1 sel2 (arrayFromString str) data.lines }
+
+
+arrayFromString : String -> Array String
+arrayFromString str =
+    str |> String.lines |> Array.fromList
 
 
 {-| -}
