@@ -4,7 +4,7 @@ module Editor exposing
     , insertAtCursor, lineAtCursor, getCursor, setCursor
     , placeInClipboard
     , getContent, getLineHeight, getSelectedString, getWrapOption, indexOf
-    , replaceSelection
+    , replaceSelection, replaceSelection2
     )
 
 {-| Use the Editor module to embed a pure Elm text editor
@@ -45,7 +45,7 @@ import ArrayUtil
 import Cmd.Extra
 import ContextMenu exposing (ContextMenu)
 import EditorModel exposing (Config, EditorModel)
-import EditorMsg exposing (Context(..), EMsg(..), WrapOption)
+import EditorMsg exposing (Context(..), EMsg(..), Selection(..), WrapOption)
 import Html as H exposing (Html)
 import Html.Attributes as HA
 import Update as U
@@ -111,6 +111,22 @@ insertAtCursor str (Editor data) =
 replaceSelection : String -> Editor -> Editor
 replaceSelection str (Editor data) =
     Editor (Function.replaceLines data (Array.fromList (String.lines str)))
+
+
+replaceSelection2 : String -> Editor -> Editor
+replaceSelection2 str (Editor data) =
+    case data.selection of
+        NoSelection ->
+            Editor data
+
+        SelectingFrom _ ->
+            Editor data
+
+        SelectedChar _ ->
+            Editor data
+
+        Selection sel1 sel2 ->
+            Editor { data | lines = ArrayUtil.replace sel1 sel2 str data.lines }
 
 
 {-| -}

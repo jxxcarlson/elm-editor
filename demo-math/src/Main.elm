@@ -274,7 +274,7 @@ pasteToEditorAndClipboard model str =
     let
         editor2 =
             -- Editor.insertAtCursor str model.editor
-            Editor.replaceSelection str model.editor
+            Editor.replaceSelection2 str model.editor
 
         counter =
             model.counter + 1
