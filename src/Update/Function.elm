@@ -121,10 +121,24 @@ pasteSelection model =
             else
                 { line = model.cursor.line + Array.length model.selectedText, column = model.cursor.column }
     in
-    { model
-        | lines = ArrayUtil.replaceLines model.cursor model.cursor model.selectedText model.lines
-        , cursor = newCursor
-    }
+    case model.selection of
+        NoSelection ->
+            model
+
+        SelectingFrom _ ->
+            model
+
+        SelectedChar pos ->
+            { model
+                | lines = ArrayUtil.replaceLines pos pos model.selectedText model.lines
+                , cursor = newCursor
+            }
+
+        Selection sel1 sel2 ->
+            { model
+                | lines = ArrayUtil.replaceLines sel1 sel2 model.selectedText model.lines
+                , cursor = newCursor
+            }
 
 
 replaceLines : EditorModel -> Array String -> EditorModel
