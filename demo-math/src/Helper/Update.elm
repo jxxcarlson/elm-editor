@@ -11,6 +11,7 @@ import Helper.File
 import Helper.Sync
 import Html exposing (..)
 import Html.Attributes as HA exposing (..)
+import Json.Encode
 import MiniLatex.EditSimple
 import Model exposing (..)
 import Outside
@@ -199,19 +200,14 @@ handleEditorMsg model msg editorMsg =
         EditorMsg.InsertChar c ->
             Helper.Sync.sync newEditor cmd { model | documentDirty = True }
 
-        --EditorMsg.CopyPasteClipboard ->
-        --    let
-        --        clipBoardCmd =
-        --            Outside.sendInfo (Outside.AskForClipBoard Json.Encode.null)
-        --    in
-        --    model
-        --        |> syncModel newEditor
-        --        |> Cmd.Extra.withCmds [ clipBoardCmd, Cmd.map EditorMsg cmd ]
-        EditorMsg.WriteToSystemClipBoard ->
+        EditorMsg.CopyPasteClipboard ->
             let
-                _ =
-                    Debug.log "Here is" "WriteToSystemClipBoard"
+                clipBoardCmd =
+                    Outside.sendInfo (Outside.AskForClipBoard Json.Encode.null)
             in
+            Helper.Sync.sync newEditor (Cmd.batch [ cmd, clipBoardCmd ]) model
+
+        EditorMsg.WriteToSystemClipBoard ->
             ( { model | editor = newEditor }
             , Outside.sendInfo
                 (Outside.WriteToClipBoard
@@ -240,13 +236,6 @@ handleEditorMsg model msg editorMsg =
 
 
 -- HELPERS
---
---syncModel : Editor -> Model -> Model
---syncModel newEditor model =
---    model
---        |> updateRenderingData (Editor.getLines newEditor)
---        |> updateDocument newEditor
---        |> (\m -> { m | editor = newEditor })
 
 
 debounceConfig : Debounce.Config Msg

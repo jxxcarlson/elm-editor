@@ -9,7 +9,7 @@ app.ports.infoForOutside.subscribe(msg => {
             console.log("AskForClipBoard")
             navigator.clipboard.readText()
               .then(text => {
-
+                console.log("TEXT", text)
                 app.ports.infoForElm.send({tag: "GotClipboard", data:  text})
               })
               .catch(err => {

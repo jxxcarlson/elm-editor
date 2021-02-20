@@ -3,6 +3,7 @@ module Main exposing (main)
 --
 
 import Browser
+import Cmd.Extra exposing (withCmd)
 import Config
 import Debounce exposing (Debounce)
 import Dict
@@ -17,6 +18,7 @@ import Helper.Update
 import Html exposing (..)
 import MiniLatex.EditSimple
 import Model exposing (..)
+import Outside exposing (InfoForElm(..))
 import Process
 import Random
 import Style.Element
@@ -254,6 +256,27 @@ update msg model =
         CancelNewfile ->
             ( { model | filePopupOpen = False }, Cmd.none )
 
+        OutsideInfo msg_ ->
+            model
+                |> withCmd (Outside.sendInfo msg_)
+
+        Outside infoForElm ->
+            case infoForElm of
+                Outside.GotClipboard clipboard ->
+                    pasteToEditorAndClipboard model clipboard
+
+        LogErr _ ->
+            ( model, Cmd.none )
+
+
+pasteToEditorAndClipboard : Model -> String -> ( Model, Cmd msg )
+pasteToEditorAndClipboard model str =
+    let
+        editor2 =
+            Editor.placeInClipboard str model.editor
+    in
+    { model | editor = Editor.insertAtCursor str editor2 } |> withCmd Cmd.none
+
 
 
 -- SUBSCRIPTIONS
@@ -261,7 +284,10 @@ update msg model =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    Time.every 1000 Tick
+    Sub.batch
+        [ Time.every 1000 Tick
+        , Outside.getInfo Outside LogErr
+        ]
 
 
 

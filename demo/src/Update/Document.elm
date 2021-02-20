@@ -222,7 +222,6 @@ sync result localDoc model =
     case result of
         Ok remoteDoc ->
             let
-                -- op = Debug.log "OP" (Document.syncOperation localDoc remoteDoc)
                 op =
                     Document.syncOperation localDoc remoteDoc
 

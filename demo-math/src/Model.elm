@@ -8,6 +8,7 @@ import File exposing (File)
 import Html exposing (Html)
 import Http
 import MiniLatex.EditSimple exposing (Data, LaTeXMsg)
+import Outside
 import Random
 import Time
 import Umuli
@@ -83,6 +84,9 @@ type Msg
     | GotFilename String
     | MakeNewfile
     | CancelNewfile
+    | Outside Outside.InfoForElm
+    | OutsideInfo Outside.InfoForOutside
+    | LogErr String
 
 
 type DocumentType
