@@ -3,7 +3,7 @@ module View.EditorFooter exposing (view)
 import EditorModel exposing (AutoLineBreak(..), EditMode(..), EditorModel, ViewMode(..), VimMode(..))
 import Html as H exposing (Attribute, Html)
 import Html.Attributes as HA
-import Update.Vim as Vim
+import Vim.Update as Vim
 
 
 view : EditorModel -> Html msg

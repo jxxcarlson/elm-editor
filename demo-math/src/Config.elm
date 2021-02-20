@@ -4,7 +4,7 @@ import Model exposing (FileArchive(..))
 
 
 saveFileInterval =
-    15
+    5
 
 
 

@@ -28,9 +28,9 @@ import Update.File
 import Update.Function as Function
 import Update.Group
 import Update.Scroll
-import Update.Vim
 import Update.Wrap
 import Vim
+import Vim.Update
 import Window
 
 
@@ -484,7 +484,7 @@ update msg model =
             Function.toggleEditMode model |> withNoCmd
 
         ToggleShortCutExecution ->
-            Update.Vim.toggleShortCutExecution model
+            Vim.Update.toggleShortCutExecution model
 
         MarkdownMsg _ ->
             model |> withNoCmd
@@ -510,4 +510,4 @@ update msg model =
                     ( model, Cmd.none )
 
         Vim vimMsg ->
-            ( { model | vimModel = Update.Vim.update vimMsg model.vimModel }, Cmd.none )
+            ( { model | vimModel = Vim.Update.update vimMsg model.vimModel }, Cmd.none )

@@ -25,7 +25,7 @@ import Line
 import Position
 import Task
 import Update.Line
-import Update.Vim
+import Vim.Update
 
 
 autoclose : Dict String String
@@ -251,7 +251,7 @@ insertChar editMode char model =
                 |> Update.Line.break
 
         VimEditor VimNormal ->
-            Update.Vim.process char model
+            Vim.Update.process char model
 
 
 insertDispatch : String -> EditorModel -> EditorModel
