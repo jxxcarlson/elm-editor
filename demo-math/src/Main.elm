@@ -282,7 +282,7 @@ pasteToEditorAndClipboard model str =
         newData =
             -- Umuli.update counter (Editor.getContent editor2) Nothing model.data
             -- TODO: this is not a great solution
-            Umuli.init Umuli.LMiniLaTeX 0 (Editor.getContent editor2) Nothing
+            Umuli.init (Model.umuliLang model.documentType) 0 (Editor.getContent editor2) Nothing
     in
     { model
         | editor = editor2
