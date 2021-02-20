@@ -466,13 +466,24 @@ replaceLines pos1 pos2 newLines targetLines =
     if pos1.line == pos2.line then
         case ( Array.length newLines == 1, lengthOfLine 0 newLines /= lengthOfLine pos1.line targetLines ) of
             ( True, True ) ->
+                let
+                    _ =
+                        Debug.log "BR" "1"
+                in
                 insert pos1 (firstLine_ newLines) targetLines
 
             ( True, False ) ->
+                let
+                    _ =
+                        Debug.log "BR" "2"
+                in
                 insertLineAfter (pos1.line - 1) (firstLine_ newLines) targetLines
 
             ( False, _ ) ->
                 let
+                    _ =
+                        Debug.log "BR" "3"
+
                     ( before, after ) =
                         split pos1 targetLines
                 in
