@@ -4,6 +4,7 @@ module Editor exposing
     , insertAtCursor, lineAtCursor, getCursor, setCursor
     , placeInClipboard
     , getContent, getLineHeight, getSelectedString, getWrapOption, indexOf
+    , replaceSelection
     )
 
 {-| Use the Editor module to embed a pure Elm text editor
@@ -48,6 +49,7 @@ import EditorMsg exposing (Context(..), EMsg(..), WrapOption)
 import Html as H exposing (Html)
 import Html.Attributes as HA
 import Update as U
+import Update.Function as Function
 import Update.Scroll
 import View.Editor
 import View.EditorFooter
@@ -104,6 +106,11 @@ insertAtCursor str (Editor data) =
             , clipboard = str
             , cursor = newCursor
         }
+
+
+replaceSelection : String -> Editor -> Editor
+replaceSelection str (Editor data) =
+    Editor (Function.replaceLines data (Array.fromList (String.lines str)))
 
 
 {-| -}
@@ -269,6 +276,7 @@ syncMessages =
     , KillLine
     , Cut
     , Copy
+    , CopyPasteClipboard
     , NewLine
     , Paste
     , WrapAll

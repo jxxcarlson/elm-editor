@@ -21,7 +21,7 @@ app.ports.infoForOutside.subscribe(msg => {
 
         case "WriteToClipboard":
             console.log("GotClipboard")
-            navigator.permissions.execXommand("paste").then(result => {
+            navigator.permissions.execCommand("paste").then(result => {
               if (result.state == "granted" || result.state == "prompt") {
                 updateClipboard(JSON.stringify(msg.data))
               }

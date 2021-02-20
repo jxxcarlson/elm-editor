@@ -101,6 +101,11 @@ update msg model =
         NoOp ->
             ( model, Cmd.none )
 
+        MyEditorMsg editorMsg ->
+            -- Handle messages from the Editor.  The messages CopyPasteClipboard, ... GotViewportForSync
+            -- require special handling.  The others are passed to a default handler
+            Helper.Update.handleEditorMsg model msg editorMsg
+
         GetContent str ->
             Helper.Update.getContent model str
 
@@ -128,11 +133,6 @@ update msg model =
         LaTeXMsg laTeXMsg ->
             -- TODO: re-implement this
             ( model, Cmd.none )
-
-        MyEditorMsg editorMsg ->
-            -- Handle messages from the Editor.  The messages CopyPasteClipboard, ... GotViewportForSync
-            -- require special handling.  The others are passed to a default handler
-            Helper.Update.handleEditorMsg model msg editorMsg
 
         ToggleFilePopup ->
             ( { model | filePopupOpen = not model.filePopupOpen }, Cmd.none )
@@ -273,9 +273,24 @@ pasteToEditorAndClipboard : Model -> String -> ( Model, Cmd msg )
 pasteToEditorAndClipboard model str =
     let
         editor2 =
-            Editor.placeInClipboard str model.editor
+            -- Editor.insertAtCursor str model.editor
+            Editor.replaceSelection str model.editor
+
+        counter =
+            model.counter + 1
+
+        newData =
+            -- Umuli.update counter (Editor.getContent editor2) Nothing model.data
+            -- TODO: this is not a great solution
+            Umuli.init Umuli.LMiniLaTeX 0 (Editor.getContent editor2) Nothing
     in
-    { model | editor = Editor.insertAtCursor str editor2 } |> withCmd Cmd.none
+    { model
+        | editor = editor2
+        , data = newData
+        , counter = counter + 1
+        , documentDirty = True
+    }
+        |> withCmd Cmd.none
 
 
 

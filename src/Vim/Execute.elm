@@ -45,12 +45,6 @@ doReplacement replacementData model =
         line =
             model.cursor.line
 
-        lineEnd_ =
-            Array.get line newLines
-                |> Maybe.map String.length
-                |> Maybe.withDefault 0
-                |> (\x -> x - 1)
-
         newSelection =
             Selection
                 { line = line + replacementData.deltaLine, column = replacementData.sel1 }
@@ -110,7 +104,7 @@ replacements =
     , { k = "env", r = "\\begin{env}\nXXX\n\\end{env}\n\n", deltaLine = 1, deltaColumn = 0, sel1 = 0, sel2 = 3 }
     , { k = "enumerate", r = "\\begin{enumerate}\n\n\\item X\n\n\\item Y\n\n\\end{enumerate}\n\n", deltaLine = 2, deltaColumn = 6, sel1 = 5, sel2 = 6 }
     , { k = "itemize", r = "\\begin{itemize}\n\n\\item X\n\n\\item Y\n\n\\end{itemize}\n\n", deltaLine = 2, deltaColumn = 6, sel1 = 5, sel2 = 6 }
-    , { k = "$", r = "$\\pi$", deltaLine = 0, deltaColumn = 1, sel1 = 0, sel2 = 3 }
+    , { k = "$", r = "$\\pi$", deltaLine = 0, deltaColumn = 1, sel1 = 1, sel2 = 3 }
     , { k = "$$", r = "$$\n\\pi\n$$\n", deltaLine = 1, deltaColumn = 0, sel1 = 0, sel2 = 3 }
     ]
 
