@@ -122,8 +122,8 @@ replaceSelection2 str (Editor data) =
         SelectingFrom _ ->
             Editor data
 
-        SelectedChar _ ->
-            Editor data
+        SelectedChar pos ->
+            Editor { data | lines = ArrayUtil.replace pos pos str data.lines }
 
         Selection sel1 sel2 ->
             Editor { data | lines = ArrayUtil.replace sel1 sel2 str data.lines }
