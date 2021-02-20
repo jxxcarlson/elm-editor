@@ -275,6 +275,7 @@ pasteToEditorAndClipboard model str =
         editor2 =
             -- Editor.insertAtCursor str model.editor
             Editor.replaceSelection2 str model.editor
+                |> (\editor -> Editor.placeInClipboard str editor)
 
         counter =
             model.counter + 1
