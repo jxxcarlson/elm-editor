@@ -299,4 +299,6 @@ syncMessages =
     , WrapSelection
     , Undo
     , Redo
+    , Indent
+    , Deindent
     ]
