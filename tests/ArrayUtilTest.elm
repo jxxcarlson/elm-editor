@@ -4,8 +4,8 @@ import Action
 import Array exposing (Array)
 import ArrayUtil
 import EditorMsg exposing (Position, Selection(..))
-import Test exposing (Test, describe, test, only)
 import Expect
+import Test exposing (Test, describe, only, test)
 
 
 stringFromArray : Array String -> String
@@ -148,7 +148,6 @@ suite =
             , test "Cut passes rejoin test" <|
                 \_ ->
                     let
-
                         input =
                             Array.fromList [ "abcde", "01234", "56789", "aeiou", "pqrst" ]
 

@@ -5,7 +5,6 @@ import Debounce exposing (Debounce)
 import Editor exposing (Editor, EditorMsg)
 import EditorModel
 import File exposing (File)
-import Html exposing (Html)
 import Http
 import MiniLatex.EditSimple exposing (Data, LaTeXMsg)
 import Outside
@@ -96,8 +95,8 @@ type DocumentType
 
 
 umuliLang : DocumentType -> Umuli.Lang
-umuliLang mode =
-    case mode of
+umuliLang documentType =
+    case documentType of
         MiniLaTeX ->
             Umuli.LMiniLaTeX
 
