@@ -8,14 +8,14 @@ module Umuli exposing
     , update
     )
 
+import CaYaTeX
+import Element
 import Html exposing (Html)
 import Html.Attributes as HA
 import Markdown.Data as Markdown
 import Markdown.Option
 import Markdown.Render
 import MiniLatex.EditSimple
-import CaYaTeX
-import Element
 
 
 type Data
@@ -75,6 +75,7 @@ render : String -> Data -> List (Element.Element UmuliMsg)
 render selectedId data =
     case data of
         ML data_ ->
+            --  MiniLatex.EditSimple.get selectedId data_  |> List.map (Html.map MLMsg)
             MiniLatex.EditSimple.get selectedId data_
                 |> List.map (Html.map MLMsg)
                 |> List.map Element.html
@@ -92,7 +93,7 @@ render selectedId data =
             in
             case output of
                 Markdown.Render.Simple html ->
-                    [ html |> Html.map MDMsg |> Element.html]
+                    [ html |> Html.map MDMsg |> Element.html ]
 
                 Markdown.Render.Composite docParts ->
                     [ docParts.title, docParts.toc, docParts.document ]
@@ -100,12 +101,12 @@ render selectedId data =
                         |> List.map Element.html
 
         CY data_ ->
-                CaYaTeX.render "_id_" data_  |>  List.map (Element.map CYMsg)
+            CaYaTeX.render "_id_" data_ |> List.map (Element.map CYMsg)
 
         TT data_ ->
             [ Html.div [ HA.style "white-space" "pre" ] [ Html.text data_ ] |> Element.html ]
 
+
 renderContent : Lang -> String -> String -> Maybe String -> List (Element.Element UmuliMsg)
 renderContent lang selectedId content mpreamble =
     render selectedId (init lang 0 content mpreamble)
-
