@@ -3,8 +3,8 @@
     "source-directories": [
         "src",
         "../src",
-        "/Users/carlson/dev/cheetah/elm-markdown/src",
-        "/Users/carlson/dev/cheetah/meenylatex/src"
+        "/Users/jxxcarlson/dev/cheetah/elm-markdown/src",
+        "/Users/jxxcarlson/dev/cheetah/meenylatex/src"
     ],
     "elm-version": "0.19.1",
     "dependencies": {
