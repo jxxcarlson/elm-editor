@@ -91,6 +91,7 @@ type Msg
 type DocumentType
     = MiniLaTeX
     | MathMarkdown
+    | CaYaTeX
     | PlainText
 
 
@@ -102,6 +103,9 @@ umuliLang documentType =
 
         MathMarkdown ->
             Umuli.LMarkdown
+
+
+        CaYaTeX -> Umuli.LCaYaTeX
 
         PlainText ->
             Umuli.LText
@@ -116,6 +120,9 @@ fileExtension dt =
         MathMarkdown ->
             ".md"
 
+        CaYaTeX -> ".cyt"
+
+
         PlainText ->
             ".txt"
 
@@ -128,6 +135,8 @@ docType ext =
 
         "md" ->
             MathMarkdown
+
+        "cyt" -> CaYaTeX
 
         "txt" ->
             PlainText
@@ -151,6 +160,9 @@ findDocumentType fileName =
 
         Just "md" ->
             MathMarkdown
+
+        Just "cyt" ->
+            CaYaTeX
 
         Just "txt" ->
             PlainText

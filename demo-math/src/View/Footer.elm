@@ -38,7 +38,8 @@ view model =
             , fileArchive model.fileArchive
             ]
         , row [ Element.alignRight, Element.spacing 12 ]
-            [ UI.loadDocumentButton "start.tex"
+            [ UI.loadDocumentButton "start.cyt"
+            , UI.loadDocumentButton "start.tex"
             , UI.loadDocumentButton "markdown.md"
             ]
         ]

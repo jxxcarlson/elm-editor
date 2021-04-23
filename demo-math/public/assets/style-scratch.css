@@ -1,0 +1,131 @@
+
+.mm-paragraph {
+	white-space: normal;
+}
+
+body { font-size: 13px;
+       line-height: 19px;}
+
+
+mjx-stretchy-h > mjx-ext > mjx-c::before {
+  padding-top: 1px;
+}
+
+#__RENDERED_TEXT__ {
+  overflow-y: scroll;
+  }
+
+
+
+.toc-level-0 {  margin-left: 0em; font-size : 10pt; line-height: 4pt; font-weight: normal; text-decoration: none; }
+.toc-level-1 {  margin-left: 1em; font-size : 10pt; line-height: 4pt; font-weight: normal; text-decoration: none;  }
+.toc-level-2 {  margin-left: 2em; font-size : 10pt; line-height: 4pt; font-weight: normal; text-decoration: none;  }
+.toc-level-3 {  margin-left: 3em; font-size : 10pt; line-height: 4pt; font-weight: normal; text-decoration: none;  }
+
+.mm-code {font-family: "Courier New"
+  , Courier, monospace; padding: 8px; background-color: #f5f5f5; font-size: 11pt;
+}
+.mm-inline-code {font-family: "Courier New"
+  , Courier, monospace; padding-left: 5px; padding-right: 5px;background-color: #f5f5f5; font-size: 11pt;
+}
+
+h1 {font-size: 24px}
+
+.mm-image {width: 100%}
+.mm-h1 {font-size: 18pt}
+.mm-h2 {font-size: 16pt}
+.mm-h3 {font-size: 12pt}
+.mm-h4 {font-size: 10pt}
+.mm-h5 {font-size: 10pt}
+.mm-olist-item {
+	list-style: none;
+  margin-bottom: 8px;
+  padding-left: 18px;
+  text-indent: -18px;
+}
+.mm-ulist-item {
+	list-style: none;
+  margin-bottom: 8px;
+  padding-left: 18px;
+  text-indent: -18px;
+	white-space: normal;
+}
+
+.p mm-ulist-item > mm-block-0 { margin-left: 20px;}
+.p fmm-ulist-item > mm-block-1 { margin-left: 40px;}
+
+.mm-quotation {
+	margin-left: 24px;
+	margin-top: 18px;
+	margin-right: 36px;
+	margin-bottom: 18px;
+	white-space: normal;
+}
+.mm-poetry {
+	margin-left: 24px;
+	margin-top: 18px;
+	margin-right: 36px;
+	margin-bottom: 18px;
+	white-space: nowrap;
+}
+.mm-closed-block {
+	margin-bottom; 12px;
+	width: inherit;
+	white-space: normal;
+}
+.mm-closed-block .mm-inlinelist {
+	margin-bottom: 12px;
+	line-height: 18px;
+	width: inherit;
+}
+.mm-poetry .mm-inlinelist .mm-inlinelist {
+	margin-bottom: 4px;
+	width: inherit;
+}
+
+.mm-poetry p { margin-bottom: 0;}
+
+.mm-error-message {
+	color: red; margin-bottom: 12px;
+}
+.mm-code {
+	font: 16px courier; background-color: #eee; padding: 8px;
+}
+
+.mm-strike-through {
+	 text-decoration: line-through;
+}
+
+.mm-table {
+
+}
+
+.mm-table-row {
+	 display: block;
+	 margin-left: 40px;
+	 height: 25px;
+}
+
+p.mm-table-row {
+	display: inline-block;
+}
+
+.mm-table-cell {
+    display: inline-block;
+		width: 80px;
+}
+
+p.mm-table-cell {
+	display: inline-block;
+}
+
+.mm-verbatim {
+	font: 16px courier; background-color: #eee;
+}
+
+
+.input-range-labels-container { visibility: hidden }
+
+.input-range-container {
+     transform: rotate(-270deg) translateY(-510px) translateX(-84px)
+  }
