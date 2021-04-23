@@ -121,8 +121,8 @@ pasteSelection model =
             else
                 { line = model.cursor.line + Array.length model.selectedText, column = model.cursor.column }
 
-        _ =
-            Debug.log "SEL" model.selectedText
+        --_ =
+        --    Debug.log "SEL" model.selectedText
     in
     case model.selection of
         NoSelection ->
