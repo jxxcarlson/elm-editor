@@ -328,8 +328,7 @@ view model =
                     , Font.size 14
                     , Element.spacing 18
                     , Element.paddingXY 12 12
-
-                    -- , htmlAttribute "white-space" "normal"
+                    , htmlAttribute "white-space" "normal"
                     ]
                     (Umuli.render "" model.data |> List.map (Element.map Umuli))
                 ]
