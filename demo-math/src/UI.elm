@@ -149,6 +149,8 @@ setRenderingModeButton currentMode newMode =
                 MathMarkdown ->
                     "MathMarkdown"
 
+                CaYaTeX -> "CaYaTeX"
+
                 PlainText ->
                     "Plain Text"
 

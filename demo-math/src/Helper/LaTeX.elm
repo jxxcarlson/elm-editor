@@ -13,6 +13,7 @@ import Task
 import UUID
 
 
+
 printToPDF model =
     let
         ( newUUID_, newSeed ) =
@@ -37,6 +38,9 @@ generatePdf docType uuid editor =
                 MiniLaTeX ->
                     Editor.getContent editor
                         |> MiniLatex.Export.toLaTeXWithImages
+
+                CaYaTeX -> "Not yet implemented"
+                     |> MiniLatex.Export.toLaTeXWithImages
 
                 MathMarkdown ->
                     Editor.getContent editor

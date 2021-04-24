@@ -45,6 +45,7 @@ debounceMsg model msg_ =
     ( { model | debounce = debounce }, cmd )
 
 
+-- render : Model -> String -> ({ a | counter : Int, data : Umuli.Data }, Cmd Msg)
 render model str =
     let
         n =
@@ -53,9 +54,9 @@ render model str =
         newData =
             Umuli.update model.counter str Nothing model.data
 
-        renderedText : Html Msg
+        -- renderedText : Html Msg
         renderedText =
-            Umuli.render "" newData |> Html.div [] |> Html.map Umuli
+            Umuli.render "" newData -- |> Html.div [] |> Html.map Umuli
     in
     ( { model
         | data = newData

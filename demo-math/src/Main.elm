@@ -10,12 +10,14 @@ import Dict
 import Editor exposing (Editor)
 import Element exposing (Element, centerX, centerY, column, el, fill, px, row, text)
 import Element.Background as Background
+import Element.Font as Font
 import File
 import Helper.File
 import Helper.LaTeX
 import Helper.Load as Load
 import Helper.Update
 import Html exposing (..)
+import Html.Attributes
 import MiniLatex.EditSimple
 import Model exposing (..)
 import Outside exposing (InfoForElm(..))
@@ -318,25 +320,34 @@ view model =
         column [ centerX, centerY ]
             [ row [ Element.spacing 0 ]
                 [ el [ Element.alignTop ] (viewEditor model)
-
-                -- TODO: fix the below (round) --- (round Load.config.width)
-                , el [ Element.alignTop ]
-                    (UI.renderedSource
-                        (model.config.width - 40)
-                        (model.config.height + 22)
-                        (Umuli.render "" model.data |> Html.div [] |> Html.map Umuli)
-                    )
+                , column
+                    [ Element.width (px (round model.config.width - 8))
+                    , Element.height (px (round model.config.height))
+                    , Element.scrollbarY
+                    , Background.color (Style.Element.gray 1.0)
+                    , Font.size 14
+                    , Element.spacing 18
+                    , Element.paddingXY 12 12
+                    , htmlAttribute "white-space" "normal"
+                    ]
+                    (Umuli.render "" model.data |> List.map (Element.map Umuli))
                 ]
             , Footer.view model
             ]
 
 
-render : MiniLatex.EditSimple.Data -> Html Msg
-render editRecord =
-    editRecord
-        |> MiniLatex.EditSimple.get ""
-        |> Html.div []
-        |> Html.map LaTeXMsg
+htmlAttribute : String -> String -> Element.Attribute msg
+htmlAttribute key value =
+    Element.htmlAttribute (Html.Attributes.attribute key value)
+
+
+
+--render : MiniLatex.EditSimple.Data -> Html Msg
+--render editRecord =
+--    editRecord
+--        |> MiniLatex.EditSimple.get ""
+--        |> Html.div []
+--        |> Html.map LaTeXMsg
 
 
 viewEditor : Model -> Element Msg
