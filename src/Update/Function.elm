@@ -117,7 +117,7 @@ pasteSelection model =
     let
         newCursor =
             if Array.length model.selectedText == 1 then
-                Position.deltaColumn (lengthOfLine 0 model.selectedText - 1) model.cursor
+                Position.deltaColumn (lengthOfLine 0 model.selectedText) model.cursor
 
             else
                 { line = model.cursor.line + Array.length model.selectedText, column = model.cursor.column }
@@ -139,9 +139,20 @@ pasteSelection model =
             }
 
         Selection sel1 sel2 ->
+            let
+                -- TODO: in this case, delete selection, then paste
+                _ =
+                    Debug.log "paste, (sel1, sel2)" ( sel1, sel2 )
+
+                --( newArray, removed ) =
+                --    Action.deleteSelection model.selection model.lines |> Debug.log "CUT"
+                delta =
+                    lengthOfLine 0 model.selectedText + sel1.column - sel2.column |> Debug.log "DELTA"
+            in
             { model
                 | lines = ArrayUtil.replaceLines sel1 sel2 model.selectedText model.lines
-                , cursor = newCursor
+                , cursor = Position.deltaColumn delta model.cursor
+                , selection = NoSelection
             }
 
 

@@ -466,27 +466,44 @@ replaceLines pos1 pos2 newLines targetLines =
     if pos1.line == pos2.line then
         case ( Array.length newLines == 1, lengthOfLine 0 newLines /= lengthOfLine pos1.line targetLines ) of
             ( True, True ) ->
-                --let
-                --    _ =
-                --        Debug.log "BR" "1"
-                --in
-                insert pos1 (firstLine_ newLines) targetLines
+                let
+                    _ =
+                        Debug.log "BR 1 (pos1, pos2)" ( pos1, pos2 )
+
+                    _ =
+                        Debug.log "target lines" targetLines
+
+                    _ =
+                        Debug.log "CUT" (cutOut pos1 pos2 targetLines)
+
+                    targetLines_ =
+                        if pos1 == pos2 then
+                            targetLines
+
+                        else
+                            cutOut pos1 pos2 targetLines |> Tuple.second
+                in
+                insert pos1 (firstLine_ newLines) targetLines_
 
             ( True, False ) ->
-                --let
-                --    _ =
-                --        Debug.log "BR" "2"
-                --in
+                let
+                    _ =
+                        Debug.log "BR" "2"
+                in
                 insertLineAfter (pos1.line - 1) (firstLine_ newLines) targetLines
 
             ( False, _ ) ->
                 let
-                    --_ =
-                    --    Debug.log "BR" "3"
+                    _ =
+                        Debug.log "BR" "3"
+
+                    _ =
+                        Debug.log "newlines" newLines
+
                     { before, middle, after } =
-                        cut pos1 pos2 targetLines
+                        cut pos1 pos2 targetLines |> Debug.log "CT"
                 in
-                joinThree before newLines after
+                joinThree before newLines after |> Debug.log "JOIN"
 
     else
         let

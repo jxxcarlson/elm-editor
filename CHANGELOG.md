@@ -2,6 +2,10 @@
 
 Most recent first
 
+- 4/25/2021. Bugfix: handle case of pasting with no selection
+
+- 4/24/2021. Integrate CaYaTeX
+
 - 2/29/2020. Add matching parens, brackets, etc
 
 - 2/29/2020: Add extend selection with shift + arrow key
