@@ -73,6 +73,7 @@ copySelection model =
             ( model, Cmd.none )
 
 
+lengthOfLine : Int -> Array String -> Int
 lengthOfLine line targetLines =
     Array.get line targetLines
         |> Maybe.map String.length
@@ -116,17 +117,17 @@ pasteSelection model =
     let
         newCursor =
             if Array.length model.selectedText == 1 then
-                Position.deltaColumn (lengthOfLine 0 model.selectedText) model.cursor
+                Position.deltaColumn (lengthOfLine 0 model.selectedText - 1) model.cursor
 
             else
                 { line = model.cursor.line + Array.length model.selectedText, column = model.cursor.column }
-
-        --_ =
-        --    Debug.log "SEL" model.selectedText
     in
     case model.selection of
         NoSelection ->
-            model
+            { model
+                | lines = ArrayUtil.replaceLines model.cursor model.cursor model.selectedText model.lines
+                , cursor = newCursor
+            }
 
         SelectingFrom _ ->
             model

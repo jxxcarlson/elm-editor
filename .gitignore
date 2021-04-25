@@ -18,3 +18,4 @@ demo-math/.env
 **/*/Main.min.js
 server/
 demo-math/app.ts
+mathdemo/public/Main.js
