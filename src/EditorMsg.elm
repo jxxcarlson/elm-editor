@@ -29,7 +29,7 @@ type Context
     | Background
 
 
-{-| Mouuse hover states
+{-| Mouse hover states
 -}
 type Hover
     = NoHover
